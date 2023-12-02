@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="tabs:TabHostViewModel"
+             x:Class="Tefin.Views.Tabs.TabHostView">
+  <Border CornerRadius="10" BorderThickness="2" BorderBrush="#0e1014">
+
+    <TabControl ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+      <TabControl.ItemTemplate>
+        <DataTemplate>
+          <Grid ColumnDefinitions="*, Auto">
+            <TextBlock Text="{Binding Title}" />
+            <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="1" VerticalAlignment="Center"
+                    Padding="2"
+                    Margin="12 0 0 0">
+              <Button.Flyout>
+                <Flyout>
+                  <Grid RowDefinitions="*, Auto" Height="100">
+                    <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center"
+                               HorizontalAlignment="Center"></TextBlock>
+
+                    <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
+                      <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right">
+                        <Button Click="CloseButtonClick">
+                          <TextBlock Text="Yes, close it"></TextBlock>
+                        </Button>
+                        <Button Click="CancelButtonClick" Margin="6 6 6 6">
+                          <TextBlock Text="Cancel"></TextBlock>
+                        </Button>
+                      </StackPanel>
+                    </Border>
+                  </Grid>
+                </Flyout>
+              </Button.Flyout>
+              <!-- <TextBlock Text="x" VerticalAlignment="Center" FontSize="12" /> -->
+              <Viewbox Height="16" Width="16">
+                <Canvas Width="24" Height="24">
+                  <Path Fill="#228BCB" Data="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M17,8.4L13.4,12L17,15.6L15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4Z" />
+                </Canvas>
+              </Viewbox>
+            </Button>
+          </Grid>
+        </DataTemplate>
+      </TabControl.ItemTemplate>
+    </TabControl>
+  </Border>
+</UserControl>

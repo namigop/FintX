@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="explorer:MethodNode"
+             x:Class="Tefin.Views.Explorer.MethodNodeView">
+    <StackPanel Orientation="Horizontal">
+        <Border>
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Polygon Points="0.5,3.569 7.506,0.774 14.511,3.569 14.511,12.018 7.506,15.3 0.5,11.725" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Line StartPoint="7.50,15.183" EndPoint="7.506, 6.87" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Polyline Points="0.647,3.663 7.477,6.823 14.359,3.717" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </Border>
+        <TextBlock Text="{Binding Title}" Margin="6 0 0 0" VerticalAlignment="Center" />
+    </StackPanel>
+</UserControl>

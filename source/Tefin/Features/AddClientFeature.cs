@@ -1,0 +1,10 @@
+using Tefin.Core;
+using Tefin.Core.Interop;
+
+namespace Tefin.Features;
+
+public class AddClientFeature(ProjectTypes.Project project, string clientName, string serviceName, string protoOrUrl, string description, string[] csFiles, IOResolver io) {
+    public async Task Add() {
+        await Project.addClient(io, project, clientName, serviceName, protoOrUrl, description, csFiles);
+    }
+}

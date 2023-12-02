@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:overlay="clr-namespace:Tefin.ViewModels.Overlay"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:CompileBindings="True"
+             x:DataType="overlay:OverlayHostViewModel"
+             x:Class="Tefin.Views.Overlay.OverlayHostView">
+    <Border>
+        <Grid Grid.RowDefinitions="*, Auto, *">
+            <Grid Opacity="0.7" Grid.Row="0" Background="{StaticResource Bym.Color.DefaultControlBackground}" />
+            <Grid Grid.Row="1">
+
+                <Grid Background="{StaticResource Bym.Color.DefaultWindowBackground}">
+                    <StackPanel Orientation="Vertical" Margin="15" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <TextBlock Text="{Binding Content.Title}" FontSize="18" VerticalAlignment="Center"
+                                   Margin="16" HorizontalAlignment="Center" />
+
+                        <ScrollViewer>
+                            <ContentControl Content="{Binding Content}" MinWidth="450" />
+                        </ScrollViewer>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <Grid Opacity="0.5" Grid.Row="2" Background="{StaticResource Bym.Color.DefaultControlBackground}" />
+        </Grid>
+    </Border>
+</UserControl>

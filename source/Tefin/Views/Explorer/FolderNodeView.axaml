@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="explorer:FolderNode"
+             x:Class="Tefin.Views.Explorer.FolderNodeView">
+    <StackPanel Orientation="Horizontal">
+        <Border>
+            <Viewbox Width="16" Height="16" VerticalAlignment="Center">
+                <Canvas Width="24" Height="24">
+                    <Path Fill="DarkOrange"
+                          Data="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z" />
+                </Canvas>
+            </Viewbox>
+        </Border>
+        <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
+                   Background="Transparent"
+                   VerticalAlignment="Center"
+                   Foreground="LightGray" />
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+
+        <IsPackable>false</IsPackable>
+        <GenerateProgramFile>false</GenerateProgramFile>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="TestInputTypes.fs" />
+        <Compile Include="ClassTypeTests.fs" />
+        <Compile Include="CollectionTypesTest.fs" />
+        <Compile Include="GrpcMethodInfoTest.fs" />
+        <Compile Include="TypeBuilderTest.fs" />
+        <Compile Include="TimeItTest.fs" />
+        <Compile Include="Program.fs"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="ReactiveUI" Version="19.5.1" />
+        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Desktop\Avalonia\Tefin.Core\Tefin.Core.fsproj" />
+      <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
+      <ProjectReference Include="..\Tefin\Tefin.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:typeEditors="clr-namespace:Tefin.ViewModels.Types.TypeEditors"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="typeEditors:NullableBoolEditor"
+             x:Class="Tefin.Views.Types.TypeEditors.NullableBoolEditorView">
+    <Border x:Name="MainBorder">
+        <StackPanel Orientation="Horizontal">
+            <ToggleSwitch IsChecked="{Binding TempValue, Mode=TwoWay}"
+                          IsEnabled="{Binding !IsNull}"
+                          OffContent="False"
+                          OnContent="True" />
+            <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
+                      IsVisible="{Binding AcceptsNull}" />
+        </StackPanel>
+
+    </Border>
+</UserControl>

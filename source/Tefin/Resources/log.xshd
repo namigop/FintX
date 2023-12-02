@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- syntax definition for Json by alek kowalczyk -->
+<SyntaxDefinition name="Json" extensions=".json" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<Color name="Info" foreground="#0A6DBD" exampleText="INFO" />
+	<Color name="Error" foreground="#AE4841" exampleText="ERROR" />
+	<Color name="Warn" foreground="#BCA027" exampleText="WARN" />
+	 
+	<RuleSet>
+	        <Keywords color="Info">
+    			<Word>INFO</Word>    			 
+    		</Keywords>
+    		<Keywords color="Error">
+                <Word>ERROR</Word>    			 
+            </Keywords>
+            <Keywords color="Warn">
+                <Word>WARN</Word>    			 
+            </Keywords>		
+	</RuleSet>
+</SyntaxDefinition>

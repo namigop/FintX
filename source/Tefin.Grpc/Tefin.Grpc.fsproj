@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="GrpcPackage.fs" />
+        <Compile Include="ClientStreamWriter.fs" />
+        <Compile Include="AsyncStreamReader.fs" />
+        <Compile Include="CallInterceptor.fs" />
+        <Compile Include="GrpcTypeBuilder.fs" />
+        <Compile Include="GrpcReflectionClient.fs"/>
+        <Compile Include="ProtocProcess.fs"/>
+        <Compile Include="ProtoDiscoveryClient.fs"/>
+        <Compile Include="ServerReflectionDiscoveryClient.fs"/>
+        <Compile Include="ClientCompiler.fs" />
+        <Compile Include="ServiceClient.fs" />
+        <Compile Include="ChannelBuilder.fs" />
+        <Compile Include="MethodInvoker.fs" />
+        <Compile Include="Features.fs" />
+        <Compile Include="ResponseUtils.fs" />
+        <Compile Include="ResponseUnary.fs" />
+        <Compile Include="ResponseServerStreaming.fs" />
+        <Compile Include="ResponseClientStreaming.fs" />
+        <Compile Include="DuplexClientStreaming.fs" />
+        <Compile Include="CallUnary.fs" />
+        <Compile Include="CallServerStreaming.fs" />
+        <Compile Include="CallClientStreaming.fs" />
+        <Compile Include="CallDuplexStreaming.fs" />
+        <Compile Include="Startup.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
+        <PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.57.0"/>
+        <PackageReference Include="Grpc.Reflection" Version="2.57.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.58.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Bym.Resources\Bym.Resources.csproj"/>
+        <ProjectReference Include="..\Tefin.Core\Tefin.Core.fsproj" />
+    </ItemGroup>
+
+</Project>

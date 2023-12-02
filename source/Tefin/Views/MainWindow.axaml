@@ -1,0 +1,79 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Tefin.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Tefin.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:CompileBindings="True"
+        WindowState="Maximized"
+        ExtendClientAreaToDecorationsHint="True"
+        Icon="/Assets/fire.ico"
+        Title="{Binding Title}">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+      <!--<NativeMenu.Menu> 
+                 <NativeMenu> 
+                     <NativeMenuItem Header="File"> 
+                         <NativeMenu> 
+                             <NativeMenuItem   Gesture="Ctrl+O"/> 
+                             <NativeMenuItemSeparator/> 
+                             <NativeMenuItem  Header="Recent"> 
+                                 <NativeMenu/> 
+                             </NativeMenuItem> 
+                             <NativeMenuItemSeparator/> 
+                             <NativeMenuItem   /> 
+                         </NativeMenu> 
+                     </NativeMenuItem> 
+                     <NativeMenuItem Header="Edit"> 
+                         <NativeMenu> 
+                             <NativeMenuItem Header="Copy"/> 
+                             <NativeMenuItem Header="Paste"/> 
+                         </NativeMenu> 
+                     </NativeMenuItem> 
+                      
+                 </NativeMenu> 
+             </NativeMenu.Menu>--> 
+
+    <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="Auto, *, 8, 3*">
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <!-- <TextBlock Text="{Binding SubTitle}" FontSize="12" Foreground="DimGray" FontStyle="Italic" Margin="6 0 0 0" VerticalAlignment="Center" ></TextBlock> -->
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
+           
+        </StackPanel>
+
+        <!-- left menu -->
+        <ContentControl Content="{Binding MainMenu}" Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="8 0 0 0" />
+
+        <!-- selected left menu control -->
+        <ContentControl Content="{Binding MainMenu.SelectedMenu}" Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" />
+
+        <GridSplitter Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" />
+        <Border Grid.Row="2" Grid.Column="3" Padding="0 0 10 0">
+            <Grid RowDefinitions="2*, 8, *">
+                <!-- tab editors -->
+                <ContentControl Content="{Binding TabHost}" Grid.Row="0" />
+                <GridSplitter Grid.Row="1" Height="8" />
+                <Grid Grid.Row="2">
+                    <ContentControl Content="{Binding Misc}" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <ContentControl Content="{Binding Footer}" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="4" />
+
+        <ContentControl Content="{Binding Overlay}" Margin="0 40 0 0"
+                        IsVisible="{Binding Overlay.CanShowOverlay}"
+                        Grid.Row="0" Grid.RowSpan="4" Grid.Column="0" Grid.ColumnSpan="4" />
+
+
+    </Grid>
+
+</Window>

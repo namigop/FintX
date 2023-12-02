@@ -1,0 +1,47 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:grpc="clr-namespace:Tefin.ViewModels.Tabs.Grpc"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="grpc:ServerStreamingViewModel"
+             x:Class="Tefin.Views.Tabs.Grpc.ServerStreamingView">
+    <Border  BorderThickness="0">
+        <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
+            <Grid Grid.Row="0" Grid.Column="0">
+                <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
+                    <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0" 
+                            ToolTip.Tip="Send the request">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Height="20" Width="20">
+                                <Canvas  Width="24" Height="24"><Path Fill="#228BCB" Data="M3 20V14L11 12L3 10V4L22 12Z" /></Canvas>
+                            </Viewbox>
+                            <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+            </Grid>
+            
+            <Grid Grid.Row="0" Grid.Column="2">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" />
+                </StackPanel>
+            </Grid>
+
+            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="2" Margin="0 6 0 0"
+                    Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
+            <Grid Grid.Row="2" Grid.Column="0">
+                <ContentControl Content="{Binding ReqViewModel}" />
+            </Grid>
+            
+            <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="8" Margin="6" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
+           
+            <Grid Grid.Row="2" Grid.Column="2">
+                <ContentControl Content="{Binding RespViewModel}" />
+            </Grid>
+           
+        </Grid>
+    </Border>
+
+</UserControl>

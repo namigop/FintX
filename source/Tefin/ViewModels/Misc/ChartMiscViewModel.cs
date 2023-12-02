@@ -1,0 +1,125 @@
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows.Input;
+
+using LiveChartsCore;
+using LiveChartsCore.Drawing;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.Themes;
+
+using ReactiveUI;
+
+using SkiaSharp;
+
+using Tefin.Core;
+using Tefin.Core.Infra.Actors;
+
+//using Tefin.Messages;
+
+namespace Tefin.ViewModels.Misc;
+
+public class ChartMiscViewModel : MiscViewModelTabItem {
+    private readonly LvcColor[] Colors = ColorPalletes.FluentDesign;
+    private int _currentColor = 0;
+    private SeriesModel? _selectedSeries;
+
+    public ChartMiscViewModel() {
+        this.ClearSeriesCommand = CreateCommand(OnClearSeries);
+        GlobalHub.subscribe<MethodCallMessage>(OnReceiveMethodCall);
+    }
+
+    public ICommand ClearSeriesCommand { get; }
+
+    public SeriesModel? SelectedSeries {
+        get => this._selectedSeries;
+        set {
+            this.RaiseAndSetIfChanged(ref _selectedSeries, value);
+            if (this._selectedSeries != null) {
+                foreach (var s in SeriesModels)
+                    s.Series.IsVisible = this._selectedSeries == s;
+            }
+        }
+    }
+
+    public ObservableCollection<ISeries> Series { get; } = new();
+
+    public ObservableCollection<SeriesModel> SeriesModels { get; } = new();
+
+    public override string Title { get; } = "Chart";
+
+    public Axis[] XAxes { get; } = {
+        new() {
+            MinStep = 1,
+            TextSize = 0,
+            // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
+            // {
+            //     StrokeThickness = 2,
+            //     //PathEffect = new DashEffect(new float[] { 3, 3 })
+            // }
+        }
+    };
+
+    public Axis[] YAxes { get; } = {
+        new() {
+            MinLimit = 0,
+            Name = "Elapsed (msec)",
+            NamePaint = new SolidColorPaint(SKColors.SlateGray),
+            NameTextSize = 16,
+            TextSize = 14,
+            LabelsPaint = new SolidColorPaint(SKColors.SlateGray),
+            SeparatorsPaint = new SolidColorPaint(SKColors.DimGray) {
+                StrokeThickness = 0.5f,
+                //PathEffect = new DashEffect(new float[] { 3, 3 })
+            }
+        }
+    };
+
+    private void AddPoint(string clientName, string method, double point) {
+        lock (this) {
+            var seriesModel = this.SeriesModels.FirstOrDefault(t => t.ClientName == clientName && t.Method == method);
+            if (seriesModel == null) {
+                seriesModel = new SeriesModel(clientName, method, new ColumnSeries<double>() { Name = method });
+                this.SeriesModels.Add(seriesModel);
+                this.Series.Add(seriesModel.Series);
+
+                var nextColorIndex = _currentColor++ % Colors.Length;
+                var color = this.Colors[nextColorIndex];
+                seriesModel.Series.Fill = new SolidColorPaint(new SKColor(color.R, color.G, color.B, 90));
+            }
+
+            this.SelectedSeries = seriesModel;
+            seriesModel.Values.Add(point);
+        }
+    }
+
+    private void OnClearSeries() {
+        this.Series.Clear();
+        this.SeriesModels.Clear();
+        // this._currentColor = 0;
+    }
+
+    private void OnReceiveMethodCall(MethodCallMessage obj) {
+        this.AddPoint(obj.ClientName, obj.Method, obj.Point);
+    }
+
+    public class SeriesModel {
+        private readonly string _clientName;
+        private readonly string _method;
+        private readonly ColumnSeries<double> _series;
+
+        public SeriesModel(string clientName, string method, ColumnSeries<double> series) {
+            this._clientName = clientName;
+            this._method = method;
+            this._series = series;
+            series.Values = this.Values;
+            series.MaxBarWidth = 20;
+        }
+
+        public string ClientName { get => _clientName; }
+        public string Id { get => $"{ClientName}/{Method}"; }
+        public string Method { get => _method; }
+        public ColumnSeries<double> Series { get => _series; }
+        public ObservableCollection<double> Values { get; } = new();
+    }
+}

@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:types="clr-namespace:Tefin.ViewModels.Types"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="types:MetadataNode"
+             x:Class="Tefin.Views.Types.MetadataNodeView">
+    <UserControl.Styles>
+        <StyleInclude Source="TypeItemStyles.axaml" />
+    </UserControl.Styles>
+    <StackPanel Orientation="Horizontal">
+        <Border>
+
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Path Data="M4.028,14.527L0.5,12.617v-4.1l3.503,-1.938L7.5,8.517v4.063L4.028,14.527z" Fill="Transparent" />
+                        <Path Data="M4.032,15.098L0,12.914V8.222l4.003,-2.215L8,8.222v4.65L4.032,15.098zM1,12.319l3.023,1.638L7,12.286V8.811L4.003,7.15L1,8.811V12.319z"
+                              Fill="#20A0E0" />
+                        <Polygon Points="9.055,0.754 2.5,4.317 2.5,5.695 4.003,4.863 9,7.633 9,13.458 7.302,14.41 9.101,15.368 15.5,11.786 15.5,4.317" Fill="#4E4E4E" />
+                        <Polygon
+                            Points="9.057,0.183 2,4.02 2,5.972 3,5.419 3,4.615 9.053,1.324 15,4.612 15,11.493 9.095,14.798 7.82,14.12 6.784,14.701 9.107,15.937 16,12.08 16,4.022"
+                            Fill="#20A0E0" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </Border>
+
+        <TextBlock Text="{Binding Title}" Classes="Title" Margin="6 0 0 0" />
+        <TextBlock Text="=" Margin="6 0 0 0"
+                   Background="Transparent"
+                   VerticalAlignment="Center"
+                   Foreground="WhiteSmoke" />
+        <TextBlock Text="{Binding FormattedTypeName}" Classes="SubTitle" Margin="6 0 0 0" />
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding FormattedValue}" Margin="6 0 0 0" Classes="FormattedValue" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
