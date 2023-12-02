@@ -46,7 +46,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Bym.Resources\Bym.Resources.csproj"/>
+        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
         <ProjectReference Include="..\Tefin.Core\Tefin.Core.fsproj" />
     </ItemGroup>
 

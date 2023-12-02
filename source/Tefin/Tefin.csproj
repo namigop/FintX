@@ -35,6 +35,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Tefin.Core\Tefin.Core.fsproj" />
         <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
+        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
     </ItemGroup>
 
 

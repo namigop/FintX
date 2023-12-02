@@ -43,7 +43,7 @@ module ProtocProcess =
             let zip = Path.Combine(grpcRootPath, "protoc.zip")
 
             if not (io.Dir.Exists(protocPath)) then
-                do! io.File.WriteAllBytesAsync zip Bym.Resources.Properties.Resources.protocZip
+                do! io.File.WriteAllBytesAsync zip Tefin.Resources.Properties.Resources.protocZip
                 io.File.ExtractZip zip toolsPath
 
             let protocFile, csharpPluginFile =
@@ -84,11 +84,11 @@ module ProtocProcess =
                    "type"
                    "wrappers" |]
 
-            let mgr = Bym.Resources.Properties.Resources.ResourceManager
+            let mgr = Tefin.Resources.Properties.Resources.ResourceManager
 
             for file in protoFiles do
                 let bytes =
-                    mgr.GetObject(file, Bym.Resources.Properties.Resources.Culture) :?> byte array
+                    mgr.GetObject(file, Tefin.Resources.Properties.Resources.Culture) :?> byte array
 
                 let f = file.Replace("_", "")
                 let target = Path.Combine(googlePath, $"{f}.proto")

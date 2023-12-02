@@ -11,7 +11,7 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tefin.Grpc", "Tefin.Grpc\Te
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Tefin.Tests", "Tefin.Tests\Tefin.Tests.fsproj", "{34309CA7-A1A3-4CC5-A76C-D5154105A33C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bym.Resources", "Bym.Resources\Bym.Resources.csproj", "{FBF886E9-6320-4BF0-A85F-39E419650768}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tefin.Resources", "Tefin.Resources\Tefin.Resources.csproj", "{FBF886E9-6320-4BF0-A85F-39E419650768}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
