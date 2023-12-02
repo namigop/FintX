@@ -19,6 +19,7 @@ public class ListNode : TypeBaseNode {
     private readonly Type _itemType;
     private int _listItemsCount;
     private int _targetListItemsCount;
+    private bool _isEditing;
 
     public ListNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.IsExpanded = true;
@@ -42,12 +43,24 @@ public class ListNode : TypeBaseNode {
         }
     }
 
+    public override bool IsEditing
+    {
+        get => _isEditing;
+        set
+        {
+            _isEditing = value;
+            if (!_isEditing)
+                this.ListItemsCount = this.TargetListItemsCount;
+
+        }
+    }
+
     public int TargetListItemsCount {
         get => this._targetListItemsCount;
         set {
             Debug.WriteLine($"_targetListItemsCount = {value}");
             this.RaiseAndSetIfChanged(ref this._targetListItemsCount, value);
-            this.ListItemsCount = this.TargetListItemsCount;
+            //this.ListItemsCount = this.TargetListItemsCount;
         }
     }
 
@@ -96,10 +109,6 @@ public class ListNode : TypeBaseNode {
         this.RaisePropertyChanged(nameof(this.IsNullOrEmpty));
     }
 
-    public void ResetTargetCount() {
-        this.TargetListItemsCount = this.ListItemsCount;
-    }
-
     protected static int GetListSize(object value) {
         var currentCount = -1;
 
@@ -124,7 +133,7 @@ public class ListNode : TypeBaseNode {
         var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this), processedTypeNames, current, parent);
         return inner;
     }
-
+    
     protected virtual Type GetItemType() {
         return this._itemType;
     }
