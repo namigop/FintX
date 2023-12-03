@@ -18,17 +18,31 @@ module TypeBuilder =
 
     let register handler = handlers.Insert(0, handler) //side-effect
 
-    let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
-        let mutable handled = false
-        let mutable instance = Unchecked.defaultof<obj>
+    let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth:int) =
+        let result = 
+            [for h in handlers -> h]
+            |> Seq.fold (fun state handleFunc ->
+                let struct (handled:bool, _)  = state
+                if handled then
+                    state
+                else
+                    let ret  = handleFunc type2 createInstance parentInstance depth
+                    ret )
+                (struct (false, Unchecked.defaultof<obj>))
+                
+        result
+    //     
+    // let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
+    //     let mutable handled = false
+    //     let mutable instance = Unchecked.defaultof<obj>
+    //
+    //     for handleFunc in handlers do
+    //         if (not handled) then
+    //             let struct (h, i) = handleFunc type2 createInstance parentInstance depth
+    //             handled <- h
+    //             instance <- i
 
-        for handleFunc in handlers do
-            if (not handled) then
-                let struct (h, i) = handleFunc type2 createInstance parentInstance depth
-                handled <- h
-                instance <- i
-
-        struct (handled, instance)
+    //    struct (handled, instance)
 
 module SystemType =
 
