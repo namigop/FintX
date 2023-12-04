@@ -7,6 +7,22 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\fire.ico</ApplicationIcon>
+        <AssemblyName>FintX</AssemblyName>
+    </PropertyGroup>
+    <PropertyGroup>
+        <CFBundleName>FintX</CFBundleName> <!-- Also defines .app file name -->
+        <CFBundleDisplayName>FintX</CFBundleDisplayName>
+        <CFBundleIdentifier>com.erik.FintX</CFBundleIdentifier>
+        <CFBundleVersion>1.0.0</CFBundleVersion>
+        <CFBundlePackageType>APPL</CFBundlePackageType>
+        <CFBundleShortVersionString>FintX 1.0+</CFBundleShortVersionString>
+        <CFBundleSignature>com.erik.FintX</CFBundleSignature>
+        <CFBundleExecutable>FintX</CFBundleExecutable>
+        <CFBundleIconFile>Resources/fire.icns</CFBundleIconFile>
+        <!--        <ApplicationIcon>Assets\BraveNewLog.ico</ApplicationIcon>-->
+        <!--        <ApplicationIcon>Assets\ldb.ico</ApplicationIcon> &lt;!&ndash; Will be copied from output directory &ndash;&gt;-->
+        <!--        <NSPrincipalClass>NSApplication</NSPrincipalClass>-->
+        <!--        <NSHighResolutionCapable>true</NSHighResolutionCapable>-->
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,6 +41,7 @@
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
+        <PackageReference Include="DotNet.Bundle" Version="0.9.13" />
         <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
         <PackageReference Include="Google.Protobuf" Version="3.24.4" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
@@ -33,7 +50,6 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Tefin.Core\Tefin.Core.fsproj" />
         <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
         <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
     </ItemGroup>
@@ -311,6 +327,9 @@
       <None Remove="Resources\log.xshd" />
       <Content Include="Assets\fire.ico" />
       <EmbeddedResource Include="Resources\log.xshd" />
+      <None Update="Resources\fire.icns">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 

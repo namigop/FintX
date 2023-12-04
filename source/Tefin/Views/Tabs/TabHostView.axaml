@@ -19,7 +19,7 @@
               <Button.Flyout>
                 <Flyout>
                   <Grid RowDefinitions="*, Auto" Height="100">
-                    <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center"
+                    <TextBlock Text="Are you sure?" VerticalAlignment="Center"
                                HorizontalAlignment="Center"></TextBlock>
 
                     <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
