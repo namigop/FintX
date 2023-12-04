@@ -4,6 +4,7 @@ open System.Reflection
 open System.Threading.Tasks
 open Tefin.Core
 open Tefin.Core.Execution
+open Tefin.Core.Interop
 
 module CallDuplexStreaming =
     let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
@@ -34,8 +35,9 @@ module CallDuplexStreaming =
                     execContext
         }
 
-    let run (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
+    let run (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) =
         task {
+            let callConfig = CallConfig.From cfg io
             let! ctx = runSteps io methodInfo mParams callConfig
             let resp = DuplexStreamingResponse.create methodInfo ctx
             return struct (ctx.Success, resp)

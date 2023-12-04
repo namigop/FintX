@@ -49,9 +49,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         try {
             var mi = this.ReqViewModel.MethodInfo;
             var mParams = this.ReqViewModel.GetMethodParameters();
-            var cfg = new CallConfig("http://localhost:5000", false, "", none<Cert>(), this.Io);
-
-            var feature = new CallServerStreamingFeature(mi, mParams, cfg, this.Io);
+            
+            var clientConfig = this.Client.Config.Value;
+            var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
             var (ok, resp) = await feature.Run();
             var (_, response, context) = resp.OkayOrFailed();
 

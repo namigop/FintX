@@ -19,7 +19,8 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingReqViewModel : UnaryReqViewModel {
-    private ClientStreamingCallResponse _callResponse;
+    private ClientStreamingCallResponse? _callResponse;
+    private bool _canWrite;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
         methodParameterInstances) {
@@ -32,9 +33,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
+        _callResponse = default;
+        this.StreamItems.Add(new EmptyNode());
     }
 
-    public ClientStreamingCallResponse CallResponse {
+    public ClientStreamingCallResponse? CallResponse {
         get => this._callResponse;
         set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
@@ -47,14 +50,24 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     public ICommand WriteCommand { get; }
 
+
+    public bool CanWrite {
+        get => _canWrite;
+        set => this.RaiseAndSetIfChanged(ref _canWrite, value);
+    }
+
     public void SetupClientStream(ClientStreamingCallResponse response) {
-        this.CallResponse = response;
+        this._callResponse = response;
         var listType = typeof(List<>);
         var constructedListType = listType.MakeGenericType(response.CallInfo.RequestItemType);
         var stream = Activator.CreateInstance(constructedListType);
         var streamNode = new ResponseStreamNode("Client Stream", constructedListType, null, stream, null);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
+
+        streamNode.Items.CollectionChanged += (ss, args) => {
+
+        };
         var (ok, reqInstance) = TypeBuilder.getDefault(response.CallInfo.RequestItemType, true, none<object>(), 0);
         if (ok)
             streamNode.AddItem(reqInstance);
@@ -64,15 +77,19 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     private async Task OnEndWrite() {
         var resp = this.CallResponse;
+        this.IsBusy = true;
         var writer = new WriteClientStreamFeature();
-        var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+        //var node = (TypeBaseNode)this.StreamItems[0].Items[0];
         this.CallResponse = await writer.CompleteWrite(resp);
+        this.IsBusy = false;
     }
 
     private async Task OnWrite() {
         var resp = this.CallResponse;
+        this.IsBusy = true;
         var writer = new WriteClientStreamFeature();
         var node = (TypeBaseNode)this.StreamItems[0].Items[0];
         await writer.Write(resp, node.Value);
+        this.IsBusy = false;
     }
 }

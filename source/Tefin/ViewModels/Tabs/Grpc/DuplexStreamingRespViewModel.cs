@@ -40,6 +40,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var readDuplexStream = new ReadDuplexStreamFeature();
 
         try {
+            this.IsBusy = true;
             var cs = new CancellationTokenSource();
             await foreach (var d in readDuplexStream.ReadResponseStream(resp, cs.Token))
                 Dispatcher.UIThread.Post(() => {

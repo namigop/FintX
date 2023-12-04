@@ -133,7 +133,7 @@ module DuplexStreamingResponse =
         }
 
     let completeWrite (resp: DuplexStreamingCallResponse) =
-        task { do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task) }
+        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)  
 
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
         { Headers = resp.Headers
@@ -141,7 +141,7 @@ module DuplexStreamingResponse =
           Status = resp.Status }
 
     let write (resp: DuplexStreamingCallResponse) (reqItem: obj) =
-        task { do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task) }
+          (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task) 
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 

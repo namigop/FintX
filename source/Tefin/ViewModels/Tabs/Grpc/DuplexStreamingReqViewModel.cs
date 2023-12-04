@@ -66,13 +66,17 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var resp = this.CallResponse;
         var writer = new WriteDuplexStreamFeature();
         var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+        this.IsBusy = true;
         this.CallResponse = await writer.CompleteWrite(resp);
+        this.IsBusy = false;
     }
 
     private async Task OnWrite() {
         var resp = this.CallResponse;
         var writer = new WriteDuplexStreamFeature();
+        this.IsBusy = true;
         var node = (TypeBaseNode)this.StreamItems[0].Items[0];
         await writer.Write(resp, node.Value);
+        this.IsBusy = false;
     }
 }

@@ -17,6 +17,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
+    private bool _canWrite;
 
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
@@ -25,6 +26,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.StatusText = "";
 
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
+        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, vm => this.IsBusy = vm.IsBusy);
     }
 
     public ClientStreamingCallResponse CallResponse => this.ReqViewModel.CallResponse;
@@ -69,16 +71,18 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         try {
             var mi = this.ReqViewModel.MethodInfo;
             var mParams = this.ReqViewModel.GetMethodParameters();
-            var cfg = new CallConfig("http://localhost:5000", false, "", none<Cert>(), this.Io);
-
-            var feature = new CallClientStreamingFeature(mi, mParams, cfg, this.Io);
+            var clientConfig = this.Client.Config.Value;
+            var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
             var (ok, resp) = await feature.Run();
             var (_, response, context) = resp.OkayOrFailed();
-            if (ok) this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response);
+            if (ok) 
+                this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
+            
             this.IsBusy = false;
         }
         finally {
             this.IsBusy = false;
         }
     }
+
 }

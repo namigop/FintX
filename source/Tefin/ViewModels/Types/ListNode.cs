@@ -79,6 +79,7 @@ public class ListNode : TypeBaseNode {
         node.IsExpanded = false;
         this.Items.Add(node);
         this._listItemsCount = this.Items.Count;
+        this._targetListItemsCount = this.Items.Count;
         this.RaisePropertyChanged(nameof(this.FormattedValue));
     }
 

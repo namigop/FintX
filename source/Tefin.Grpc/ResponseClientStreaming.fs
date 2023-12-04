@@ -129,10 +129,9 @@ module ClientStreamingResponse =
         }
 
     let completeWrite (resp: ClientStreamingCallResponse) =
-        task { do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task) }
+        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
 
-    let getResponse (resp: ClientStreamingCallResponse) =
-        task { return! resp.CallInfo.GetResponse() }
+    let getResponse (resp: ClientStreamingCallResponse) = resp.CallInfo.GetResponse()
 
     let toStandardCallResponse (resp: ClientStreamingCallResponse) =
         { Headers = resp.Headers
@@ -140,10 +139,9 @@ module ClientStreamingResponse =
           Status = resp.Status }
 
     let write (resp: ClientStreamingCallResponse) (reqItem: obj) =
-        task { do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task) }
+        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task)
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
-
         if ctx.Success then
             let w = wrapResponse methodInfo (Res.getValue ctx.Response) false
 
@@ -155,9 +153,7 @@ module ClientStreamingResponse =
             Okay t
         else
             let err = Res.getError ctx.Response
-
-            let w =
-                wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
 
             let t: ErrorClientStreamingResponse =
                 { MethodInfo = methodInfo
