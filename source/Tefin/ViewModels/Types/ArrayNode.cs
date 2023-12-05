@@ -25,9 +25,9 @@ public class ArrayNode : ListNode {
         var constructedListType = listType.MakeGenericType(this._itemType);
 
         this._listMethods = ListTypeMethod.GetMethods(constructedListType);
-        var parentValue = parent != null ? Core.Utils.some(parent.Value) : Core.Utils.none<object>();
+        var parentValue = parent != null ? Core.Utils.some(parent.Value)! : Core.Utils.none<object>();
         var (_, list) = TypeBuilder.getDefault(constructedListType, true, parentValue, 0);
-        this._listMethods.ClearMethod.Invoke(list, null);
+        this._listMethods.ClearMethod!.Invoke(list, null);
 
         // var clearMethod = constructedListType.GetMethod("Clear", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
         // clearMethod!.Invoke(list, null);
@@ -61,12 +61,12 @@ public class ArrayNode : ListNode {
         this.Value = this.ToArray(this._internalList);
     }
 
-    private object ToArray(object targetList) {
+    private object? ToArray(object? targetList) {
         if (targetList == null)
             return null;
 
         var mi = targetList.GetType().GetMethod("ToArray", BindingFlags.Instance | BindingFlags.Public);
-        var arrayInstance = mi.Invoke(targetList, null);
+        var arrayInstance = mi!.Invoke(targetList, null);
         return arrayInstance;
     }
 }

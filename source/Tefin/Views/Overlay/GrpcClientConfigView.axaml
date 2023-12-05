@@ -28,7 +28,7 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Json Web Token (JWT)" Classes="FormField"></TextBlock>
-                    <TextBox Text="{Binding JWT}" Height="80"></TextBox>
+                    <TextBox Text="{Binding Jwt}" Height="80"></TextBox>
                 </StackPanel>
               
                 <StackPanel>

@@ -19,7 +19,7 @@ public class DictionaryNode : ListNode {
         var constructedListType = listType.MakeGenericType(typeArgs);
         this._listMethods = ListTypeMethod.GetMethods(constructedListType);
         this._itemType = typeof(Pair<,>).MakeGenericType(typeArgs);
-        this._internalList = ToListOfPairs(constructedListType, instance); // Activator.CreateInstance(constructedListType);
+        this._internalList = ToListOfPairs(constructedListType, instance)!; // Activator.CreateInstance(constructedListType);
         this._internalListType = constructedListType;
 
         this.FormattedTypeName = $"{{dict<{typeArgs[0].Name},{typeArgs[1].Name}>}}";

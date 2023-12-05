@@ -3,10 +3,10 @@ using System.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class TimestampTypeInfo : ITypeInfo {
-    private readonly int index;
+    private readonly int _index;
 
     public TimestampTypeInfo(int index, TimestampNode parentNode) {
-        this.index = index;
+        this._index = index;
         this.ParentNode = parentNode;
     }
 
@@ -20,11 +20,11 @@ public class TimestampTypeInfo : ITypeInfo {
 
     public object? GetValue(object parentInstance) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        return pi.GetValue(parentInstance, new object[] { this.index });
+        return pi.GetValue(parentInstance, new object[] { this._index });
     }
 
     public void SetValue(object parentInstance, object value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        pi.SetValue(parentInstance, value, new object[] { this.index });
+        pi.SetValue(parentInstance, value, new object[] { this._index });
     }
 }

@@ -9,8 +9,6 @@ using Avalonia.Controls.Templates;
 namespace Tefin.ViewModels.Types;
 
 public class NodeTemplateColumn<T> : TemplateColumn<T> {
-    private readonly Func<Control, IDataTemplate>? _getCellTemplate;
-
     public NodeTemplateColumn(object? header, IDataTemplate cellTemplate, IDataTemplate? cellEditingTemplate = null, GridLength? width = null,
         TemplateColumnOptions<T>? options = null) : base(header, cellTemplate, cellEditingTemplate, width, options) {
     }

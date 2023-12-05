@@ -13,12 +13,12 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Types;
 
 public abstract class TypeBaseNode : NodeBase {
-    private readonly ITypeInfo _typeInfo;
+    private readonly ITypeInfo? _typeInfo;
     private bool _isNull;
     private bool _isSelected;
     private object? _value;
 
-    protected TypeBaseNode(string name, Type type, ITypeInfo typeInfo, object? instance, TypeBaseNode? parent) {
+    protected TypeBaseNode(string name, Type type, ITypeInfo? typeInfo, object? instance, TypeBaseNode? parent) {
         this.Title = name;
         this.FormattedTypeName = type.Name;
         this._isNull = instance == null;
@@ -37,11 +37,6 @@ public abstract class TypeBaseNode : NodeBase {
     public bool IsNull {
         get => this._isNull;
         set => this.RaiseAndSetIfChanged(ref this._isNull, value);
-    }
-
-    public bool IsSelected {
-        get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
     public TypeBaseNode? Parent { get; }
@@ -79,6 +74,6 @@ public abstract class TypeBaseNode : NodeBase {
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
         var parentInstance = this.Parent?.Value;
         if (parentInstance != null)
-            this._typeInfo.SetValue(parentInstance, newValue);
+            this._typeInfo?.SetValue(parentInstance, newValue);
     }
 }

@@ -70,7 +70,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref _isUsingSsl, value);
     }
 
-    public string JWT {
+    public string Jwt {
         get => this._jwt;
         set => this.RaiseAndSetIfChanged(ref _jwt, value);
     }
@@ -122,7 +122,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.IsUsingSsl = this._clientConfig.IsUsingSSL;
 
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
-        this.JWT = this._clientConfig.Jwt;
+        this.Jwt = this._clientConfig.Jwt;
         this.Description = this._clientConfig.Description;
         if (string.IsNullOrWhiteSpace(this._clientConfig.CertStoreLocation)) {
             this.SelectedCertStoreLocation = StoreLocation.LocalMachine;
@@ -154,7 +154,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.Name = this.ClientName;
         this._clientConfig.Url = this.Url;
         this._clientConfig.IsCertFromFile = this.IsUsingSsl && this.IsCertFromFile;
-        this._clientConfig.Jwt = this.JWT;
+        this._clientConfig.Jwt = this.Jwt;
         this._clientConfig.IsUsingSSL = this.IsUsingSsl;
         this._clientConfig.Description = this.Description;
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);

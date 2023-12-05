@@ -20,7 +20,7 @@ using Tefin.Core.Infra.Actors;
 namespace Tefin.ViewModels.Misc;
 
 public class ChartMiscViewModel : MiscViewModelTabItem {
-    private readonly LvcColor[] Colors = ColorPalletes.FluentDesign;
+    private readonly LvcColor[] _colors = ColorPalletes.FluentDesign;
     private int _currentColor = 0;
     private SeriesModel? _selectedSeries;
 
@@ -83,8 +83,8 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
                 this.SeriesModels.Add(seriesModel);
                 this.Series.Add(seriesModel.Series);
 
-                var nextColorIndex = _currentColor++ % Colors.Length;
-                var color = this.Colors[nextColorIndex];
+                var nextColorIndex = _currentColor++ % this._colors.Length;
+                var color = this._colors[nextColorIndex];
                 seriesModel.Series.Fill = new SolidColorPaint(new SKColor(color.R, color.G, color.B, 90));
             }
 

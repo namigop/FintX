@@ -85,6 +85,7 @@ public class DefaultNode : TypeBaseNode {
                     this.Items.Add(node);
                 }
                 catch (Exception exc) {
+                    Io.Log.Error(exc);
                     Debugger.Break();
                 }
         }
@@ -104,7 +105,12 @@ public class DefaultNode : TypeBaseNode {
             this.Value = null;
         }
         else {
-            var (ok, v) = TypeBuilder.getDefault(this.Type, true, FSharpOption<object>.Some(this.Parent?.Value), 0);
+            var n = FSharpOption<object>.None;
+            if (this.Parent?.Value != null) {
+                n = FSharpOption<object>.Some(this.Parent.Value);
+            }
+            
+            var (__, v) = TypeBuilder.getDefault(this.Type, true, n, 0);
             this.Value = v;
         }
     }

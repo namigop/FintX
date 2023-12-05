@@ -7,28 +7,28 @@ using System.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class TypeInfo : ITypeInfo {
-    private readonly FieldInfo? fieldInfo;
-    private readonly ParameterInfo? paramInfo;
-    private readonly PropertyInfo? propertyInfo;
-    private object? paramInstance;
+    private readonly FieldInfo? _fieldInfo;
+    private readonly ParameterInfo? _paramInfo;
+    private readonly PropertyInfo? _propertyInfo;
+    private object? _paramInstance;
 
     public TypeInfo(PropertyInfo propInfo) {
-        this.propertyInfo = propInfo;
+        this._propertyInfo = propInfo;
         this.Name = propInfo.Name;
         this.CanRead = propInfo.CanRead;
         this.CanWrite = propInfo.CanWrite;
     }
 
     public TypeInfo(FieldInfo fieldInfo) {
-        this.fieldInfo = fieldInfo;
+        this._fieldInfo = fieldInfo;
         this.Name = fieldInfo.Name;
         this.CanRead = fieldInfo.IsPublic;
         this.CanWrite = fieldInfo.IsPublic;
     }
 
     public TypeInfo(ParameterInfo? paramInfo, object? paramInstance) {
-        this.paramInstance = paramInstance;
-        this.paramInfo = paramInfo;
+        this._paramInstance = paramInstance;
+        this._paramInfo = paramInfo;
         this.Name = paramInfo?.Name ?? "";
         this.CanRead = true;
         this.CanWrite = true;
@@ -36,29 +36,29 @@ public class TypeInfo : ITypeInfo {
 
     public bool CanRead { get; }
     public bool CanWrite { get; }
-    public FieldInfo? FieldInfo => this.fieldInfo;
+    public FieldInfo? FieldInfo => this._fieldInfo;
     public string Name { get; }
-    public PropertyInfo? PropertyInfo => this.propertyInfo;
+    public PropertyInfo? PropertyInfo => this._propertyInfo;
 
     public object? GetValue(object parent) {
-        if (this.paramInfo != null)
-            return this.paramInstance;
+        if (this._paramInfo != null)
+            return this._paramInstance;
 
-        if (this.fieldInfo != null)
-            return this.fieldInfo.GetValue(parent)!;
+        if (this._fieldInfo != null)
+            return this._fieldInfo.GetValue(parent)!;
 
-        return this.propertyInfo!.GetValue(parent);
+        return this._propertyInfo!.GetValue(parent);
     }
 
     public virtual void SetValue(object parentInstance, object value) {
-        if (this.paramInfo != null)
-            this.paramInstance = value;
+        if (this._paramInfo != null)
+            this._paramInstance = value;
         //throw new Exception("Unable to call SetValue(...) on a ParameterInfo");
 
-        if (this.fieldInfo != null && this.fieldInfo.IsPublic)
-            this.fieldInfo.SetValue(parentInstance, value);
+        if (this._fieldInfo != null && this._fieldInfo.IsPublic)
+            this._fieldInfo.SetValue(parentInstance, value);
 
-        if (this.propertyInfo != null && this.propertyInfo.CanWrite)
-            this.propertyInfo.SetValue(parentInstance, value);
+        if (this._propertyInfo != null && this._propertyInfo.CanWrite)
+            this._propertyInfo.SetValue(parentInstance, value);
     }
 }

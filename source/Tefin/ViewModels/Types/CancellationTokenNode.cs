@@ -10,8 +10,7 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.ViewModels.Types;
 
 public class CancellationTokenNode : TypeBaseNode {
-    private readonly CancellationToken _token;
-
+    
     public CancellationTokenNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         this.Editor = new CancellationTokenEditor(this);
@@ -20,7 +19,7 @@ public class CancellationTokenNode : TypeBaseNode {
     public ITypeEditor Editor { get; }
     public override string FormattedTypeName { get; }
     public override string FormattedValue => (CancellationToken)this.Value! == CancellationToken.None ? "None" : "Token";
-    public CancellationTokenSource Source { get; set; }
+    public CancellationTokenSource? Source { get; set; }
 
     public override void Init(Dictionary<string, int> processedTypeNames) {
         //no child nodes

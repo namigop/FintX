@@ -7,10 +7,10 @@ using System.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class MetadataEntryTypeInfo : ITypeInfo {
-    private readonly int index;
+    private readonly int _index;
 
     public MetadataEntryTypeInfo(int index, MetadataNode parentNode) {
-        this.index = index;
+        this._index = index;
         this.ParentNode = parentNode;
     }
 
@@ -24,11 +24,11 @@ public class MetadataEntryTypeInfo : ITypeInfo {
 
     public object? GetValue(object parentInstance) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        return pi.GetValue(parentInstance, new object[] { this.index });
+        return pi.GetValue(parentInstance, new object[] { this._index });
     }
 
     public void SetValue(object parentInstance, object value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        pi.SetValue(parentInstance, value, new object[] { this.index });
+        pi.SetValue(parentInstance, value, new object[] { this._index });
     }
 }
