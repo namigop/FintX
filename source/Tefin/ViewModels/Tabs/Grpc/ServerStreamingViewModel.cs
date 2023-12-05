@@ -54,14 +54,12 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
             var (ok, resp) = await feature.Run();
             var (_, response, context) = resp.OkayOrFailed();
-
+            this.IsBusy = false;
+            
             this.RespViewModel.Show(ok, response, context);
             await this.RespViewModel.SetupServerStreamNode(response);
-
-            //await this.RespViewModel.Complete(stdResp, readServerStream.CompleteRead);
             await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
-            this.IsBusy = false;
-
+            
             var elapsed = DateTime.Now - context.StartTime;
             this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
 

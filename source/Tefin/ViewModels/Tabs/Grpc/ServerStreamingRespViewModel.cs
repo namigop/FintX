@@ -5,7 +5,7 @@ using System.Threading;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
-
+using ReactiveUI;
 using Tefin.Core.Execution;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
@@ -15,6 +15,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ServerStreamingRespViewModel : StandardResponseViewModel {
+    private bool _canRead;
 
     public ServerStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
@@ -24,7 +25,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
             }
         };
     }
-
+    public bool CanRead {
+        get => this._canRead;
+        private set => this.RaiseAndSetIfChanged(ref _canRead , value);
+    }
     public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
 
     public HierarchicalTreeDataGridSource<IExplorerItem> StreamTree { get; }
@@ -36,15 +40,17 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
 
         try {
             var cs = new CancellationTokenSource();
+            this.CanRead = true;
             await foreach (var d in readServerStream.ReadResponseStream(resp, cs.Token)) {
                 streamNode.AddItem(d);
                 if (streamNode.Items.Count == 1)
                     streamNode.IsExpanded = true;
             }
+
         }
-        catch (Exception exc) {
-            //exception is already logged by the custom AsyncStreamReader
+        finally {
             this.IsBusy = false;
+            this.CanRead = false;
         }
     }
 

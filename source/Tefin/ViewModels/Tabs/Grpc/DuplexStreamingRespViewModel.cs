@@ -7,6 +7,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Threading;
 
+using ReactiveUI;
+
 using Tefin.Core.Execution;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
@@ -16,6 +18,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingRespViewModel : StandardResponseViewModel {
+    private bool _canRead;
 
     public DuplexStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
@@ -23,11 +26,16 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
                 new HierarchicalExpanderColumn<IExplorerItem>(
                     new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate",
                     new GridLength(1, GridUnitType.Star)),
-                    x => x.Items,
-                    x => x.Items.Any(),
-                    x => x.IsExpanded)
+                    x => x.Items, //
+                    x => x.Items.Any(),//
+                    x => x.IsExpanded)//
             }
         };
+    }
+
+    public bool CanRead {
+        get => this._canRead;
+        private set => this.RaiseAndSetIfChanged(ref _canRead , value);
     }
 
     public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
@@ -41,6 +49,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
 
         try {
             this.IsBusy = true;
+            this.CanRead = true;
             var cs = new CancellationTokenSource();
             await foreach (var d in readDuplexStream.ReadResponseStream(resp, cs.Token))
                 Dispatcher.UIThread.Post(() => {
@@ -51,7 +60,10 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         }
         catch (Exception exc) {
             this.Io.Log.Error(exc);
+        }
+        finally {
             this.IsBusy = false;
+            this.CanRead = false;
         }
     }
 
