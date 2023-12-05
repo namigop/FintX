@@ -16,6 +16,10 @@ using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
 using System.Text.RegularExpressions;
+
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+using Tefin.Core.Interop;
 using Tefin.ViewModels.Validations;
 
 #endregion
@@ -25,6 +29,7 @@ using Tefin.ViewModels.Validations;
 namespace Tefin.ViewModels.Overlay;
 
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
+    private readonly ProjectTypes.Project _project;
     private string _clientName;
     private bool _isDiscoveringUsingProto;
     private string _protoFilesOrUrl;
@@ -32,7 +37,8 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _protoFile;
     private string _address;
 
-    public AddGrpcServiceOverlayViewModel() {
+    public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
+        this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
         this.DiscoverCommand = this.CreateCommand(this.OnDiscover);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
@@ -137,10 +143,21 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     private async Task OnOkay() {
-        if (string.IsNullOrWhiteSpace(this.ClientName))
+        if (string.IsNullOrWhiteSpace(this.ClientName)) {
+            this.Io.Log.Error("Client name is empty.  Enter a valid name");
             return;
-        if (string.IsNullOrWhiteSpace(this.SelectedDiscoveredService))
+        }
+
+        if (string.IsNullOrWhiteSpace(this.SelectedDiscoveredService)) {
+            this.Io.Log.Error("Please select a service");
             return;
+        }
+
+        if (this._project.Clients.FirstOrDefault(t => t.Name == this.ClientName) != null) {
+            this.Io.Log.Error("Client already exists.  Enter a new name");
+            return;
+        }
+        
 
         this.Close();
 

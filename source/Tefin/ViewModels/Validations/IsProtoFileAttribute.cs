@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Tefin.ViewModels.Validations {
 
@@ -42,7 +37,7 @@ namespace Tefin.ViewModels.Validations {
     }
 
     public class IsValidFolderNameAttribute : ValidationAttribute {
-
+        
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
             if (value == null)
                 return new ValidationResult("Value cannot be null. Enter a valid folder name");

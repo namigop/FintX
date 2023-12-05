@@ -1,12 +1,8 @@
 namespace Tefin.Core
 
-open System
-open System.Text.Json.Serialization
-open Newtonsoft.Json
 open Tefin.Core.Infra.Actors
 open Tefin.Core.Interop
 open System.IO
-open Tefin.Core.Interop.Messages
 
 type AddClientRequest =
     { Name: string
@@ -57,7 +53,7 @@ module Project =
                 let currentName = clientConfig.Name
                 let nameChanged = not (oldName = currentName)
 
-                if (nameChanged) then
+                if nameChanged then
                     let newClientPath = Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
                     Directory.Move(oldClientPath, newClientPath)
 

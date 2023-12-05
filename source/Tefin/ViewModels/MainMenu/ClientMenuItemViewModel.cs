@@ -20,9 +20,10 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
    
     public ClientMenuItemViewModel(MainMenuViewModel main) : base(main) {
         this.Explorer = new ExplorerViewModel();
+        this.SubMenus = new ClientSubMenuViewModel(this.Explorer);
     }
 
-    public ExplorerViewModel Explorer { get; set; }
+    public ExplorerViewModel Explorer { get; private set; }
     public override string Name { get; } = "Clients";
 
     public Project Project {
@@ -31,7 +32,7 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
     }
 
     public override string ShortName { get; } = "clients";
-    public override ISubMenusViewModel? SubMenus { get; } = new ClientSubMenuViewModel();
+    public override ISubMenusViewModel? SubMenus { get; } 
     public override string ToolTip { get; } = "View clients";
 
   
