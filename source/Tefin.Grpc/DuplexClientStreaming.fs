@@ -1,7 +1,6 @@
 namespace Tefin.Grpc.Execution
 
 open System
-open System.Collections.Generic
 open System.Reflection
 open System.Threading
 open System.Threading.Tasks
@@ -9,13 +8,10 @@ open Grpc.Core
 open Microsoft.FSharp.Control
 open Tefin.Core.Execution
 open Tefin.Core.Interop
-open Tefin.Core.Reflection
 open Tefin.Core
-open FSharp.Control
 
 type DuplexStreamingCallInfo =
-    {
-      DuplexStreamType: Type
+    { DuplexStreamType: Type
       RequestItemType: Type
       ResponseItemType: Type
       RequestStream: obj
@@ -25,7 +21,7 @@ type DuplexStreamingCallInfo =
       MoveNextMethodInfo: MethodInfo
       CompleteAsyncMethodInfo: MethodInfo
       ResponseHeadersAsyncPropInfo: PropertyInfo
-      CurrentPropInfo : PropertyInfo
+      CurrentPropInfo: PropertyInfo
       ResponseStream: obj
 
       CallResult: obj }
@@ -37,9 +33,10 @@ type DuplexStreamingCallInfo =
         this.GetTrailersMethodInfo.Invoke(this.CallResult, null) :?> Metadata
 
     member this.GetCurrent() =
-        this.CurrentPropInfo.GetValue (this.ResponseStream)
-    member this.MoveNext(token:CancellationToken) =
-        this.MoveNextMethodInfo.Invoke(this.ResponseStream, [|token|]) :?> Task<bool>
+        this.CurrentPropInfo.GetValue(this.ResponseStream)
+
+    member this.MoveNext(token: CancellationToken) =
+        this.MoveNextMethodInfo.Invoke(this.ResponseStream, [| token |]) :?> Task<bool>
 
     member this.GetResponseHeaders() =
         this.ResponseHeadersAsyncPropInfo.GetValue(this.CallResult) :?> Task<Metadata>
@@ -49,6 +46,12 @@ type DuplexStreamingCallResponse =
       Status: Status option
       Trailers: Metadata option
       CallInfo: DuplexStreamingCallInfo }
+
+    static member Empty() =
+        { Headers = None
+          Status = None
+          Trailers = None
+          CallInfo = Unchecked.defaultof<DuplexStreamingCallInfo> }
 
     member this.HasStatus = this.Status.IsSome
 
@@ -77,12 +80,17 @@ module DuplexStreamingResponse =
         let requestItemType = args[0]
         let responseItemType = args[1]
 
-        let duplexStreamType = typedefof<AsyncDuplexStreamingCall<_, _>>.MakeGenericType(requestItemType, responseItemType)
+        let duplexStreamType =
+            typedefof<AsyncDuplexStreamingCall<_, _>>
+                .MakeGenericType(requestItemType, responseItemType)
 
         let requestStreamPropInfo = duplexStreamType.GetProperty("RequestStream") //IDuplexStreamWriter<TRequest>
         let requestStream = requestStreamPropInfo.GetValue(resp)
         let requestStreamType = requestStream.GetType()
-        let responseStreamType  = typedefof<IAsyncStreamReader<_>>.MakeGenericType responseItemType
+
+        let responseStreamType =
+            typedefof<IAsyncStreamReader<_>>.MakeGenericType responseItemType
+
         let responseStreamPropInfo = duplexStreamType.GetProperty("ResponseStream")
         let responseStream = responseStreamPropInfo.GetValue(resp)
         let currentPropInfo = responseStreamType.GetProperty("Current")
@@ -101,8 +109,7 @@ module DuplexStreamingResponse =
           Trailers = None
           Status = None
           CallInfo =
-            {
-              DuplexStreamType = duplexStreamType
+            { DuplexStreamType = duplexStreamType
               RequestItemType = requestItemType
               ResponseItemType = responseItemType
               CallResult = resp
@@ -111,7 +118,7 @@ module DuplexStreamingResponse =
               GetTrailersMethodInfo = getTrailersMethodInfo
               WriteAsyncMethodInfo = writeMethod
               CompleteAsyncMethodInfo = completeMethod
-              MoveNextMethodInfo =moveNextMethodInfo
+              MoveNextMethodInfo = moveNextMethodInfo
               ResponseStream = responseStream
               CurrentPropInfo = currentPropInfo
               ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo } }
@@ -133,7 +140,7 @@ module DuplexStreamingResponse =
         }
 
     let completeWrite (resp: DuplexStreamingCallResponse) =
-        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)  
+        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
 
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
         { Headers = resp.Headers
@@ -141,7 +148,7 @@ module DuplexStreamingResponse =
           Status = resp.Status }
 
     let write (resp: DuplexStreamingCallResponse) (reqItem: obj) =
-          (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task) 
+        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task)
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 
@@ -157,8 +164,7 @@ module DuplexStreamingResponse =
         else
             let err = Res.getError ctx.Response
 
-            let w =
-                wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
 
             let t: ErrorDuplexStreamingResponse =
                 { MethodInfo = methodInfo

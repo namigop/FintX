@@ -5,9 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
 
-using Microsoft.FSharp.Core;
-using Avalonia.Controls;
-
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
@@ -15,10 +12,6 @@ using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
-using System.Text.RegularExpressions;
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Validations;
 
@@ -30,12 +23,12 @@ namespace Tefin.ViewModels.Overlay;
 
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
-    private string _clientName;
+    private string _clientName  ="";
     private bool _isDiscoveringUsingProto;
-    private string _protoFilesOrUrl;
+    private string _protoFilesOrUrl = "";
     private string? _selectedDiscoveredService;
-    private string _protoFile;
-    private string _address;
+    private string _protoFile = "";
+    private string _address = "";
 
     public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
@@ -44,6 +37,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.OkayCommand = this.CreateCommand(this.OnOkay);
         this.ReflectionUrl = "http://localhost:5000";
         this.Title = "Add a client";
+        this.Description = "";
     }
 
     public ICommand CancelCommand { get; }

@@ -10,7 +10,7 @@ namespace Tefin.Utils;
 public static class DialogUtils {
 
     public static Window GetMainWindow() {
-        if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+        if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
             
             return desktop.MainWindow!;
         }
@@ -22,7 +22,7 @@ public static class DialogUtils {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
 
         // Start async operation to open the dialog.
-        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
             Title = dialogTitle
         });

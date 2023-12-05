@@ -9,16 +9,13 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
-using static Tefin.Core.Utils;
-
 #endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
-    private string _statusText;
-    private bool _canWrite;
-
+    private string _statusText = "";
+    
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
         this.RespViewModel = new ClientStreamingRespViewModel(mi);
@@ -28,8 +25,6 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, vm => this.IsBusy = vm.IsBusy);
     }
-
-    public ClientStreamingCallResponse CallResponse => this.ReqViewModel.CallResponse;
 
     public ClientStreamingReqViewModel ReqViewModel { get; }
 

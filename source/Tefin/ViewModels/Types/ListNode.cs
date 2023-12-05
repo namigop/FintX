@@ -70,7 +70,7 @@ public class ListNode : TypeBaseNode {
         var listInstance = this.GetListInstance();
         this.GetMethods().AddMethod!.Invoke(listInstance, new[] { itemInstance });
         var itemType = this.GetItemType();
-        var count = GetListSize(listInstance);
+        var count = GetListSize(listInstance!);
         var name = $"{this.ItemName}[{count}]";
         var processedTypeNames = new Dictionary<string, int>();
 
@@ -151,7 +151,7 @@ public class ListNode : TypeBaseNode {
         return ListTypeMethod.GetMethods(this.Type);
     }
 
-    protected override void OnValueChanged(object oldValue, object newValue) {
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
 
     private void OnCountChanged(ViewModelBase obj) {

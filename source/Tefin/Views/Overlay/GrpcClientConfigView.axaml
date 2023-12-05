@@ -32,8 +32,8 @@
                 </StackPanel>
               
                 <StackPanel>
-                    <ToggleSwitch IsChecked="{Binding IsUsingSSL}" Margin="0 2 0 0" OnContent="Use client x509 certificate (https://)" OffContent="Don't use SSL (http://)"></ToggleSwitch>
-                    <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSSL}" Margin="12 0 0 0">
+                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" OnContent="Use client x509 certificate (https://)" OffContent="Don't use SSL (http://)"></ToggleSwitch>
+                    <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSsl}" Margin="12 0 0 0">
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
                             <RadioButton Content="File" Margin="0" IsChecked="{Binding IsCertFromFile}"></RadioButton>
                             <RadioButton Content="Store" Margin="6" IsChecked="{Binding !IsCertFromFile}"></RadioButton>

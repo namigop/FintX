@@ -11,7 +11,7 @@ namespace Tefin.ViewModels.Types;
 
 public class SystemNode : TypeBaseNode {
 
-    public SystemNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
+    public SystemNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
         //Debug.WriteLine($"{name} = {type.Name}");
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         if (type == typeof(string))

@@ -19,7 +19,7 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingReqViewModel : UnaryReqViewModel {
-    private ClientStreamingCallResponse? _callResponse;
+    private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
@@ -33,11 +33,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
-        _callResponse = default;
+        _callResponse = ClientStreamingCallResponse.Empty();
         this.StreamItems.Add(new EmptyNode());
     }
 
-    public ClientStreamingCallResponse? CallResponse {
+    public ClientStreamingCallResponse CallResponse {
         get => this._callResponse;
         set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
@@ -95,7 +95,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.IsBusy = true;
             var writer = new WriteClientStreamFeature();
             var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-            await writer.Write(resp, node.Value);
+            await writer.Write(resp, node.Value!);
         }
         finally {
             this.IsBusy = false;

@@ -1,10 +1,8 @@
 namespace Tefin.Grpc.Custom
 
 open System
-open System.Threading
 open Grpc.Core
 open System.Threading.Tasks
-open Newtonsoft.Json.Serialization
 open Tefin.Core
 
 type IClientStreamActions<'T> =

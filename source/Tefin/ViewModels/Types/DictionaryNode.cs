@@ -3,7 +3,6 @@ using Google.Protobuf.Collections;
 namespace Tefin.ViewModels.Types;
 
 public class DictionaryNode : ListNode {
-
     //private int listItemsCount;
     private readonly object _internalList;
 
@@ -29,13 +28,13 @@ public class DictionaryNode : ListNode {
 
     public override string FormattedTypeName { get; }
 
-    public static object ToListOfPairs(Type lpType, object? dict) {
+    public static object? ToListOfPairs(Type lpType, object? dict) {
         if (dict == null)
             return null;
 
         var lpInstance = Activator.CreateInstance(lpType);
         var fromDictionary = lpType.GetMethod("FromDictionary", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        fromDictionary.Invoke(lpInstance, new[] { dict });
+        fromDictionary!.Invoke(lpInstance, new[] { dict });
         return lpInstance;
     }
 
@@ -51,16 +50,19 @@ public class DictionaryNode : ListNode {
         return this._listMethods;
     }
 
-    public class ListOfPairs<K, V> : List<Pair<K, V>> {
-
+    public class ListOfPairs<K, V> : List<Pair<K, V>> where K : notnull {
         public void FromDictionary(Dictionary<K, V> source) {
             this.Clear();
-            foreach (var i in source) this.Add(new Pair<K, V>() { Key = i.Key, Value = i.Value });
+            foreach (var i in source) {
+                this.Add(new Pair<K, V>(i.Key, i.Value));
+            }
         }
 
         public void FromMapField(MapField<K, V> source) {
             this.Clear();
-            foreach (var i in source) this.Add(new Pair<K, V>() { Key = i.Key, Value = i.Value });
+            foreach (var i in source) {
+                this.Add(new Pair<K, V>(i.Key, i.Value));
+            }
         }
 
         public IDictionary<K, V> ToDictionary() {
@@ -79,7 +81,11 @@ public class DictionaryNode : ListNode {
     }
 
     public class Pair<K, V> {
-        public K Key { get; set; }
-        public V Value { get; set; }
+        public Pair(K key, V value) {
+            this.Key = key;
+            this.Value = value;
+        }
+        public K Key { get; }
+        public V Value { get; }
     }
 }

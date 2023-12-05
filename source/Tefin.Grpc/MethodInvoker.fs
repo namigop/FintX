@@ -3,7 +3,6 @@ namespace Tefin.Grpc.Execution
 open System
 open System.Collections.Generic
 open System.Reflection
-open System.Runtime.CompilerServices
 open System.Threading.Tasks
 open Tefin.Core.Reflection
 open Grpc.Core

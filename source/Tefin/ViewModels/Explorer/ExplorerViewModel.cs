@@ -46,7 +46,7 @@ public class ExplorerViewModel : ViewModelBase {
     }
 
     public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
-    public Project Project { get; set; }
+    public Project? Project { get; set; }
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public void AddClientNode(ClientGroup cg, Type? type = null) {

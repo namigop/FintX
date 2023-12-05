@@ -1,17 +1,13 @@
 namespace Tefin.Grpc.Execution
 
 open System
-open System.Collections.Generic
 open System.Reflection
-open System.Threading
 open System.Threading.Tasks
 open Grpc.Core
 open Microsoft.FSharp.Control
 open Tefin.Core.Execution
 open Tefin.Core.Interop
-open Tefin.Core.Reflection
 open Tefin.Core
-open FSharp.Control
 
 type ClientStreamingCallInfo =
     { ClientStreamItemType: Type
@@ -51,6 +47,12 @@ type ClientStreamingCallResponse =
       Trailers: Metadata option
       CallInfo: ClientStreamingCallInfo }
 
+    static member Empty() = {
+        Headers = None
+        Status = None
+        Trailers = None
+        CallInfo = Unchecked.defaultof<ClientStreamingCallInfo> 
+    }
     member this.HasStatus = this.Status.IsSome
 
 type OkayClientStreamingResponse =

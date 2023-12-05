@@ -9,8 +9,6 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
-using static Tefin.Core.Utils;
-
 #endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;

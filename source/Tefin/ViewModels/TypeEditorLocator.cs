@@ -12,7 +12,10 @@ namespace Tefin.ViewModels;
 public class TypeEditorLocator : IDataTemplate {
     private static readonly Dictionary<Type, Type> mapping = new();
 
-    public Control Build(object data) {
+    public Control Build(object? data) {
+        if (data == null)
+            return new TextBlock { Text = "data cannot be null"};
+        
         var sourceType = data.GetType();
         if (mapping.TryGetValue(sourceType, out var value))
             return (Control)Activator.CreateInstance(value)!;
@@ -29,7 +32,7 @@ public class TypeEditorLocator : IDataTemplate {
         return new TextBlock { Text = "Not Found: " + fullName };
     }
 
-    public bool Match(object data) {
+    public bool Match(object? data) {
         return data is ITypeEditor;
     }
 }

@@ -4,8 +4,6 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
-using Avalonia.Controls;
-
 using Tefin.Utils;
 
 #endregion
@@ -13,8 +11,8 @@ using Tefin.Utils;
 namespace Tefin.ViewModels.Types;
 
 public class ByteArrayNode : TypeBaseNode {
-    private string _base64;
-    private string _file;
+    private string _base64 = "";
+    private string _file = "";
     private bool _isFromFile;
 
     public ByteArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
@@ -78,7 +76,7 @@ public class ByteArrayNode : TypeBaseNode {
     }
 
     //public ICommand OpenFileCommand { get; }
-    protected override void OnValueChanged(object oldValue, object newValue) {
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
 
     private async Task OnOpenFile() {

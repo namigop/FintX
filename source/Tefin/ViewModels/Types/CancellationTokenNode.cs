@@ -26,6 +26,6 @@ public class CancellationTokenNode : TypeBaseNode {
         //no child nodes
     }
 
-    protected override void OnValueChanged(object oldValue, object newValue) {
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
 }

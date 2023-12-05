@@ -27,9 +27,11 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
         }
     }
 
-    public void CommitEdit() {
+    public override void CommitEdit() {
         if (DateTime.TryParse(this.DateTimeText, out var dt)) {
-            if (this.IsUtc) dt = dt.ToUniversalTime();
+            if (this.IsUtc) {
+                dt = dt.ToUniversalTime();
+            }
 
             this.TempValue = dt;
             this.Node.Value = dt;

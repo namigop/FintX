@@ -43,7 +43,10 @@ public class ConsoleIntercept : TextWriter {
         this.Sync();
     }
 
-    public override void WriteLine(string value) {
+    public override void WriteLine(string? value) {
+        if (string.IsNullOrEmpty(value))
+            return;
+        
         this._sb.AppendLine(value);
         this.Sync();
     }

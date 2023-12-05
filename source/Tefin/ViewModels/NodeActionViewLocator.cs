@@ -8,7 +8,10 @@ namespace Tefin.ViewModels;
 public class NodeActionViewLocator : IDataTemplate {
     private static readonly Dictionary<Type, Type> Mapping = new();
 
-    public Control Build(object data) {
+    public Control Build(object? data) {
+        if (data == null)
+            return new Border() { Width = 0, Height = 0 };
+        
         var sourceType = data.GetType();
         if (Mapping.TryGetValue(sourceType, out var value)) {
             ((NodeBase)data).IsEditing = false;
@@ -27,7 +30,7 @@ public class NodeActionViewLocator : IDataTemplate {
         return new Border() { Width = 0, Height = 0 };
     }
 
-    public bool Match(object data) {
+    public bool Match(object? data) {
         return data is NodeBase;
     }
 }

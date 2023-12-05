@@ -15,17 +15,17 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _clientConfigFile;
     private readonly Action _onClientNameChanged;
     private readonly string _title = "Client Configuration";
-    private string _certFile;
+    private string _certFile ="";
     private ProjectTypes.ClientConfig _clientConfig;
-    private string _clientName;
-    private string _description;
-    private bool _isCertFromFile;
-    private bool _isUsingSsl;
-    private string _jwt;
-    private StoreLocation _selectedCertStoreLocation;
+    private string _clientName = "";
+    private string _description = "";
+    private bool _isCertFromFile = false;
+    private bool _isUsingSsl = false;
+    private string _jwt ="";
+    private StoreLocation _selectedCertStoreLocation = StoreLocation.LocalMachine;
     private StoreCertSelection _selectedStoreCertificate;
-    private string _thumbprint;
-    private string _url;
+    private string _thumbprint = "";
+    private string _url = "";
 
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
@@ -65,7 +65,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref _isCertFromFile, value);
     }
 
-    public bool IsUsingSSL {
+    public bool IsUsingSsl {
         get => this._isUsingSsl;
         set => this.RaiseAndSetIfChanged(ref _isUsingSsl, value);
     }
@@ -119,7 +119,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig = new ReadClientConfigFeature(clientConfigFile, this.Io).Read();
         this.ClientName = this._clientConfig.Name;
         this.Url = this._clientConfig.Url;
-        this.IsUsingSSL = this._clientConfig.IsUsingSSL;
+        this.IsUsingSsl = this._clientConfig.IsUsingSSL;
 
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.JWT = this._clientConfig.Jwt;
@@ -153,9 +153,9 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         var nameChanged = this._clientConfig.Name != this.ClientName;
         this._clientConfig.Name = this.ClientName;
         this._clientConfig.Url = this.Url;
-        this._clientConfig.IsCertFromFile = this.IsUsingSSL && this.IsCertFromFile;
+        this._clientConfig.IsCertFromFile = this.IsUsingSsl && this.IsCertFromFile;
         this._clientConfig.Jwt = this.JWT;
-        this._clientConfig.IsUsingSSL = this.IsUsingSSL;
+        this._clientConfig.IsUsingSSL = this.IsUsingSsl;
         this._clientConfig.Description = this.Description;
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;

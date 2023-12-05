@@ -18,8 +18,8 @@ namespace Tefin.ViewModels.Types;
 public class DefaultNode : TypeBaseNode {
     private bool _valueIsNull;
 
-    public DefaultNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
-        this.FormattedTypeName = type.FullName.StartsWith("Tefin") ? "" : $"{{{type.Name}}}";
+    public DefaultNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+        this.FormattedTypeName = type.FullName!.StartsWith("Tefin") ? "" : $"{{{type.Name}}}";
         this.IsExpanded = true;
         this.SubscribeTo(x => ((DefaultNode)x).ValueIsNull, this.OnValueIsNullChangedl);
         this._valueIsNull = this.IsNull;
@@ -44,13 +44,16 @@ public class DefaultNode : TypeBaseNode {
         if (instance == null)
             return false;
 
-        if (SystemType.isSystemType(parameterType)) return false;
+        if (SystemType.isSystemType(parameterType)) {
+            return false;
+        }
 
-        var count = 0;
         var instanceCountLimit = 100000; //TODO:Count is configurable
-        if (processedTypeNames.TryGetValue(parameterType.FullName, out count) && count == instanceCountLimit) return false;
+        if (processedTypeNames.TryGetValue(parameterType.FullName!, out var count) && count == instanceCountLimit) {
+            return false;
+        }
 
-        processedTypeNames[parameterType.FullName] = count == 0 ? 1 : count + 1;
+        processedTypeNames[parameterType.FullName!] = count == 0 ? 1 : count + 1;
         return true;
     }
 
@@ -90,7 +93,7 @@ public class DefaultNode : TypeBaseNode {
         this.ValueIsNull = this.IsNull;
     }
 
-    protected override void OnValueChanged(object oldValue, object newValue) {
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
         this.Items.Clear();
         this.Init();
     }

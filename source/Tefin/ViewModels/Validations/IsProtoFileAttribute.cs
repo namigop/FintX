@@ -9,7 +9,7 @@ namespace Tefin.ViewModels.Validations {
                 return new ValidationResult("Value cannot be null. Enter a valid http address");
 
             try {
-                var uri = new Uri(value.ToString());
+                var uri = new Uri(value.ToString()!);
                 if (!uri.Scheme.StartsWith("http")) {
                     return new ValidationResult(errorMessage: "Enter a valid http url");
                 }

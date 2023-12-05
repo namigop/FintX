@@ -20,14 +20,20 @@ namespace Tefin.ViewModels.Explorer;
 
 public class ClientNode : NodeBase {
     private ProjectTypes.ClientGroup _client;
-    private string _clientName;
+    private string _clientName ="";
     private Type? _clientType;
-    private string _desc;
-    private string _url;
+    private string _desc = "";
+    private string _url = "";
 
     public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
+        this._client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
         this.ClientType = clientType;
+        this.ClientName = "";
+        this.ClientConfigFile = "";
+        this.ClientPath = "";
+        this.ServiceName = "";
+        
         this.Update(cg);
 
         this.IsExpanded = true;

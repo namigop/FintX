@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using Tefin.Grpc.Execution;
@@ -11,7 +12,7 @@ public class ReadServerStreamFeature {
         return ServerStreamingResponse.completeCall(resp);
     }
 
-    public async IAsyncEnumerable<object> ReadResponseStream(ServerStreamingCallResponse resp, CancellationToken token) {
+    public async IAsyncEnumerable<object> ReadResponseStream(ServerStreamingCallResponse resp, [EnumeratorCancellation] CancellationToken token) {
         while (await resp.CallInfo.MoveNext(token)) {
             var i = resp.CallInfo.GetCurrent();
             yield return i;

@@ -21,7 +21,7 @@ public class MainWindowViewModel : ViewModelBase {
     public MainMenuViewModel MainMenu { get; } = new();
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
-    public AppTypes.Root Root { get; private set; }
+    public AppTypes.Root? Root { get; private set; }
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
     public string Title { get; } = Core.Utils.appName;

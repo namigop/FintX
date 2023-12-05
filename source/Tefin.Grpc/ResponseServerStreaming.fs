@@ -1,7 +1,6 @@
 namespace Tefin.Grpc.Execution
 
 open System
-open System.Collections.Generic
 open System.Reflection
 open System.Threading
 open System.Threading.Tasks
@@ -9,9 +8,7 @@ open Grpc.Core
 open Microsoft.FSharp.Control
 open Tefin.Core.Execution
 open Tefin.Core.Interop
-open Tefin.Core.Reflection
 open Tefin.Core
-open FSharp.Control
 
 type ServerStreamingCallInfo =
     { ServerStreamItemType: Type

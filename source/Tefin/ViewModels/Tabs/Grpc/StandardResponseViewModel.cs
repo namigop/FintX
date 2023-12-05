@@ -5,8 +5,6 @@ using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 
-using DynamicData;
-
 using Grpc.Core;
 
 using Tefin.Core.Execution;
