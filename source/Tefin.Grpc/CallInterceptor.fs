@@ -1,6 +1,7 @@
 namespace Tefin.Grpc.Custom
 
 open System.Diagnostics
+open System.Threading.Tasks
 open Grpc.Core
 open Grpc.Core.Interceptors
 open Tefin.Core
@@ -16,6 +17,27 @@ type CallInterceptor(clientName: string, io: IOResolver) =
         io.Log.Error $"Call to {name} failed. Elapsed {ts.TotalMilliseconds} msec"
         io.Log.Error $"{exc}"
 
+    let rec tryExec (count: int) (doThis: unit -> 'a) =
+        try
+            doThis ()
+        with exc ->
+            if (count = 0) then
+                tryExec (count + 1) doThis //retry once
+            else
+                raise exc
+
+    let rec tryExecAsync (count: int) (doThis: unit -> Task<'a>) =
+        task {
+            try
+                return! doThis ()
+            with exc ->
+                if (count = 0) then
+                    return! tryExec (count + 1) doThis //retry once
+                else
+                    raise exc
+                    return Unchecked.defaultof<'a> //will this be reached??
+        }
+
     let getWrappedResponseHeaders_ClientStream (clientName: string) (resp: AsyncClientStreamingCall<'TReq, 'TResp>) =
         task {
             let name = "ResponseHeadersAsync"
@@ -23,8 +45,8 @@ type CallInterceptor(clientName: string, io: IOResolver) =
             let onErrorOpt = Some(onError name)
             let! meta, ts = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
             return meta
-            //let! meta = resp.ResponseHeadersAsync
-            //return meta
+        //let! meta = resp.ResponseHeadersAsync
+        //return meta
         }
 
     let getWrappedResponseHeaders_DuplexStream (clientName: string) (resp: AsyncDuplexStreamingCall<'TReq, 'TResp>) =
@@ -66,6 +88,7 @@ type CallInterceptor(clientName: string, io: IOResolver) =
         status
 
     let getWrappedStatus_DuplexStream (service: string) (method: string) (resp: AsyncDuplexStreamingCall<'TReq, 'TResp>) =
+
         let name = "GetStatus"
         let onSuccessOpt = Some(onSuccess name)
         let onErrorOpt = Some(onError name)
@@ -74,6 +97,7 @@ type CallInterceptor(clientName: string, io: IOResolver) =
             TimeIt.runActionWithReturnValue resp.GetStatus onSuccessOpt onErrorOpt
 
         status
+
 
     let getWrappedTrailer_ServerStream (service: string) (method: string) (resp: AsyncServerStreamingCall<'TResp>) =
         let name = "GetTrailers"
@@ -126,9 +150,21 @@ type CallInterceptor(clientName: string, io: IOResolver) =
         let call = continuation.Invoke(context)
         let method = context.Method.Name
         let getRespHeaderTask = getWrappedResponseHeaders_ClientStream clientName call
-        let getStatus = fun () -> getWrappedStatus_ClientStream clientName method call
-        let getTrailer = fun () -> getWrappedTrailer_ClientStream clientName method call
-        let getResponseTask = getWrappedResponse_ClientStream clientName method call
+
+        let getStatus =
+            fun () ->
+                fun () -> getWrappedStatus_ClientStream clientName method call
+                |> tryExec 0
+
+        let getTrailer =
+            fun () ->
+                fun () -> getWrappedTrailer_ClientStream clientName method call
+                |> tryExec 0
+
+        let getResponseTask =
+            fun () -> getWrappedResponse_ClientStream clientName method call
+            |> tryExecAsync 0
+
         let dispose = call.Dispose
 
         let writer = TimedClientStreamWriter.create io call.RequestStream clientName method
@@ -147,8 +183,17 @@ type CallInterceptor(clientName: string, io: IOResolver) =
         let call = continuation.Invoke(context)
         let method = context.Method.Name
         let getRespHeaderTask = getWrappedResponseHeaders_DuplexStream clientName call
-        let getStatus = fun () -> getWrappedStatus_DuplexStream clientName method call
-        let getTrailer = fun () -> getWrappedTrailer_DuplexStream clientName method call
+
+        let getStatus =
+            fun () ->
+                fun () -> getWrappedStatus_DuplexStream clientName method call
+                |> tryExec 0
+
+        let getTrailer =
+            fun () ->
+                fun () -> getWrappedTrailer_DuplexStream clientName method call
+                |> tryExec 0
+
         //let getResponseTask = getWrappedResponse_DuplexStream clientName method call
         let dispose = call.Dispose
 
@@ -170,8 +215,17 @@ type CallInterceptor(clientName: string, io: IOResolver) =
         let call = continuation.Invoke(request, context)
         let method = context.Method.Name
         let getRespHeaderTask = getWrappedResponseHeaders_ServerStream clientName call
-        let getStatus = fun () -> getWrappedStatus_ServerStream clientName method call
-        let getTrailer = fun () -> getWrappedTrailer_ServerStream clientName method call
+
+        let getStatus =
+            fun () ->
+                fun () -> getWrappedStatus_ServerStream clientName method call
+                |> tryExec 0
+
+        let getTrailer =
+            fun () ->
+                fun () -> getWrappedTrailer_ServerStream clientName method call
+                |> tryExec 0
+
         let dispose = call.Dispose
 
         let reader = TimedAsyncStreamReader.create io call.ResponseStream clientName method
@@ -198,6 +252,7 @@ type CallInterceptor(clientName: string, io: IOResolver) =
             .OnCompleted(fun () ->
                 sw.Stop()
                 let status = call.GetStatus()
+
                 if (status.StatusCode = StatusCode.OK) then
                     io.MethodCall.Publish(clientName, method, sw.Elapsed.TotalMilliseconds)
                     onSuccess method "" sw.Elapsed

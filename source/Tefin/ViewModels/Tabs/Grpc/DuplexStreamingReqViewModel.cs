@@ -20,6 +20,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private DuplexStreamingCallResponse _callResponse;
+    private bool _canWrite;
 
     public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
         methodParameterInstances) {
@@ -46,6 +47,10 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     public HierarchicalTreeDataGridSource<IExplorerItem> StreamTree { get; }
 
     public ICommand WriteCommand { get; }
+    public bool CanWrite {
+        get => this._canWrite;
+        private set => this.RaiseAndSetIfChanged(ref _canWrite, value);
+    }
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this.CallResponse = response;
@@ -56,27 +61,38 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         var (ok, reqInstance) = TypeBuilder.getDefault(response.CallInfo.RequestItemType, true, none<object>(), 0);
-        if (ok)
+        if (ok) {
+            this.CanWrite = true;
             streamNode.AddItem(reqInstance);
+        }
         else
             this.Io.Log.Error($"Unable to create an instance for {response.CallInfo.RequestItemType}");
     }
 
     private async Task OnEndWrite() {
-        var resp = this.CallResponse;
-        var writer = new WriteDuplexStreamFeature();
-        var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-        this.IsBusy = true;
-        this.CallResponse = await writer.CompleteWrite(resp);
-        this.IsBusy = false;
+        try {
+            var resp = this.CallResponse;
+            var writer = new WriteDuplexStreamFeature();
+            var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+            this.IsBusy = true;
+            this.CallResponse = await writer.CompleteWrite(resp);
+            this.IsBusy = false;
+        }finally {
+            this.CanWrite = false;
+            this.IsBusy = false;
+        }
     }
 
     private async Task OnWrite() {
-        var resp = this.CallResponse;
-        var writer = new WriteDuplexStreamFeature();
-        this.IsBusy = true;
-        var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-        await writer.Write(resp, node.Value);
-        this.IsBusy = false;
+        try {
+            var resp = this.CallResponse;
+            var writer = new WriteDuplexStreamFeature();
+            this.IsBusy = true;
+            var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+            await writer.Write(resp, node.Value);
+        }
+        finally {
+            this.IsBusy = false;
+        }
     }
 }

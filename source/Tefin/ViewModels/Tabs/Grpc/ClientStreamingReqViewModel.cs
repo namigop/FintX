@@ -66,30 +66,39 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.StreamItems.Add(streamNode);
 
         streamNode.Items.CollectionChanged += (ss, args) => {
-
         };
         var (ok, reqInstance) = TypeBuilder.getDefault(response.CallInfo.RequestItemType, true, none<object>(), 0);
-        if (ok)
+        if (ok) {
+            this.CanWrite = true;
             streamNode.AddItem(reqInstance);
+        }
         else
             this.Io.Log.Error($"Unable to create an instance for {response.CallInfo.RequestItemType}");
     }
 
     private async Task OnEndWrite() {
-        var resp = this.CallResponse;
-        this.IsBusy = true;
-        var writer = new WriteClientStreamFeature();
-        //var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-        this.CallResponse = await writer.CompleteWrite(resp);
-        this.IsBusy = false;
+        try {
+            var resp = this.CallResponse;
+            this.IsBusy = true;
+            var writer = new WriteClientStreamFeature();
+            this.CallResponse = await writer.CompleteWrite(resp);
+        }
+        finally {
+            this.CanWrite = false;
+            this.IsBusy = false;
+        }
     }
 
     private async Task OnWrite() {
-        var resp = this.CallResponse;
-        this.IsBusy = true;
-        var writer = new WriteClientStreamFeature();
-        var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-        await writer.Write(resp, node.Value);
-        this.IsBusy = false;
+        try {
+            var resp = this.CallResponse;
+            this.IsBusy = true;
+            var writer = new WriteClientStreamFeature();
+            var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+            await writer.Write(resp, node.Value);
+        }
+        finally {
+            this.IsBusy = false;
+        }
     }
 }

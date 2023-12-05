@@ -72,22 +72,25 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
         }
     }
 
-    private async Task OnStart()
-    {
-        this.IsBusy = true;
+    private async Task OnStart() {
+        try {
+            this.IsBusy = true;
 
-        var mi = this.ReqViewModel.MethodInfo;
-        var mParams = this.ReqViewModel.GetMethodParameters();
-         
-        var clientConfig = this.Client.Config.Value;
-        var feature = new CallDuplexStreamingFeature(mi, mParams, clientConfig, this.Io);
-        var (ok, resp) = await feature.Run();
-        var (_, response, context) = resp.OkayOrFailed();
-        if (ok)
-        {
-            this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response);
-            this.RespViewModel.Show(ok, response, context);
-            _ = this.RespViewModel.SetupDuplexStreamNode(response);
+            var mi = this.ReqViewModel.MethodInfo;
+            var mParams = this.ReqViewModel.GetMethodParameters();
+
+            var clientConfig = this.Client.Config.Value;
+            var feature = new CallDuplexStreamingFeature(mi, mParams, clientConfig, this.Io);
+            var (ok, resp) = await feature.Run();
+            var (_, response, context) = resp.OkayOrFailed();
+            if (ok) {
+                this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response);
+                this.RespViewModel.Show(ok, response, context);
+                _ = this.RespViewModel.SetupDuplexStreamNode(response);
+            }
+        }
+        finally {
+            this.IsBusy = false;
         }
     }
 }
