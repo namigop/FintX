@@ -3,7 +3,9 @@
 using System.Windows.Input;
 
 using ReactiveUI;
+
 using Avalonia.Controls;
+
 using Tefin.Utils;
 
 #endregion
@@ -80,9 +82,7 @@ public class ByteArrayNode : TypeBaseNode {
     }
 
     private async Task OnOpenFile() {
-        var filter = new FileDialogFilter() { Name = "All files (*.*)" };
-        filter.Extensions.Add("*");
-        var (ok, files) = await DialogUtils.OpenFile(filter);
+        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] { "*.*" });
         if (ok) {
             this.File = files[0];
             var bytes = System.IO.File.ReadAllBytes(this._file);

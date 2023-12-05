@@ -1,24 +1,58 @@
+using System.Linq;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 
 namespace Tefin.Utils;
 
 public static class DialogUtils {
-    public static async Task<(bool, string[])> OpenFile(FileDialogFilter filter, bool allowMultipleSelection = false) {
-        var dg = new OpenFileDialog();
-       
-        dg.Filters = new List<FileDialogFilter>() { filter }; //"txt files (*.txt)|*.txt|All files (*.*)|*.*";
-        dg.AllowMultiple = allowMultipleSelection;
+
+    public static Window GetMainWindow() {
         if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-            var files = await dg.ShowAsync(desktop.MainWindow);
-            if (files == null || files.Length == 0) {
-                return (false, Array.Empty<string>());
-            }
-
-            return (true, files);
+            
+            return desktop.MainWindow!;
         }
+        
+        throw new NotSupportedException();
+    }
 
+    public static async Task SaveFile(string dialogTitle, string fileTitle, string content) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+
+        // Start async operation to open the dialog.
+        var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+        {
+            Title = dialogTitle
+        });
+
+        if (file is not null)
+        {
+            await using var stream = await file.OpenWriteAsync();
+            await using var streamWriter = new StreamWriter(stream);
+            await streamWriter.WriteAsync(content);
+        } 
+    }
+    
+    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+            Title = dialogTitle,
+            AllowMultiple = allowMultipleSelection,
+            FileTypeFilter = new[] {
+                new FilePickerFileType("filter.Name") {
+                    Patterns = filterExtensions
+                }
+            }
+        });
+
+        if (files.Count >= 1) {
+            var filePaths = files.Where(t => t.Path.IsFile).Select(t => t.Path.LocalPath).ToArray();
+            return (true, filePaths);
+        }
+ 
         return (false, Array.Empty<string>());
+         
     }
 }

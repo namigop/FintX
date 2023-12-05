@@ -2,6 +2,7 @@
 
 using System.Linq;
 using System.Reactive;
+using System.Windows.Input;
 
 using Tefin.Core.Interop;
 using Tefin.Features;
@@ -24,6 +25,19 @@ public class MainWindowViewModel : ViewModelBase {
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
     public string Title { get; } = Core.Utils.appName;
+
+    public ICommand SponsorCommand {
+        get;
+    }
+
+    public MainWindowViewModel() {
+        this.SponsorCommand = CreateCommand(this.OnSponsor);
+        this.Root = default;
+    }
+
+    private void OnSponsor() {
+        Core.Utils.openBrowser("https://github.com/sponsors/namigop"); 
+    }
 
     public void Init() {
         this.Root = new StartupFeature().Load();

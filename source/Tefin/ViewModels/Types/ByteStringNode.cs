@@ -73,10 +73,8 @@ public class ByteStringNode : TypeBaseNode {
         this.Init();
     }
 
-    private async Task OnOpenFile() {
-        var filter = new FileDialogFilter() { Name = "All files (*.*)" };
-        filter.Extensions.Add("*");
-        var (ok, files) = await DialogUtils.OpenFile(filter);
+    private async Task OnOpenFile() { 
+        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new []{"*.*"});
         if (ok) {
             this.File = files[0];
             var newByteString = await System.IO.File.OpenRead(this._file).Then(c => ByteString.FromStreamAsync(c));

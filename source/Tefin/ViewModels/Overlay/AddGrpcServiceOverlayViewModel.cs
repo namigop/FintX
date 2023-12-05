@@ -109,10 +109,8 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             discoParams = new DiscoverParameters(Array.Empty<string>(), new Uri(this.ReflectionUrl));
            
         }
-        else {
-            var filter = new FileDialogFilter() { Name = "Proto file (*.proto)" };
-            filter.Extensions.Add("proto");
-            var (ok, files) = await DialogUtils.OpenFile(filter);
+        else { 
+            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new []{"*.proto"});
             if (ok) {
                 this.ProtoFile = files[0];
                // PopulateServiceNamesFromProto();

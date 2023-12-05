@@ -2,6 +2,7 @@ module Tefin.Core.Utils
 
 open System
 open System.Collections.Generic
+open System.Diagnostics
 open System.Globalization
 open System.Runtime.InteropServices
 open System.IO
@@ -151,3 +152,10 @@ let jsonDeserialize<'T>(json:string) =
    | exc ->
        Console.WriteLine (exc.ToString())
        Unchecked.defaultof<'T>
+       
+let openBrowser(url:string) =
+    if isLinux() then
+        Process.Start ("xdg-open", url)
+    else
+        let psi = new ProcessStartInfo (FileName = url, UseShellExecute = true)
+        Process.Start (psi) 
