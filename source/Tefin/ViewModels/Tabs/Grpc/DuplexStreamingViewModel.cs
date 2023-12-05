@@ -31,7 +31,6 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.IsBusy = obj.IsBusy;
     }
 
-    public DuplexStreamingCallResponse CallResponse => this.ReqViewModel.CallResponse;
     public DuplexStreamingReqViewModel ReqViewModel { get; }
     public DuplexStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
@@ -48,19 +47,21 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private async void OnCallResponseChanged(ViewModelBase obj) {
         var reqVm = (DuplexStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
+        
+        if (resp.WriteCompleted) {
+            Task<object> CompleteRead() {
+                var feature = new WriteDuplexStreamFeature();
+                var respWithStatus = feature.EndCall(resp);
 
-        Task<object> CompleteRead() {
-            object model = new StandardResponseViewModel.GrpcStandardResponse() {
-                Headers = resp.Headers.Value,
-                Trailers = resp.Trailers.Value,
-                Status = resp.Status.Value
-            };
-            return Task.FromResult(model);
-        }
+                object model = new StandardResponseViewModel.GrpcStandardResponse() {
+                    Headers = respWithStatus.Headers.Value,
+                    Trailers = respWithStatus.Trailers.Value,
+                    Status = respWithStatus.Status.Value
+                };
+                return Task.FromResult(model);
+            }
 
-        if (resp.HasStatus) {
-            this.IsBusy = false;
-            await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+            _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
         }
     }
 

@@ -45,13 +45,15 @@ type DuplexStreamingCallResponse =
     { Headers: Metadata option
       Status: Status option
       Trailers: Metadata option
-      CallInfo: DuplexStreamingCallInfo }
+      CallInfo: DuplexStreamingCallInfo
+      WriteCompleted : bool }
 
     static member Empty() =
         { Headers = None
           Status = None
           Trailers = None
-          CallInfo = Unchecked.defaultof<DuplexStreamingCallInfo> }
+          CallInfo = Unchecked.defaultof<DuplexStreamingCallInfo>
+          WriteCompleted = false }
 
     member this.HasStatus = this.Status.IsSome
 
@@ -108,6 +110,7 @@ module DuplexStreamingResponse =
         { Headers = None
           Trailers = None
           Status = None
+          WriteCompleted = false 
           CallInfo =
             { DuplexStreamType = duplexStreamType
               RequestItemType = requestItemType
@@ -139,9 +142,10 @@ module DuplexStreamingResponse =
             return { resp with Headers = Some meta }
         }
 
-    let completeWrite (resp: DuplexStreamingCallResponse) =
-        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
-
+    let completeWrite (resp: DuplexStreamingCallResponse) = task {
+       do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
+       return {resp with WriteCompleted = true }
+    }
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
         { Headers = resp.Headers
           Trailers = resp.Trailers

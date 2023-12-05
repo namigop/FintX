@@ -15,7 +15,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText = "";
-    
+
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
         this.RespViewModel = new ClientStreamingRespViewModel(mi);
@@ -51,14 +51,21 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         var reqVm = (ClientStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
 
-        async Task<object> CompleteRead() {
-            var stdResponse = ClientStreamingResponse.toStandardCallResponse(resp);
-            if (resp.HasStatus) return await ClientStreamingResponse.getResponse(resp);
+        if (resp.WriteCompleted) {
+            async Task<object> CompleteRead() {
+                var callResponse = await ClientStreamingResponse.getResponse(resp);
+                return callResponse;
+            }
 
-            return null;
+
+            this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead)
+                .ContinueWith(t => {
+                    if (t.Exception == null) {
+                        var feature = new WriteClientStreamFeature();
+                        feature.EndCall(resp);
+                    }
+                });
         }
-
-        _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
     }
 
     private async Task OnStart() {
@@ -71,14 +78,13 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
             var (ok, resp) = await feature.Run();
             var (_, response, context) = resp.OkayOrFailed();
-            if (ok) 
+            if (ok)
                 this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
-            
+
             this.IsBusy = false;
         }
         finally {
             this.IsBusy = false;
         }
     }
-
 }

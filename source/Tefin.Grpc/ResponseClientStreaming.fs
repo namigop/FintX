@@ -45,14 +45,16 @@ type ClientStreamingCallResponse =
     { Headers: Metadata option
       Status: Status option
       Trailers: Metadata option
+      WriteCompleted: bool
       CallInfo: ClientStreamingCallInfo }
 
-    static member Empty() = {
-        Headers = None
-        Status = None
-        Trailers = None
-        CallInfo = Unchecked.defaultof<ClientStreamingCallInfo> 
-    }
+    static member Empty() =
+        { Headers = None
+          Status = None
+          Trailers = None
+          WriteCompleted = false
+          CallInfo = Unchecked.defaultof<ClientStreamingCallInfo> }
+
     member this.HasStatus = this.Status.IsSome
 
 type OkayClientStreamingResponse =
@@ -101,6 +103,7 @@ module ClientStreamingResponse =
         { Headers = None
           Trailers = None
           Status = None
+          WriteCompleted = false
           CallInfo =
             { ClientStreamItemType = requestItemType
               ClientStreamType = clientStreamType
@@ -131,7 +134,10 @@ module ClientStreamingResponse =
         }
 
     let completeWrite (resp: ClientStreamingCallResponse) =
-        (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
+        task {
+            do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
+            return { resp with WriteCompleted = true }
+        }
 
     let getResponse (resp: ClientStreamingCallResponse) = resp.CallInfo.GetResponse()
 
@@ -142,6 +148,8 @@ module ClientStreamingResponse =
 
     let write (resp: ClientStreamingCallResponse) (reqItem: obj) =
         (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task)
+
+
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
         if ctx.Success then
