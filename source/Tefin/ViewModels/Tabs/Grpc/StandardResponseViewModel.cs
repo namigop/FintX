@@ -5,6 +5,8 @@ using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 
+using DynamicData;
+
 using Grpc.Core;
 
 using Tefin.Core.Execution;
@@ -24,10 +26,16 @@ public class StandardResponseViewModel : ViewModelBase {
                     new GridLength(1, GridUnitType.Star)), x => x.Items, x => x.Items.Any(), x => x.IsExpanded)
             }
         };
+        
+        //this.Items.Add(new EmptyNode());
     }
 
     public ObservableCollection<IExplorerItem> Items { get; } = new();
     public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
+
+    public void Init() {
+        this.Items.Clear();
+    }
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         this.Items.Clear();
@@ -38,6 +46,7 @@ public class StandardResponseViewModel : ViewModelBase {
             this.Items.Add(node);
         }
         catch (Exception ecx) {
+            Io.Log.Error(ecx);
         }
     }
 

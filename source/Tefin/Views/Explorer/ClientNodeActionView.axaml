@@ -16,7 +16,26 @@
         <StackPanel Orientation="Horizontal"
                     Margin="0 0 14 0"
                     HorizontalAlignment="Right">
-            <Button Classes="ClearButtonStyle" Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
+            <StackPanel.Styles>
+                <Style Selector="Button.isNotLoaded">
+                    <Setter Property="BorderBrush" Value="#BCA027"/>
+                    <Setter Property="BorderThickness" Value="1.4"></Setter>
+                    <Setter Property="CornerRadius" Value="6"></Setter>
+                    <!-- <Style.Animations> -->
+                    <!--     <Animation Duration="0:0:2" IterationCount="10"> -->
+                    <!--         <KeyFrame Cue="0%"> -->
+                    <!--             ~1~ <Setter Property="Opacity" Value="0.0"/> @1@ -->
+                    <!--             <Setter Property="Fill" Value="SlateGray"/> -->
+                    <!--         </KeyFrame> -->
+                    <!--         <KeyFrame Cue="100%">  -->
+                    <!--             ~1~ <Setter Property="Opacity" Value="1.0"/> @1@ -->
+                    <!--             <Setter Property="Fill" Value="#BCA027"/> -->
+                    <!--         </KeyFrame> -->
+                    <!--     </Animation>  -->
+                    <!-- </Style.Animations> -->
+                </Style>
+            </StackPanel.Styles>
+            <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle" Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
                 <Viewbox Width="18" Height="18">
                     <Canvas
                         Width="24" Height="24">

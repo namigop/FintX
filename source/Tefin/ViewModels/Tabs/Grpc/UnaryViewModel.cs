@@ -46,6 +46,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     private async Task OnStart() {
         this.IsBusy = true;
         try {
+            this.RespViewModel.Init();
             var mi = this.ReqViewModel.MethodInfo;
             var mParams = this.ReqViewModel.GetMethodParameters();
             var clientConfig = this.Client.Config.Value;
@@ -54,7 +55,6 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             var (ok, resp) = await feature.Run();
             var (_, response, context) = resp.OkayOrFailed();
 
-            this.IsBusy = false;
             this.StatusText = $"Elapsed {printTimeSpan(context.Elapsed.Value)}";
             this.RespViewModel.Show(ok, response, context);
         }

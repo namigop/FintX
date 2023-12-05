@@ -22,7 +22,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, true);
         this.RespViewModel = new ServerStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
-        this.StatusText = "";
+        this._statusText = "";
     }
 
     public ServerStreamingReqViewModel ReqViewModel { get; set; }
@@ -47,6 +47,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private async Task OnStart() {
         this.IsBusy = true;
         try {
+            this.RespViewModel.Init();
             var mi = this.ReqViewModel.MethodInfo;
             var mParams = this.ReqViewModel.GetMethodParameters();
             
@@ -65,12 +66,12 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
 
             async Task<object> CompleteRead() {
                 var readServerStream = new ReadServerStreamFeature();
-                var resp = (ServerStreamingCallResponse)response;
-                resp = await readServerStream.CompleteRead(resp);
+                var callResponse = (ServerStreamingCallResponse)response;
+                callResponse = await readServerStream.CompleteRead(callResponse);
                 var model = new StandardResponseViewModel.GrpcStandardResponse() {
-                    Headers = resp.Headers.Value,
-                    Trailers = resp.Trailers.Value,
-                    Status = resp.Status.Value
+                    Headers = callResponse.Headers.Value,
+                    Trailers = callResponse.Trailers.Value,
+                    Status = callResponse.Status.Value
                 };
                 return model;
             }

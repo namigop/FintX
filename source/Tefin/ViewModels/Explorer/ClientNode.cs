@@ -72,6 +72,10 @@ public class ClientNode : NodeBase {
 
     public ICommand DeleteCommand { get; }
 
+    public bool IsLoaded {
+        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode;
+    }
+
     public override void Init() {
         if (this.ClientType == null)
             return;
@@ -91,6 +95,7 @@ public class ClientNode : NodeBase {
         }
 
         this.IsExpanded = true;
+        this.RaisePropertyChanged(nameof(IsLoaded));
     }
 
     private void OnDelete() {

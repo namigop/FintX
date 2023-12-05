@@ -29,6 +29,7 @@ public class UnaryRespViewModel : ViewModelBase {
     public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
 
     public void Init() {
+        this.Items.Clear();
     }
 
     public void Show(bool ok, object response, Context context) {

@@ -2,22 +2,23 @@
 
 using System.Reflection;
 using System.Windows.Input;
+
 using ReactiveUI;
+
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
+
 using static Tefin.Core.Utils;
 
 #endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
-public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
-{
+public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
 
-    public DuplexStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg)
-    {
+    public DuplexStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new DuplexStreamingReqViewModel(mi, true);
         this.RespViewModel = new DuplexStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
@@ -28,8 +29,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).IsBusy, OnIsBusyChanged);
     }
 
-    private void OnIsBusyChanged(ViewModelBase obj)
-    {
+    private void OnIsBusyChanged(ViewModelBase obj) {
         this.IsBusy = obj.IsBusy;
     }
 
@@ -38,26 +38,21 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
     public DuplexStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
 
-    public string StatusText
-    {
+    public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
-    public override void Init()
-    {
+    public override void Init() {
         this.ReqViewModel.Init();
     }
 
-    private async void OnCallResponseChanged(ViewModelBase obj)
-    {
+    private async void OnCallResponseChanged(ViewModelBase obj) {
         var reqVm = (DuplexStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
 
-        Task<object> CompleteRead()
-        {
-            object model = new StandardResponseViewModel.GrpcStandardResponse()
-            {
+        Task<object> CompleteRead() {
+            object model = new StandardResponseViewModel.GrpcStandardResponse() {
                 Headers = resp.Headers.Value,
                 Trailers = resp.Trailers.Value,
                 Status = resp.Status.Value
@@ -65,8 +60,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
             return Task.FromResult(model);
         }
 
-        if (resp.HasStatus)
-        {
+        if (resp.HasStatus) {
             this.IsBusy = false;
             await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
         }
@@ -75,7 +69,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase
     private async Task OnStart() {
         try {
             this.IsBusy = true;
-
+            this.RespViewModel.Init();
             var mi = this.ReqViewModel.MethodInfo;
             var mParams = this.ReqViewModel.GetMethodParameters();
 
