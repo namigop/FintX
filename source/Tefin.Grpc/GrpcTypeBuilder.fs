@@ -2,15 +2,18 @@ namespace Tefin.Grpc
 
 open System
 open System.Reflection
+open System.Runtime.InteropServices
 open Google.Protobuf
 open Grpc.Core
+open Tefin.Core
 open Tefin.Core.Reflection
 
 module GrpcTypeBuilder =
     let private buildMeta (createInstance: bool) =
         if (createInstance) then
             let meta = new Metadata()
-            meta.Add("key", "value")
+            
+            meta.Add("client", $"{Utils.appName}({RuntimeInformation.FrameworkDescription})/@{Environment.MachineName}")
             struct (true, box meta)
         else
             struct (false, Unchecked.defaultof<obj>)
