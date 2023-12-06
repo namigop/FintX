@@ -4,12 +4,16 @@ open System
 open System.Collections.Generic
 open System.Diagnostics
 open System.Globalization
+open System.Reflection
 open System.Runtime.InteropServices
 open System.IO
 open System.Text
 open Newtonsoft.Json
 
 let appName = "FintX"
+
+let appVersion =  Assembly.GetEntryAssembly().GetName().Version
+let appVersionSimple =  $"{appVersion.Major}.{appVersion.Minor}"
 
 let some obj = Some obj
 let none = None

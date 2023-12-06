@@ -13,7 +13,7 @@ module GrpcTypeBuilder =
         if (createInstance) then
             let meta = new Metadata()
             
-            meta.Add("client", $"{Utils.appName}({RuntimeInformation.FrameworkDescription})/@{Environment.MachineName}")
+            meta.Add("client", $"{Utils.appName} {Utils.appVersionSimple}({RuntimeInformation.FrameworkDescription})/@{Environment.MachineName}")
             struct (true, box meta)
         else
             struct (false, Unchecked.defaultof<obj>)

@@ -18,21 +18,21 @@
                     HorizontalAlignment="Right">
             <StackPanel.Styles>
                 <Style Selector="Button.isNotLoaded">
-                    <Setter Property="BorderBrush" Value="#BCA027"/>
-                    <Setter Property="BorderThickness" Value="1.4"></Setter>
-                    <Setter Property="CornerRadius" Value="6"></Setter>
-                    <!-- <Style.Animations> -->
-                    <!--     <Animation Duration="0:0:2" IterationCount="10"> -->
-                    <!--         <KeyFrame Cue="0%"> -->
-                    <!--             ~1~ <Setter Property="Opacity" Value="0.0"/> @1@ -->
-                    <!--             <Setter Property="Fill" Value="SlateGray"/> -->
-                    <!--         </KeyFrame> -->
-                    <!--         <KeyFrame Cue="100%">  -->
-                    <!--             ~1~ <Setter Property="Opacity" Value="1.0"/> @1@ -->
-                    <!--             <Setter Property="Fill" Value="#BCA027"/> -->
-                    <!--         </KeyFrame> -->
-                    <!--     </Animation>  -->
-                    <!-- </Style.Animations> -->
+                    <!-- <Setter Property="BorderThickness" Value="1"></Setter> -->
+                    <!-- <Setter Property="CornerRadius" Value="4"></Setter> -->
+                    <Style.Animations>
+                        <Animation Duration="0:0:1" IterationCount="5">
+                            <KeyFrame Cue="0%">
+                                <!-- <Setter Property="Opacity" Value="0.0"/> -->
+                                <Setter Property="Background" Value="Transparent"/>
+                            </KeyFrame>
+                            <KeyFrame Cue="100%">
+                                <!-- <Setter Property="Opacity" Value="1.0"/> -->
+                                <!-- <Setter Property="BorderThickness" Value="0"></Setter> -->
+                                <Setter Property="Background" Value="#BCA027"/>
+                            </KeyFrame>
+                        </Animation>
+                    </Style.Animations>
                 </Style>
             </StackPanel.Styles>
             <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle" Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
