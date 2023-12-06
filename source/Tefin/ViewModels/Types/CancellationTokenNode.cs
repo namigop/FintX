@@ -11,7 +11,7 @@ namespace Tefin.ViewModels.Types;
 
 public class CancellationTokenNode : TypeBaseNode {
     
-    public CancellationTokenNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
+    public CancellationTokenNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         this.Editor = new CancellationTokenEditor(this);
     }

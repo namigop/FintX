@@ -11,11 +11,11 @@ namespace Tefin.ViewModels.Types;
 public class ByteStringNode : TypeBaseNode {
     private readonly string _formattedTypeName = $"{{{nameof(ByteString)}}}";
     private readonly string? _og;
-    private string _base64;
-    private string _file;
+    private string _base64 = "";
+    private string _file = "";
     private bool _isFromFile;
 
-    public ByteStringNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
+    public ByteStringNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this._og = this.TypedValue?.ToBase64();
         this.OpenFileCommand = this.CreateCommand(this.OnOpenFile);
     }

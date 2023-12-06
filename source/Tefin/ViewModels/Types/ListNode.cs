@@ -21,7 +21,7 @@ public class ListNode : TypeBaseNode {
     private int _targetListItemsCount;
     private bool _isEditing;
 
-    public ListNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ListNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.IsExpanded = true;
         this.SubscribeTo(x => ((ListNode)x).ListItemsCount, this.OnCountChanged);
         this._itemType = type.GetGenericArguments().FirstOrDefault()!;
@@ -89,7 +89,7 @@ public class ListNode : TypeBaseNode {
         //if (this.GeneratePropertyNodes && TypeNode.CanCreateChildNodes(this.GetListType(), processedTypeNames, listInstance)) {
         if (DefaultNode.CanCreateChildNodes(this.GetListType(), processedTypeNames, listInstance)) {
             this.Items.Clear();
-            var e = this.GetMethods().GetEnumeratorMethod!.Invoke(listInstance, null) as IEnumerator;
+            var e = (IEnumerator)this.GetMethods().GetEnumeratorMethod!.Invoke(listInstance, null)!;
             var itemType = this.GetItemType();
             var counter = 0;
 
@@ -130,7 +130,7 @@ public class ListNode : TypeBaseNode {
         return currentCount;
     }
 
-    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object current, TypeBaseNode parent) {
+    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode parent) {
         var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this), processedTypeNames, current, parent);
         return inner;
     }
@@ -191,6 +191,9 @@ public class ListNode : TypeBaseNode {
             return;
 
         var listInstance = this.GetListInstance();
+        if (listInstance == null)
+            return;
+        
         if (targetCount > currentCount)
             AddNodes(targetCount, currentCount, listInstance, this.GetItemType());
 

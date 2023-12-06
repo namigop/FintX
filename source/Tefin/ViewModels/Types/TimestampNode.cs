@@ -13,8 +13,8 @@ namespace Tefin.ViewModels.Types;
 public class TimestampNode : TypeBaseNode {
     private string _dateTime;
 
-    public TimestampNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
-        var ts = (Timestamp)instance;
+    public TimestampNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+        var ts = instance as Timestamp;
         if (ts != null)
             this._dateTime = $"{ts.ToDateTime():O}";
         else
@@ -39,7 +39,7 @@ public class TimestampNode : TypeBaseNode {
     }
 
     public void Reset() {
-        var ts = (Timestamp)this.Value;
+        var ts = (Timestamp)this.Value!;
         this.DateTimeText = $"{ts.ToDateTime():O}";
     }
 }

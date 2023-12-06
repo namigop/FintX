@@ -14,7 +14,7 @@ public class TimestampNodeBuilder : ITypeNodeBuilder {
         return type == typeof(Timestamp);
     }
 
-    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object instance, TypeBaseNode parent) {
+    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         TimestampNode? t = new(name, type, propInfo, instance, parent);
         return t;
     }

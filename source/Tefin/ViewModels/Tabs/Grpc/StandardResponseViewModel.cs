@@ -50,7 +50,7 @@ public class StandardResponseViewModel : ViewModelBase {
 
     public virtual void Show(bool ok, object response, Context context) {
         if (ok) {
-            var model = new GrpcStandardResponse();
+            var model = new GrpcStandardResponse() { Headers = new Metadata(), Status = new Status(StatusCode.Unknown, ""), Trailers = new Metadata()};
             var node = new ResponseNode(this._methodInfo.Name, typeof(GrpcStandardResponse), null, model, null);
             node.Init();
             this.Items.Clear();
@@ -59,8 +59,8 @@ public class StandardResponseViewModel : ViewModelBase {
     }
 
     public class GrpcStandardResponse {
-        public Metadata Headers { get; set; }
-        public Status Status { get; set; }
-        public Metadata Trailers { get; set; }
+        public required Metadata Headers { get; set; }
+        public required Status Status { get; set; }
+        public required Metadata Trailers { get; set; }
     }
 }

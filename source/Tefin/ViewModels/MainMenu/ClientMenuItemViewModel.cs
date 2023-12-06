@@ -27,7 +27,7 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
     public override string Name { get; } = "Clients";
 
     public Project Project {
-        get => this.Explorer.Project;
+        get => this.Explorer.Project!;
         private set => this.Explorer.Project = value;
     }
 

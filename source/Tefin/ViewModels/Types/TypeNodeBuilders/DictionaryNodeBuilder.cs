@@ -8,7 +8,7 @@ public class DictionaryNodeBuilder : ITypeNodeBuilder {
         return TypeHelper.isDictionaryType(type);
     }
 
-    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode parent) {
+    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         DictionaryNode? node = new(name, type, propInfo, instance, parent);
         return node;
     }

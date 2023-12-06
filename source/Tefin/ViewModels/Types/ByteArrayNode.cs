@@ -15,7 +15,7 @@ public class ByteArrayNode : TypeBaseNode {
     private string _file = "";
     private bool _isFromFile;
 
-    public ByteArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
+    public ByteArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.IsFromFile = false;
         this.File = "";
         this.Base64 = "";

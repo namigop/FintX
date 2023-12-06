@@ -14,8 +14,7 @@ namespace Tefin.ViewModels.Types;
 
 public abstract class TypeBaseNode : NodeBase {
     private readonly ITypeInfo? _typeInfo;
-    private bool _isNull;
-    private bool _isSelected;
+    private bool _isNull; 
     private object? _value;
 
     protected TypeBaseNode(string name, Type type, ITypeInfo? typeInfo, object? instance, TypeBaseNode? parent) {

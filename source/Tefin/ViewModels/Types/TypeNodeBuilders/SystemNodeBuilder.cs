@@ -12,7 +12,7 @@ public class SystemNodeBuilder : ITypeNodeBuilder {
         return SystemType.isSystemType(type);
     }
 
-    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode parent) {
+    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         SystemNode t = new(name, type, propInfo, instance, parent);
         return t;
     }

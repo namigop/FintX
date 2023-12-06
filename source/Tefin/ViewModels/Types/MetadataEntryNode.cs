@@ -13,9 +13,9 @@ public class MetadataEntryNode : TypeBaseNode {
     private readonly object _index;
     private readonly Metadata _metadata;
 
-    public MetadataEntryNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
-        this._metadata = (Metadata)parent.Value!;
-        this._entry = (Metadata.Entry)instance;
+    public MetadataEntryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+        this._metadata = (Metadata)parent!.Value!;
+        this._entry = (Metadata.Entry)instance!;
         this._index = this._metadata.IndexOf(this._entry);
         this.Title = $"Item[{this._index}]";
         this.Key = "";
