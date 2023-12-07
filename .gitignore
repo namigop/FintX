@@ -396,3 +396,5 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/source/Setup/Output
+/source/Setup/sign.cmd
