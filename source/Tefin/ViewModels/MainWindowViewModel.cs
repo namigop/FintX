@@ -30,6 +30,8 @@ public class MainWindowViewModel : ViewModelBase {
         get;
     }
 
+    public string SponsorAlignment { get; } = Core.Utils.isWindows() ? "Left" : "Right";
+
     public MainWindowViewModel() {
         this.SponsorCommand = CreateCommand(this.OnSponsor);
         this.Root = default;

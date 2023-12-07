@@ -46,9 +46,10 @@
             <!-- <TextBlock Text="{Binding SubTitle}" FontSize="12" Foreground="DimGray" FontStyle="Italic" Margin="6 0 0 0" VerticalAlignment="Center" ></TextBlock> -->
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-                    VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0 0 10 0">
+                    VerticalAlignment="Center" HorizontalAlignment="{Binding SponsorAlignment}" Margin="0 0 10 0">
            <Button Background="Transparent" Command="{Binding SponsorCommand}">
-               <TextBlock FontSize="12" Foreground="CornflowerBlue" Text="Support this project by becoming a sponsor"> </TextBlock>
+               <TextBlock FontSize="12" Foreground="CornflowerBlue"
+                          Text="Support this project by becoming a sponsor"> </TextBlock>
            </Button>
         </StackPanel>
 
