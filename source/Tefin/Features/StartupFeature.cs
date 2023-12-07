@@ -5,10 +5,17 @@ using Tefin.Core.Interop;
 
 namespace Tefin.Features;
 
-public class StartupFeature() {
+public class StartupFeature {
+    public StartupFeature() {
+    }
 
     public void Init() {
-        Core.App.init();
+       
+        foreach (Environment.SpecialFolder sf in Enum.GetValues(typeof(System.Environment.SpecialFolder)))
+        {
+            Console.WriteLine( $"{sf} : {Environment.GetFolderPath(sf)}");
+        }
+        
         Grpc.Startup.init();
         LiveCharts.Configure(config => {
             config.AddDarkTheme();
@@ -16,6 +23,7 @@ public class StartupFeature() {
     }
 
     public AppTypes.Root Load() {
+        Core.App.init();
         return Core.App.loadRoot();
     }
 }

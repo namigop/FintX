@@ -174,8 +174,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         return Task.CompletedTask;
     }
 
-    public class StoreCertSelection(string subject, string thumbprint) {
-        public string Subject { get => subject; }
-        public string Thumbprint { get => thumbprint; }
+    public class StoreCertSelection {
+        private readonly string _subject;
+        private readonly string _thumbprint1;
+        public StoreCertSelection(string subject, string thumbprint) {
+            this._subject = subject;
+            this._thumbprint1 = thumbprint;
+        }
+        public string Subject { get => this._subject; }
+        public string Thumbprint { get => this._thumbprint1; }
     }
 }

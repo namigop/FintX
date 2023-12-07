@@ -62,10 +62,10 @@ let getAppDataPath () =
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
             |> fun p -> Path.Combine(p, appName)
         elif isMac () then
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-            |> fun p -> Path.Combine(p, appName)
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+            |> fun p -> Path.Combine(p, ".local", "share", appName)
         else
-            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)
             |> fun p -> Path.Combine(p, appName)
 
     get () |> (fun d -> Directory.CreateDirectory d) |> (fun d -> d.FullName)

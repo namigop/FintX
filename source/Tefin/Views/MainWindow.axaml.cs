@@ -14,7 +14,13 @@ public partial class MainWindow : Window {
         this.InitializeComponent();
         this.DataContextChanged += (s, arg) => {
             var vm = (MainWindowViewModel)this.DataContext;
-            vm.Init();
+            try {
+                vm.Init();
+            }
+            catch (Exception exc) {
+                vm.Io.Log.Error(exc);
+            }
+                
         };
     }
 }
