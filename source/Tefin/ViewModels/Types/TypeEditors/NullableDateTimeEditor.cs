@@ -7,7 +7,7 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
     private bool _isUtc;
 
     public NullableDateTimeEditor(TypeBaseNode node) : base(node) {
-        var dateTime = (DateTime)node.Value;
+        var dateTime = (DateTime)(node.Value ?? DateTime.Now.AddDays(1));
         this._dateTimeText = $"{dateTime:O}";
         this._isUtc = dateTime.Kind == DateTimeKind.Utc;
     }

@@ -15,7 +15,7 @@ public class MetadataNode : ListNode {
 
     public override string FormattedTypeName => $"{{{nameof(Metadata)}}}";
 
-    protected override TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object current, TypeBaseNode parent) {
+    protected override TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode? parent) {
         MetadataEntryTypeInfo? typeInfo = new(counter, this);
         return TypeNodeBuilder.Create(name, itemType, typeInfo, processedTypeNames, current, parent);
     }

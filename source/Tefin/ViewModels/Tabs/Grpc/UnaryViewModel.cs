@@ -21,7 +21,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
-        this.StatusText = "";
+        this._statusText = "";
     }
 
     public UnaryReqViewModel ReqViewModel { get; set; }

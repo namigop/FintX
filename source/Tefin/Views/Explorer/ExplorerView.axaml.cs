@@ -33,7 +33,7 @@ public partial class ExplorerView : UserControl {
             var item = (IExplorerItem)context!;
             if (item.CanOpen) {
                 var vm = (this.DataContext as ExplorerViewModel);
-                var tab = TabFactory.From(item, vm.Io);
+                var tab = TabFactory.From(item, vm!.Io);
                 if (tab != null)
                     GlobalHub.publish(new OpenTabMessage(tab));
             }

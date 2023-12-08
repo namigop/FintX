@@ -6,7 +6,7 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
     private string _dateTimeText;
 
     public DateTimeOffsetEditor(TypeBaseNode node) : base(node) {
-        var dateTime = (DateTimeOffset)node.Value;
+        var dateTime = (DateTimeOffset)node.Value!;
         this._dateTimeText = $"{dateTime:O}";
     }
 

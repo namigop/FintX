@@ -16,6 +16,7 @@ public partial class MainMenuView : UserControl {
     }
 
     private void Init(object? sender, EventArgs e) {
-        ((MainMenuViewModel)this.DataContext).ClientMenuItem.SelectItemCommand.Execute(null);
+        var vm = (MainMenuViewModel)this.DataContext!;
+        vm.ClientMenuItem.SelectItemCommand.Execute(null);
     }
 }

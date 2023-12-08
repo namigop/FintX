@@ -9,7 +9,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public static class TabFactory {
 
-    public static ITabViewModel From(IExplorerItem item, IOResolver io) {
+    public static ITabViewModel? From(IExplorerItem item, IOResolver io) {
         switch (item) {
             case FilePerfNode p:
                 return new FilePerfTabViewModel(p);

@@ -59,7 +59,7 @@ public class ByteArrayNode : TypeBaseNode {
             this.Value = Convert.FromBase64String(this.Base64);
         }
         catch (Exception exc) {
-            //this.Value = this.Value;
+           Io.Log.Warn(exc.Message);
         }
     }
 

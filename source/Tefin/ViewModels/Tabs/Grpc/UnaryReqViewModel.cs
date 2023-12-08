@@ -46,7 +46,7 @@ public class UnaryReqViewModel : ViewModelBase {
     public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
 
     public object[] GetMethodParameters() {
-        return this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray();
+        return this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
     }
 
     public void Init() {

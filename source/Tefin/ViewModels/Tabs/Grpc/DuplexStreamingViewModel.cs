@@ -20,7 +20,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = new DuplexStreamingReqViewModel(mi, true);
         this.RespViewModel = new DuplexStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
-        this.StatusText = "";
+        this._statusText = "";
 
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, OnIsBusyChanged);
@@ -44,7 +44,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.Init();
     }
 
-    private async void OnCallResponseChanged(ViewModelBase obj) {
+    private void OnCallResponseChanged(ViewModelBase obj) {
         var reqVm = (DuplexStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
         

@@ -15,7 +15,7 @@ public class WriteDuplexStreamFeature {
         return DuplexStreamingResponse.completeCall(response);
     }
 
-    public async Task Write(DuplexStreamingCallResponse response, object instance) {
+    public async Task Write(DuplexStreamingCallResponse response, object? instance) {
         await DuplexStreamingResponse.write(response, instance);
     }
 }

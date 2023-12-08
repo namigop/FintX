@@ -27,7 +27,7 @@ public static class TypeNodeBuilder {
         return Create(name, instance.GetType(), null, new Dictionary<string, int>(), instance, null);
     }
 
-    public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
+    public static TypeBaseNode Create(string name, Type type, ITypeInfo? propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         foreach (var builder in nodeBuilders)
             if (builder.CanHandle(type))
                 return builder.Handle(name, type, propInfo, processedTypeNames, instance, parent);

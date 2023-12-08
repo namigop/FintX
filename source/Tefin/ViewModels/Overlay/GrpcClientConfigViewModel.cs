@@ -16,14 +16,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly Action _onClientNameChanged;
     private readonly string _title = "Client Configuration";
     private string _certFile ="";
-    private ProjectTypes.ClientConfig _clientConfig;
+    private ProjectTypes.ClientConfig _clientConfig = null!;
     private string _clientName = "";
     private string _description = "";
     private bool _isCertFromFile = false;
     private bool _isUsingSsl = false;
     private string _jwt ="";
-    private StoreLocation _selectedCertStoreLocation = StoreLocation.LocalMachine;
-    private StoreCertSelection _selectedStoreCertificate;
+    private StoreLocation _selectedCertStoreLocation;
+    private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
     private string _url = "";
 

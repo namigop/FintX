@@ -16,7 +16,7 @@ public partial class ByteStringNodeEditView : UserControl {
     }
 
     private void OnKeyDownBase64TextBox(object? sender, KeyEventArgs e) {
-        var vm = (ByteStringNode)this.DataContext;
+        var vm = (ByteStringNode)this.DataContext!;
         if (e.Key == Key.Enter) {
             vm.CreateFromBase64String();
         }

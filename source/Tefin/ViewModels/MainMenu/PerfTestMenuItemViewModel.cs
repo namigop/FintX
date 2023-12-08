@@ -9,7 +9,7 @@ namespace Tefin.ViewModels.MainMenu;
 public class ConfigMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel {
 
     public ConfigMenuItemViewModel(MainMenuViewModel main) : base(main) {
-        //  this.Explorer = new ExplorerViewModel();
+         this.Explorer = new ExplorerViewModel();
     }
 
     public ExplorerViewModel Explorer { get; set; }

@@ -3,16 +3,16 @@ using ReactiveUI;
 namespace Tefin.ViewModels.Types;
 
 public class EnumNode : TypeBaseNode {
-    private object _selectedEnumValue;
+    private object? _selectedEnumValue;
 
-    public EnumNode(string name, Type type, ITypeInfo propInfo, object instance, TypeBaseNode parent) : base(name, type, propInfo, instance, parent) {
+    public EnumNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.EnumValues = Enum.GetValues((type.IsEnum ? type : Nullable.GetUnderlyingType(type))!);
-        this.SelectedEnumValue = instance;
+        this._selectedEnumValue = instance;
     }
 
     public Array EnumValues { get; }
 
-    public object SelectedEnumValue {
+    public object? SelectedEnumValue {
         get => this._selectedEnumValue;
         set {
             this.RaiseAndSetIfChanged(ref this._selectedEnumValue, value);

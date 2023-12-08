@@ -19,7 +19,7 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
-    private DuplexStreamingCallResponse _callResponse;
+    private DuplexStreamingCallResponse? _callResponse;
     private bool _canWrite;
 
     public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
@@ -35,7 +35,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
     }
 
-    public DuplexStreamingCallResponse CallResponse {
+    public DuplexStreamingCallResponse? CallResponse {
         get => this._callResponse;
         set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
@@ -71,13 +71,17 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     private async Task OnEndWrite() {
         try {
-            var resp = this.CallResponse;
+            if (this.CallResponse == null) {
+                Io.Log.Warn("Unable to write to the duplex stream");
+                return;
+            }
+
             var writer = new WriteDuplexStreamFeature();
-            var node = (TypeBaseNode)this.StreamItems[0].Items[0];
             this.IsBusy = true;
-            this.CallResponse = await writer.CompleteWrite(resp);
+            this.CallResponse = await writer.CompleteWrite(this.CallResponse);
             this.IsBusy = false;
-        }finally {
+        }
+        finally {
             this.CanWrite = false;
             this.IsBusy = false;
         }
@@ -88,6 +92,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
             var resp = this.CallResponse;
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
+
             var node = (TypeBaseNode)this.StreamItems[0].Items[0];
             await writer.Write(resp, node.Value);
         }

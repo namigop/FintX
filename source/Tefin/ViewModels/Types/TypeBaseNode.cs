@@ -14,7 +14,7 @@ namespace Tefin.ViewModels.Types;
 
 public abstract class TypeBaseNode : NodeBase {
     private readonly ITypeInfo? _typeInfo;
-    private bool _isNull; 
+    private bool _isNull;
     private object? _value;
 
     protected TypeBaseNode(string name, Type type, ITypeInfo? typeInfo, object? instance, TypeBaseNode? parent) {
@@ -72,7 +72,7 @@ public abstract class TypeBaseNode : NodeBase {
 
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
         var parentInstance = this.Parent?.Value;
-        if (parentInstance != null)
+        if (parentInstance != null && newValue != null)
             this._typeInfo?.SetValue(parentInstance, newValue);
     }
 }

@@ -12,10 +12,11 @@ public class ListNodeBuilder : ITypeNodeBuilder {
         return TypeHelper.isGenericListType(type);
     }
 
-    public TypeBaseNode Handle(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
-        if (propInfo.CanWrite)
-            return new ListNode(name, type, propInfo, instance, parent);
+    public TypeBaseNode Handle(string name, Type type, ITypeInfo typeInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
+        if (typeInfo.CanWrite)
+            return new ListNode(name, type, typeInfo, instance, parent);
 
-        return new ListNode(name, type, new ReadOnlyListTypeInfo(propInfo.PropertyInfo), instance, parent);
+        
+        return new ListNode(name, type, new ReadOnlyListTypeInfo(typeInfo.PropertyInfo!), instance, parent);
     }
 }

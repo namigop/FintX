@@ -28,14 +28,10 @@ public class ArrayNode : ListNode {
         var parentValue = parent != null ? Core.Utils.some(parent.Value)! : Core.Utils.none<object>();
         var (_, list) = TypeBuilder.getDefault(constructedListType, true, parentValue, 0);
         this._listMethods.ClearMethod!.Invoke(list, null);
-
-        // var clearMethod = constructedListType.GetMethod("Clear", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
-        // clearMethod!.Invoke(list, null);
+        
         this._internalList = list;
         this._internalListType = this._internalList.GetType();
-        if (instance != null) this._listMethods.AddRangeMethod.Invoke(this._internalList, new[] { instance });
-        //var adr = this._internalListType.GetMethod("AddRange", BindingFlags.Public | BindingFlags.Instance);
-        //adr.Invoke(this._internalList, new[] { instance });
+        if (instance != null) this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] { instance });
         this.SubscribeTo(x => ((ArrayNode)x).ListItemsCount, this.OnCountChanged);
     }
 

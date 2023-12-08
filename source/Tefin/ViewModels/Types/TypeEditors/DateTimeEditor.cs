@@ -7,7 +7,7 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
     private bool _isUtc;
 
     public DateTimeEditor(TypeBaseNode node) : base(node) {
-        var dateTime = (DateTime)node.Value;
+        var dateTime = (DateTime)node.Value!;
         this._dateTimeText = $"{dateTime:O}";
         this._isUtc = dateTime.Kind == DateTimeKind.Utc;
     }
@@ -42,7 +42,8 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
         }
     }
 
-    public void Reset() {
+    public override void Reset() {
         this.DateTimeText = $"{this.TempValue:O}";
+        this.HasChanges = false;
     }
 }
