@@ -20,7 +20,6 @@
         <Compile Include="ChannelBuilder.fs" />
         <Compile Include="MethodInvoker.fs" />
         <Compile Include="Features.fs" />
-        <Compile Include="ResponseUtils.fs" />
         <Compile Include="ResponseUnary.fs" />
         <Compile Include="ResponseServerStreaming.fs" />
         <Compile Include="ResponseClientStreaming.fs" />

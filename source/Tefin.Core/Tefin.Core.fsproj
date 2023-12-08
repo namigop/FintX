@@ -36,6 +36,8 @@
         <Compile Include="Reflection\TypeBuilder.fs" />
         <Compile Include="Reflection\MethodInfoHelper.fs" />
         <Compile Include="Reflection\ClassGen.fs" />
+        <Compile Include="Reflection\RequestUtils.fs" />
+        <Compile Include="Reflection\ResponseUtils.fs" />
         <Compile Include="Project.fs" />
         <Compile Include="ClientCompiler.fs" />
         <Compile Include="CallPipeline.fs" />

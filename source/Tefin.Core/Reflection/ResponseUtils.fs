@@ -1,4 +1,4 @@
-namespace Tefin.Grpc.Execution
+namespace Tefin.Core.Reflection
 
 open System.Collections.Generic
 open Tefin.Core.Reflection
@@ -41,16 +41,23 @@ module ResponseUtils =
         let generatedTypes = Dictionary<TypeKey, Type>()
         fun (methodInfo:MethodInfo) isContainerForError ->
             let className = $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
-            let moduleName = className
-            let assemblyName = $"Tefin{className}"
-            let responseType =
-                if isContainerForError then typeof<ErrorResponse>
-                else if methodInfo.ReturnType.IsGenericType then
-                    methodInfo.ReturnType.GetGenericArguments().[0]
-                else
-                    methodInfo.ReturnType
-            ClassGen.create
-                assemblyName
-                moduleName
-                className
-                [| {IsMethod = false; Name = "Response"; Type = responseType } |]
+            let ok, v = generatedTypes.TryGetValue( { ClassName = className; IsErrorContainer = isContainerForError})
+            if ok then v
+            else
+                let moduleName = className
+                let assemblyName = $"Tefin{className}"
+                let responseType =
+                    if isContainerForError then typeof<ErrorResponse>
+                    else if methodInfo.ReturnType.IsGenericType then
+                        methodInfo.ReturnType.GetGenericArguments().[0]
+                    else
+                        methodInfo.ReturnType
+                let genType =
+                    ClassGen.create
+                        assemblyName
+                        moduleName
+                        className
+                        [| {IsMethod = false; Name = "Response"; Type = responseType } |]
+                let key = {ClassName = className; IsErrorContainer = isContainerForError}
+                generatedTypes.Add(key, genType)
+                genType
