@@ -43,7 +43,7 @@ namespace Tefin.ViewModels.Validations {
                 return new ValidationResult("Value cannot be null. Enter a valid folder name");
 
             var enteredName = value.ToString();
-            var cleanedUp = Tefin.Core.Utils.makeValidFileName(value.ToString());
+            var cleanedUp = Core.Utils.makeValidFileName(value.ToString());
             if (enteredName != cleanedUp) {
                 return new ValidationResult(errorMessage: "Name contains invalid characters");
             }

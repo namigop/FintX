@@ -39,7 +39,7 @@ public class ViewModelBase : ReactiveObject, IDisposable {
                 await doThis();
             }
             catch (Exception exc) {
-                Io.Log.Error(exc);
+                this.Io.Log.Error(exc);
             }
         });
     }
@@ -50,7 +50,7 @@ public class ViewModelBase : ReactiveObject, IDisposable {
                 doThis();
             }
             catch (Exception exc) {
-                Io.Log.Error(exc);
+                this.Io.Log.Error(exc);
             }
         });
     }

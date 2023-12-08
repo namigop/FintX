@@ -25,8 +25,8 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     private SeriesModel? _selectedSeries;
 
     public ChartMiscViewModel() {
-        this.ClearSeriesCommand = CreateCommand(OnClearSeries);
-        GlobalHub.subscribe<MethodCallMessage>(OnReceiveMethodCall);
+        this.ClearSeriesCommand = this.CreateCommand(this.OnClearSeries);
+        GlobalHub.subscribe<MethodCallMessage>(this.OnReceiveMethodCall);
     }
 
     public ICommand ClearSeriesCommand { get; }
@@ -34,9 +34,9 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     public SeriesModel? SelectedSeries {
         get => this._selectedSeries;
         set {
-            this.RaiseAndSetIfChanged(ref _selectedSeries, value);
+            this.RaiseAndSetIfChanged(ref this._selectedSeries, value);
             if (this._selectedSeries != null) {
-                foreach (var s in SeriesModels)
+                foreach (var s in this.SeriesModels)
                     s.Series.IsVisible = this._selectedSeries == s;
             }
         }
@@ -83,7 +83,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
                 this.SeriesModels.Add(seriesModel);
                 this.Series.Add(seriesModel.Series);
 
-                var nextColorIndex = _currentColor++ % this._colors.Length;
+                var nextColorIndex = this._currentColor++ % this._colors.Length;
                 var color = this._colors[nextColorIndex];
                 seriesModel.Series.Fill = new SolidColorPaint(new SKColor(color.R, color.G, color.B, 90));
             }
@@ -116,10 +116,10 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
             series.MaxBarWidth = 20;
         }
 
-        public string ClientName { get => _clientName; }
-        public string Id { get => $"{ClientName}/{Method}"; }
-        public string Method { get => _method; }
-        public ColumnSeries<double> Series { get => _series; }
+        public string ClientName { get => this._clientName; }
+        public string Id { get => $"{this.ClientName}/{this.Method}"; }
+        public string Method { get => this._method; }
+        public ColumnSeries<double> Series { get => this._series; }
         public ObservableCollection<double> Values { get; } = new();
     }
 }

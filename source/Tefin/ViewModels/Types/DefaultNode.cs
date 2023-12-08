@@ -85,7 +85,7 @@ public class DefaultNode : TypeBaseNode {
                     this.Items.Add(node);
                 }
                 catch (Exception exc) {
-                    Io.Log.Error(exc);
+                    this.Io.Log.Error(exc);
                     Debugger.Break();
                 }
         }

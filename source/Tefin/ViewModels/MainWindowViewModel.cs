@@ -33,7 +33,7 @@ public class MainWindowViewModel : ViewModelBase {
     public string SponsorAlignment { get; } = Core.Utils.isWindows() ? "Left" : "Right";
 
     public MainWindowViewModel() {
-        this.SponsorCommand = CreateCommand(this.OnSponsor);
+        this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
     }
 
@@ -50,8 +50,8 @@ public class MainWindowViewModel : ViewModelBase {
         var hasClients = this.MainMenu.ClientMenuItem.Project.Clients.Any();
         if (hasClients) {
             foreach (var c in this.MainMenu.ClientMenuItem.Project.Clients) {
-                Io.Log.Info($"Found client {c.Name}, {c.Config.Value.ServiceName}@{c.Config.Value.Url}");
-                Io.Log.Warn("Recompile the client first to start testing the methods");
+                this.Io.Log.Info($"Found client {c.Name}, {c.Config.Value.ServiceName}@{c.Config.Value.Url}");
+                this.Io.Log.Warn("Recompile the client first to start testing the methods");
             }
         }
     }

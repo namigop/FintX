@@ -12,7 +12,7 @@ public class DiscoverFeature {
     }
 
     public async Task<(bool, string[])> Discover(IOResolver io) {
-        var ret = await Grpc.Features.discover(new DiscoverParameters(this._protoFiles, new Uri(this._reflectionUrl)));
+        var ret = await ServiceClient.discover(io, new DiscoverParameters(this._protoFiles, new Uri(this._reflectionUrl)));
         if (ret.IsOk) {
             io.Log.Info($"Service discovery successful. {ret.ResultValue}");
         }

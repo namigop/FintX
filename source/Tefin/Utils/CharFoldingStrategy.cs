@@ -12,8 +12,8 @@ public class CharFoldingStrategy {
     }
 
     public CharFoldingStrategy(char openingChar, char closingChar) {
-        OpeningBrace = openingChar;
-        ClosingBrace = closingChar;
+        this.OpeningBrace = openingChar;
+        this.ClosingBrace = closingChar;
     }
 
     /// <summary>
@@ -27,7 +27,7 @@ public class CharFoldingStrategy {
     private char OpeningBrace { get; }
 
     public void UpdateFoldings(FoldingManager manager, TextDocument document) {
-        var newFoldings = CreateNewFoldings(document, out var firstErrorOffset);
+        var newFoldings = this.CreateNewFoldings(document, out var firstErrorOffset);
         manager.UpdateFoldings(newFoldings, firstErrorOffset);
     }
 
@@ -36,7 +36,7 @@ public class CharFoldingStrategy {
     /// </summary>
     private IEnumerable<NewFolding> CreateNewFoldings(TextDocument document, out int firstErrorOffset) {
         firstErrorOffset = -1;
-        return CreateNewFoldings(document);
+        return this.CreateNewFoldings(document);
     }
 
     /// <summary>
@@ -47,8 +47,8 @@ public class CharFoldingStrategy {
 
         var startOffsets = new Stack<int>();
         var lastNewLineOffset = 0;
-        var openingBrace = OpeningBrace;
-        var closingBrace = ClosingBrace;
+        var openingBrace = this.OpeningBrace;
+        var closingBrace = this.ClosingBrace;
         for (var i = 0; i < document.TextLength; i++) {
             var c = document.GetCharAt(i);
             if (c == openingBrace) {

@@ -4,6 +4,6 @@ namespace Tefin.Views.MainMenu;
 
 public partial class ServerMenuItemView : UserControl {
     public ServerMenuItemView() {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 }

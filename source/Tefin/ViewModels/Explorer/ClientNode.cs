@@ -38,10 +38,10 @@ public class ClientNode : NodeBase {
 
         this.IsExpanded = true;
         this.Items.Add(new EmptyNode());
-        this.OpenClientConfigCommand = CreateCommand(OnOpenClientConfig);
-        this.CompileClientTypeCommand = CreateCommand(OnCompileClientType);
-        this.DeleteCommand = CreateCommand(OnDelete);
-        GlobalHub.subscribe<MsgClientUpdated>(OnClientUpdated);
+        this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
+        this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
+        this.DeleteCommand = this.CreateCommand(this.OnDelete);
+        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
 
 
@@ -101,7 +101,7 @@ public class ClientNode : NodeBase {
         }
 
         this.IsExpanded = true;
-        this.RaisePropertyChanged(nameof(IsLoaded));
+        this.RaisePropertyChanged(nameof(this.IsLoaded));
     }
 
     private void OnDelete() {

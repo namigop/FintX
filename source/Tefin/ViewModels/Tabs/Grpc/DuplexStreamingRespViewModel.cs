@@ -35,7 +35,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
 
     public bool CanRead {
         get => this._canRead;
-        private set => this.RaiseAndSetIfChanged(ref _canRead , value);
+        private set => this.RaiseAndSetIfChanged(ref this._canRead , value);
     }
 
     public ObservableCollection<IExplorerItem> StreamItems { get; } = new();

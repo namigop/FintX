@@ -5,9 +5,11 @@ open System
 //open Bym.Grpc.Core.GrpcServerReflection
 open System.Collections.ObjectModel
 open System.Reflection
+open System.Text.RegularExpressions
 open System.Threading.Tasks
 open Grpc.Core
 open Tefin.Core
+open Tefin.Core.Res
 open System.IO
 open Tefin.Grpc.Discovery
 
@@ -65,16 +67,17 @@ module ServiceClient =
 
     let generateSourceFiles (io: IOResolver) (compileParams: CompileParameters) =
         task {
-            let locations = compileParams.ProtoFiles
-            let address = compileParams.ReflectionServiceUrl
+            let grpcParams = {compileParams with Config = GrpcPackage.grpcConfigValues }
+            let locations = grpcParams.ProtoFiles
+            let address = grpcParams.ReflectionServiceUrl
 
             if (locations.Length = 0) then
                 let dp: ServerDiscoverParameters =
                     { Address = address
-                      ServiceName = compileParams.ServiceName
-                      CustomClientName = compileParams.Name
-                      Description = compileParams.Description
-                      Config = compileParams.Config }
+                      ServiceName = grpcParams.ServiceName
+                      CustomClientName = grpcParams.Name
+                      Description = grpcParams.Description
+                      Config = grpcParams.Config }
 
                 io.Log.Info $"Generating client code from {address}"
                 let! cs = ServerReflectionDiscoveryClient.generateSource io dp
@@ -82,9 +85,9 @@ module ServiceClient =
             else
                 let dp: ProtoDiscoverParameters =
                     { ProtoFiles = locations
-                      CustomClientName = compileParams.Name
-                      Description = compileParams.Description
-                      Config = compileParams.Config }
+                      CustomClientName = grpcParams.Name
+                      Description = grpcParams.Description
+                      Config = grpcParams.Config }
 
                 io.Log.Info $"Generating client code from {locations}"
                 let! csFiles = ProtoDiscoveryClient.generateSource io dp
@@ -98,27 +101,50 @@ module ServiceClient =
             return services
         }
 
-    let compile (io: IOResolver) (compileParams: CompileParameters) =
+    let compile (io: IOResolver) (sourceFiles:string array) (compileParams: CompileParameters) =
         task {
-            let sourceFiles = compileParams.CsFiles |> Array.map (fun f -> Path.GetFileName(f))
+            let grpcParams = {compileParams with Config = GrpcPackage.grpcConfigValues
+                                                 CsFiles =  sourceFiles }
+            
+            let sourceFiles = grpcParams.CsFiles |> Array.map (fun f -> Path.GetFileName(f))
             let msg = String.Join(", ", sourceFiles)
             io.Log.Info($"Compiling : {msg}")
             let tempFile = Path.GetTempFileName()
             io.File.Delete(tempFile)
 
             let grpcClientFileOpt =
-                compileParams.CsFiles |> Array.tryFind (fun f -> f.EndsWith("Grpc.cs"))
+                grpcParams.CsFiles |> Array.tryFind (fun f -> f.EndsWith("Grpc.cs"))
 
             match grpcClientFileOpt with
             | None -> return Ret.Error(Exception("Unable to generate the source code of the service client"))
             | Some grpcClientFile ->
-                let rootPath = compileParams.Config["RootPath"]
+                let rootPath = grpcParams.Config["RootPath"]
                 let name = Path.GetFileNameWithoutExtension(grpcClientFile)
                 let assemblyName = $"{name}_{Path.GetFileNameWithoutExtension(tempFile)}"
 
                 let assemblyFile =
                     Path.Combine(rootPath, "clients", assemblyName, $"{assemblyName}.dll")
 
-                let! compileOutput = Task.Run(fun () -> ClientCompiler.compile io assemblyFile compileParams.CsFiles)
+                let! compileOutput = Task.Run(fun () -> ClientCompiler.compile io assemblyFile grpcParams.CsFiles)
                 return compileOutput
         }
+        
+    let discover (io:IOResolver) (discoParams : DiscoverParameters) = task {
+        if (discoParams.ProtoFiles.Length > 0) then
+            let regex = @"service\s+(?<ServiceName>\w+)\s+";
+            let lines = io.File.ReadAllLines discoParams.ProtoFiles[0]
+            let services =  
+                lines 
+                |> Array.map (fun l -> Regex.Match(l, regex)) 
+                |> Array.filter (fun g -> g.Success)
+                |> Array.map (fun m -> m.Groups["ServiceName"].Value)
+            
+            return (Ret.Ok services)
+
+         else
+            let! services = GrpcReflectionClient.getServices io discoParams.ReflectionUri.AbsoluteUri
+            return services
+    }
+
+  
+ 

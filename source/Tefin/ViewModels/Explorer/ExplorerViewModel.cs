@@ -36,7 +36,7 @@ public class ExplorerViewModel : ViewModelBase {
         this.ExplorerTree = temp;
 
         GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
-        GlobalHub.subscribe<ClientDeletedMessage>(OnClientDeleted);
+        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
     }
 
     private void OnClientDeleted(ClientDeletedMessage obj) {
@@ -75,7 +75,7 @@ public class ExplorerViewModel : ViewModelBase {
             this.Project = proj;
 
             var client = proj.Clients.First(t => t.Name == obj.ClientName);
-            AddClientNode(client, type);
+            this.AddClientNode(client, type);
         }
     }
 }

@@ -44,7 +44,7 @@ public class StandardResponseViewModel : ViewModelBase {
             this.Items.Add(node);
         }
         catch (Exception ecx) {
-            Io.Log.Error(ecx);
+            this.Io.Log.Error(ecx);
         }
     }
 

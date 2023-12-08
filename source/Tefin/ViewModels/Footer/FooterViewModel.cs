@@ -14,13 +14,13 @@ public class FooterViewModel : ViewModelBase {
     public FooterViewModel() {
         this._background = Colors.info;
         this._message = "Ready...";
-        GlobalHub.subscribe<Core.Interop.Messages.MsgShowFooter>(OnShowFooter);
+        GlobalHub.subscribe<Core.Interop.Messages.MsgShowFooter>(this.OnShowFooter);
     }
 
     private void OnShowFooter(Core.Interop.Messages.MsgShowFooter obj) {
         this.Background = obj.Color;
         this.Message = obj.Message;
-        DispatcherTimer.Run(OnReset, TimeSpan.FromSeconds(30));
+        DispatcherTimer.Run(this.OnReset, TimeSpan.FromSeconds(30));
     }
 
     private bool OnReset() {
@@ -31,11 +31,11 @@ public class FooterViewModel : ViewModelBase {
 
     public string Background {
         get => this._background;
-        private set => this.RaiseAndSetIfChanged(ref _background, value);
+        private set => this.RaiseAndSetIfChanged(ref this._background, value);
     }
 
     public string Message {
         get => this._message;
-        private set => this.RaiseAndSetIfChanged(ref _message, value);
+        private set => this.RaiseAndSetIfChanged(ref this._message, value);
     }
 }

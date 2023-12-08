@@ -27,7 +27,7 @@ public class MethodTabViewModel : TabViewModelBase {
         //name format {Title}(count)
         var maxTabs = 1000;
         for (int i = 1; i < maxTabs; i++) {
-            var suggestedName = $"{Title}({i})";
+            var suggestedName = $"{this.Title}({i})";
             if (!existingNames.Contains(suggestedName))
                 return suggestedName;
         }

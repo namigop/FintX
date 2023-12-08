@@ -5,6 +5,6 @@ namespace Tefin.Views.Overlay;
 public partial class GrpcClientConfigView : UserControl {
 
     public GrpcClientConfigView() {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 }

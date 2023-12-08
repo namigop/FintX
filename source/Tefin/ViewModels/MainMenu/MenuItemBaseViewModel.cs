@@ -17,7 +17,7 @@ public abstract class MenuItemBaseViewModel : ViewModelBase, IMenuItemViewModel 
     }
     public bool IsSelected {
         get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSelected, value);
+        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
     public abstract string Name { get; }
     public ICommand SelectItemCommand { get; }

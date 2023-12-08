@@ -23,8 +23,8 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this._statusText = "";
 
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
-        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, OnIsBusyChanged);
-        this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).IsBusy, OnIsBusyChanged);
+        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, this.OnIsBusyChanged);
+        this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).IsBusy, this.OnIsBusyChanged);
     }
 
     private void OnIsBusyChanged(ViewModelBase obj) {

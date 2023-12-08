@@ -57,7 +57,7 @@ public class ByteStringNode : TypeBaseNode {
             this.Value = ByteString.FromBase64(this.Base64);
         }
         catch (Exception exc) {
-            Io.Log.Warn(exc.Message);
+            this.Io.Log.Warn(exc.Message);
         }
     }
 

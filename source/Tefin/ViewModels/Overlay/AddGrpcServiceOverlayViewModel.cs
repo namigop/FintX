@@ -79,8 +79,8 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     [IsProtoFile]
     public string ProtoFile {
-        get => _protoFile;
-        set => this.RaiseAndSetIfChanged(ref _protoFile, value);
+        get => this._protoFile;
+        set => this.RaiseAndSetIfChanged(ref this._protoFile, value);
     }
 
     [Required(ErrorMessage = "Service is required")]
@@ -115,7 +115,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         if (discoParams == null)
             return;
         
-        var res = await Grpc.Features.discover(discoParams);
+        var res = await ServiceClient.discover(this.Io, discoParams);
 
         if (res.IsOk) {
             var services = res.ResultValue;

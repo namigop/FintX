@@ -21,8 +21,8 @@ public partial class ExplorerView : UserControl {
     public ExplorerView() {
         this.InitializeComponent();
         this.TreeDg.DoubleTapped += this.OnDoubleTapped;
-        this.TreeDg.Tapped += TreeDgOnTapped;
-        this.TreeDg.SelectionChanging += TreeDgOnSelectionChanging;
+        this.TreeDg.Tapped += this.TreeDgOnTapped;
+        this.TreeDg.SelectionChanging += this.TreeDgOnSelectionChanging;
     }
 
     private void OnDoubleTapped(object? sender, TappedEventArgs e) {

@@ -19,7 +19,7 @@ public class MethodNode : NodeBase {
     public ProjectTypes.ClientGroup Client { get; set; }
 
     public ClientMethodViewModelBase CreateViewModel() {
-        return new GrpcClientMethodHostViewModel(this._methodInfo, Client);
+        return new GrpcClientMethodHostViewModel(this._methodInfo, this.Client);
     }
 
     public override void Init() {

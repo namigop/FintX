@@ -32,7 +32,10 @@ public class UnaryReqViewModel : ViewModelBase {
         this.MethodTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
-                    new GridLength(1, GridUnitType.Star)), x => x.Items, x => x.Items.Any(), x => x.IsExpanded)
+                    new GridLength(1, GridUnitType.Star)), 
+                    x => x.Items,
+                    x => x.Items.Any(),
+                    x => x.IsExpanded)
             }
         };
 

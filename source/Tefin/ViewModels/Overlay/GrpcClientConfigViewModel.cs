@@ -38,41 +38,41 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.CertStoreLocations.Add(StoreLocation.LocalMachine);
         this._selectedCertStoreLocation = this.CertStoreLocations[1];
 
-        Load(this._clientConfigFile);
+        this.Load(this._clientConfigFile);
     }
 
     public ICommand CancelCommand { get; }
 
     public string CertFile {
         get => this._certFile;
-        set => this.RaiseAndSetIfChanged(ref _certFile, value);
+        set => this.RaiseAndSetIfChanged(ref this._certFile, value);
     }
 
     public List<StoreLocation> CertStoreLocations { get; } = new();
 
     public string ClientName {
         get => this._clientName;
-        set => this.RaiseAndSetIfChanged(ref _clientName, value);
+        set => this.RaiseAndSetIfChanged(ref this._clientName, value);
     }
 
     public string Description {
         get => this._description;
-        set => this.RaiseAndSetIfChanged(ref _description, value);
+        set => this.RaiseAndSetIfChanged(ref this._description, value);
     }
 
     public bool IsCertFromFile {
         get => this._isCertFromFile;
-        set => this.RaiseAndSetIfChanged(ref _isCertFromFile, value);
+        set => this.RaiseAndSetIfChanged(ref this._isCertFromFile, value);
     }
 
     public bool IsUsingSsl {
         get => this._isUsingSsl;
-        set => this.RaiseAndSetIfChanged(ref _isUsingSsl, value);
+        set => this.RaiseAndSetIfChanged(ref this._isUsingSsl, value);
     }
 
     public string Jwt {
         get => this._jwt;
-        set => this.RaiseAndSetIfChanged(ref _jwt, value);
+        set => this.RaiseAndSetIfChanged(ref this._jwt, value);
     }
 
     public ICommand LoadStoreCertificatesCommand { get; }
@@ -84,7 +84,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public StoreLocation SelectedCertStoreLocation {
         get => this._selectedCertStoreLocation;
         set {
-            this.RaiseAndSetIfChanged(ref _selectedCertStoreLocation, value);
+            this.RaiseAndSetIfChanged(ref this._selectedCertStoreLocation, value);
             this.Thumbprint = "";
         }
     }
@@ -92,7 +92,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public StoreCertSelection SelectedStoreCertificate {
         get => this._selectedStoreCertificate;
         set {
-            this.RaiseAndSetIfChanged(ref _selectedStoreCertificate, value);
+            this.RaiseAndSetIfChanged(ref this._selectedStoreCertificate, value);
             this.Thumbprint = this._selectedStoreCertificate?.Thumbprint ?? string.Empty;
         }
     }
@@ -101,14 +101,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Thumbprint {
         get => this._thumbprint;
-        set => this.RaiseAndSetIfChanged(ref _thumbprint, value);
+        set => this.RaiseAndSetIfChanged(ref this._thumbprint, value);
     }
 
     public string Title => this._title;
 
     public string Url {
         get => this._url;
-        set => this.RaiseAndSetIfChanged(ref _url, value);
+        set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
     public void Close() {
@@ -160,7 +160,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;
 
-        var feature = new SaveClientConfigFeature(this._clientConfigFile, this._clientConfig, Io);
+        var feature = new SaveClientConfigFeature(this._clientConfigFile, this._clientConfig, this.Io);
         await feature.Save();
         if (nameChanged) {
             this._onClientNameChanged();
@@ -170,7 +170,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     private Task OnOpenCertFile() {
-        Io.Log.Error(new NotImplementedException()); //TODO
+        this.Io.Log.Error(new NotImplementedException()); //TODO
         return Task.CompletedTask;
     }
 

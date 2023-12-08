@@ -11,7 +11,7 @@ public class StartupFeature {
 
     public void Init() {
        
-        foreach (Environment.SpecialFolder sf in Enum.GetValues(typeof(System.Environment.SpecialFolder)))
+        foreach (Environment.SpecialFolder sf in Enum.GetValues(typeof(Environment.SpecialFolder)))
         {
             Console.WriteLine( $"{sf} : {Environment.GetFolderPath(sf)}");
         }

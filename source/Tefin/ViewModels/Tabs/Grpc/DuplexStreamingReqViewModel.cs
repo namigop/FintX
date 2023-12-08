@@ -49,7 +49,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     public ICommand WriteCommand { get; }
     public bool CanWrite {
         get => this._canWrite;
-        private set => this.RaiseAndSetIfChanged(ref _canWrite, value);
+        private set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
@@ -72,7 +72,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private async Task OnEndWrite() {
         try {
             if (this.CallResponse == null) {
-                Io.Log.Warn("Unable to write to the duplex stream");
+                this.Io.Log.Warn("Unable to write to the duplex stream");
                 return;
             }
 
@@ -90,7 +90,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private async Task OnWrite() {
         try {
             if (this.CallResponse == null) {
-                Io.Log.Warn("Unable to write to the request stream");
+                this.Io.Log.Warn("Unable to write to the request stream");
                 return;
             }
             

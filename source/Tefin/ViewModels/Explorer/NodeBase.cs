@@ -24,7 +24,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public virtual bool IsEditing {
         get => this._isEditing;
-        set => this.RaiseAndSetIfChanged(ref _isEditing, value);
+        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
     }
 
     public bool IsExpanded {
@@ -34,7 +34,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public bool IsSelected {
         get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSelected, value);
+        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
     public ObservableCollection<IExplorerItem> Items {

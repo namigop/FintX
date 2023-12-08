@@ -16,7 +16,7 @@ public abstract class GrpCallTypeViewModelBase : ViewModelBase {
     protected GrpCallTypeViewModelBase(MethodInfo mi, ProjectTypes.ClientGroup cg) {
         this.MethodInfo = mi;
         this.Client = cg;
-        GlobalHub.subscribe<MsgClientUpdated>(OnClientUpdated);
+        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
 
     public ProjectTypes.ClientGroup Client { get; private set; }

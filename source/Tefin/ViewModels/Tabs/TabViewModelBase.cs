@@ -26,7 +26,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
         this.CloseCommand = this.CreateCommand(this.OnClose);
         //this.Id = $"{item.Title}-{item.SubTitle}-{Guid.NewGuid()}";
-        GlobalHub.subscribe<RemoveTreeItemMessage>(OnRemoveTreeItemRemoved);
+        GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 
     public bool AllowDuplicates { get; set; } = false;

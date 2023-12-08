@@ -45,11 +45,11 @@ public class ListNode : TypeBaseNode {
 
     public override bool IsEditing
     {
-        get => _isEditing;
+        get => this._isEditing;
         set
         {
-            _isEditing = value;
-            if (!_isEditing)
+            this._isEditing = value;
+            if (!this._isEditing)
                 this.ListItemsCount = this.TargetListItemsCount;
 
         }

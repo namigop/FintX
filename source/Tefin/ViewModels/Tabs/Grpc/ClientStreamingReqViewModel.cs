@@ -33,7 +33,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
-        _callResponse = ClientStreamingCallResponse.Empty();
+        this._callResponse = ClientStreamingCallResponse.Empty();
         this.StreamItems.Add(new EmptyNode());
     }
 
@@ -52,8 +52,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
 
     public bool CanWrite {
-        get => _canWrite;
-        set => this.RaiseAndSetIfChanged(ref _canWrite, value);
+        get => this._canWrite;
+        set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
     public void SetupClientStream(ClientStreamingCallResponse response) {
