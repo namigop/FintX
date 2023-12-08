@@ -7,7 +7,7 @@ using ReactiveUI;
 namespace Tefin.ViewModels.MainMenu;
 
 public class MainMenuViewModel : ViewModelBase {
-    private IMenuItemViewModel _selectedMenuItem;
+    private IMenuItemViewModel? _selectedMenuItem;
 
     public MainMenuViewModel() {
         this.ClientMenuItem = new ClientMenuItemViewModel(this);
@@ -21,7 +21,7 @@ public class MainMenuViewModel : ViewModelBase {
     public ServerMenuItemViewModel ServerMenuItem { get; }
     public SelectedMenuViewModel SelectedMenu { get; }
 
-    public IMenuItemViewModel SelectedMenuItem {
+    public IMenuItemViewModel? SelectedMenuItem {
         get => this._selectedMenuItem;
         set {
             this.RaiseAndSetIfChanged(ref this._selectedMenuItem, value);

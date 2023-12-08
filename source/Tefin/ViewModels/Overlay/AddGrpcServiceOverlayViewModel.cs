@@ -157,7 +157,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (ok2, _) = await disco.Discover(this.Io);
         if (ok2) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;

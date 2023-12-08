@@ -61,8 +61,8 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead)
                 .ContinueWith(t => {
                     if (t.Exception == null) {
-                        var feature = new WriteClientStreamFeature();
-                        feature.EndCall(resp);
+                        var feature = new EndStreamingFeature();
+                        feature.EndClientStreaming(resp);
                     }
                 });
         }

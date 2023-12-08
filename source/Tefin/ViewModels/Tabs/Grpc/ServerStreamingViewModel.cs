@@ -68,6 +68,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                 var readServerStream = new ReadServerStreamFeature();
                 var callResponse = (ServerStreamingCallResponse)response;
                 callResponse = await readServerStream.CompleteRead(callResponse);
+                var end = new EndStreamingFeature();
+                callResponse = end.EndServerStreaming(callResponse);
+                
                 var model = new StandardResponseViewModel.GrpcStandardResponse() {
                     Headers = callResponse.Headers.Value,
                     Trailers = callResponse.Trailers.Value,

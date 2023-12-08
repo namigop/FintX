@@ -10,9 +10,7 @@ public class WriteClientStreamFeature {
         return response;
         //return ClientStreamingResponse.completeCall(response);
     }
-    public void EndCall(ClientStreamingCallResponse response) {
-        ClientStreamingResponse.completeCall(response);
-    }
+   
 
     public async Task Write(ClientStreamingCallResponse response, object instance) {
         await ClientStreamingResponse.write(response, instance);

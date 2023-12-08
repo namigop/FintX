@@ -46,6 +46,7 @@ public partial class Number : UserControl {
 
     private static decimal? OnCoerceValue(AvaloniaObject arg1, decimal? arg2) {
         var n = (Number)arg1;
+        
         n.Text = arg2.ToString() ?? "0";
         return arg2;
     }

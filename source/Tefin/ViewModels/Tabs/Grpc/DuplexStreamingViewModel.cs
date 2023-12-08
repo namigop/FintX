@@ -47,11 +47,13 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private void OnCallResponseChanged(ViewModelBase obj) {
         var reqVm = (DuplexStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
+        if (resp == null)
+            return;
         
         if (resp.WriteCompleted) {
             Task<object> CompleteRead() {
-                var feature = new WriteDuplexStreamFeature();
-                var respWithStatus = feature.EndCall(resp);
+                var feature = new EndStreamingFeature();
+                var respWithStatus = feature.EndDuplexStreaming(resp);
 
                 object model = new StandardResponseViewModel.GrpcStandardResponse() {
                     Headers = respWithStatus.Headers.Value,

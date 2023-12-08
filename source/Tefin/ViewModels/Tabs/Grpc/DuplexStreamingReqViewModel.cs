@@ -89,12 +89,16 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     private async Task OnWrite() {
         try {
-            var resp = this.CallResponse;
+            if (this.CallResponse == null) {
+                Io.Log.Warn("Unable to write to the request stream");
+                return;
+            }
+            
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
 
             var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-            await writer.Write(resp, node.Value);
+            await writer.Write(this.CallResponse, node.Value);
         }
         finally {
             this.IsBusy = false;

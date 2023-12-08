@@ -13,7 +13,7 @@ public class CancellationTokenEditor : TypeEditorBase<CancellationToken> {
 
     public CancellationTokenEditor(TypeBaseNode node) : base(node) {
         this.SubscribeTo(x => ((CancellationTokenEditor)x).IsNone, this.OnIsNoneChanged);
-        var token = (CancellationToken)((CancellationTokenNode)this.Node).Value;
+        var token = (CancellationToken)(((CancellationTokenNode)this.Node).Value ?? CancellationToken.None);
         this._isNone = token == CancellationToken.None;
     }
 

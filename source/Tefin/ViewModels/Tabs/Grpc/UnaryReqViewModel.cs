@@ -61,11 +61,10 @@ public class UnaryReqViewModel : ViewModelBase {
 
         if (this._generateFullTree) {
             var counter = 0;
-            List<object> mParams = new();
             foreach (var paramInfo in methodParams) {
                 var instance = hasValues ? this.MethodParameterInstances[counter] : TypeBuilder.getDefault(paramInfo.ParameterType, true, FSharpOption<object>.None, 0).Item2;
-                TypeInfo? p = new(paramInfo, instance);
-                var paramNode = TypeNodeBuilder.Create(paramInfo.Name, paramInfo.ParameterType, p, new Dictionary<string, int>(), instance, null);
+                var typeInfo = new TypeInfo(paramInfo, instance);
+                var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo, new Dictionary<string, int>(), instance, null);
                 paramNode.Init();
                 methodNode.Items.Add(paramNode);
                 counter += 1;
