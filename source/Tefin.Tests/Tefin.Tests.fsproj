@@ -13,8 +13,8 @@
         <Compile Include="ClassTypeTests.fs" />
         <Compile Include="CollectionTypesTest.fs" />
         <Compile Include="GrpcMethodInfoTest.fs" />
-        <Compile Include="TypeBuilderTest.fs" />
         <Compile Include="TimeItTest.fs" />
+        <Compile Include="NodeBuilderTest.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
@@ -33,7 +33,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Desktop\Avalonia\Tefin.Core\Tefin.Core.fsproj" />
       <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
       <ProjectReference Include="..\Tefin\Tefin.csproj" />
     </ItemGroup>
