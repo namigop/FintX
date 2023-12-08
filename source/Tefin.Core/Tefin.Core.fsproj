@@ -49,10 +49,4 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="Tefin.Core">
-        <HintPath>..\..\..\Tefin\bin\Debug\net8.0\Tefin.Core.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
 </Project>

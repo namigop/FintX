@@ -51,25 +51,40 @@ module CallPipeline =
                             Steps = [step.Name, sw.Elapsed] |> List.append ctx.Steps }}
 
         //execute all steps
-        let rec run (steps:Step array) pos ctx = task {
-            if (pos = steps.Length) then
-                //last step
+        // let rec run (steps:Step array) pos ctx = task {
+        //     if (pos = steps.Length) then
+        //         //last step
+        //         let sum = ctx.Steps |> List.sumBy (fun (_, ts) -> ts.TotalMilliseconds)
+        //         let ok = Res.isOk ctx.Response
+        //         if not ok then
+        //             ctx.Io.Value.Log.Error $"{Res.getError ctx.Response}"
+        //
+        //         return { ctx with Elapsed = Some (TimeSpan.FromMilliseconds sum)
+        //                           Success = Res.isOk ctx.Response  }
+        //     else
+        //         let! updatedContext = execStep (steps[pos]) ctx
+        //         if updatedContext.Success then
+        //             let! r = run steps (pos + 1) updatedContext
+        //             return r
+        //         else
+        //             return updatedContext
+        // }
+        //  return! run steps 0 execContext
+        
+        let lastStep = (Array.length steps) - 1
+        let mutable ctx = execContext       
+        for i in [0 .. lastStep] do            
+            if lastStep = i then
                 let sum = ctx.Steps |> List.sumBy (fun (_, ts) -> ts.TotalMilliseconds)
                 let ok = Res.isOk ctx.Response
                 if not ok then
                     ctx.Io.Value.Log.Error $"{Res.getError ctx.Response}"
-
-                return { ctx with Elapsed = Some (TimeSpan.FromMilliseconds sum)
+                    
+                ctx <- { ctx with Elapsed = Some (TimeSpan.FromMilliseconds sum)
                                   Success = Res.isOk ctx.Response  }
             else
-                let! updatedContext = execStep (steps[pos]) ctx
-                if updatedContext.Success then
-                    let! r = run steps (pos + 1) updatedContext
-                    return r
-                else
-                    return updatedContext
-        }
-
-        return! run steps 0 execContext
-
+                let! updatedContext = execStep (steps[i]) ctx
+                ctx <- updatedContext
+        
+        return ctx
     }
