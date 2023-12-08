@@ -15,5 +15,5 @@ public interface ITypeInfo {
 
     object? GetValue(object parent);
 
-    void SetValue(object parentInstance, object value);
+    void SetValue(object parentInstance, object? value);
 }

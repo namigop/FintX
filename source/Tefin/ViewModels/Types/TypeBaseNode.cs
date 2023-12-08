@@ -71,8 +71,15 @@ public abstract class TypeBaseNode : NodeBase {
     }
 
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
-        var parentInstance = this.Parent?.Value;
-        if (parentInstance != null && newValue != null)
-            this._typeInfo?.SetValue(parentInstance, newValue);
+        try {
+            var parentInstance = this.Parent?.Value;
+            if (parentInstance != null)
+                this._typeInfo?.SetValue(parentInstance, newValue);
+        }
+        catch (TargetInvocationException exc) {
+            if (exc.InnerException != null)
+                throw exc.InnerException;
+            throw;
+        }
     }
 }

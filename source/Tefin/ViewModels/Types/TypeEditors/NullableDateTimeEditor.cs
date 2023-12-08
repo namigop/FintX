@@ -1,5 +1,7 @@
 using ReactiveUI;
 
+using Tefin.Utils;
+
 namespace Tefin.ViewModels.Types.TypeEditors;
 
 public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
@@ -49,6 +51,12 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
     }
 
     public override void Reset() {
-        this.DateTimeText = $"{this.TempValue:O}";
+        if (this.TempValue != null)
+            this.DateTimeText = $"{this.TempValue:O}";
+        else {
+            this.TempValue = (this.IsUtc ? DateTime.UtcNow : DateTime.Now).Then(d => d.AddDays(1));
+            this.DateTimeText = $"{this.TempValue:O}";
+
+        }
     }
 }

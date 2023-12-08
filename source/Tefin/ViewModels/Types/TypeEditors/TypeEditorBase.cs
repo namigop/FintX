@@ -56,11 +56,17 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
         try {
             this.Node.Value = this.TempValue;
         }
+        catch (ArgumentNullException exc) {
+            this.Reset();
+            this.Node.Value = this.TempValue;
+            this.Io.Log.Error(exc);
+            this.IsNull = this.TempValue is null;
+        }
         catch (Exception exc) {
             this.Reset();
             this.Io.Log.Error(exc);
         }
-
+       
         this.HasChanges = false;
     }
 
