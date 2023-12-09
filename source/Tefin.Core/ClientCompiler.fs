@@ -109,6 +109,6 @@ module ClientCompiler =
     let getTypes (bytes: byte array) =
         use ms = new MemoryStream(bytes)
         ms.Seek(0, SeekOrigin.Begin) |>ignore
-        let context = SimpleAssemblyLoadContext()
+        let context = LoadContext()
         let assembly = context.LoadFromStream ms
         assembly.GetTypes()

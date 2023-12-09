@@ -20,6 +20,10 @@
                             <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
                     </Button>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
+                    <ToggleSwitch IsChecked="{Binding ReqViewModel.ShowTreeEditor}"
+                                  OnContent="Tree" OffContent="Json"
+                                  Margin="0 0 0 0"></ToggleSwitch>
                 </StackPanel>
 
             </Grid>

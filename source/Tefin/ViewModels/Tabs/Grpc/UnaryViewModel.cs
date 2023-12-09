@@ -16,15 +16,27 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
+    private UnaryReqViewModel _reqViewModel;
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
+        
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged );
     }
 
-    public UnaryReqViewModel ReqViewModel { get; set; }
+    private void OnShowTreeEditorChanged(ViewModelBase obj) {
+        this.ReqViewModel = null!;
+        this.ReqViewModel = (UnaryReqViewModel)obj;
+        //this.RaisePropertyChanged(nameof(this.ReqViewModel));
+    }
+
+    public UnaryReqViewModel ReqViewModel {
+        get => this._reqViewModel;
+        private set => this.RaiseAndSetIfChanged(ref _reqViewModel, value);
+    }
     public UnaryRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
 

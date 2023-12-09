@@ -12,6 +12,7 @@ using Microsoft.FSharp.Core;
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
+using Tefin.Grpc.Dynamic;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeNodeBuilders;
@@ -23,60 +24,74 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryReqViewModel : ViewModelBase {
-    private readonly bool _generateFullTree;
+    private readonly object?[] _methodParameterInstances;
 
-    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) {
-        this.MethodParameterInstances = methodParameterInstances ?? new List<object>();
-        this._generateFullTree = generateFullTree;
+    //private readonly bool _generateFullTree;
+    private bool _showTreeEditor;
+
+    private readonly JsonRequestEditorViewModel _jsonEditor;
+    private readonly TreeRequestEditorViewModel _treeEditor;
+    private IRequestEditorViewModel _requestEditor;
+
+    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
+        TreeRequestEditorViewModel treeEditor;
+        this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
+        this._showTreeEditor = true;
+        this.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged);
         this.MethodInfo = methodInfo;
-        this.MethodTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
-            Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
-                    new GridLength(1, GridUnitType.Star)), 
-                    x => x.Items,
-                    x => x.Items.Any(),
-                    x => x.IsExpanded)
-            }
-        };
-
-        this.Items.Add(new EmptyNode());
+        this._jsonEditor = new JsonRequestEditorViewModel(methodInfo);
+        this._treeEditor = new TreeRequestEditorViewModel(methodInfo);
+        this._requestEditor = this._treeEditor;
     }
 
-    public ObservableCollection<IExplorerItem> Items { get; } = new();
+    public IRequestEditorViewModel RequestEditor {
+        get => this._requestEditor;
+        private set => this.RaiseAndSetIfChanged(ref _requestEditor, value);
+    }
+
+    public bool ShowTreeEditor {
+        get => this._showTreeEditor;
+        set => this.RaiseAndSetIfChanged(ref _showTreeEditor, value);
+    }
+ 
     public MethodInfo MethodInfo { get; }
-    public List<object> MethodParameterInstances { get; }
 
-    public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
 
-    public object[] GetMethodParameters() {
-        return this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
+    public object?[] GetMethodParameters() {
+        var (ok, p) = this.RequestEditor.GetParameters();
+        if (ok) {
+            return p;
+        }
+
+        return Array.Empty<object>();
     }
 
     public void Init() {
-        if (this.Items.FirstOrDefault() is not EmptyNode) return;
+        this._requestEditor.Show(this._methodParameterInstances);
+    }
 
-        this.Items.Clear();
-        var methodParams = this.MethodInfo.GetParameters();
-        var hasValues = this.MethodParameterInstances.Count == methodParams.Length;
 
-        var methodNode = new MethodInfoNode(this.MethodInfo);
-        this.Items.Add(methodNode);
-
-        if (this._generateFullTree) {
-            var counter = 0;
-            foreach (var paramInfo in methodParams) {
-                var instance = hasValues ? this.MethodParameterInstances[counter] : TypeBuilder.getDefault(paramInfo.ParameterType, true, FSharpOption<object>.None, 0).Item2;
-                var typeInfo = new TypeInfo(paramInfo, instance);
-                var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo, new Dictionary<string, int>(), instance, null);
-                paramNode.Init();
-                methodNode.Items.Add(paramNode);
-                counter += 1;
-
-                if (!hasValues)
-                    this.MethodParameterInstances.Add(instance);
-            }
+    private void OnShowTreeEditorChanged(ViewModelBase obj) {
+        var vm = (UnaryReqViewModel)obj;
+        if (vm.ShowTreeEditor) {
+            this.ShowAsTree();
         }
+        else {
+            this.ShowAsJson();
+        }
+    }
 
-        this.RaisePropertyChanged(nameof(this.Items));
+    private void ShowAsJson() {
+        var (ok, parameters) = this._requestEditor.GetParameters();
+        this.RequestEditor = this._jsonEditor;
+        if (ok)
+            this.RequestEditor.Show(parameters);
+    }
+
+    private void ShowAsTree() {
+        var (ok, parameters) = this._requestEditor.GetParameters();
+        this.RequestEditor = this._treeEditor;
+        if (ok)
+            this.RequestEditor.Show(parameters);
     }
 }

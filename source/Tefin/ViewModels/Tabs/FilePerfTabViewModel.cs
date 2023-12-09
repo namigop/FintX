@@ -1,13 +1,13 @@
 #region
 
 using Tefin.ViewModels.Explorer;
+using Tefin.Core;
 
 #endregion
 
 namespace Tefin.ViewModels.Tabs;
 
 public class FilePerfTabViewModel : TabViewModelBase {
-
     public FilePerfTabViewModel(FilePerfNode item) : base(item) {
     }
 

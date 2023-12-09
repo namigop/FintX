@@ -19,11 +19,11 @@ let ``Can serialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let json = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
-    Assert.NotNull json
+    let jsonRet = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
+    Assert.True (Res.isOk jsonRet)
    
     //Validate the generate json
-    let jObj = JObject.Parse json
+    let jObj = JObject.Parse (Res.getValue jsonRet)
     let argToken = jObj.SelectToken "$.arg"
     Assert.True argToken.HasValues
    
@@ -53,9 +53,9 @@ let ``Can deserialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let json = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
-    Assert.NotNull json
-    let genInstance = DynamicTypes.fromJson_unary mi json
+    let jsonRet = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
+    Assert.True(Res.isOk jsonRet)
+    let genInstance = DynamicTypes.fromJson_unary mi (Res.getValue jsonRet)
     Assert.NotNull genInstance
     
     let argNames = [ "intArg"; "stringArg"; "doubleArg"]
@@ -75,5 +75,3 @@ let ``Can deserialize methodArgs tree`` () =
     let a = Instance.indirectSerialize typeof<Test1> genTest1
     let b = Instance.indirectSerialize typeof<Test1> test1
     Assert.Equal(b,a)
-    
-    ()

@@ -2,10 +2,10 @@
 <!-- syntax definition for Json by alek kowalczyk -->
 <SyntaxDefinition name="Json" extensions=".json" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
 	<Color name="Bool" foreground="#638CB3" exampleText="true | false" />
-	<Color name="Number" foreground="#638CB3" exampleText="3.14" />
-	<Color name="String" foreground="#9EC0E3" exampleText="" />
+	<Color name="Number" foreground="#C2A374" exampleText="3.14" />  <!-- #638CB3  -->
+	<Color name="String" foreground="#59A5AD" exampleText="" />
 	<Color name="Null" foreground="#676868" exampleText="" />
-	<Color name="FieldName" foreground="#8ED689" />
+	<Color name="FieldName" foreground="#AA83C3" />  <!-- #8ED689 :greenish -->
 	<Color name="Punctuation" foreground="#CAD1D8" />
 	<Color name="Comment" foreground="#676868" />
 
