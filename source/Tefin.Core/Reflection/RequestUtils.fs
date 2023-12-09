@@ -25,9 +25,9 @@ module RequestUtils =
                generatedTypes.Add(className, genType)
                genType  
                
-    let emitRequestClass  (methodInfo:MethodInfo) =
+    let emitRequestClass (prefix:string)  (methodInfo:MethodInfo) =
         let getClassName() =
-           let className = $"Request__{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
+           let className = $"{prefix}_Request__{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
            className
         let getProperties() =
            methodInfo.GetParameters()

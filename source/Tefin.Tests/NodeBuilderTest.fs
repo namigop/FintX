@@ -92,7 +92,7 @@ let ``Can build class object tree`` () =
     
     
 [<Fact>]
-let ``Can edit class object tree`` () =
+let ``Can edit class object tree`` () =    
     let (node, typeInfo, instance) = buildNode<Test1> "RunTest1"
     let target = Test1(
         BoolType = true,

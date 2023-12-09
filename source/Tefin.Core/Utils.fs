@@ -139,24 +139,7 @@ let cache fn =
             let value = fn c
             dict.Add(c, value)
             value
-
-let jsonSerialize<'T when 'T:equality>(objToSerialize:'T) =
-   if not (objToSerialize = Unchecked.defaultof<'T>) then
-      let json = JsonConvert.SerializeObject(objToSerialize, Formatting.Indented)
-      json
-   else
-      ""
-let jsonDeserialize<'T>(json:string) =
-   try
-      let settings = JsonSerializerSettings()
-      //settings.Converters.Add(new ByteStringConverter());
-      let obj = JsonConvert.DeserializeObject<'T>(json, settings)
-      obj
-   with
-   | exc ->
-       Console.WriteLine (exc.ToString())
-       Unchecked.defaultof<'T>
-       
+        
 let openBrowser(url:string) =
     if isLinux() then
         Process.Start ("xdg-open", url)

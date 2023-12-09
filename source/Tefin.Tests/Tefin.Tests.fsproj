@@ -15,6 +15,7 @@
         <Compile Include="GrpcMethodInfoTest.fs" />
         <Compile Include="TimeItTest.fs" />
         <Compile Include="NodeBuilderTest.fs" />
+        <Compile Include="SerDeserTests.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

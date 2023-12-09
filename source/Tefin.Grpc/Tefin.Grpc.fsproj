@@ -29,6 +29,7 @@
         <Compile Include="CallClientStreaming.fs" />
         <Compile Include="CallDuplexStreaming.fs" />
         <Compile Include="Startup.fs" />
+        <Compile Include="DynamicTypes.fs" />
     </ItemGroup>
 
     <ItemGroup>

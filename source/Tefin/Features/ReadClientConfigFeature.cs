@@ -13,6 +13,6 @@ public class ReadClientConfigFeature {
 
     public ProjectTypes.ClientConfig Read() {
         var json = this._io.File.ReadAllText(this._clientConfigFile);
-        return Core.Utils.jsonDeserialize<ProjectTypes.ClientConfig>(json);
+        return Instance.jsonDeserialize<ProjectTypes.ClientConfig>(json);
     }
 }

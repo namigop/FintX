@@ -14,7 +14,7 @@ type AddClientRequest =
 module Project =
     let loadClient (clientPath: string) =
         let configFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)
-        let config = Utils.jsonDeserialize<ClientConfig> (File.ReadAllText configFile)
+        let config = Instance.jsonDeserialize<ClientConfig> (File.ReadAllText configFile)
 
         let codePath = Path.Combine(clientPath, "code")
         let files = Directory.GetFiles(codePath, "*.*")
@@ -62,7 +62,7 @@ module Project =
                 else
                     clientConfigFile, oldClientPath
 
-            let json = Utils.jsonSerialize clientConfig
+            let json = Instance.jsonSerialize clientConfig
             do! io.File.WriteAllTextAsync file json
 
             let clientGroup = loadClient filePath
