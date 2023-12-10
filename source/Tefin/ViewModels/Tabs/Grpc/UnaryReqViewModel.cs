@@ -57,13 +57,8 @@ public class UnaryReqViewModel : ViewModelBase {
     public MethodInfo MethodInfo { get; }
 
 
-    public object?[] GetMethodParameters() {
-        var (ok, p) = this.RequestEditor.GetParameters();
-        if (ok) {
-            return p;
-        }
-
-        return Array.Empty<object>();
+    public (bool, object?[]) GetMethodParameters() {
+        return this.RequestEditor.GetParameters();
     }
 
     public void Init() {

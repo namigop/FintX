@@ -49,34 +49,35 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         try {
             this.RespViewModel.Init();
             var mi = this.ReqViewModel.MethodInfo;
-            var mParams = this.ReqViewModel.GetMethodParameters();
-            
-            var clientConfig = this.Client.Config.Value;
-            var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
-            var (ok, resp) = await feature.Run();
-            var (_, response, context) = resp.OkayOrFailed();
-            this.IsBusy = false;
-            
-            this.RespViewModel.Show(ok, response, context);
-            await this.RespViewModel.SetupServerStreamNode(response);
-            await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
-            
-            var elapsed = DateTime.Now - context.StartTime;
-            this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
+            var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
+            if (paramOk) {
+                var clientConfig = this.Client.Config.Value;
+                var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
+                var (ok, resp) = await feature.Run();
+                var (_, response, context) = resp.OkayOrFailed();
+                this.IsBusy = false;
 
-            async Task<object> CompleteRead() {
-                var readServerStream = new ReadServerStreamFeature();
-                var callResponse = (ServerStreamingCallResponse)response;
-                callResponse = await readServerStream.CompleteRead(callResponse);
-                var end = new EndStreamingFeature();
-                callResponse = end.EndServerStreaming(callResponse);
-                
-                var model = new StandardResponseViewModel.GrpcStandardResponse() {
-                    Headers = callResponse.Headers.Value,
-                    Trailers = callResponse.Trailers.Value,
-                    Status = callResponse.Status.Value
-                };
-                return model;
+                this.RespViewModel.Show(ok, response, context);
+                await this.RespViewModel.SetupServerStreamNode(response);
+                await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+
+                var elapsed = DateTime.Now - context.StartTime;
+                this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
+
+                async Task<object> CompleteRead() {
+                    var readServerStream = new ReadServerStreamFeature();
+                    var callResponse = (ServerStreamingCallResponse)response;
+                    callResponse = await readServerStream.CompleteRead(callResponse);
+                    var end = new EndStreamingFeature();
+                    callResponse = end.EndServerStreaming(callResponse);
+
+                    var model = new StandardResponseViewModel.GrpcStandardResponse() {
+                        Headers = callResponse.Headers.Value,
+                        Trailers = callResponse.Trailers.Value,
+                        Status = callResponse.Status.Value
+                    };
+                    return model;
+                }
             }
         }
         finally {

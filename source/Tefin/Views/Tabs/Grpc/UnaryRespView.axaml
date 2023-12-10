@@ -19,11 +19,6 @@
                             <ContentControl.DataTemplates>
                                 <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
                             </ContentControl.DataTemplates>
-                            <!-- <ContentControl.ContextFlyout> -->
-                            <!--     <Flyout> -->
-                            <!--         <TextBlock Text="sdf"></TextBlock> -->
-                            <!--     </Flyout> -->
-                            <!-- </ContentControl.ContextFlyout> -->
                         </ContentControl>
                     </DataTemplate>
                     <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">

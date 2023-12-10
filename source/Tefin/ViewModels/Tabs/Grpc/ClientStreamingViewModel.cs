@@ -73,15 +73,15 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         try {
             this.RespViewModel.Init();
             var mi = this.ReqViewModel.MethodInfo;
-            var mParams = this.ReqViewModel.GetMethodParameters();
-            var clientConfig = this.Client.Config.Value;
-            var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
-            var (ok, resp) = await feature.Run();
-            var (_, response, context) = resp.OkayOrFailed();
-            if (ok)
-                this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
-
-            this.IsBusy = false;
+            var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
+            if (paramOk) {
+                var clientConfig = this.Client.Config.Value;
+                var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
+                var (ok, resp) = await feature.Run();
+                var (_, response, context) = resp.OkayOrFailed();
+                if (ok)
+                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
+            }
         }
         finally {
             this.IsBusy = false;
