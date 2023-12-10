@@ -1,6 +1,7 @@
 namespace Tefin.Core.Reflection
 
 open System.Collections.Generic
+open Grpc.Core
 open Tefin.Core.Reflection
 open Tefin.Core.Interop
 open System
@@ -39,7 +40,7 @@ module ResponseUtils =
                 type2
     let emitUnaryResponse =
         let generatedTypes = Dictionary<TypeKey, Type>()
-        fun (methodInfo:MethodInfo) isContainerForError ->
+        fun (methodInfo:MethodInfo) (isAsync:bool) isContainerForError ->
             let className = $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
             let ok, v = generatedTypes.TryGetValue( { ClassName = className; IsErrorContainer = isContainerForError})
             if ok then v
@@ -52,12 +53,22 @@ module ResponseUtils =
                         methodInfo.ReturnType.GetGenericArguments().[0]
                     else
                         methodInfo.ReturnType
+                let propInfos =
+                    if isAsync then
+                        [| {IsMethod = false; Name = "Response"; Type = responseType }
+                           {IsMethod = false; Name = "Headers"; Type = typeof<Metadata> }
+                           {IsMethod = false; Name = "Trailers"; Type = typeof<Metadata> }
+                           {IsMethod = false; Name = "Status"; Type = typeof<Status> }
+                            |]
+                    else
+                        [| {IsMethod = false; Name = "Response"; Type = responseType } |]
                 let genType =
                     ClassGen.create
                         assemblyName
                         moduleName
                         className
-                        [| {IsMethod = false; Name = "Response"; Type = responseType } |]
+                        propInfos
+                        
                 let key = {ClassName = className; IsErrorContainer = isContainerForError}
                 generatedTypes.Add(key, genType)
                 genType

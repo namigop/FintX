@@ -2,6 +2,7 @@ namespace Tefin.Grpc.Execution
 
 open System
 open System.Reflection
+open Grpc.Core
 open Tefin.Core.Execution
 open Tefin.Core.Interop
 open System.Threading.Tasks
@@ -38,12 +39,32 @@ module UnaryResponse =
             return resultProperty.GetValue(task)
         }
 
+     
     let private wrapResponse (methodInfo: MethodInfo) (resp: obj) (isError: bool) =
         task {
-            let wrapperType = ResponseUtils.emitUnaryResponse methodInfo isError
+            let isAsync = methodInfo.ReturnType.IsGenericType
+            let wrapperType = ResponseUtils.emitUnaryResponse methodInfo isAsync isError
             let wrapperInst = Activator.CreateInstance(wrapperType)
-            let prop = wrapperType.GetProperty("Response")
-            prop.SetValue(wrapperInst, resp)
+           
+            if (isAsync) then
+                let unaryAsyncCall = resp
+                let! actualResponse = awaitCall methodInfo unaryAsyncCall
+                let respHeadersPi = methodInfo.ReturnType.GetProperty("ResponseHeadersAsync")
+                let getStatusMi = methodInfo.ReturnType.GetMethod("GetStatus")
+                let getTrailersMi = methodInfo.ReturnType.GetMethod("GetTrailers")                
+                let responsePi = wrapperType.GetProperty("Response")
+                
+                responsePi.SetValue(wrapperInst, actualResponse)
+                let! headers = (respHeadersPi.GetValue(unaryAsyncCall)) :?> Task<Metadata>
+                let trailers = (getTrailersMi.Invoke(unaryAsyncCall, null)) :?> Metadata
+                let status = (getStatusMi.Invoke(unaryAsyncCall, null)) :?> Status
+                wrapperType.GetProperty("Headers").SetValue(wrapperInst, headers)
+                wrapperType.GetProperty("Trailers").SetValue(wrapperInst, trailers)
+                wrapperType.GetProperty("Status").SetValue(wrapperInst, status)
+            else
+                let prop = wrapperType.GetProperty("Response")
+                prop.SetValue(wrapperInst, resp)
+            
             return wrapperInst
         }
 
