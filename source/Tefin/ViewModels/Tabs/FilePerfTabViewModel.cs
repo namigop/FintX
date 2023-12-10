@@ -1,7 +1,6 @@
 #region
 
 using Tefin.ViewModels.Explorer;
-using Tefin.Core;
 
 #endregion
 

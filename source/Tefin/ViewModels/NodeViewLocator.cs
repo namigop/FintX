@@ -4,7 +4,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 
 using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Tabs.Grpc;
 
 #endregion
 

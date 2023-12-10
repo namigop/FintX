@@ -29,28 +29,16 @@
                         <Button Command="{Binding EndWriteCommand}" Classes="MenuButton" ToolTip.Tip="Finish writing to the request stream">
                             <TextBlock Text="End write"></TextBlock>
                         </Button>
+                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
+                        <ToggleSwitch IsChecked="{Binding IsShowingClientStreamTree}"
+                                      OnContent="Tree" OffContent="Json"
+                                      Margin="0 0 0 0"></ToggleSwitch>
                     </StackPanel>
                 </Border>
-                <TreeDataGrid Source="{Binding StreamTree}" ShowColumnHeaders="False" x:Name="TreeDgStream"
-                              Grid.Row="1"
-                              VerticalAlignment="Stretch">
-                    <TreeDataGrid.Resources>
-                        <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
-                            <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                                <ContentControl.DataTemplates>
-                                    <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
-                                </ContentControl.DataTemplates>
-                            </ContentControl>
-                        </DataTemplate>
-                        <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">
-                            <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                                <ContentControl.DataTemplates>
-                                    <viewModels:NodeEditViewLocator /> <!-- will load *NodeEditView.axaml -->
-                                </ContentControl.DataTemplates>
-                            </ContentControl>
-                        </DataTemplate>
-                    </TreeDataGrid.Resources>
-                </TreeDataGrid>
+                
+                <ContentControl Content="{Binding ClientStreamEditor}" Grid.Row="1" />
+                
+                
                 <TextBlock Text="Click run to enable writing to the client stream" FontSize="16" Opacity="0.5"  Grid.Row="0" Grid.RowSpan="2"
                            IsVisible="{Binding !CanWrite}"
                            IsHitTestVisible="False"

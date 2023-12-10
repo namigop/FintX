@@ -1,23 +1,8 @@
 #region
 
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
-
-using Microsoft.FSharp.Core;
-
 using ReactiveUI;
-
-using Tefin.Core.Reflection;
-using Tefin.Grpc.Dynamic;
-using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Types;
-using Tefin.ViewModels.Types.TypeNodeBuilders;
-
-using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 
 #endregion
 

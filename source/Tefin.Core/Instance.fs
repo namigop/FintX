@@ -21,15 +21,18 @@ module Instance =
         settings
 
     let jsonSerialize<'T when 'T: equality> (objToSerialize: 'T) =
-        if not (objToSerialize = Unchecked.defaultof<'T>) then
-            use sw = new StringWriter()
-            use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation =4)
-            let ser = JsonSerializer.CreateDefault()
-            ser.Serialize(jw, objToSerialize)
-            let json = sw.ToString()
-            //let json = JsonConvert.SerializeObject(objToSerialize, Formatting.Indented)
-            json
-        else
+        try
+            if not (objToSerialize = Unchecked.defaultof<'T>) then
+                use sw = new StringWriter()
+                use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation =4)
+                let ser = JsonSerializer.CreateDefault()
+                ser.Serialize(jw, objToSerialize)
+                let json = sw.ToString()                
+                json
+            else
+                ""
+        with exc ->
+            Log.logError (exc.ToString())
             ""
 
 
@@ -38,8 +41,7 @@ module Instance =
             let obj = JsonConvert.DeserializeObject<'T>(json, jsonSettings)
             obj
         with exc ->
-            Log.logError (exc.ToString())
-            //Console.WriteLine(exc.ToString())
+            Log.logError (exc.ToString())            
             Unchecked.defaultof<'T>
 
     //this is just a marker type
