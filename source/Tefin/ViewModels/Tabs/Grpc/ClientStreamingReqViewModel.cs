@@ -22,8 +22,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
 
-    public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
-        methodParameterInstances) {
+    public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) 
+        : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
@@ -65,8 +65,6 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
 
-        streamNode.Items.CollectionChanged += (ss, args) => {
-        };
         var (ok, reqInstance) = TypeBuilder.getDefault(response.CallInfo.RequestItemType, true, none<object>(), 0);
         if (ok) {
             this.CanWrite = true;

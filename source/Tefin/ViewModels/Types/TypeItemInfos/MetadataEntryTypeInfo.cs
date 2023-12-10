@@ -27,7 +27,7 @@ public class MetadataEntryTypeInfo : ITypeInfo {
         return pi?.GetValue(parentInstance, new object[] { this._index });
     }
 
-    public void SetValue(object parentInstance, object value) {
+    public void SetValue(object parentInstance, object? value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
         pi?.SetValue(parentInstance, value, new object[] { this._index });
     }

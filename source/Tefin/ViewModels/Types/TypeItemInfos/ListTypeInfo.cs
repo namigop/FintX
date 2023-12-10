@@ -28,7 +28,7 @@ public class ListTypeInfo : ITypeInfo {
         return pi?.GetValue(parentInstance, new object[] { this.Index });
     }
 
-    public virtual void SetValue(object parentInstance, object value) {
+    public virtual void SetValue(object parentInstance, object? value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
         pi?.SetValue(parentInstance, value, new object[] { this.Index });
     }

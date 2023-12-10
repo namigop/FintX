@@ -8,10 +8,10 @@ namespace Tefin.Features;
 
 public class CallClientStreamingFeature {
     private readonly MethodInfo _mi;
-    private readonly object[] _mParams;
+    private readonly object?[] _mParams;
     private readonly ProjectTypes.ClientConfig _cfg;
     private readonly IOResolver _io;
-    public CallClientStreamingFeature(MethodInfo mi, object[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
+    public CallClientStreamingFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
         this._mi = mi;
         this._mParams = mParams;
         this._cfg = cfg;

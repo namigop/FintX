@@ -50,7 +50,7 @@ public class TypeInfo : ITypeInfo {
         return this._propertyInfo!.GetValue(parent);
     }
 
-    public virtual void SetValue(object parentInstance, object value) {
+    public virtual void SetValue(object parentInstance, object? value) {
         if (this._paramInfo != null)
             this._paramInstance = value;
         //throw new Exception("Unable to call SetValue(...) on a ParameterInfo");

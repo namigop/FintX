@@ -19,7 +19,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     private UnaryReqViewModel _reqViewModel;
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
-        this.ReqViewModel = new UnaryReqViewModel(mi, true);
+        this._reqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";

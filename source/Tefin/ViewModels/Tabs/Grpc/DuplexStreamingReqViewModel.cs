@@ -22,8 +22,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private DuplexStreamingCallResponse? _callResponse;
     private bool _canWrite;
 
-    public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object>? methodParameterInstances = null) : base(methodInfo, generateFullTree,
-        methodParameterInstances) {
+    public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
+        : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate

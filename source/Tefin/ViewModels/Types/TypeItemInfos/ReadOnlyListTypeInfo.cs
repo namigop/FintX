@@ -17,7 +17,7 @@ public class ReadOnlyListTypeInfo : TypeInfo {
         this._addRangeMethod = type.GetMethod("AddRange", BindingFlags.Public | BindingFlags.Instance)!;
     }
 
-    public override void SetValue(object parentInstance, object value) {
+    public override void SetValue(object parentInstance, object? value) {
         var parentListValue = this.PropertyInfo!.GetValue(parentInstance);
 
         //Update the list only if we are working on different instances

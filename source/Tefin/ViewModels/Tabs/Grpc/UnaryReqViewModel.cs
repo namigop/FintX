@@ -34,7 +34,6 @@ public class UnaryReqViewModel : ViewModelBase {
     private IRequestEditorViewModel _requestEditor;
 
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
-        TreeRequestEditorViewModel treeEditor;
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
         this._showTreeEditor = true;
         this.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged);
