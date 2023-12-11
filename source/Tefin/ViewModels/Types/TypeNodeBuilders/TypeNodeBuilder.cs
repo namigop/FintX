@@ -1,3 +1,4 @@
+ 
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public static class TypeNodeBuilder {
@@ -5,6 +6,7 @@ public static class TypeNodeBuilder {
 
     static TypeNodeBuilder() {
         NodeBuilders.Add(new CancellationTokenNodeBuilder());
+        NodeBuilders.Add(new ExceptionNodeBuilder());
         NodeBuilders.Add(new ByteStringNodeBuilder());
         NodeBuilders.Add(new ByteArrayNodeBuilder());
         // nodeBuilders.Add(new StreamNodeBuilder());
@@ -20,18 +22,22 @@ public static class TypeNodeBuilder {
 
         // nodeBuilders.Add(new InheritanceNodeBuilder());
         // nodeBuilders.Add(new InterfaceNodeBuilder());
+       
         NodeBuilders.Add(new DefaultNodeBuilder()); //always the last one
     }
-    //
-    // public static TypeBaseNode Create(string name, object instance) {
-    //     return Create(name, instance.GetType(), null, new Dictionary<string, int>(), instance, null);
-    // }
+     
 
     public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         foreach (var builder in NodeBuilders)
-            if (builder.CanHandle(type))
+            if (builder.CanHandle(type)) {
+                try {
                     return builder.Handle(name, type, propInfo, processedTypeNames, instance, parent);
-
+                }
+                catch (Exception exc) {
+                    //continue with other builders
+                }
+            }
+        
         throw new NotSupportedException($"Unable to build a node for {type.FullName}");
     }
 }
