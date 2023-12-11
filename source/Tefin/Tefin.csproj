@@ -317,6 +317,10 @@
           <DependentUpon>ConfigMenuItemView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Types\ExceptionNodeView.axaml.cs">
+          <DependentUpon>ExceptionNodeView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

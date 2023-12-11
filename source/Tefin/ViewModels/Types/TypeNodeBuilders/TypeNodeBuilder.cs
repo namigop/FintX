@@ -1,4 +1,8 @@
  
+using System.Diagnostics;
+
+using Tefin.Core;
+
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public static class TypeNodeBuilder {
@@ -34,7 +38,7 @@ public static class TypeNodeBuilder {
                     return builder.Handle(name, type, propInfo, processedTypeNames, instance, parent);
                 }
                 catch (Exception exc) {
-                    //continue with other builders
+                    Resolver.value.Log.Warn(exc.Message);
                 }
             }
         

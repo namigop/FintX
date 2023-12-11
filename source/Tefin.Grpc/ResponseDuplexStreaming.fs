@@ -153,8 +153,17 @@ module DuplexStreamingResponse =
                  }
 
     let completeCall (resp: DuplexStreamingCallResponse) =
-        let status = resp.CallInfo.GetStatus(resp.CallResult)
-        let trailers = resp.CallInfo.GetTrailers(resp.CallResult)
+        let status =
+            try
+                resp.CallInfo.GetStatus(resp.CallResult)
+            with exc ->
+                Status(StatusCode.Unknown, exc.Message)
+                
+        let trailers =
+            try
+                resp.CallInfo.GetTrailers(resp.CallResult) 
+            with exc -> Metadata()
+            
         let d = resp.CallResult :?> IDisposable
         d.Dispose()
 
@@ -202,12 +211,3 @@ module DuplexStreamingResponse =
                   Response = w }
 
             Error t
-
-// let createJson (resp: ResponseClientStreaming) =
-//     match resp with
-//     | Okay k ->
-//         let isError = false
-//         wrapResponse k.MethodInfo k.Response isError
-//     | Error e ->
-//         let isError = true
-//         wrapResponse e.MethodInfo e.Response isError

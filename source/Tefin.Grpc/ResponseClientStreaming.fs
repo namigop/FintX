@@ -126,8 +126,17 @@ module ClientStreamingResponse =
               CallInfo =  callInfo                }
 
     let completeCall (resp: ClientStreamingCallResponse) =
-        let status = resp.CallInfo.GetStatus(resp.CallResult)
-        let trailers = resp.CallInfo.GetTrailers(resp.CallResult)
+        let status =
+            try
+                resp.CallInfo.GetStatus(resp.CallResult)
+            with exc ->
+                Status(StatusCode.Unknown, exc.Message)
+                
+        let trailers =
+            try
+                resp.CallInfo.GetTrailers(resp.CallResult) 
+            with exc -> Metadata()
+           
         let d = resp.CallResult :?> IDisposable
         d.Dispose()
 

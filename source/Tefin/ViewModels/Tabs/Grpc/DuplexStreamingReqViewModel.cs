@@ -1,81 +1,106 @@
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
-
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
 
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
-using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Types;
 
 using static Tefin.Core.Utils;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
-    private DuplexStreamingCallResponse? _callResponse;
+    private DuplexStreamingCallResponse _callResponse;
     private bool _canWrite;
+    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
+    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
 
+    private IListEditorViewModel _clientStreamEditor;
+    private bool _isShowingClientStreamTree;
+    private readonly Type _listType;
+    private readonly Type _requestItemType;
     public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
-        this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
-            Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
-                    new GridLength(1, GridUnitType.Star)), x => x.Items, x => x.Items.Any(), x => x.IsExpanded)
-            }
-        };
-
+         
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
+        this._callResponse = DuplexStreamingCallResponse.Empty();
+        var args = methodInfo.ReturnType.GetGenericArguments();
+        this._requestItemType = args[0];
+        var listType = typeof(List<>);
+        this._listType = listType.MakeGenericType(_requestItemType);
+
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("Request Stream", this._listType);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("Request Stream", this._listType);
+        this._isShowingClientStreamTree = true;
+        this._clientStreamEditor = this._clientStreamTreeEditor;
+
+        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, OnIsShowingClientStreamTreeChanged);
     }
 
-    public DuplexStreamingCallResponse? CallResponse {
+    public DuplexStreamingCallResponse CallResponse {
         get => this._callResponse;
-        set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
+        private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
 
     public ICommand EndWriteCommand { get; }
-
-    public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
-
-    public HierarchicalTreeDataGridSource<IExplorerItem> StreamTree { get; }
-
+ 
     public ICommand WriteCommand { get; }
     public bool CanWrite {
         get => this._canWrite;
         private set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
-
-    public void SetupDuplexStream(DuplexStreamingCallResponse response) {
-        this.CallResponse = response;
-        var listType = typeof(List<>);
-        var constructedListType = listType.MakeGenericType(response.CallInfo.RequestItemType);
-        var stream = Activator.CreateInstance(constructedListType);
-        var streamNode = new ResponseStreamNode("Duplex Stream", constructedListType, null, stream, null);
-        this.StreamItems.Clear();
-        this.StreamItems.Add(streamNode);
-        var (ok, reqInstance) = TypeBuilder.getDefault(response.CallInfo.RequestItemType, true, none<object>(), 0);
-        if (ok) {
-            this.CanWrite = true;
-            streamNode.AddItem(reqInstance);
-        }
-        else
-            this.Io.Log.Error($"Unable to create an instance for {response.CallInfo.RequestItemType}");
+    public bool IsShowingClientStreamTree {
+        get => this._isShowingClientStreamTree;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
+    }
+    public IListEditorViewModel ClientStreamEditor {
+        get => this._clientStreamEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
 
+    public void SetupDuplexStream(DuplexStreamingCallResponse response) {
+        this._callResponse = response;
+        var stream = Activator.CreateInstance(this._listType)!;
+        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
+        if (ok) {
+            var add = this._listType.GetMethod("Add");
+            add!.Invoke(stream, new[] { reqInstance });
+        }
+        else
+            this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
+
+        this._clientStreamEditor.Show(stream!);
+        this.CanWrite = true;
+    }
+    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
+        var vm = (DuplexStreamingReqViewModel)obj;
+        if (vm._isShowingClientStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+    
+    private void ShowAsJson() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamJsonEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
+    }
+
+    private void ShowAsTree() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamTreeEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
+    }
+    
     private async Task OnEndWrite() {
         try {
-            if (this.CallResponse == null) {
-                this.Io.Log.Warn("Unable to write to the duplex stream");
-                return;
-            }
-
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
             this.CallResponse = await writer.CompleteWrite(this.CallResponse);
@@ -94,11 +119,15 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
                 return;
             }
             
+            var resp = this.CallResponse;
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
 
-            var node = (TypeBaseNode)this.StreamItems[0].Items[0];
-            await writer.Write(this.CallResponse, node.Value);
+            foreach (var i in this.ClientStreamEditor.GetListItems())
+                await writer.Write(resp, i);
+        } 
+        catch (Exception exc) {
+            Io.Log.Error(exc);
         }
         finally {
             this.IsBusy = false;

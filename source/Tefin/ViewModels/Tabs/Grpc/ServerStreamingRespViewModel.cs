@@ -1,19 +1,12 @@
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
-
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
 
 using ReactiveUI;
 
 using Tefin.Core.Execution;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
-using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Types;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
@@ -25,6 +18,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
     private bool _isShowingServerStreamTree;
     private IListEditorViewModel _serverStreamEditor;
+    private CancellationTokenSource? _cs;
 
     public ServerStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
         var args = methodInfo.ReturnType.GetGenericArguments();
@@ -32,8 +26,8 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(_responseItemType);
 
-        this._serverStreamTreeEditor = new ListTreeEditorViewModel("Server Stream", this._listType);
-        this._serverStreamJsonEditor = new ListJsonEditorViewModel("Server Stream", this._listType);
+        this._serverStreamTreeEditor = new ListTreeEditorViewModel("response stream", this._listType);
+        this._serverStreamJsonEditor = new ListJsonEditorViewModel("response stream", this._listType);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
         this.EndReadCommand = CreateCommand(OnEndRead);
@@ -45,8 +39,9 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         get;
     }
 
-    private Task OnEndRead() {
-        throw new NotImplementedException();
+    private void OnEndRead() {
+      this._cs?.Cancel();
+      
     }
 
     public bool IsShowingServerStreamTree {
@@ -68,11 +63,17 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var readServerStream = new ReadServerStreamFeature();
 
         try {
-            var cs = new CancellationTokenSource();
+            this._cs = new CancellationTokenSource();
             this.CanRead = true;
-            await foreach (var d in readServerStream.ReadResponseStream(resp, cs.Token)) {
+            await foreach (var d in readServerStream.ReadResponseStream(resp, this._cs.Token)) {
+                if (this._cs.Token.IsCancellationRequested)
+                    break;
+                
                 this.ServerStreamEditor.AddItem(d);
             }
+        }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
         }
         finally {
             this.IsBusy = false;

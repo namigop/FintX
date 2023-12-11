@@ -69,7 +69,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     }
     public ClientStreamingCallResponse CallResponse {
         get => this._callResponse;
-        set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
+        private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
 
     public ICommand EndWriteCommand {
@@ -123,7 +123,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             var resp = this.CallResponse;
             this.IsBusy = true;
             var writer = new WriteClientStreamFeature();
-            //var node = (TypeBaseNode)this.StreamItems[0].Items[0];
+            
             foreach (var i in this.ClientStreamEditor.GetListItems())
                 await writer.Write(resp, i);
         }

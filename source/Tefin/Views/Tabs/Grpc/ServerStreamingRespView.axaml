@@ -45,8 +45,8 @@
                         
                         <Button Command="{Binding EndReadCommand}" 
                                 IsEnabled="{Binding CanRead}"
-                                Classes="MenuButton" ToolTip.Tip="Finish writing to the request stream">
-                            <TextBlock Text="End write"></TextBlock>
+                                Classes="MenuButton" ToolTip.Tip="Stop reading the response stream">
+                            <TextBlock Text="End read"></TextBlock>
                         </Button>
                         <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
                         <ToggleSwitch IsChecked="{Binding IsShowingServerStreamTree}"
@@ -59,7 +59,7 @@
                
                 
                 <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0.25" Margin="10"  >
-                    <TextBlock Text="server stream" FontSize="20"  
+                    <TextBlock Text="response stream" FontSize="20"  
                                IsHitTestVisible="False"
                     />
                     <ProgressBar IsIndeterminate="True" MinWidth="100" Margin="0 0 0 0" IsVisible="{Binding CanRead}"></ProgressBar>

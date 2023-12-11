@@ -73,7 +73,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
 
                     var model = new StandardResponseViewModel.GrpcStandardResponse() {
                         Headers = callResponse.Headers.Value,
-                        Trailers = callResponse.Trailers.Value,
+                        Trailers =   callResponse.Trailers.Value,
                         Status = callResponse.Status.Value
                     };
                     return model;

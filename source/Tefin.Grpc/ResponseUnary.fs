@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open System.Reflection
 open Grpc.Core
+open Grpc.Reflection.V1Alpha
 open Tefin.Core.Execution
 open Tefin.Core.Interop
 open System.Threading.Tasks
@@ -38,16 +39,18 @@ module UnaryResponse =
 
     let awaitCall (methodInfo: MethodInfo) (resp2: obj) =
         task {
-            let responseProperty = methodInfo.ReturnType.GetProperty("ResponseAsync")
-            let task = responseProperty.GetValue(resp2) :?> Task
-            do! task
-            let resultProperty = task.GetType().GetProperty("Result")
-            return resultProperty.GetValue(task)
+            try
+                let responseProperty = methodInfo.ReturnType.GetProperty("ResponseAsync")
+                let task = responseProperty.GetValue(resp2) :?> Task
+                do! task
+                let resultProperty = task.GetType().GetProperty("Result")
+                return resultProperty.GetValue(task) |> Res.ok
+            with exc -> return (Res.failed exc)
         }
 
     let completeAsyncCall  =
         let cache = Dictionary<Type, AsyncUnaryCallInfo>()
-        fun (methodInfo: MethodInfo) (resp: obj) (wrapperType: Type) (wrapperInst: obj) ->
+        fun (methodInfo: MethodInfo) (resp: obj) (wrapperType2: Type) (wrapperInst2: obj) ->
             task {
                 let itemType = methodInfo.ReturnType.GetGenericArguments().[0]
                 let asyncUnaryCallType = typedefof<AsyncUnaryCall<_>>.MakeGenericType itemType
@@ -65,17 +68,38 @@ module UnaryResponse =
                          temp
 
                 let unaryAsyncCall = resp
-                let! actualResponse = awaitCall methodInfo unaryAsyncCall               
+                let! actualResponseOrError = awaitCall methodInfo unaryAsyncCall
+                let wrapperType, wrapperInst, actualResponse = 
+                    match actualResponseOrError with
+                    | Ret.Ok c ->
+                        (wrapperType2, wrapperInst2, c)
+                    | Ret.Error exc ->
+                         let wrapperType = ResponseUtils.emitUnaryResponse methodInfo true true
+                         let wrapperInst = Activator.CreateInstance(wrapperType)
+                         let c = ErrorResponse(Error = exc.Message)
+                         (wrapperType, wrapperInst, c)
+                    
                 let responsePi = wrapperType.GetProperty("Response")
                 responsePi.SetValue(wrapperInst, actualResponse)
                 
-                let! headers = callInfo.ResponseHeadersPropInfo.GetValue(unaryAsyncCall) :?> Task<Metadata>
-                let trailers = callInfo.GetTrailersMethodInfo.Invoke(unaryAsyncCall, null) :?> Metadata
-                let status = callInfo.GetStatusMethodInfo.Invoke(unaryAsyncCall, null) :?> Status
+                let headerProp = wrapperType.GetProperty("Headers")
+                try
+                    let! headers = callInfo.ResponseHeadersPropInfo.GetValue(unaryAsyncCall) :?> Task<Metadata>
+                    headerProp.SetValue(wrapperInst, headers)
+                with _ ->  headerProp.SetValue(wrapperInst, Metadata())
+                
+                let statusProp = wrapperType.GetProperty("Status")
+                try
+                    let status = callInfo.GetStatusMethodInfo.Invoke(unaryAsyncCall, null) :?> Status
+                    statusProp.SetValue(wrapperInst, status)
+                with _ -> ()
+                
+                let trailersProp =wrapperType.GetProperty("Trailers")
+                try
+                    let trailers = callInfo.GetTrailersMethodInfo.Invoke(unaryAsyncCall, null) :?> Metadata
+                    trailersProp.SetValue(wrapperInst, trailers)
+                with _ -> trailersProp.SetValue(wrapperInst, Metadata())                                               
                
-                wrapperType.GetProperty("Headers").SetValue(wrapperInst, headers)
-                wrapperType.GetProperty("Trailers").SetValue(wrapperInst, trailers)
-                wrapperType.GetProperty("Status").SetValue(wrapperInst, status)
                 (unaryAsyncCall :?> IDisposable).Dispose()
                 return wrapperInst
             }
@@ -106,9 +130,13 @@ module UnaryResponse =
 
                 return (Okay t)
             else
-                let err = Res.getError ctx.Response
+                let err =
+                    let exc = Res.getError ctx.Response
+                    match exc with
+                    | :? TargetInvocationException as t ->  t.InnerException.Message
+                    | _ -> exc.Message
 
-                let! w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+                let! w = wrapResponse methodInfo (ErrorResponse(Error = err)) true
 
                 let t: ErrorUnaryResponse =
                     { MethodInfo = methodInfo

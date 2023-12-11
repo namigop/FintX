@@ -3,6 +3,7 @@ using System.Linq;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Threading;
 
 using Tefin.Core.Reflection;
 using Tefin.ViewModels.Explorer;
@@ -39,10 +40,12 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     }
 
     public void AddItem(object instance) {
-        var streamNode = (ResponseStreamNode)this.StreamItems[0];
-        streamNode.AddItem(instance);
-        if (streamNode.Items.Count == 1)
-            streamNode.IsExpanded = true;
+        Dispatcher.UIThread.Post(() => {
+            var streamNode = (ResponseStreamNode)this.StreamItems[0];
+            streamNode.AddItem(instance);
+            if (streamNode.Items.Count == 1)
+                streamNode.IsExpanded = true;
+        });
     }
     public IEnumerable<object> GetListItems() {
         dynamic list = this._listInstance;

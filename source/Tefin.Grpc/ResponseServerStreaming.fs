@@ -120,13 +120,22 @@ module ServerStreamingResponse =
            Status = resp.Status
         }
     let completeCall (resp: ServerStreamingCallResponse) =
-        let status =  resp.CallInfo.GetStatus(resp.CallResult)
-        let trailers = resp.CallInfo.GetTrailers(resp.CallResult)
+        let status =
+            try
+                resp.CallInfo.GetStatus(resp.CallResult)
+            with exc ->
+                Status(StatusCode.Unknown, exc.Message)
+                
+        let trailers =
+            try
+                resp.CallInfo.GetTrailers(resp.CallResult) 
+            with exc -> Metadata()
+            
         let d = resp.CallResult :?> IDisposable
         d.Dispose()
 
         { resp with
-            Trailers = Some trailers
+            Trailers =  Some trailers
             Status = Some status }
 
     let getResponseHeader (okayResp: ServerStreamingCallResponse) =

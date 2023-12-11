@@ -47,7 +47,7 @@
                 
                 <StackPanel Orientation="Vertical"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2"
                             Opacity="0.25" Margin="10">
-                    <TextBlock Text="client stream" FontSize="20"  IsHitTestVisible="False" />
+                    <TextBlock Text="request stream" FontSize="20"  IsHitTestVisible="False" />
                     <ProgressBar IsIndeterminate="True" Height="5" IsVisible="{Binding CanWrite}" MinWidth="100"></ProgressBar>
                 </StackPanel>
             </Grid>
