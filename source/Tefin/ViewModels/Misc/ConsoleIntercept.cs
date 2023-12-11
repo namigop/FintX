@@ -79,4 +79,9 @@ public class ConsoleIntercept : TextWriter {
         //var vertOffset = (this._txtEditor.TextArea.TextView.DefaultLineHeight) * target;
         this._txtEditor.ScrollTo(target, 0);
     }
+
+    public void Clear() {
+        this._sb.Clear();
+        this.Sync();
+    }
 }

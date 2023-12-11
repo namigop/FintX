@@ -10,4 +10,6 @@ public interface IListEditorViewModel {
     public void Show(object listInstance);
 
     void Clear();
+
+    void AddItem(object item);
 }

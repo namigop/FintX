@@ -65,7 +65,7 @@ public abstract class TypeBaseNode : NodeBase {
         var props = t.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead || p.CanWrite)
 
             //ignore all classes under the System.Reflection namespace
-            .Where(p => p.PropertyType.Namespace == null || (p.PropertyType.Namespace != null && !p.PropertyType.Namespace.StartsWith("System.Reflection")))
+            .Where(p => p.PropertyType.Namespace == null || p.PropertyType.Namespace != null && !p.PropertyType.Namespace.StartsWith("System.Reflection"))
             .Where(p => p.PropertyType != typeof(IDictionary<string, object>)).OrderBy(p => p.Name).ToList();
         return props;
     }

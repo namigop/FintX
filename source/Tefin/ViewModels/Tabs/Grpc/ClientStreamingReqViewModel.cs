@@ -12,20 +12,18 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
-    private readonly ClientStreamTreeEditorViewModel _csTreeEditor;
-    private readonly ClientStreamJsonEditorViewModel _csJsonEditor;
-    private readonly ICommand _endWriteCommand;
-    
-    private readonly ICommand _writeCommand;
-    private IListEditorViewModel _csEditorViewModel;
+    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
+    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
+
+    private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
     private readonly Type _listType;
     private readonly Type _requestItemType;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
-        this._writeCommand = this.CreateCommand(this.OnWrite);
-        this._endWriteCommand = this.CreateCommand(this.OnEndWrite);
+        this.WriteCommand = this.CreateCommand(this.OnWrite);
+        this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
         this._callResponse = ClientStreamingCallResponse.Empty();
 
         var args = methodInfo.ReturnType.GetGenericArguments();
@@ -33,10 +31,10 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(_requestItemType);
 
-        this._csTreeEditor = new ClientStreamTreeEditorViewModel(this._listType);
-        this._csJsonEditor = new ClientStreamJsonEditorViewModel(this._listType);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("Client Stream", this._listType);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("Client Stream", this._listType);
         this._isShowingClientStreamTree = true;
-        this._csEditorViewModel = this._csTreeEditor;
+        this._clientStreamEditor = this._clientStreamTreeEditor;
 
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, OnIsShowingClientStreamTreeChanged);
     }
@@ -52,15 +50,15 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     }
 
     private void ShowAsJson() {
-        var (ok, list) = this._csEditorViewModel.GetList();
-        this.ClientStreamEditor = this._csJsonEditor;
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok)
             this.ClientStreamEditor.Show(list);
     }
 
     private void ShowAsTree() {
-        var (ok, list) = this._csEditorViewModel.GetList();
-        this.ClientStreamEditor = this._csTreeEditor;
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok)
             this.ClientStreamEditor.Show(list);
     }
@@ -75,17 +73,16 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public ICommand EndWriteCommand {
-        get => this._endWriteCommand;
+        get;
     }
 
     public ICommand WriteCommand {
-        get => this._writeCommand;
+        get;
     }
 
-
     public IListEditorViewModel ClientStreamEditor {
-        get => this._csEditorViewModel;
-        private set => this.RaiseAndSetIfChanged(ref _csEditorViewModel, value);
+        get => this._clientStreamEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
     public bool CanWrite {
         get => this._canWrite;
@@ -103,7 +100,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         else
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
         
-        this._csEditorViewModel.Show(stream!);
+        this._clientStreamEditor.Show(stream!);
         this.CanWrite = true;
     }
 
@@ -116,7 +113,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
         finally {
             this.CanWrite = false;
-            this._csEditorViewModel.Clear();
+            this._clientStreamEditor.Clear();
             this.IsBusy = false;
         }
     }

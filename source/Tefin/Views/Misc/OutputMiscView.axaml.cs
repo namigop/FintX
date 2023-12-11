@@ -1,7 +1,9 @@
 using System.Xml;
 
+using Avalonia;
 using Avalonia.Controls;
 
+using AvaloniaEdit;
 using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Highlighting.Xshd;
 
@@ -16,29 +18,37 @@ public partial class OutputMiscView : UserControl {
         this.InitializeComponent();
         this.DataContextChanged += this.OnDataContextChanged;
         this.SetupSyntaxHighlighting();
+        this.Editor.TextChanged += OnTextChanged;
+        this.DetachedFromVisualTree += OnDetached;
     }
 
-    public OutputMiscViewModel? ViewModel {
-        get {
-            return this._vm;
+    private void OnTextChanged(object? sender, EventArgs e) {
+        var editor = (TextEditor)sender!;
+        if (string.IsNullOrEmpty(editor.Document.Text)) {
+            if (this._vm != null) {
+                this._vm.Editor.Clear();
+            }
         }
     }
 
+    private void OnDetached(object? sender, VisualTreeAttachmentEventArgs e) {
+        this.Editor.TextChanged -= OnTextChanged;
+    }
+
     private void OnDataContextChanged(object? sender, EventArgs e) {
-        var temp = (((OutputMiscView)sender!)).DataContext;
+        var temp = ((OutputMiscView)sender!).DataContext;
         if (temp != null && this._vm == null) {
             this._vm = (OutputMiscViewModel)temp;
             this._vm.Editor.SetTarget(this.Editor);
+            
         }
     }
 
     private void SetupSyntaxHighlighting() {
-        using (var resource = typeof(OutputMiscView).Assembly.GetManifestResourceStream("Tefin.Resources.log.xshd")) {
-            if (resource != null) {
-                using (var reader = new XmlTextReader(resource)) {
-                    this.Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-                }
-            }
+        using var resource = typeof(OutputMiscView).Assembly.GetManifestResourceStream("Tefin.Resources.log.xshd");
+        if (resource != null) {
+            using var reader = new XmlTextReader(resource);
+            this.Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
         }
     }
 }

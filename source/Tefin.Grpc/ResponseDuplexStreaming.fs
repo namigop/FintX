@@ -1,6 +1,7 @@
 namespace Tefin.Grpc.Execution
 
 open System
+open System.Collections.Generic
 open System.Reflection
 open System.Threading
 open System.Threading.Tasks
@@ -14,44 +15,48 @@ type DuplexStreamingCallInfo =
     { DuplexStreamType: Type
       RequestItemType: Type
       ResponseItemType: Type
-      RequestStream: obj
       GetStatusMethodInfo: MethodInfo
       GetTrailersMethodInfo: MethodInfo
       WriteAsyncMethodInfo: MethodInfo
       MoveNextMethodInfo: MethodInfo
       CompleteAsyncMethodInfo: MethodInfo
       ResponseHeadersAsyncPropInfo: PropertyInfo
-      CurrentPropInfo: PropertyInfo
-      ResponseStream: obj
+      RequestStreamPropInfo : PropertyInfo
+      ResponseStreamPropInfo : PropertyInfo
+      CurrentPropInfo: PropertyInfo }
 
-      CallResult: obj }
+    member this.GetStatus(callResult:obj) =
+        this.GetStatusMethodInfo.Invoke(callResult, null) :?> Status
 
-    member this.GetStatus() =
-        this.GetStatusMethodInfo.Invoke(this.CallResult, null) :?> Status
+    member this.GetTrailers(callResult:obj) =
+        this.GetTrailersMethodInfo.Invoke(callResult, null) :?> Metadata
 
-    member this.GetTrailers() =
-        this.GetTrailersMethodInfo.Invoke(this.CallResult, null) :?> Metadata
+    member this.GetCurrent(responseStream:obj) =
+        this.CurrentPropInfo.GetValue(responseStream)
 
-    member this.GetCurrent() =
-        this.CurrentPropInfo.GetValue(this.ResponseStream)
+    member this.MoveNext(responseStream:obj, token: CancellationToken) =
+        this.MoveNextMethodInfo.Invoke(responseStream, [| token |]) :?> Task<bool>
 
-    member this.MoveNext(token: CancellationToken) =
-        this.MoveNextMethodInfo.Invoke(this.ResponseStream, [| token |]) :?> Task<bool>
-
-    member this.GetResponseHeaders() =
-        this.ResponseHeadersAsyncPropInfo.GetValue(this.CallResult) :?> Task<Metadata>
+    member this.GetResponseHeaders(callResult:obj) =
+        this.ResponseHeadersAsyncPropInfo.GetValue(callResult) :?> Task<Metadata>
 
 type DuplexStreamingCallResponse =
     { Headers: Metadata option
       Status: Status option
       Trailers: Metadata option
       CallInfo: DuplexStreamingCallInfo
+      RequestStream: obj
+      ResponseStream: obj
+      CallResult: obj
       WriteCompleted : bool }
 
     static member Empty() =
         { Headers = None
           Status = None
           Trailers = None
+          RequestStream = Unchecked.defaultof<obj>
+          ResponseStream = Unchecked.defaultof<obj>
+          CallResult = Unchecked.defaultof<obj>
           CallInfo = Unchecked.defaultof<DuplexStreamingCallInfo>
           WriteCompleted = false }
 
@@ -77,59 +82,80 @@ type ResponseDuplexStreaming =
         | Error err -> struct (true, err.Response, err.Context)
 
 module DuplexStreamingResponse =
-    let private wrapResponse (methodInfo: MethodInfo) (resp: obj) (isError: bool) =
-        let args = methodInfo.ReturnType.GetGenericArguments()
-        let requestItemType = args[0]
-        let responseItemType = args[1]
+    let private wrapResponse =
+        let cache = Dictionary<Type, DuplexStreamingCallInfo>()
+        
+        fun  (methodInfo: MethodInfo) (resp: obj) (isError: bool)  ->
+        
+            let args = methodInfo.ReturnType.GetGenericArguments()
+            let requestItemType = args[0]
+            let responseItemType = args[1]
 
-        let duplexStreamType =
-            typedefof<AsyncDuplexStreamingCall<_, _>>
-                .MakeGenericType(requestItemType, responseItemType)
+            let duplexStreamType =
+                typedefof<AsyncDuplexStreamingCall<_, _>>
+                    .MakeGenericType(requestItemType, responseItemType)
 
-        let requestStreamPropInfo = duplexStreamType.GetProperty("RequestStream") //IDuplexStreamWriter<TRequest>
-        let requestStream = requestStreamPropInfo.GetValue(resp)
-        let requestStreamType = requestStream.GetType()
+            let callInfo =
+                let found, temp = cache.TryGetValue duplexStreamType
+                if found then temp
+                else
+                    
+                    let requestStreamPropInfo = duplexStreamType.GetProperty("RequestStream") //IDuplexStreamWriter<TRequest>
+                    let requestStream = requestStreamPropInfo.GetValue(resp)
+                    let requestStreamType = requestStream.GetType()
 
-        let responseStreamType =
-            typedefof<IAsyncStreamReader<_>>.MakeGenericType responseItemType
+                    let responseStreamType =
+                        typedefof<IAsyncStreamReader<_>>.MakeGenericType responseItemType
 
-        let responseStreamPropInfo = duplexStreamType.GetProperty("ResponseStream")
-        let responseStream = responseStreamPropInfo.GetValue(resp)
-        let currentPropInfo = responseStreamType.GetProperty("Current")
-        let moveNextMethodInfo = responseStreamType.GetMethod("MoveNext")
+                    let responseStreamPropInfo = duplexStreamType.GetProperty("ResponseStream")
+                    //let responseStream = responseStreamPropInfo.GetValue(resp)
+                    let currentPropInfo = responseStreamType.GetProperty("Current")
+                    let moveNextMethodInfo = responseStreamType.GetMethod("MoveNext")
 
-        let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
-        let completeMethod = requestStreamType.GetMethod("CompleteAsync")
+                    let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
+                    let completeMethod = requestStreamType.GetMethod("CompleteAsync")
 
-        let getStatusMethodInfo = duplexStreamType.GetMethod("GetStatus")
-        let getTrailersMethodInfo = duplexStreamType.GetMethod("GetTrailers")
+                    let getStatusMethodInfo = duplexStreamType.GetMethod("GetStatus")
+                    let getTrailersMethodInfo = duplexStreamType.GetMethod("GetTrailers")
 
-        let responseHeadersAsyncPropInfo =
-            duplexStreamType.GetProperty("ResponseHeadersAsync")
+                    let responseHeadersAsyncPropInfo =
+                        duplexStreamType.GetProperty("ResponseHeadersAsync")
+                        
+                    let temp =
+                        { DuplexStreamType = duplexStreamType
+                          RequestItemType = requestItemType
+                          ResponseItemType = responseItemType
+                          GetStatusMethodInfo = getStatusMethodInfo
+                          GetTrailersMethodInfo = getTrailersMethodInfo
+                          WriteAsyncMethodInfo = writeMethod
+                          CompleteAsyncMethodInfo = completeMethod
+                          MoveNextMethodInfo = moveNextMethodInfo
+                          RequestStreamPropInfo = requestStreamPropInfo
+                          ResponseStreamPropInfo = responseStreamPropInfo 
+                  
+                          CurrentPropInfo = currentPropInfo
+                          ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo }
+                    cache[duplexStreamType] <- temp
+                    temp
+                        
 
-        { Headers = None
-          Trailers = None
-          Status = None
-          WriteCompleted = false 
-          CallInfo =
-            { DuplexStreamType = duplexStreamType
-              RequestItemType = requestItemType
-              ResponseItemType = responseItemType
+            let requestStream = callInfo.RequestStreamPropInfo.GetValue(resp)
+            let responseStream = callInfo.ResponseStreamPropInfo.GetValue(resp)
+            
+            { Headers = None
+              Trailers = None
+              Status = None
               CallResult = resp
               RequestStream = requestStream
-              GetStatusMethodInfo = getStatusMethodInfo
-              GetTrailersMethodInfo = getTrailersMethodInfo
-              WriteAsyncMethodInfo = writeMethod
-              CompleteAsyncMethodInfo = completeMethod
-              MoveNextMethodInfo = moveNextMethodInfo
-              ResponseStream = responseStream
-              CurrentPropInfo = currentPropInfo
-              ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo } }
+              ResponseStream = responseStream    
+              WriteCompleted = false 
+              CallInfo = callInfo
+                 }
 
     let completeCall (resp: DuplexStreamingCallResponse) =
-        let status = resp.CallInfo.GetStatus()
-        let trailers = resp.CallInfo.GetTrailers()
-        let d = resp.CallInfo.CallResult :?> IDisposable
+        let status = resp.CallInfo.GetStatus(resp.CallResult)
+        let trailers = resp.CallInfo.GetTrailers(resp.CallResult)
+        let d = resp.CallResult :?> IDisposable
         d.Dispose()
 
         { resp with
@@ -138,12 +164,12 @@ module DuplexStreamingResponse =
 
     let getResponseHeader (resp: DuplexStreamingCallResponse) =
         task {
-            let! meta = resp.CallInfo.GetResponseHeaders() //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
+            let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
             return { resp with Headers = Some meta }
         }
 
     let completeWrite (resp: DuplexStreamingCallResponse) = task {
-       do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, null) :?> Task)
+       do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
        return {resp with WriteCompleted = true }
     }
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
@@ -152,7 +178,7 @@ module DuplexStreamingResponse =
           Status = resp.Status }
 
     let write (resp: DuplexStreamingCallResponse) (reqItem: obj) =
-        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.CallInfo.RequestStream, [| reqItem |]) :?> Task)
+        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 

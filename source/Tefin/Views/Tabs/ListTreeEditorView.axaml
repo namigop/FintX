@@ -6,12 +6,10 @@
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="tabs:ClientStreamTreeEditorViewModel"
-             x:Class="Tefin.Views.Tabs.ClientStreamTreeEditorView">
+             x:DataType="tabs:ListTreeEditorViewModel"
+             x:Class="Tefin.Views.Tabs.ListTreeEditorView">
    <Border>
-       <TreeDataGrid Source="{Binding StreamTree}" ShowColumnHeaders="False" x:Name="TreeDgStream"
-                     Grid.Row="1"
-                     VerticalAlignment="Stretch">
+       <TreeDataGrid Source="{Binding StreamTree}" ShowColumnHeaders="False" x:Name="TreeDgStream" VerticalAlignment="Stretch">
            <TreeDataGrid.Resources>
                <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
                    <ContentControl Content="{Binding}" Margin="4 0 0 0">

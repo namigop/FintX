@@ -7,7 +7,7 @@
              x:DataType="misc:MiscViewModel"
              x:Class="Tefin.Views.Misc.MiscView">
     <Border BorderBrush="#0e1014" BorderThickness="2" CornerRadius="10">
-        <TabControl ItemsSource="{Binding MiscItems}">
+        <TabControl ItemsSource="{Binding MiscItems}" SelectedItem="">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="*, Auto">
@@ -15,6 +15,11 @@
                     </Grid>
                 </DataTemplate>
             </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate x:DataType="misc:MiscViewModelTabItem">
+                    <ContentControl Content="{Binding}" />    
+                </DataTemplate>
+            </TabControl.ContentTemplate>
         </TabControl>
     </Border>
 </UserControl>

@@ -45,7 +45,7 @@ public partial class JsonEditor : UserControl {
         this.Editor.Document = new TextDocument { Text = "" };
         this.Editor.TextChanged += this.OnTextChanged;
         this._folding = new CharFoldingStrategy('{', '}');
-        this._foldingTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+        this._foldingTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         this._foldingTimer.Tick += this.FoldingTimer_Tick;
         this._foldingTimer.IsEnabled = false;
 

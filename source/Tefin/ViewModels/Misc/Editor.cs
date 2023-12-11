@@ -13,4 +13,8 @@ public class Editor {
     public void SetTarget(TextEditor textEditor) {
         this._ci.TextEditor = textEditor;
     }
+
+    public void Clear() {
+        this._ci.Clear();
+    }
 }

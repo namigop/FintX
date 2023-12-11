@@ -5,8 +5,8 @@
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="tabs:ClientStreamJsonEditorViewModel"
-             x:Class="Tefin.Views.Tabs.ClientStreamJsonEditorView">
+             x:DataType="tabs:ListJsonEditorViewModel"
+             x:Class="Tefin.Views.Tabs.ListJsonEditorView">
     <Border>
         <controls:JsonEditor Text="{Binding Json}" />
     </Border>

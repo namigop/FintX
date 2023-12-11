@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reflection;
 
 using ReactiveUI;
 
@@ -7,15 +8,19 @@ using Tefin.Core.Reflection;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class ClientStreamJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
-    private readonly object? _listInstance;
+public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
+    private readonly string _name;
+    private object? _listInstance;
     private readonly Type _listItemType;
     private string _json;
+    private readonly MethodInfo _addMethod;
 
-    public ClientStreamJsonEditorViewModel(Type listType) {
+    public ListJsonEditorViewModel(string name, Type listType) {
+        this._name = name;
         this.ListType = listType;
         this._listInstance = Activator.CreateInstance(listType);
         this._listItemType = TypeHelper.getListItemType(listType).Value;
+        this._addMethod = listType.GetMethod("Add")!;
         this._json = "";
     }
 
@@ -42,18 +47,23 @@ public class ClientStreamJsonEditorViewModel : ViewModelBase, IListEditorViewMod
         this.Json = "";
 
     }
+    public void AddItem(object instance) {
+        this._addMethod.Invoke(this._listInstance, new[] { instance });
+        var jsonInstance = Instance.indirectSerialize(this._listItemType, instance);
+        var startIndex = this.Json.Length - 1;
+        var endPos = this.Json.LastIndexOf(']', startIndex);
+        var begin = endPos == 1 ? "" : ",";
+        this.Json = this._json.Insert(endPos, $"{begin}{Environment.NewLine}{jsonInstance}{Environment.NewLine}");
+    }
 
     public IEnumerable<object> GetListItems() {
         dynamic list = Instance.indirectDeserialize(this.ListType, this._json);
         foreach (var i in list)
             yield return i;
-        // }
-        // catch (Exception e) {
-        //     return Enumerable.Empty<object>();
-        // }
     }
     public void Show(object listInstance) {
         try {
+            this._listInstance = listInstance;
             var json = Instance.indirectSerialize(this.ListType, listInstance);
             this.Json = json;
         }

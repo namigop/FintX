@@ -10,10 +10,12 @@ using Tefin.ViewModels.Types;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class ClientStreamTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
+public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
+    private readonly string _name;
     private object _listInstance;
     private readonly Type _listItemType;
-    public ClientStreamTreeEditorViewModel(Type listType) {
+    public ListTreeEditorViewModel(string name, Type listType) {
+        this._name = name;
         this.ListType = listType;
         this._listInstance = Activator.CreateInstance(listType)!;
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
@@ -35,6 +37,13 @@ public class ClientStreamTreeEditorViewModel : ViewModelBase, IListEditorViewMod
     public (bool, object) GetList() {
         return (true, this._listInstance);
     }
+
+    public void AddItem(object instance) {
+        var streamNode = (ResponseStreamNode)this.StreamItems[0];
+        streamNode.AddItem(instance);
+        if (streamNode.Items.Count == 1)
+            streamNode.IsExpanded = true;
+    }
     public IEnumerable<object> GetListItems() {
         dynamic list = this._listInstance;
         foreach (var i in list)
@@ -52,16 +61,9 @@ public class ClientStreamTreeEditorViewModel : ViewModelBase, IListEditorViewMod
          */
 
         this._listInstance = listInstance;
-        var streamNode = new ResponseStreamNode("Client Stream", this.ListType, null, listInstance, null);
+        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();
-        //
-        // var (ok, reqInstance) = TypeBuilder.getDefault(this._listItemType, true, Core.Utils.none<object>(), 0);
-        // if (ok) {
-        //     streamNode.AddItem(reqInstance);
-        // }
-        // else
-        //     this.Io.Log.Error($"Unable to create an instance for {this._listItemType}");
     }
 }
