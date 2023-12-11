@@ -2,21 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
-             xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="tabs:TreeRequestEditorViewModel"
-             x:Class="Tefin.Views.Tabs.TreeRequestEditorView">
+             x:DataType="tabs:TreeResponseEditorViewModel"
+             x:Class="Tefin.Views.Tabs.TreeResponseEditorView">
     <Border>
-        <TreeDataGrid Source="{Binding MethodTree}" ShowColumnHeaders="False" x:Name="TreeDg"  VerticalAlignment="Stretch">
+        <TreeDataGrid Source="{Binding ResponseTree}" ShowColumnHeaders="False" x:Name="TreeDg"
+                      Grid.Row="0"
+                      VerticalAlignment="Stretch">
             <TreeDataGrid.Resources>
                 <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
                     <ContentControl Content="{Binding}" Margin="4 0 0 0">
                         <ContentControl.DataTemplates>
                             <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
                         </ContentControl.DataTemplates>
-                        
                     </ContentControl>
                 </DataTemplate>
                 <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">
@@ -28,6 +29,5 @@
                 </DataTemplate>
             </TreeDataGrid.Resources>
         </TreeDataGrid>
-
     </Border>
 </UserControl>

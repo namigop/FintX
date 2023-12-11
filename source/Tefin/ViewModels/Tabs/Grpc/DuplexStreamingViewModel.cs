@@ -15,6 +15,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
+    private bool _showTreeEditor;
 
     public DuplexStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new DuplexStreamingReqViewModel(mi, true);
@@ -30,7 +31,14 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private void OnIsBusyChanged(ViewModelBase obj) {
         this.IsBusy = obj.IsBusy;
     }
-
+    public bool ShowTreeEditor {
+        get => this._showTreeEditor;
+        set {
+            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
+            this.ReqViewModel.ShowTreeEditor = value;
+            this.RespViewModel.IsShowingResponseTreeEditor = value; tooggle.ser/deser fails
+        }
+    }
     public DuplexStreamingReqViewModel ReqViewModel { get; }
     public DuplexStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }

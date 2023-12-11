@@ -1,62 +1,76 @@
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 
-using Avalonia.Controls;
-using Avalonia.Controls.Models.TreeDataGrid;
-
 using Grpc.Core;
-
+using ReactiveUI;
 using Tefin.Core.Execution;
-using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Types;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
-public class StandardResponseViewModel : ViewModelBase {
+public abstract class StandardResponseViewModel : ViewModelBase {
     private readonly MethodInfo _methodInfo;
+    private bool _isShowingResponseTreeEditor;
+    private IResponseEditorViewModel _responseEditor;
+    private readonly TreeResponseEditorViewModel _treeRespEditor;
+    private readonly JsonResponseEditorViewModel _jsonRespEditor;
 
-    public StandardResponseViewModel(MethodInfo methodInfo) {
+    protected StandardResponseViewModel(MethodInfo methodInfo) {
         this._methodInfo = methodInfo;
-        this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
-            Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
-                    new GridLength(1, GridUnitType.Star)), x => x.Items, x => x.Items.Any(), x => x.IsExpanded)
-            }
-        };
-        
-        //this.Items.Add(new EmptyNode());
+        this.IsShowingResponseTreeEditor = true;
+
+        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);
+        this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
+        this._responseEditor = this._treeRespEditor;
+        this.SubscribeTo(vm => ((StandardResponseViewModel)vm).IsShowingResponseTreeEditor, OnIsShowingResponseTreeEditor);
     }
 
-    public ObservableCollection<IExplorerItem> Items { get; } = new();
-    public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
+    private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
+        try {
+            var vm = (StandardResponseViewModel)obj;
+            if (vm._isShowingResponseTreeEditor) {
+                this.ShowAsTree();
+            }
+            else {
+                this.ShowAsJson();
+            }
+        }
+        catch (Exception e) {
+            Console.WriteLine(e);
+             
+        }
+    }
+    private void ShowAsJson() {
+        var (ok, resp) = this._treeRespEditor.GetResponse();
+        this.ResponseEditor = this._jsonRespEditor;
+        if (ok)
+             this.ResponseEditor.Show(resp, this._treeRespEditor.ResponseType);
+    }
 
+    private void ShowAsTree() {
+        var (ok, resp) = this._jsonRespEditor.GetResponse();
+        this.ResponseEditor = this._treeRespEditor;
+        if (ok)
+            this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
+    }
+
+    public IResponseEditorViewModel ResponseEditor {
+        get => this._responseEditor;
+        set => this.RaiseAndSetIfChanged(ref _responseEditor, value);
+    }
+    public bool IsShowingResponseTreeEditor {
+        get => this._isShowingResponseTreeEditor;
+        set => this.RaiseAndSetIfChanged(ref _isShowingResponseTreeEditor , value);
+    }
+
+   
     public void Init() {
-        this.Items.Clear();
+      this.ResponseEditor.Init();
     }
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
-        this.Items.Clear();
-        try {
-            var resp = await completeRead();
-            var node = new ResponseNode(this._methodInfo.Name, responseType, null, resp, null);
-            node.Init();
-            this.Items.Add(node);
-        }
-        catch (Exception ecx) {
-            this.Io.Log.Error(ecx);
-        }
+        await this.ResponseEditor.Complete(responseType, completeRead);
     }
 
-    public virtual void Show(bool ok, object response, Context context) {
-        if (ok) {
-            var model = new GrpcStandardResponse() { Headers = new Metadata(), Status = new Status(StatusCode.Unknown, ""), Trailers = new Metadata()};
-            var node = new ResponseNode(this._methodInfo.Name, typeof(GrpcStandardResponse), null, model, null);
-            node.Init();
-            this.Items.Clear();
-            this.Items.Add(node);
-        }
-    }
+    public abstract void Show(bool ok, object response, Context context); 
 
     public class GrpcStandardResponse {
         public required Metadata Headers { get; set; }

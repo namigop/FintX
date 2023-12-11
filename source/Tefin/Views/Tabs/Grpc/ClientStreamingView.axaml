@@ -21,7 +21,7 @@
                         </StackPanel>
                     </Button>
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
-                    <ToggleSwitch IsChecked="{Binding ReqViewModel.ShowTreeEditor}"
+                    <ToggleSwitch IsChecked="{Binding ShowTreeEditor}"
                                   OnContent="Tree" OffContent="Json"
                                   Margin="0 0 0 0"></ToggleSwitch>
                 </StackPanel>

@@ -15,17 +15,26 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText = "";
+    private bool _showTreeEditor;
 
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
         this.RespViewModel = new ClientStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this.StatusText = "";
-
+        this.ShowTreeEditor = true;
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, vm => this.IsBusy = vm.IsBusy);
     }
 
+    public bool ShowTreeEditor {
+        get => this._showTreeEditor;
+        set {
+            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
+            this.ReqViewModel.ShowTreeEditor = value;
+            this.RespViewModel.IsShowingResponseTreeEditor = value;
+        }
+    }
     public ClientStreamingReqViewModel ReqViewModel { get; }
 
     public ClientStreamingRespViewModel RespViewModel { get; }

@@ -1,6 +1,3 @@
- 
-using System.Diagnostics;
-
 using Tefin.Core;
 
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;

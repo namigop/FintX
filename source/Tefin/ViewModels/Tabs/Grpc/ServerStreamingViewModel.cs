@@ -17,6 +17,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
+    private bool _showTreeEditor;
 
     public ServerStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, true);
@@ -24,7 +25,14 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
     }
-
+    public bool ShowTreeEditor {
+        get => this._showTreeEditor;
+        set {
+            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
+            this.ReqViewModel.ShowTreeEditor = value;
+            this.RespViewModel.IsShowingResponseTreeEditor = value;
+        }
+    }
     public ServerStreamingReqViewModel ReqViewModel { get; set; }
     public ServerStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }

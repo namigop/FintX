@@ -9,6 +9,6 @@ public class ClientStreamingRespViewModel : StandardResponseViewModel {
     }
 
     public override void Show(bool ok, object response, Context context) {
-        base.Show(ok, response, context);
+        //base.Show(ok, response, context);
     }
 }

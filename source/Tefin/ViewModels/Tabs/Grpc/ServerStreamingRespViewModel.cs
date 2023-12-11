@@ -59,7 +59,6 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     }
     public async Task SetupServerStreamNode(object response) {
         var resp = (ServerStreamingCallResponse)response;
-
         var readServerStream = new ReadServerStreamFeature();
 
         try {
@@ -82,7 +81,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     }
 
     public override void Show(bool ok, object response, Context context) {
-        base.Show(ok, response, context);
+        //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
         this.ServerStreamEditor.Show(stream!);
     }

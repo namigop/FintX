@@ -81,8 +81,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     }
 
     public override void Show(bool ok, object response, Context context) {
-        base.Show(ok, response, context);
-        base.Show(ok, response, context);
+        //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
         this.ServerStreamEditor.Show(stream!);
     }
