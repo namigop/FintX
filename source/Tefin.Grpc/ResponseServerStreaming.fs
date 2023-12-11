@@ -97,8 +97,7 @@ module ServerStreamingResponse =
                       ServerStreamItemType = itemType
                       ServerStreamType = serverStreamType
                       ResponseStreamType = responseStreamType
-                      ResponseStreamPropInfo =  responseStreamPropInfo
-                      
+                      ResponseStreamPropInfo =  responseStreamPropInfo                      
                       CurrentPropInfo = currentPropInfo
                       MoveNextMethodInfo = moveNextMethodInfo
                       GetStatusMethodInfo = getStatusMethodInfo
@@ -149,7 +148,6 @@ module ServerStreamingResponse =
             Okay t
         else
             let err = Res.getError ctx.Response
-
             let w =
                 wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
 
@@ -157,14 +155,4 @@ module ServerStreamingResponse =
                 { MethodInfo = methodInfo
                   Context = ctx
                   Response = w }
-
             Error t
-
-// let createJson (resp: ResponseServerStreaming) =
-//     match resp with
-//     | Okay k ->
-//         let isError = false
-//         wrapResponse k.MethodInfo k.Response isError
-//     | Error e ->
-//         let isError = true
-//         wrapResponse e.MethodInfo e.Response isError

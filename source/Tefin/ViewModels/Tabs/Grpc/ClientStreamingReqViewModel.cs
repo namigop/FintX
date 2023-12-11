@@ -116,6 +116,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
         finally {
             this.CanWrite = false;
+            this._csEditorViewModel.Clear();
             this.IsBusy = false;
         }
     }

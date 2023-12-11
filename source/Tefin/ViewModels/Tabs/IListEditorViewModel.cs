@@ -8,4 +8,6 @@ public interface IListEditorViewModel {
     public IEnumerable<object> GetListItems();
 
     public void Show(object listInstance);
+
+    void Clear();
 }

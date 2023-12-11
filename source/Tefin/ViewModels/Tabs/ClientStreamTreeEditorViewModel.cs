@@ -41,6 +41,10 @@ public class ClientStreamTreeEditorViewModel : ViewModelBase, IListEditorViewMod
             yield return i;
     }
 
+    public void Clear() {
+        this.StreamItems.Clear();
+    }
+
     public void Show(object listInstance) {
         /*  Tree Structure is
             - ResponseStreamNode //List

@@ -37,6 +37,12 @@ public class ClientStreamJsonEditorViewModel : ViewModelBase, IListEditorViewMod
             return (false, default!);
         }
     }
+
+    public void Clear() {
+        this.Json = "";
+
+    }
+
     public IEnumerable<object> GetListItems() {
         dynamic list = Instance.indirectDeserialize(this.ListType, this._json);
         foreach (var i in list)
