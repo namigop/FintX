@@ -8,8 +8,8 @@ namespace Tefin.Features;
 public class ReadServerStreamFeature {
 
     public async IAsyncEnumerable<object> ReadResponseStream(ServerStreamingCallResponse resp, [EnumeratorCancellation] CancellationToken token) {
-        while (await resp.CallInfo.MoveNext(token)) {
-            var i = resp.CallInfo.GetCurrent();
+        while (await resp.CallInfo.MoveNext(resp.CallResult, token)) {
+            var i = resp.CallInfo.GetCurrent(resp.CallResult);
             yield return i;
         }
     }

@@ -1,6 +1,7 @@
 namespace Tefin.Grpc.Execution
 
 open System
+open System.Collections.Generic
 open System.Reflection
 open System.Threading
 open System.Threading.Tasks
@@ -20,21 +21,21 @@ type ServerStreamingCallInfo =
       ResponseStreamPropInfo: PropertyInfo
       ResponseHeadersAsyncPropInfo : PropertyInfo
       CurrentPropInfo: PropertyInfo
-      CallResult: obj}
+      }
 
-    member this.GetResponseStream() =
-        this.ResponseStreamPropInfo.GetValue this.CallResult
-    member this.GetCurrent() =
-        this.CurrentPropInfo.GetValue (this.GetResponseStream())
-    member this.GetStatus() =
-        this.GetStatusMethodInfo.Invoke (this.CallResult, null) :?> Status
-    member this.GetTrailers() =
-        this.GetTrailersMethodInfo.Invoke (this.CallResult, null) :?> Metadata
-    member this.MoveNext(token:CancellationToken) =
-        this.MoveNextMethodInfo.Invoke(this.GetResponseStream(), [|token|]) :?> Task<bool>
+    member this.GetResponseStream(callResult:obj) =
+        this.ResponseStreamPropInfo.GetValue callResult
+    member this.GetCurrent(callResult:obj) =
+        this.CurrentPropInfo.GetValue (this.GetResponseStream(callResult))
+    member this.GetStatus(callResult:obj) =
+        this.GetStatusMethodInfo.Invoke (callResult, null) :?> Status
+    member this.GetTrailers(callResult:obj) =
+        this.GetTrailersMethodInfo.Invoke (callResult, null) :?> Metadata
+    member this.MoveNext(callResult:obj, token:CancellationToken) =
+        this.MoveNextMethodInfo.Invoke(this.GetResponseStream(callResult), [|token|]) :?> Task<bool>
 
-    member this.GetResponseHeaders() =
-        this.ResponseHeadersAsyncPropInfo.GetValue (this.CallResult) :?> Task<Metadata>
+    member this.GetResponseHeaders(callResult:obj) =
+        this.ResponseHeadersAsyncPropInfo.GetValue (callResult) :?> Task<Metadata>
 
 type StandardCallResponse =
     { Headers: Metadata option
@@ -46,6 +47,7 @@ type ServerStreamingCallResponse =
     { Headers: Metadata option
       Status: Status option
       Trailers: Metadata option
+      CallResult: obj
       CallInfo : ServerStreamingCallInfo
        }
 
@@ -69,32 +71,48 @@ type ResponseServerStreaming =
         | Error err -> struct (true, err.Response, err.Context)
 
 module ServerStreamingResponse =
-    let private wrapResponse (methodInfo: MethodInfo) (resp: obj) (isError: bool) =
-        let itemType = methodInfo.ReturnType.GetGenericArguments().[0]
-        let serverStreamType = typedefof<AsyncServerStreamingCall<_>>.MakeGenericType itemType
-        let responseStreamType  = typedefof<IAsyncStreamReader<_>>.MakeGenericType itemType
-        let responseStreamPropInfo = serverStreamType.GetProperty("ResponseStream")
-        let currentPropInfo = responseStreamType.GetProperty("Current")
-        let moveNextMethodInfo = responseStreamType.GetMethod("MoveNext")
-        let getStatusMethodInfo = serverStreamType.GetMethod("GetStatus")
-        let getTrailersMethodInfo = serverStreamType.GetMethod("GetTrailers")
-        let responseHeadersAsyncPropInfo = serverStreamType.GetProperty("ResponseHeadersAsync")
-
-        { Headers = None
-          Trailers = None
-          Status = None
-          CallInfo = {
-              ServerStreamItemType = itemType
-              ServerStreamType = serverStreamType
-              ResponseStreamType = responseStreamType
-              ResponseStreamPropInfo =  responseStreamPropInfo
-              CallResult = resp
-              CurrentPropInfo = currentPropInfo
-              MoveNextMethodInfo = moveNextMethodInfo
-              GetStatusMethodInfo = getStatusMethodInfo
-              GetTrailersMethodInfo = getTrailersMethodInfo
-              ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
-          }}
+    let private wrapResponse =
+        let cache = Dictionary<Type, ServerStreamingCallInfo>()
+        
+        fun (methodInfo: MethodInfo) (resp: obj) (isError: bool)  ->
+            let itemType = methodInfo.ReturnType.GetGenericArguments().[0]
+            let serverStreamType = typedefof<AsyncServerStreamingCall<_>>.MakeGenericType itemType
+            let found, callInfo = cache.TryGetValue serverStreamType
+            if found then 
+                { Headers = None
+                  Trailers = None
+                  Status = None
+                  CallResult = resp
+                  CallInfo = callInfo } 
+            else
+                let responseStreamType  = typedefof<IAsyncStreamReader<_>>.MakeGenericType itemType                
+                let responseStreamPropInfo = serverStreamType.GetProperty("ResponseStream")
+                let currentPropInfo = responseStreamType.GetProperty("Current")
+                let moveNextMethodInfo = responseStreamType.GetMethod("MoveNext")
+                let getStatusMethodInfo = serverStreamType.GetMethod("GetStatus")
+                let getTrailersMethodInfo = serverStreamType.GetMethod("GetTrailers")
+                let responseHeadersAsyncPropInfo = serverStreamType.GetProperty("ResponseHeadersAsync")
+                let callInfo =
+                    {
+                      ServerStreamItemType = itemType
+                      ServerStreamType = serverStreamType
+                      ResponseStreamType = responseStreamType
+                      ResponseStreamPropInfo =  responseStreamPropInfo
+                      
+                      CurrentPropInfo = currentPropInfo
+                      MoveNextMethodInfo = moveNextMethodInfo
+                      GetStatusMethodInfo = getStatusMethodInfo
+                      GetTrailersMethodInfo = getTrailersMethodInfo
+                      ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
+                    }
+                    
+                cache[serverStreamType] <- callInfo
+                
+                { Headers = None
+                  Trailers = None
+                  Status = None
+                  CallResult = resp
+                  CallInfo = callInfo}
 
     let toStandardCallResponse  (resp: ServerStreamingCallResponse) =
         {
@@ -103,9 +121,9 @@ module ServerStreamingResponse =
            Status = resp.Status
         }
     let completeCall (resp: ServerStreamingCallResponse) =
-        let status =  resp.CallInfo.GetStatus()
-        let trailers = resp.CallInfo.GetTrailers()
-        let d = resp.CallInfo.CallResult :?> IDisposable
+        let status =  resp.CallInfo.GetStatus(resp.CallResult)
+        let trailers = resp.CallInfo.GetTrailers(resp.CallResult)
+        let d = resp.CallResult :?> IDisposable
         d.Dispose()
 
         { resp with
@@ -114,8 +132,7 @@ module ServerStreamingResponse =
 
     let getResponseHeader (okayResp: ServerStreamingCallResponse) =
         task {
-            //let prop = okayResp.ServerStreamType.GetProperty("ResponseHeadersAsync")
-            let! meta = okayResp.CallInfo.GetResponseHeaders() //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
+            let! meta = okayResp.CallInfo.GetResponseHeaders(okayResp.CallResult)
             return { okayResp with Headers = Some meta }
         }
 

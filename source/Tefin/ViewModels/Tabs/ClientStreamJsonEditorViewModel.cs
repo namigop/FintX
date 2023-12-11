@@ -33,7 +33,7 @@ public class ClientStreamJsonEditorViewModel : ViewModelBase, IListEditorViewMod
             var list = Instance.indirectDeserialize(this.ListType, this._json);
             return (true, list);
         }
-        catch (Exception e) {
+        catch {
             return (false, default!);
         }
     }
