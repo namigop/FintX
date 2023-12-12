@@ -11,25 +11,7 @@
 
     <Border>
         <Grid>
-            <TreeDataGrid Source="{Binding ResponseTree}" ShowColumnHeaders="False" x:Name="TreeDg"
-                          VerticalAlignment="Stretch">
-                <TreeDataGrid.Resources>
-                    <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
-                        <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                            <ContentControl.DataTemplates>
-                                <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
-                            </ContentControl.DataTemplates>
-                        </ContentControl>
-                    </DataTemplate>
-                    <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">
-                        <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                            <ContentControl.DataTemplates>
-                                <viewModels:NodeEditViewLocator /> <!-- will load *NodeEditView.axaml -->
-                            </ContentControl.DataTemplates>
-                        </ContentControl>
-                    </DataTemplate>
-                </TreeDataGrid.Resources>
-            </TreeDataGrid>
+            <ContentControl Content="{Binding ResponseEditor}"></ContentControl>
             <TextBlock Text="response" FontSize="20" Opacity="0.15"
                        IsHitTestVisible="False"
                        VerticalAlignment="Bottom" HorizontalAlignment="Right"

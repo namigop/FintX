@@ -22,6 +22,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel = new DuplexStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
+        this._showTreeEditor = true;
 
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, this.OnIsBusyChanged);
@@ -36,7 +37,8 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         set {
             this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
             this.ReqViewModel.ShowTreeEditor = value;
-            this.RespViewModel.IsShowingResponseTreeEditor = value; tooggle.ser/deser fails
+            this.ReqViewModel.IsShowingClientStreamTree = value;
+            this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
     }
     public DuplexStreamingReqViewModel ReqViewModel { get; }

@@ -55,9 +55,10 @@ let ``Can deserialize methodArgs tree`` () =
     let args = [|test1; intVal; stringVal; doubleVal|]
     let jsonRet = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
     Assert.True(Res.isOk jsonRet)
-    let genInstance = DynamicTypes.fromJson_unary mi (Res.getValue jsonRet)
-    Assert.NotNull genInstance
+    let genInstanceRet = DynamicTypes.fromJson_unary mi (Res.getValue jsonRet)
+    Assert.True (Res.isOk genInstanceRet)
     
+    let genInstance = Res.getValue genInstanceRet
     let argNames = [ "intArg"; "stringArg"; "doubleArg"]
     let args = [ box intVal; stringVal; doubleVal ]
     let genType = genInstance.GetType()

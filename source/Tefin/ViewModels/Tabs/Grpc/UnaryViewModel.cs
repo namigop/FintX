@@ -17,13 +17,14 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class UnaryViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
     private UnaryReqViewModel _reqViewModel;
+    private bool _showTreeEditor;
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this._reqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
-        
+        this._showTreeEditor = true;
         this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged );
     }
 
@@ -32,7 +33,14 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = (UnaryReqViewModel)obj;
         //this.RaisePropertyChanged(nameof(this.ReqViewModel));
     }
-
+    public bool ShowTreeEditor {
+        get => this._showTreeEditor;
+        set {
+            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
+            this.ReqViewModel.ShowTreeEditor = value;
+            this.RespViewModel.IsShowingResponseTreeEditor = value;
+        }
+    }
     public UnaryReqViewModel ReqViewModel {
         get => this._reqViewModel;
         private set => this.RaiseAndSetIfChanged(ref _reqViewModel, value);

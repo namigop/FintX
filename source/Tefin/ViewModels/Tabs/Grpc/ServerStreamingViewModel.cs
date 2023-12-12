@@ -24,6 +24,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel = new ServerStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
+        this._showTreeEditor = true;
     }
     public bool ShowTreeEditor {
         get => this._showTreeEditor;

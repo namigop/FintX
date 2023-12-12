@@ -108,6 +108,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         }
         finally {
             this.CanWrite = false;
+            this.ClientStreamEditor.Clear();
             this.IsBusy = false;
         }
     }

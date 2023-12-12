@@ -17,6 +17,7 @@ module Instance =
         let settings = JsonSerializerSettings()
         settings.Converters.Add(ByteStringConverter())
         settings.Converters.Add(MetadataEntryConverter())
+        settings.Converters.Add(StatusConverter())
         //settings.Converters.Add(CancellationTokenConverter())
         settings
 

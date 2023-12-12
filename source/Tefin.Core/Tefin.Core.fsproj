@@ -40,6 +40,7 @@
         <Compile Include="Reflection\ResponseUtils.fs" />
         <Compile Include="ByteStringConverter.fs" />
         <Compile Include="MetadataEntryConverter.fs" />
+        <Compile Include="StatusConverter.fs" />
         <Compile Include="CancellationTokenConverter.fs" />
         <Compile Include="Instance.fs" />
         <Compile Include="Project.fs" />
