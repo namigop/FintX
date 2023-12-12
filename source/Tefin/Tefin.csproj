@@ -8,8 +8,8 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\fire.ico</ApplicationIcon>
         <AssemblyName>FintX</AssemblyName>
-        <AssemblyVersion>0.1.0</AssemblyVersion>
-        <FileVersion>0.1.0</FileVersion>
+        <AssemblyVersion>0.2.0</AssemblyVersion>
+        <FileVersion>0.2.0</FileVersion>
     </PropertyGroup>
     <PropertyGroup>
         <CFBundleName>FintX</CFBundleName> <!-- Also defines .app file name -->
