@@ -30,7 +30,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public bool ShowTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
+            this.RaiseAndSetIfChanged(ref _showTreeEditor, value);
             this.ReqViewModel.ShowTreeEditor = value;
             this.ReqViewModel.IsShowingClientStreamTree = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;

@@ -26,24 +26,11 @@ type CompileParameters =
       ReflectionServiceUrl: string
       Config: ReadOnlyDictionary<string, string> }
 
-type GrpcMethodType =
-    | Unary = 0
-    | ServerStreaming = 1
-    | ClientStreaming = 2
-    | Duplex = 3
+
 
 module ServiceClient =
 
-    let getGrpcMethodType (mi: MethodInfo) =
-        let returnType = mi.ReturnType
-        if (returnType.Name.StartsWith("AsyncDuplexStreaming")) then
-            GrpcMethodType.Duplex
-        else if (returnType.Name.StartsWith("AsyncClientStreaming")) then
-            GrpcMethodType.ClientStreaming
-        else if (returnType.Name.StartsWith("AsyncServerStreaming")) then
-            GrpcMethodType.ServerStreaming
-        else
-            GrpcMethodType.Unary
+    
 
     let findClientType (types: Type array) =
         let rec check (t: Type) =

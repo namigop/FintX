@@ -19,7 +19,6 @@
         <Compile Include="ServiceClient.fs" />
         <Compile Include="ChannelBuilder.fs" />
         <Compile Include="MethodInvoker.fs" />
-        <Compile Include="Features.fs" />
         <Compile Include="ResponseUnary.fs" />
         <Compile Include="ResponseServerStreaming.fs" />
         <Compile Include="ResponseClientStreaming.fs" />
@@ -28,8 +27,10 @@
         <Compile Include="CallServerStreaming.fs" />
         <Compile Include="CallClientStreaming.fs" />
         <Compile Include="CallDuplexStreaming.fs" />
-        <Compile Include="Startup.fs" />
+        <Compile Include="GrpcMethod.fs" />
         <Compile Include="DynamicTypes.fs" />
+        <Compile Include="Export.fs" />
+        <Compile Include="Startup.fs" />
     </ItemGroup>
 
     <ItemGroup>

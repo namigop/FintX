@@ -1,14 +1,22 @@
 namespace Tefin.Grpc.Dynamic
 
+open System
 open System.Reflection
 open Google.Protobuf.WellKnownTypes
 open Tefin.Core
 open Tefin.Core.Reflection
+open Tefin.Grpc
 
 type SerParam = {
     Method:MethodInfo
-    MethodParams : obj array
+    RequestParams : obj array
+    RequestStream :obj option
 }
+with
+    static member Create(m, r) =
+        {Method = m; RequestParams = r; RequestStream = None }
+    static member WithStream (r:SerParam) (list) =
+        {r with RequestStream = list }
 
 module DynamicTypes =
     let private emitUnaryRequestClass methodInfo = RequestUtils.emitRequestClass "GrpcUnary" methodInfo
@@ -16,18 +24,26 @@ module DynamicTypes =
     let private emitDuplexStreamingRequestClass methodInfo = RequestUtils.emitRequestClass "GrpcDuplexStreaming" methodInfo
     let private emitServerStreamingRequestClass methodInfo = RequestUtils.emitRequestClass "GrpcServerStreaming" methodInfo
     
-     
-    let toJson_unary (p:SerParam) =
-        let genType = emitUnaryRequestClass p.Method
-        let props = p.Method.GetParameters()
-                       |> Array.map (fun p -> p.Name)
-                       |> Array.zip p.MethodParams
-                       |> Array.map (fun (i,name) -> { PropInfoName = name; Value = i })
-        Instance.toJson props genType
+    let emitRequestClassForMethod (methodInfo : MethodInfo) =
+        match GrpcMethod.getMethodType methodInfo with
+        | MethodType.Duplex -> emitDuplexStreamingRequestClass methodInfo |> Res.ok
+        | MethodType.Unary -> emitUnaryRequestClass methodInfo |> Res.ok
+        | MethodType.ClientStreaming -> emitClientStreamingRequestClass methodInfo |> Res.ok
+        | MethodType.ServerStreaming -> emitServerStreamingRequestClass methodInfo |> Res.ok
+        | _ -> Res.failed (failwith "unknown grpc method type")
+         
+    let toJsonRequest (p:SerParam) =        
+        let props =  CoreMethod.paramsToPropInfos p.Method p.RequestParams
+        emitRequestClassForMethod(p.Method)
+        |> Res.map (Instance.toJson props)
+        |> Res.getValue
+        
+    let fromJsonRequest (method:MethodInfo) (json:string) =
+        emitRequestClassForMethod(method)
+        |> Res.map (Instance.fromJson json)
+        |> Res.getValue
     
-    let fromJson_unary (method:MethodInfo) (json:string) =
-        let genType = emitUnaryRequestClass method
-        Instance.fromJson json genType
+       
     
     
 

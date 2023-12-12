@@ -2,6 +2,7 @@
 
 using System.Reflection;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Grpc;
 using Tefin.ViewModels.Explorer;
@@ -13,12 +14,12 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public GrpcClientMethodHostViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi) {
-        var type = ServiceClient.getGrpcMethodType(mi);
-        if (type == GrpcMethodType.Unary)
+        var type = GrpcMethod.getMethodType(mi);
+        if (type == MethodType.Unary)
             this.CallType = new UnaryViewModel(mi, cg);
-        else if (type == GrpcMethodType.ServerStreaming)
+        else if (type == MethodType.ServerStreaming)
             this.CallType = new ServerStreamingViewModel(mi, cg);
-        else if (type == GrpcMethodType.ClientStreaming)
+        else if (type == MethodType.ClientStreaming)
             this.CallType = new ClientStreamingViewModel(mi, cg);
         else
             this.CallType = new DuplexStreamingViewModel(mi, cg);

@@ -15,7 +15,7 @@ public class MethodInfoNode : NodeBase {
         this.IsExpanded = true;
         this.CanOpen = true;
         this.Title = mi.Name;
-        this.SubTitle = $"{{{ServiceClient.getGrpcMethodType(mi)}}}";
+        this.SubTitle = $"{{{GrpcMethod.getMethodType(mi)}}}";
     }
 
     public override void Init() {

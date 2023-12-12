@@ -19,7 +19,7 @@ let ``Can serialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let jsonRet = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
+    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args }
     Assert.True (Res.isOk jsonRet)
    
     //Validate the generate json
@@ -53,9 +53,9 @@ let ``Can deserialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let jsonRet = DynamicTypes.toJson_unary { Method = mi; MethodParams = args }
+    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args }
     Assert.True(Res.isOk jsonRet)
-    let genInstanceRet = DynamicTypes.fromJson_unary mi (Res.getValue jsonRet)
+    let genInstanceRet = DynamicTypes.fromJsonRequest mi (Res.getValue jsonRet)
     Assert.True (Res.isOk genInstanceRet)
     
     let genInstance = Res.getValue genInstanceRet
@@ -67,9 +67,7 @@ let ``Can deserialize methodArgs tree`` () =
     |> List.iter (fun (expectedValue,name) ->
         let prop = genType.GetProperty name
         let genVal = prop.GetValue genInstance
-        Assert.Equal (expectedValue, genVal)
-        ()
-        )
+        Assert.Equal (expectedValue, genVal))
     
     //validate the test1 arg
     let genTest1 = genType.GetProperty("arg").GetValue(genInstance)

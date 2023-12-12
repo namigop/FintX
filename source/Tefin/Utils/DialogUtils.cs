@@ -18,13 +18,15 @@ public static class DialogUtils {
         throw new NotSupportedException();
     }
 
-    public static async Task SaveFile(string dialogTitle, string fileTitle, string content) {
+    public static async Task SaveFile(string dialogTitle, string fileName, string content) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
 
         // Start async operation to open the dialog.
         var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
         {
-            Title = dialogTitle
+            Title = dialogTitle,
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName
         });
 
         if (file is not null)

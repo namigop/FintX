@@ -7,6 +7,7 @@
 
     <ItemGroup>
         <Compile Include="Log.fs" />
+        <Compile Include="Ext.fs" />
         <Compile Include="Colors.fs" />
         <Compile Include="Utils.fs" />
         <Compile Include="TimeIt.fs" />
@@ -46,6 +47,8 @@
         <Compile Include="Project.fs" />
         <Compile Include="ClientCompiler.fs" />
         <Compile Include="CallPipeline.fs" />
+        <Compile Include="CoreExport.fs" />
+        <Compile Include="CoreMethod.fs" />
         <Compile Include="App.fs" />
        
     </ItemGroup>

@@ -20,7 +20,7 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     }
 
     public (bool, object?[]) GetParameters() {
-        var ret = DynamicTypes.fromJson_unary(this.MethodInfo, this.Json);
+        var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
         if (ret.IsOk & ret.ResultValue != null) {
             var val = ret.ResultValue;
             return val!.GetType().GetProperties()
@@ -39,7 +39,7 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     }
 
     public void Show(object?[] parameters) {
-        var json = DynamicTypes.toJson_unary(new SerParam(this.MethodInfo, parameters));
+        var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));
         if (json.IsOk)
             this.Json = json.ResultValue;
     }
