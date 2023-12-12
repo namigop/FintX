@@ -4,7 +4,7 @@
 
 namespace Tefin.ViewModels.Explorer;
 
-internal class EmptyNode : NodeBase {
+public class EmptyNode : NodeBase {
 
     public override void Init() {
     }

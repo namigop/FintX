@@ -10,10 +10,16 @@
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
+                  <StackPanel.Styles>
+                    <Style Selector="Viewbox">
+                      <Setter Property="Height" Value="20" />
+                      <Setter Property="Width" Value="20" />
+                    </Style>
+                  </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Height="20" Width="20">
+                            <Viewbox>
                                 <Canvas Width="24" Height="24">
                                     <Path Fill="#228BCB" Data="M3 20V14L11 12L3 10V4L22 12Z" />
                                 </Canvas>
@@ -24,10 +30,33 @@
 
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
-                        <TextBlock Text="save as"></TextBlock>
+                     
+                      <Viewbox Stretch="Uniform">
+                        <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                          <Canvas>
+                            <Path Data="M1.5,14.5L6.174,14.5L6.055,14.21L5.929,13.78L5.852,13.33L5.825,12.87L5.908,12.05L6.145,11.29L6.52,10.6L7.017,9.994L7.618,9.497L8.309,9.122L9.071,8.885L9.889,8.802L11.14,8.802L10.31,7.963L11.17,7.124L12.38,5.93L12.5,5.815L12.5,4.557L8.533,0.5L1.5,0.5zz" Fill="#4E4E4E"/>
+                            <Path Data="M1,0.5L1,14.5L1,15L1.5,15L6.46,15L6.226,14.63L6.055,14.21L5.993,14L2,14L2,1L8.323,1L12,4.761L12,6.306L12.38,5.93L12.74,5.58L13,5.845L13,4.557L13,4.353L12.86,4.207L8.89,0.1504L8.743,0L8.533,0L1.5,0L1,0zz" Fill="#D8D8D8"/>
+                            <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#D8D8D8"/>
+                          </Canvas>
+                          <Canvas>
+                            <Path Data="M12.368,7.627L15.2,10.51l-2.832,2.868M15.158,10.501H9.889c-1.306,0,-2.364,1.058,-2.364,2.364v0c0,1.306,1.058,2.364,2.364,2.364h0.709" Stroke="#20A0E0" StrokeThickness="1" />
+                          </Canvas>
+                        </Canvas>
+                      </Viewbox>
+
                     </Button>
                     <Button Command="{Binding ImportRequestCommand}" Margin="6 0 0 0" ToolTip.Tip="open a saved request (*.fxrq) file">
-                        <TextBlock Text="open"></TextBlock>
+                     
+                      <Viewbox Stretch="Uniform">
+                        <Canvas Width="18" Height="18" Canvas.Left="0" Canvas.Top="0">
+                          <Canvas>
+                            <Path Data="M15.5,0.3v3.2h-3.7M15.525,3.525l-2.268,-2.308C12.805,0.758,12.187,0.5,11.543,0.5H8.3" Stroke="#1ED15D" StrokeThickness="1" />
+                            <Path Data="M13.5,15.5H1.5V4.074c0,-0.317,0.257,-0.574,0.574,-0.574h3.437c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C7.963,5.42,8.211,5.5,8.465,5.5H13.5V15.5z" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
+                            <Polygon Points="13.5,15.5 1.5,15.5 0.6,7.5 14.4,7.5" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1"  />
+                          </Canvas>
+                        </Canvas>
+                      </Viewbox>
+
                     </Button>
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
 

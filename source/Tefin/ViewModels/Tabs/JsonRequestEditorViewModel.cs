@@ -5,6 +5,9 @@ using ReactiveUI;
 
 using Tefin.Grpc.Dynamic;
 using Tefin.Utils;
+using Tefin.ViewModels.Types.TypeNodeBuilders;
+using Tefin.ViewModels.Types;
+using Tefin.Core.Reflection;
 
 namespace Tefin.ViewModels.Tabs;
 
@@ -39,6 +42,18 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     }
 
     public void Show(object?[] parameters) {
+        var methodParams = this.MethodInfo.GetParameters();
+        var hasValues = parameters.Length == methodParams.Length;
+
+        if (!hasValues) {
+            parameters = methodParams.Select(paramInfo =>
+            {
+                var (ok, inst) = TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0);
+                return inst;
+            }).ToArray();
+
+        }
+
         var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));
         if (json.IsOk)
             this.Json = json.ResultValue;

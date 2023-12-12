@@ -2,6 +2,8 @@
 
 using System.Windows.Input;
 
+using Avalonia.Controls;
+
 using ReactiveUI;
 
 using Tefin.Core;
@@ -24,7 +26,7 @@ public class ClientNode : NodeBase {
     private Type? _clientType;
     private string _desc = "";
     private string _url = "";
-
+    private bool _compileInProgress = false;
     public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
         this._client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
@@ -132,14 +134,26 @@ public class ClientNode : NodeBase {
     }
 
     private async Task OnCompileClientType() {
-        var protoFiles = Array.Empty<string>(); //TODO
-        var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
-        var csFiles = this._client.CodeFiles;
-        var (ok, compileOutput) = await compile.CompileExisting(csFiles);
-        if (ok) {
-            Type[]? types = Core.Build.ClientCompiler.getTypes(compileOutput.CompiledBytes);
-            this.ClientType = ServiceClient.findClientType(types).Value;
-            this.Init();
+        if (this._compileInProgress)
+            return;
+
+        try
+        {
+            this._compileInProgress = true;
+            var protoFiles = Array.Empty<string>(); //TODO
+            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
+            var csFiles = this._client.CodeFiles;
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles);
+            if (ok)
+            {
+                Type[]? types = Core.Build.ClientCompiler.getTypes(compileOutput.CompiledBytes);
+                this.ClientType = ServiceClient.findClientType(types).Value;
+                this.Init();
+            }
+        }
+        finally
+        {
+            this._compileInProgress = false;
         }
     }
 

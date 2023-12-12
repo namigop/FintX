@@ -81,7 +81,8 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public async Task ImportRequest() {
-        var (ok, files) = await DialogUtils.OpenFile("Open request file", "", new[] { Ext.requestFileExt }, false);
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions, false);
         if (ok) {
             var export = Export.importReq(this.Io, new SerParam(this.MethodInfo, Array.Empty<object>(), none<object>()), files[0]);
             if (export.IsOk) {
@@ -101,7 +102,7 @@ public class UnaryReqViewModel : ViewModelBase {
             var exportReqJson = Export.requestToJson(sdParam);
             if (exportReqJson.IsOk) {
                 var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue);
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
             }
             else {
                 Io.Log.Error(exportReqJson.ErrorValue);

@@ -18,7 +18,7 @@ public static class DialogUtils {
         throw new NotSupportedException();
     }
 
-    public static async Task SaveFile(string dialogTitle, string fileName, string content) {
+    public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle, string extension) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
 
         // Start async operation to open the dialog.
@@ -26,7 +26,8 @@ public static class DialogUtils {
         {
             Title = dialogTitle,
             ShowOverwritePrompt = true,
-            SuggestedFileName = fileName
+            SuggestedFileName = fileName,
+            FileTypeChoices = new[] { new FilePickerFileType(fileTitle) { Patterns = new[] { extension } } } 
         });
 
         if (file is not null)
@@ -43,7 +44,7 @@ public static class DialogUtils {
             Title = dialogTitle,
             AllowMultiple = allowMultipleSelection,
             FileTypeFilter = new[] {
-                new FilePickerFileType("filter.Name") {
+                new FilePickerFileType(fileTitle) {
                     Patterns = filterExtensions
                 }
             }
