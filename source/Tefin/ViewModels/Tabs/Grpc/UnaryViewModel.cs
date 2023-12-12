@@ -31,23 +31,17 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this._showTreeEditor = true;
         this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged );
         this.ExportRequestCommand = this.CreateCommand(OnExportRequest);
+        this.ImportRequestCommand = this.CreateCommand(OnImportRequest);
     }
 
     public ICommand ExportRequestCommand { get; }
+    public ICommand ImportRequestCommand { get; }
 
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
     private async Task OnExportRequest() {
-        var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
-        if (ok) {
-            var sdParam = new SerParam(this.ReqViewModel.MethodInfo, mParams, none<object>());
-            var exportReqJson = Export.requestToJson(sdParam);
-            if (exportReqJson.IsOk) {
-                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue);
-            }
-            else {
-                Io.Log.Error(exportReqJson.ErrorValue);
-            }
-        }
+        await this.ReqViewModel.ExportRequest();
     }
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {

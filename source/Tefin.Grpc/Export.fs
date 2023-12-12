@@ -39,7 +39,46 @@ module Export =
                 exportType.GetProperty("RequestStream").SetValue(exportInstance, requestStream.Value)
         
             exportInstance)
-        
+         
+    let importReq (io:IOResolver) (p:SerParam) (file:string) =
+        let json = io.File.ReadAllText file
+        let validate (info:ReqExport) =
+            let reqTypeRet = GrpcMethod.getMethodRequestType p.Method
+            match reqTypeRet with
+            | Error r -> Res.failed r
+            | Ok reqType ->
+                if not (info.Api = GrpcPackage.packageName) then
+                    Res.failed (failwith "Invalid package name")
+                elif not (info.Method = p.Method.Name) then
+                    Res.failed (failwith $"Invalid method name. Got {info.Method} but was expecting {p.Method.Name}")
+                elif not (info.MethodType = $"{GrpcMethod.getMethodType p.Method}") then
+                    Res.failed (failwith $"Invalid methodType name. Got {info.MethodType} but was expecting {GrpcMethod.getMethodType p.Method}")
+                elif not (info.RequestType = reqType.FullName) then
+                    Res.failed (failwith $"Invalid request type. Got {info.RequestType} but was expecting {reqType.FullName}")
+                elif (info.Request = null) then
+                    Res.failed (failwith $"Invalid request.  Value cannot be null")
+                else
+                    Res.ok info
+        let ret =
+            let exp = requestToExportType p.Method p.RequestStream
+            let (isStreaming, exportType) = Res.getValue exp
+            
+            exp
+            |> Res.map (fun (isStreaming, exportType) ->
+                let instance = Instance.indirectDeserialize exportType json
+                 
+                let info = CoreExport.inspect exportType instance 
+                info)
+            |> Res.bind validate
+            |> Res.map (fun info ->                    
+                    if not isStreaming then
+                        let requestTyp = DynamicTypes.emitRequestClassForMethod(p.Method) |> Res.getValue
+                        let objArray = DynamicTypes.toMethodParams p.Method requestTyp info.Request
+                        objArray
+                    else
+                        failwith "not yet supported for client stream and duplex"
+                )
+        ret
         
     let requestToJson (p:SerParam) =
         let reqType = Res.getValue (DynamicTypes.emitRequestClassForMethod(p.Method))

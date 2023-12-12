@@ -23,8 +23,11 @@
                     </Button>
 
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
-                    <Button Command="{Binding ExportRequestCommand}">
-                        <TextBlock Text="export"></TextBlock>
+                    <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
+                        <TextBlock Text="save as"></TextBlock>
+                    </Button>
+                    <Button Command="{Binding ImportRequestCommand}" Margin="6 0 0 0" ToolTip.Tip="open a saved request (*.fxrq) file">
+                        <TextBlock Text="open"></TextBlock>
                     </Button>
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
 

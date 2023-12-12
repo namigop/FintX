@@ -2,7 +2,7 @@ namespace Tefin.Grpc.Dynamic
 
 open System
 open System.Reflection
-open Google.Protobuf.WellKnownTypes
+//open Google.Protobuf.WellKnownTypes
 open Tefin.Core
 open Tefin.Core.Reflection
 open Tefin.Grpc
@@ -32,6 +32,21 @@ module DynamicTypes =
         | MethodType.ServerStreaming -> emitServerStreamingRequestClass methodInfo |> Res.ok
         | _ -> Res.failed (failwith "unknown grpc method type")
          
+    let toMethodParams (methodInfo : MethodInfo) (reqType:Type) (reqInstance:obj) =
+        methodInfo.GetParameters()
+        |> Array.map (fun p ->
+            let prop = reqType.GetProperty(p.Name)
+            if not (prop = null) then
+                let value = prop.GetValue reqInstance
+                if not (value = null) then
+                    value
+                else
+                    TypeHelper.getDefault p.ParameterType
+            else
+                let struct(ok, inst)  = TypeBuilder.getDefault p.ParameterType true None 0
+                inst
+            )
+        
     let toJsonRequest (p:SerParam) =        
         let props =  CoreMethod.paramsToPropInfos p.Method p.RequestParams
         emitRequestClassForMethod(p.Method)

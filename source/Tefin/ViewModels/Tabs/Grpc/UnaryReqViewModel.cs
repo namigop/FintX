@@ -4,12 +4,18 @@ using System.Reflection;
 
 using ReactiveUI;
 
+using Tefin.Core;
+using Tefin.Grpc;
+using Tefin.Grpc.Dynamic;
+using Tefin.Utils;
+using static Tefin.Core.Utils;
+
 #endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryReqViewModel : ViewModelBase {
-    private readonly object?[] _methodParameterInstances;
+    private object?[] _methodParameterInstances;
 
     //private readonly bool _generateFullTree;
     private bool _showTreeEditor;
@@ -72,5 +78,34 @@ public class UnaryReqViewModel : ViewModelBase {
         this.RequestEditor = this._treeEditor;
         if (ok)
             this.RequestEditor.Show(parameters);
+    }
+
+    public async Task ImportRequest() {
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "", new[] { Ext.requestFileExt }, false);
+        if (ok) {
+            var export = Export.importReq(this.Io, new SerParam(this.MethodInfo, Array.Empty<object>(), none<object>()), files[0]);
+            if (export.IsOk) {
+                var methodParams = export.ResultValue;
+                this._methodParameterInstances = methodParams;
+                this.Init();
+            }
+            else {
+                Io.Log.Error(export.ErrorValue);
+            }
+        }
+    }
+    public async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var sdParam = new SerParam(this.MethodInfo, mParams, none<object>());
+            var exportReqJson = Export.requestToJson(sdParam);
+            if (exportReqJson.IsOk) {
+                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue);
+            }
+            else {
+                Io.Log.Error(exportReqJson.ErrorValue);
+            }
+        }
     }
 }
