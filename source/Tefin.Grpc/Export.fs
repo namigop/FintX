@@ -61,23 +61,25 @@ module Export =
                     Res.ok info
         let ret =
             let exp = requestToExportType p.Method p.RequestStream
-            let (isStreaming, exportType) = Res.getValue exp
+            let (isStreaming, _) = Res.getValue exp
             
             exp
-            |> Res.map (fun (isStreaming, exportType) ->
+            |> Res.map (fun (_, exportType) ->
                 let instance = Instance.indirectDeserialize exportType json
-                 
                 let info = CoreExport.inspect exportType instance 
                 info)
             |> Res.bind validate
-            |> Res.map (fun info ->                    
-                    if not isStreaming then
-                        let requestTyp = DynamicTypes.emitRequestClassForMethod(p.Method) |> Res.getValue
-                        let objArray = DynamicTypes.toMethodParams p.Method requestTyp info.Request
-                        objArray
+            |> Res.map (fun info ->
+                    let requestTyp = DynamicTypes.emitRequestClassForMethod(p.Method) |> Res.getValue
+                    let objArray = DynamicTypes.toMethodParams p.Method requestTyp info.Request
+                    if not isStreaming then                       
+                        struct ((Res.ok objArray), (Res.failed (failwith "not expected")))
                     else
-                        failwith "not yet supported for client stream and duplex"
+                        let reqStream = info.RequestStream.Value
+                        struct ((Res.ok objArray), (Res.ok reqStream))
+                        //failwith "not yet supported for client stream and duplex"
                 )
+            |> Res.getValue
         ret
         
     let requestToJson (p:SerParam) =

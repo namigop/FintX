@@ -3,9 +3,11 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
+using Tefin.Utils;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
@@ -29,14 +31,58 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._requestItemType = args[0];
         var listType = typeof(List<>);
-        this._listType = listType.MakeGenericType(_requestItemType);
+        this._listType = listType.MakeGenericType(this._requestItemType);
 
         this._clientStreamTreeEditor = new ListTreeEditorViewModel("Client Stream", this._listType);
         this._clientStreamJsonEditor = new ListJsonEditorViewModel("Client Stream", this._listType);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
-        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, OnIsShowingClientStreamTreeChanged);
+        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
+    }
+
+    public override async Task ImportRequest() {
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
+        if (ok) {
+            var requestStream = Activator.CreateInstance(this._listType);
+            var import = new ImportFeature(this.Io, files[0], this.MethodInfo, requestStream);
+            var (importReq, importReqStream) = import.Run();
+            if (importReq.IsOk) {
+                var methodParams = importReq.ResultValue;
+                this.RequestEditor.Show(methodParams);
+            }
+            else {
+                this.Io.Log.Error(importReq.ErrorValue);
+            }
+            
+            if (importReqStream.IsOk) {
+                this.ClientStreamEditor.Show(importReqStream.ResultValue);
+            }
+            else {
+                this.Io.Log.Error(importReqStream.ErrorValue);
+            }
+        }
+        
+    }
+    public override async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this._clientStreamEditor.GetList();
+            if (!isValid) {
+                Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
+            }
+            
+            var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
+            }
+            else {
+                this.Io.Log.Error(exportReqJson.ErrorValue);
+            }
+        }
     }
 
     private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
@@ -113,7 +159,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
         finally {
             this.CanWrite = false;
-            this._clientStreamEditor.Clear();
+            //this._clientStreamEditor.Clear();
             this.IsBusy = false;
         }
     }
@@ -128,7 +174,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
                 await writer.Write(resp, i);
         }
         catch (Exception exc) {
-            Io.Log.Error(exc);
+            this.Io.Log.Error(exc);
         }
         finally {
             this.IsBusy = false;

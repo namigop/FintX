@@ -25,7 +25,7 @@ public class UnaryReqViewModel : ViewModelBase {
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
         this._showTreeEditor = true;
-        this.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged);
+        this.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
         this.MethodInfo = methodInfo;
         this._jsonEditor = new JsonRequestEditorViewModel(methodInfo);
         this._treeEditor = new TreeRequestEditorViewModel(methodInfo);
@@ -34,12 +34,12 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public IRequestEditorViewModel RequestEditor {
         get => this._requestEditor;
-        private set => this.RaiseAndSetIfChanged(ref _requestEditor, value);
+        private set => this.RaiseAndSetIfChanged(ref this._requestEditor, value);
     }
 
-    public bool ShowTreeEditor {
+    public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
-        set => this.RaiseAndSetIfChanged(ref _showTreeEditor, value);
+        set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
     }
  
     public MethodInfo MethodInfo { get; }
@@ -56,7 +56,7 @@ public class UnaryReqViewModel : ViewModelBase {
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         var vm = (UnaryReqViewModel)obj;
-        if (vm.ShowTreeEditor) {
+        if (vm.IsShowingRequestTreeEditor) {
             this.ShowAsTree();
         }
         else {
@@ -78,23 +78,23 @@ public class UnaryReqViewModel : ViewModelBase {
             this.RequestEditor.Show(parameters);
     }
 
-    public async Task ImportRequest() {
+    public virtual async Task ImportRequest() {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
             var import = new ImportFeature(this.Io, files[0], this.MethodInfo);
-            var export = import.Run();
+            var (export, _) = import.Run();
             if (export.IsOk) {
                 var methodParams = export.ResultValue;
                 this._methodParameterInstances = methodParams;
                 this.Init();
             }
             else {
-                Io.Log.Error(export.ErrorValue);
+                this.Io.Log.Error(export.ErrorValue);
             }
         }
     }
-    public async Task ExportRequest() {
+    public virtual async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
             var feature = new ExportFeature(this.MethodInfo, mParams);
@@ -104,7 +104,7 @@ public class UnaryReqViewModel : ViewModelBase {
                 await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
             }
             else {
-                Io.Log.Error(exportReqJson.ErrorValue);
+                this.Io.Log.Error(exportReqJson.ErrorValue);
             }
         }
     }

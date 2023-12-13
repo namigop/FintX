@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source='avares://Tefin.Resources/ResourceDictionary.axaml' />
+                <ResourceInclude Source='avares://Tefin.Resources/IconDictionary.axaml' />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
@@ -39,6 +40,7 @@
         <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml" />
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.axaml" />
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.Button.axaml" />
+        <StyleInclude Source="/Views/Controls/IconControl.axaml"></StyleInclude>
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     </Application.Styles>
 </Application>

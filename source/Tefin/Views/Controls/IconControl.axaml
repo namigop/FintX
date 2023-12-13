@@ -1,0 +1,22 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Tefin.Views.Controls"
+        xmlns:resources="clr-namespace:Tefin.Resources;assembly=Tefin.Resources">
+    <Design.PreviewWith>
+        <controls:IconControl />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|IconControl">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border>
+                    <Viewbox Stretch="Uniform" Width="{TemplateBinding Width}" Height="{TemplateBinding Height}">
+                        <ContentPresenter Content="{TemplateBinding Icon}" ContentTemplate="{StaticResource Icons}"></ContentPresenter>    
+                    </Viewbox>
+                </Border>
+                
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

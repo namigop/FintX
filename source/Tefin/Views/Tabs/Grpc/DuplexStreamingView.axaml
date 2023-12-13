@@ -3,31 +3,44 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:grpc="clr-namespace:Tefin.ViewModels.Tabs.Grpc"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="grpc:DuplexStreamingViewModel"
              x:Class="Tefin.Views.Tabs.Grpc.DuplexStreamingView">
-    <Border  BorderThickness="0">
+    <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
-                    
-                    <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0" 
+                    <StackPanel.Styles>
+                        <Style Selector="controls|IconControl">
+                            <Setter Property="Height" Value="20" />
+                            <Setter Property="Width" Value="20" />
+                        </Style>
+                    </StackPanel.Styles>
+                    <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
-                            <Viewbox Height="20" Width="20">
-                                <Canvas  Width="24" Height="24"><Path Fill="#228BCB" Data="M3 20V14L11 12L3 10V4L22 12Z" /></Canvas>
-                            </Viewbox>
+                            <controls:IconControl Icon="{StaticResource Icon.Start}" />
                             <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center"></TextBlock>
                         </StackPanel>
                     </Button>
-                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
-                    <ToggleSwitch IsChecked="{Binding ShowTreeEditor}"
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+                    <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
+                        <controls:IconControl Icon="{StaticResource Icon.Export}"></controls:IconControl>
+                    </Button>
+                    <Button Command="{Binding ImportRequestCommand}" Margin="6 0 0 0" ToolTip.Tip="open a saved request (*.fxrq) file">
+                        <controls:IconControl Icon="{StaticResource Icon.Import}"></controls:IconControl>
+                    </Button>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+
+                    <ToggleSwitch IsChecked="{Binding IsShowingRequestTreeEditor}"
                                   OnContent="Tree" OffContent="Json"
-                                  Margin="0 0 0 0"></ToggleSwitch>
+                                  Margin="0 0 0 0">
+                    </ToggleSwitch>
                 </StackPanel>
 
             </Grid>
-            
+
             <Grid Grid.Row="0" Grid.Column="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" />
@@ -39,13 +52,13 @@
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
-            
+
             <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="8" Margin="6" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
-           
+
             <Grid Grid.Row="2" Grid.Column="2">
                 <ContentControl Content="{Binding RespViewModel}" />
             </Grid>
-           
+
         </Grid>
     </Border>
 

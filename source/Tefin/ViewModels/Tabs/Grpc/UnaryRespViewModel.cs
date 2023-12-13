@@ -19,7 +19,7 @@ public class UnaryRespViewModel : ViewModelBase {
         this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
         this._responseEditor = this._treeRespEditor;
-        this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor, OnIsShowingResponseTreeEditor);
+        this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor, this.OnIsShowingResponseTreeEditor);
     }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
@@ -53,11 +53,11 @@ public class UnaryRespViewModel : ViewModelBase {
 
     public IResponseEditorViewModel ResponseEditor {
         get => this._responseEditor;
-        set => this.RaiseAndSetIfChanged(ref _responseEditor, value);
+        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
     public bool IsShowingResponseTreeEditor {
         get => this._isShowingResponseTreeEditor;
-        set => this.RaiseAndSetIfChanged(ref _isShowingResponseTreeEditor , value);
+        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor , value);
     }
 
    

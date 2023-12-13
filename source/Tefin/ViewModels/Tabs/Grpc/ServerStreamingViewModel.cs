@@ -25,12 +25,23 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
         this._showTreeEditor = true;
+        this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
+        this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
-    public bool ShowTreeEditor {
+    public ICommand ExportRequestCommand { get; }
+    public ICommand ImportRequestCommand { get; }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
+    public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
-            this.ReqViewModel.ShowTreeEditor = value;
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor , value);
+            this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
     }

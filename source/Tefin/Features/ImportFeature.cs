@@ -23,7 +23,7 @@ public class ImportFeature {
         this._responseStream = responseStream;
     }
     
-    public FSharpResult<object[], Exception> Run() {
+    public (FSharpResult<object[], Exception>, FSharpResult<object, Exception>) Run() {
         var respStream = this._responseStream == null ? Core.Utils.none<object>() : Core.Utils.some(this._responseStream);
         var import = Export.importReq(this._io, new SerParam(this._methodInfo, Array.Empty<object>(),
             respStream), this._file);

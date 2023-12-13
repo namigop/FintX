@@ -15,7 +15,7 @@ public class MiscViewModel : ViewModelBase {
 
     public MiscViewModelTabItem SelectedItem {
         get => this._selectedItem;
-        set => this.RaiseAndSetIfChanged(ref _selectedItem, value);
+        set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
     }
 
     public ObservableCollection<MiscViewModelTabItem> MiscItems { get; } = new();

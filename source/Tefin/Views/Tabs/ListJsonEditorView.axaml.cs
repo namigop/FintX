@@ -4,6 +4,6 @@ namespace Tefin.Views.Tabs;
 
 public partial class ListJsonEditorView : UserControl {
     public ListJsonEditorView() {
-        InitializeComponent();
+        this.InitializeComponent();
     }
 }

@@ -25,9 +25,9 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
         this._showTreeEditor = true;
-        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).ShowTreeEditor, OnShowTreeEditorChanged );
-        this.ExportRequestCommand = this.CreateCommand(OnExportRequest);
-        this.ImportRequestCommand = this.CreateCommand(OnImportRequest);
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged );
+        this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
+        this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
 
     public ICommand ExportRequestCommand { get; }
@@ -45,17 +45,17 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = (UnaryReqViewModel)obj;
         //this.RaisePropertyChanged(nameof(this.ReqViewModel));
     }
-    public bool ShowTreeEditor {
+    public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref _showTreeEditor , value);
-            this.ReqViewModel.ShowTreeEditor = value;
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor , value);
+            this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
     }
     public UnaryReqViewModel ReqViewModel {
         get => this._reqViewModel;
-        private set => this.RaiseAndSetIfChanged(ref _reqViewModel, value);
+        private set => this.RaiseAndSetIfChanged(ref this._reqViewModel, value);
     }
     public UnaryRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }

@@ -22,16 +22,27 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel = new ClientStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this.StatusText = "";
-        this.ShowTreeEditor = true;
+        this.IsShowingRequestTreeEditor = true;
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CallResponse, this.OnCallResponseChanged);
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).IsBusy, vm => this.IsBusy = vm.IsBusy);
+        this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
+        this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
+    }
+    public ICommand ExportRequestCommand { get; }
+    public ICommand ImportRequestCommand { get; }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
     }
 
-    public bool ShowTreeEditor {
+    public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref _showTreeEditor, value);
-            this.ReqViewModel.ShowTreeEditor = value;
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
+            this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.ReqViewModel.IsShowingClientStreamTree = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }

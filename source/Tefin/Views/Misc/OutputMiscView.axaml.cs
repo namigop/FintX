@@ -18,8 +18,8 @@ public partial class OutputMiscView : UserControl {
         this.InitializeComponent();
         this.DataContextChanged += this.OnDataContextChanged;
         this.SetupSyntaxHighlighting();
-        this.Editor.TextChanged += OnTextChanged;
-        this.DetachedFromVisualTree += OnDetached;
+        this.Editor.TextChanged += this.OnTextChanged;
+        this.DetachedFromVisualTree += this.OnDetached;
     }
 
     private void OnTextChanged(object? sender, EventArgs e) {
@@ -32,7 +32,7 @@ public partial class OutputMiscView : UserControl {
     }
 
     private void OnDetached(object? sender, VisualTreeAttachmentEventArgs e) {
-        this.Editor.TextChanged -= OnTextChanged;
+        this.Editor.TextChanged -= this.OnTextChanged;
     }
 
     private void OnDataContextChanged(object? sender, EventArgs e) {
