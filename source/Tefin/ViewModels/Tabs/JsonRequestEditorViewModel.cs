@@ -5,8 +5,6 @@ using ReactiveUI;
 
 using Tefin.Grpc.Dynamic;
 using Tefin.Utils;
-using Tefin.ViewModels.Types.TypeNodeBuilders;
-using Tefin.ViewModels.Types;
 using Tefin.Core.Reflection;
 
 namespace Tefin.ViewModels.Tabs;

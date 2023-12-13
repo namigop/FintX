@@ -5,10 +5,8 @@ using System.Reflection;
 using ReactiveUI;
 
 using Tefin.Core;
-using Tefin.Grpc;
-using Tefin.Grpc.Dynamic;
+using Tefin.Features;
 using Tefin.Utils;
-using static Tefin.Core.Utils;
 
 #endregion
 
@@ -82,9 +80,10 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public async Task ImportRequest() {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
-        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions, false);
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            var export = Export.importReq(this.Io, new SerParam(this.MethodInfo, Array.Empty<object>(), none<object>()), files[0]);
+            var import = new ImportFeature(this.Io, files[0], this.MethodInfo);
+            var export = import.Run();
             if (export.IsOk) {
                 var methodParams = export.ResultValue;
                 this._methodParameterInstances = methodParams;
@@ -98,8 +97,8 @@ public class UnaryReqViewModel : ViewModelBase {
     public async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
-            var sdParam = new SerParam(this.MethodInfo, mParams, none<object>());
-            var exportReqJson = Export.requestToJson(sdParam);
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
             if (exportReqJson.IsOk) {
                 var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
                 await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");

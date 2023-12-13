@@ -16,6 +16,7 @@
         <Compile Include="TimeItTest.fs" />
         <Compile Include="NodeBuilderTest.fs" />
         <Compile Include="SerDeserTests.fs" />
+        <Compile Include="ImportExportTest.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

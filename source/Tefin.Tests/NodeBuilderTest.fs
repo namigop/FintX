@@ -1,4 +1,4 @@
-module Tefin.Tests.NodeBuilderTest
+module NodeBuilderTest
 open System
 open System.Collections.Generic
 open System.Reflection

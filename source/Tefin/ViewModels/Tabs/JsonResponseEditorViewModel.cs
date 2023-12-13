@@ -1,7 +1,5 @@
 using System.Reflection;
 
-using Avalonia.Controls;
-
 using ReactiveUI;
 
 using Tefin.Core;

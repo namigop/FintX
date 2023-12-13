@@ -1,8 +1,9 @@
-module Tefin.Tests.SerDeserTests
+module SerializeDeseializeTests
 
 open Newtonsoft.Json.Linq
 open Tefin.Core
 open Tefin.Grpc.Dynamic
+open Tefin.Views.Types
 open Xunit
 open Tefin.Tests.TestInputTypes
 
@@ -19,7 +20,7 @@ let ``Can serialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args }
+    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args ; RequestStream = None }
     Assert.True (Res.isOk jsonRet)
    
     //Validate the generate json
@@ -53,7 +54,7 @@ let ``Can deserialize methodArgs tree`` () =
     let doubleVal = 42.42
     
     let args = [|test1; intVal; stringVal; doubleVal|]
-    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args }
+    let jsonRet = DynamicTypes.toJsonRequest { Method = mi; RequestParams = args; RequestStream = None }
     Assert.True(Res.isOk jsonRet)
     let genInstanceRet = DynamicTypes.fromJsonRequest mi (Res.getValue jsonRet)
     Assert.True (Res.isOk genInstanceRet)

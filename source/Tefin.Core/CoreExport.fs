@@ -21,9 +21,9 @@ module CoreExport =
           { IsMethod = false; Name = "MethodType"; Type = typeof<string> }
           { IsMethod = false; Name = "RequestType"; Type = typeof<string> }
           { IsMethod = false; Name = "Request";  Type = requestType } |]
-    let streamingRequestPropInfos requestType requestStreamType =
-        singleReqPropInfos requestType
-        |> Array.append [| { IsMethod = false; Name = "RequestStream"; Type = requestStreamType } |]
+    let streamingRequestPropInfos requestType requestStreamType =        
+        [| { IsMethod = false; Name = "RequestStream"; Type = requestStreamType } |]
+        |> Array.append (singleReqPropInfos requestType)
         
     let emitRequestExportClass (requestStreamTypeOpt: Type option) (requestType: Type) : Type =
         let getProperties () =

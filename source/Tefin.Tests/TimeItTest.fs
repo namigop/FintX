@@ -1,4 +1,4 @@
-module Tefin.Tests.TimeItTest
+module TimeItTest
 
 
 open System

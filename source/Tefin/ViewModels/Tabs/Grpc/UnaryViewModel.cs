@@ -5,12 +5,8 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
-using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
-using Tefin.Grpc;
-using Tefin.Grpc.Dynamic;
-using Tefin.Utils;
 
 using static Tefin.Core.Utils;
 

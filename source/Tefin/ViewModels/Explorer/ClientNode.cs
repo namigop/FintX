@@ -2,8 +2,6 @@
 
 using System.Windows.Input;
 
-using Avalonia.Controls;
-
 using ReactiveUI;
 
 using Tefin.Core;
