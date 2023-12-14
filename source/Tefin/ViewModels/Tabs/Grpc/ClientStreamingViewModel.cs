@@ -79,8 +79,11 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 
                 //get the headers/trailers
                 var feature = new EndStreamingFeature();
-                await feature.EndClientStreaming(resp); //TODO: use same emitted structure as UnaryAsync
-                return callResponse;
+                callResponse = await feature.EndClientStreaming(callResponse); //TODO: use same emitted structure as UnaryAsync
+                var builder = new CompositeResponseFeature();
+                var (type, response) = await builder.BuildClientStreamResponse(callResponse);
+
+                return response;
             }
 
 

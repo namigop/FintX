@@ -9,6 +9,7 @@ open Microsoft.FSharp.Control
 open Tefin.Core.Execution
 open Tefin.Core.Interop
 open Tefin.Core
+open Tefin.Core.Reflection
 
 type ClientStreamingCallInfo =
     { ClientStreamItemType: Type
@@ -20,7 +21,8 @@ type ClientStreamingCallInfo =
       WriteAsyncMethodInfo: MethodInfo
       CompleteAsyncMethodInfo: MethodInfo
       ResponseHeadersAsyncPropInfo: PropertyInfo
-      RequestStreamPropInfo: PropertyInfo }
+      RequestStreamPropInfo: PropertyInfo
+      Method : MethodInfo}
 
     member this.GetStatus(callResult: obj) =
         this.GetStatusMethodInfo.Invoke(callResult, null) :?> Status
@@ -48,6 +50,7 @@ type ClientStreamingCallResponse =
       WriteCompleted: bool
       CallResult: obj
       RequestStream: obj
+      Response: obj
       CallInfo: ClientStreamingCallInfo }
 
     static member Empty() =
@@ -56,6 +59,7 @@ type ClientStreamingCallResponse =
           Trailers = None
           WriteCompleted = false
           CallResult = Unchecked.defaultof<obj>
+          Response = Unchecked.defaultof<obj>
           RequestStream = Unchecked.defaultof<obj>
           CallInfo = Unchecked.defaultof<ClientStreamingCallInfo> }
 
@@ -120,7 +124,8 @@ module ClientStreamingResponse =
                           WriteAsyncMethodInfo = writeMethod
                           CompleteAsyncMethodInfo = completeMethod
                           ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
-                          RequestStreamPropInfo = requestStreamPropInfo }
+                          RequestStreamPropInfo = requestStreamPropInfo
+                          Method = methodInfo}
 
                     cache[clientStreamType] <- temp
                     temp
@@ -132,9 +137,39 @@ module ClientStreamingResponse =
               Status = None
               WriteCompleted = false
               CallResult = resp
+              Response = Unchecked.defaultof<obj>
               RequestStream = requestStream
               CallInfo = callInfo }
 
+    let emitClientStreamResponse (resp: ClientStreamingCallResponse) = task {
+        let isError = resp.Response :? Exception
+         
+        let wrapperType = ResponseUtils.emitClientStreamResponse resp.CallInfo.Method isError
+        let wrapperInst = Activator.CreateInstance wrapperType
+        let responsePi = wrapperType.GetProperty("Response")
+        let response =
+            if (isError) then
+                let exc = resp.Response :?> Exception
+                ErrorResponse(Error = exc.Message) |> box
+            else
+                resp.Response
+                
+        responsePi.SetValue(wrapperInst, response)
+       
+        let headerProp = wrapperType.GetProperty("Headers")
+        headerProp.SetValue(wrapperInst, match resp.Headers with | Some m -> m | None -> Metadata())
+        
+        let statusProp = wrapperType.GetProperty("Status")       
+        statusProp.SetValue(wrapperInst, match resp.Status with | Some s -> s | None -> Status(StatusCode.Unknown, "check the logs") )
+        
+        let trailersProp =wrapperType.GetProperty("Trailers")
+        trailersProp.SetValue(wrapperInst, match resp.Trailers with | Some m -> m | None -> Metadata())
+            
+        return struct (wrapperType, wrapperInst)                            
+       
+        }
+        
+        
     let completeCall (resp: ClientStreamingCallResponse) =
         task {
             let status =
@@ -171,17 +206,14 @@ module ClientStreamingResponse =
         }
 
     let getResponse (resp: ClientStreamingCallResponse) =
-        resp.CallInfo.GetResponse(resp.CallResult)
+        task {
+            let! methodCallResponse = resp.CallInfo.GetResponse(resp.CallResult)
+            return { resp with Response = methodCallResponse }
+        }
 
-    let toStandardCallResponse (resp: ClientStreamingCallResponse) =
-        { Headers = resp.Headers
-          Trailers = resp.Trailers
-          Status = resp.Status }
 
     let write (resp: ClientStreamingCallResponse) (reqItem: obj) =
         (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
-
-
 
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
         if ctx.Success then

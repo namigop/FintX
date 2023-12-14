@@ -92,7 +92,8 @@ module UnaryResponse =
                 try
                     let status = callInfo.GetStatusMethodInfo.Invoke(unaryAsyncCall, null) :?> Status
                     statusProp.SetValue(wrapperInst, status)
-                with _ -> ()
+                with exc ->
+                     statusProp.SetValue(wrapperInst, Status(StatusCode.Unknown, exc.Message, exc))
                 
                 let trailersProp =wrapperType.GetProperty("Trailers")
                 try

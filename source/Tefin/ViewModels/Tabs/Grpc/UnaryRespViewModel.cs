@@ -73,11 +73,5 @@ public class UnaryRespViewModel : ViewModelBase {
 
     public void Show(bool ok, object response, Context context) {
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
-        // Dispatcher.UIThread.Post(() => {
-        //     this.Items.Clear();
-        //     var node = new ResponseNode(this._methodInfo.Name, response.GetType(), null, response, null); // TypeNodeBuilder.Create(this._methodInfo.Name, response);
-        //     node.Init();
-        //     this.Items.Add(node);
-        // });
     }
 }

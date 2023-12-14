@@ -15,7 +15,7 @@ public class EndStreamingFeature {
         return await DuplexStreamingResponse.completeCall(response);
     }
 
-    public ServerStreamingCallResponse EndServerStreaming(ServerStreamingCallResponse resp) {
-        return ServerStreamingResponse.completeCall(resp);
+    public async Task<ServerStreamingCallResponse> EndServerStreaming(ServerStreamingCallResponse resp) {
+        return await ServerStreamingResponse.completeCall(resp);
     }
 }

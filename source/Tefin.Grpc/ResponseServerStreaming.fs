@@ -15,41 +15,42 @@ type ServerStreamingCallInfo =
     { ServerStreamItemType: Type
       ServerStreamType: Type
       ResponseStreamType: Type
-      MoveNextMethodInfo : MethodInfo
-      GetStatusMethodInfo : MethodInfo
-      GetTrailersMethodInfo : MethodInfo
+      MoveNextMethodInfo: MethodInfo
+      GetStatusMethodInfo: MethodInfo
+      GetTrailersMethodInfo: MethodInfo
       ResponseStreamPropInfo: PropertyInfo
-      ResponseHeadersAsyncPropInfo : PropertyInfo
-      CurrentPropInfo: PropertyInfo
-      }
+      ResponseHeadersAsyncPropInfo: PropertyInfo
+      CurrentPropInfo: PropertyInfo }
 
-    member this.GetResponseStream(callResult:obj) =
+    member this.GetResponseStream(callResult: obj) =
         this.ResponseStreamPropInfo.GetValue callResult
-    member this.GetCurrent(callResult:obj) =
-        this.CurrentPropInfo.GetValue (this.GetResponseStream(callResult))
-    member this.GetStatus(callResult:obj) =
-        this.GetStatusMethodInfo.Invoke (callResult, null) :?> Status
-    member this.GetTrailers(callResult:obj) =
-        this.GetTrailersMethodInfo.Invoke (callResult, null) :?> Metadata
-    member this.MoveNext(callResult:obj, token:CancellationToken) =
-        this.MoveNextMethodInfo.Invoke(this.GetResponseStream(callResult), [|token|]) :?> Task<bool>
 
-    member this.GetResponseHeaders(callResult:obj) =
-        this.ResponseHeadersAsyncPropInfo.GetValue (callResult) :?> Task<Metadata>
+    member this.GetCurrent(callResult: obj) =
+        this.CurrentPropInfo.GetValue(this.GetResponseStream(callResult))
+
+    member this.GetStatus(callResult: obj) =
+        this.GetStatusMethodInfo.Invoke(callResult, null) :?> Status
+
+    member this.GetTrailers(callResult: obj) =
+        this.GetTrailersMethodInfo.Invoke(callResult, null) :?> Metadata
+
+    member this.MoveNext(callResult: obj, token: CancellationToken) =
+        this.MoveNextMethodInfo.Invoke(this.GetResponseStream(callResult), [| token |]) :?> Task<bool>
+
+    member this.GetResponseHeaders(callResult: obj) =
+        this.ResponseHeadersAsyncPropInfo.GetValue(callResult) :?> Task<Metadata>
 
 type StandardCallResponse =
     { Headers: Metadata option
       Status: Status option
-      Trailers: Metadata option
-       }
+      Trailers: Metadata option }
 
 type ServerStreamingCallResponse =
     { Headers: Metadata option
       Status: Status option
       Trailers: Metadata option
       CallResult: obj
-      CallInfo : ServerStreamingCallInfo
-       }
+      CallInfo: ServerStreamingCallInfo }
 
 type OkayServerStreamingResponse =
     { MethodInfo: MethodInfo
@@ -73,70 +74,78 @@ type ResponseServerStreaming =
 module ServerStreamingResponse =
     let private wrapResponse =
         let cache = Dictionary<Type, ServerStreamingCallInfo>()
-        
-        fun (methodInfo: MethodInfo) (resp: obj) (isError: bool)  ->
+
+        fun (methodInfo: MethodInfo) (resp: obj) (isError: bool) ->
             let itemType = methodInfo.ReturnType.GetGenericArguments().[0]
-            let serverStreamType = typedefof<AsyncServerStreamingCall<_>>.MakeGenericType itemType
+
+            let serverStreamType =
+                typedefof<AsyncServerStreamingCall<_>>.MakeGenericType itemType
+
             let found, callInfo = cache.TryGetValue serverStreamType
-            if found then 
+
+            if found then
                 { Headers = None
                   Trailers = None
                   Status = None
                   CallResult = resp
-                  CallInfo = callInfo } 
+                  CallInfo = callInfo }
             else
-                let responseStreamType  = typedefof<IAsyncStreamReader<_>>.MakeGenericType itemType                
+                let responseStreamType = typedefof<IAsyncStreamReader<_>>.MakeGenericType itemType
                 let responseStreamPropInfo = serverStreamType.GetProperty("ResponseStream")
                 let currentPropInfo = responseStreamType.GetProperty("Current")
                 let moveNextMethodInfo = responseStreamType.GetMethod("MoveNext")
                 let getStatusMethodInfo = serverStreamType.GetMethod("GetStatus")
                 let getTrailersMethodInfo = serverStreamType.GetMethod("GetTrailers")
-                let responseHeadersAsyncPropInfo = serverStreamType.GetProperty("ResponseHeadersAsync")
+
+                let responseHeadersAsyncPropInfo =
+                    serverStreamType.GetProperty("ResponseHeadersAsync")
+
                 let callInfo =
-                    {
-                      ServerStreamItemType = itemType
+                    { ServerStreamItemType = itemType
                       ServerStreamType = serverStreamType
                       ResponseStreamType = responseStreamType
-                      ResponseStreamPropInfo =  responseStreamPropInfo                      
+                      ResponseStreamPropInfo = responseStreamPropInfo
                       CurrentPropInfo = currentPropInfo
                       MoveNextMethodInfo = moveNextMethodInfo
                       GetStatusMethodInfo = getStatusMethodInfo
                       GetTrailersMethodInfo = getTrailersMethodInfo
-                      ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
-                    }
-                    
+                      ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo }
+
                 cache[serverStreamType] <- callInfo
-                
+
                 { Headers = None
                   Trailers = None
                   Status = None
                   CallResult = resp
-                  CallInfo = callInfo}
+                  CallInfo = callInfo }
 
-    let toStandardCallResponse  (resp: ServerStreamingCallResponse) =
-        {
-           Headers = resp.Headers
-           Trailers = resp.Trailers
-           Status = resp.Status
-        }
+    let toStandardCallResponse (resp: ServerStreamingCallResponse) =
+        { Headers = resp.Headers
+          Trailers = resp.Trailers
+          Status = resp.Status }
+
     let completeCall (resp: ServerStreamingCallResponse) =
-        let status =
-            try
-                resp.CallInfo.GetStatus(resp.CallResult)
-            with exc ->
-                Status(StatusCode.Unknown, exc.Message)
-                
-        let trailers =
-            try
-                resp.CallInfo.GetTrailers(resp.CallResult) 
-            with exc -> Metadata()
-            
-        let d = resp.CallResult :?> IDisposable
-        d.Dispose()
+        task {
+            let status =
+                try
+                    resp.CallInfo.GetStatus(resp.CallResult)
+                with exc ->
+                    Status(StatusCode.Unknown, exc.Message)
 
-        { resp with
-            Trailers =  Some trailers
-            Status = Some status }
+            let trailers =
+                try
+                    resp.CallInfo.GetTrailers(resp.CallResult)
+                with exc ->
+                    Metadata()
+
+            let d = resp.CallResult :?> IDisposable
+            d.Dispose()
+
+            return
+                { resp with
+                    Trailers = Some trailers
+                    Status = Some status }
+        }
 
     let getResponseHeader (okayResp: ServerStreamingCallResponse) =
         task {
@@ -157,11 +166,11 @@ module ServerStreamingResponse =
             Okay t
         else
             let err = Res.getError ctx.Response
-            let w =
-                wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
 
             let t: ErrorServerStreamingResponse =
                 { MethodInfo = methodInfo
                   Context = ctx
                   Response = w }
+
             Error t
