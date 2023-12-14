@@ -18,6 +18,7 @@
                         </Style>
                     </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
+                            IsEnabled="{Binding !ReqViewModel.CanWrite} "
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
                             <controls:IconControl Icon="{StaticResource Icon.Start}" />

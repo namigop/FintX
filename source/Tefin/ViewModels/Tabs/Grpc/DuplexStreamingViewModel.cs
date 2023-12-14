@@ -29,6 +29,8 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).IsBusy, this.OnIsBusyChanged);
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
+        this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite, _ => this.RaisePropertyChanged(nameof(this.CanStart)));
+        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).CanRead, _ => this.RaisePropertyChanged(nameof(this.CanStart)));
     }
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -48,6 +50,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
+    }
+
+    public bool CanStart {
+        get => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
     }
 
     private async Task OnImportRequest() {
