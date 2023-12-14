@@ -1,9 +1,12 @@
+#region
+
 using Google.Protobuf;
+
+#endregion
 
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class ByteStringNodeBuilder : ITypeNodeBuilder {
-
     public bool CanHandle(Type type) {
         return type == typeof(ByteString);
     }

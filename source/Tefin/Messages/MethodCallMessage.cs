@@ -1,7 +1,6 @@
 namespace Tefin.Messages;
 
 public class MethodCallMessage : MessageBase {
-
     public MethodCallMessage(string url, string method, double point) {
         this.Url = url;
         this.Method = method;

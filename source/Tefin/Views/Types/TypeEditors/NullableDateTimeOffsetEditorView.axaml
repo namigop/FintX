@@ -10,8 +10,8 @@
         <StackPanel Orientation="Horizontal">
             <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"
                      IsEnabled="{Binding !IsNull}" />
-           
-            <Border Width="2" Margin="6" Background="WhiteSmoke"></Border>
+
+            <Border Width="2" Margin="6" Background="WhiteSmoke" />
 
             <CheckBox Margin="0 0 0 0" IsChecked="{Binding IsNull}" Content="null"
                       IsVisible="{Binding AcceptsNull}" />

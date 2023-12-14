@@ -8,24 +8,24 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="tabs:ListTreeEditorViewModel"
              x:Class="Tefin.Views.Tabs.ListTreeEditorView">
-   <Border>
-       <TreeDataGrid Source="{Binding StreamTree}" ShowColumnHeaders="False" x:Name="TreeDgStream" VerticalAlignment="Stretch">
-           <TreeDataGrid.Resources>
-               <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
-                   <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                       <ContentControl.DataTemplates>
-                           <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
-                       </ContentControl.DataTemplates>
-                   </ContentControl>
-               </DataTemplate>
-               <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">
-                   <ContentControl Content="{Binding}" Margin="4 0 0 0">
-                       <ContentControl.DataTemplates>
-                           <viewModels:NodeEditViewLocator /> <!-- will load *NodeEditView.axaml -->
-                       </ContentControl.DataTemplates>
-                   </ContentControl>
-               </DataTemplate>
-           </TreeDataGrid.Resources>
-       </TreeDataGrid>
-   </Border>
+    <Border>
+        <TreeDataGrid Source="{Binding StreamTree}" ShowColumnHeaders="False" x:Name="TreeDgStream" VerticalAlignment="Stretch">
+            <TreeDataGrid.Resources>
+                <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
+                    <ContentControl Content="{Binding}" Margin="4 0 0 0">
+                        <ContentControl.DataTemplates>
+                            <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
+                </DataTemplate>
+                <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">
+                    <ContentControl Content="{Binding}" Margin="4 0 0 0">
+                        <ContentControl.DataTemplates>
+                            <viewModels:NodeEditViewLocator /> <!-- will load *NodeEditView.axaml -->
+                        </ContentControl.DataTemplates>
+                    </ContentControl>
+                </DataTemplate>
+            </TreeDataGrid.Resources>
+        </TreeDataGrid>
+    </Border>
 </UserControl>

@@ -10,7 +10,6 @@
              x:Class="Tefin.Views.Tabs.TreeResponseEditorView">
     <Border>
         <TreeDataGrid Source="{Binding ResponseTree}" ShowColumnHeaders="False" x:Name="TreeDg"
-                      Grid.Row="0"
                       VerticalAlignment="Stretch">
             <TreeDataGrid.Resources>
                 <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">

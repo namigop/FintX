@@ -9,10 +9,8 @@ using Tefin.ViewModels.MainMenu;
 namespace Tefin.Views.MainMenu;
 
 public partial class MainMenuView : UserControl {
-
     public MainMenuView() {
         this.InitializeComponent();
-         
     }
 
     private void Init(object? sender, EventArgs e) {

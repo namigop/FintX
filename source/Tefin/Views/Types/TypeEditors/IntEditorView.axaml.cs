@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class IntEditorView : UserControl {
-
     public IntEditorView() {
         this.InitializeComponent();
     }

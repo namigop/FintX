@@ -1,7 +1,6 @@
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class DefaultNodeBuilder : ITypeNodeBuilder {
-
     public bool CanHandle(Type type) {
         return true; //default handling for all types
     }

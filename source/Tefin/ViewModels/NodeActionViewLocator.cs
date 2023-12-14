@@ -1,7 +1,11 @@
+#region
+
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 
 using Tefin.ViewModels.Explorer;
+
+#endregion
 
 namespace Tefin.ViewModels;
 
@@ -10,8 +14,11 @@ public class NodeActionViewLocator : IDataTemplate {
 
     public Control Build(object? data) {
         if (data == null)
-            return new Border() { Width = 0, Height = 0 };
-        
+            return new Border {
+                Width = 0,
+                Height = 0
+            };
+
         var sourceType = data.GetType();
         if (Mapping.TryGetValue(sourceType, out var value)) {
             ((NodeBase)data).IsEditing = false;
@@ -27,7 +34,10 @@ public class NodeActionViewLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new Border() { Width = 0, Height = 0 };
+        return new Border {
+            Width = 0,
+            Height = 0
+        };
     }
 
     public bool Match(object? data) {

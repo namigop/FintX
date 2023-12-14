@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Explorer;
 
 public partial class ClientNodeView : UserControl {
-
     public ClientNodeView() {
         this.InitializeComponent();
     }

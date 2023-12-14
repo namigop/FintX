@@ -9,7 +9,6 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class ArrayNode : ListNode {
-
     //private int listItemsCount;
     private readonly object _internalList;
 
@@ -28,14 +27,19 @@ public class ArrayNode : ListNode {
         var parentValue = parent != null ? Core.Utils.some(parent.Value)! : Core.Utils.none<object>();
         var (_, list) = TypeBuilder.getDefault(constructedListType, true, parentValue, 0);
         this._listMethods.ClearMethod!.Invoke(list, null);
-        
+
         this._internalList = list;
         this._internalListType = this._internalList.GetType();
-        if (instance != null) this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] { instance });
+        if (instance != null)
+            this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] {
+                instance
+            });
         this.SubscribeTo(x => ((ArrayNode)x).ListItemsCount, this.OnCountChanged);
     }
 
-    public override string FormattedTypeName => $"{{{this.Type.Name}}}";
+    public override string FormattedTypeName {
+        get => $"{{{this.Type.Name}}}";
+    }
 
     protected override Type GetItemType() {
         return this._itemType;

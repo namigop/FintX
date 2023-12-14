@@ -1,3 +1,5 @@
+#region
+
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -9,12 +11,14 @@ using Tefin.Core.Reflection;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs;
 
 public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
+    private readonly Type _listItemType;
     private readonly string _name;
     private object _listInstance;
-    private readonly Type _listItemType;
     public ListTreeEditorViewModel(string name, Type listType) {
         this._name = name;
         this.ListType = listType;

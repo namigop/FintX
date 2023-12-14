@@ -1,8 +1,12 @@
+#region
+
 using System.Text;
 
 using Avalonia.Threading;
 
 using AvaloniaEdit;
+
+#endregion
 
 namespace Tefin.ViewModels.Misc;
 
@@ -10,9 +14,6 @@ public class ConsoleIntercept : TextWriter {
     private const int Capacity = 1_000_000; //about 4 MB
     private readonly StringBuilder _sb = new();
     private TextEditor? _txtEditor;
-
-    public ConsoleIntercept() {
-    }
 
     public override Encoding Encoding { get; } = Encoding.UTF8;
 
@@ -46,7 +47,7 @@ public class ConsoleIntercept : TextWriter {
     public override void WriteLine(string? value) {
         if (string.IsNullOrEmpty(value))
             return;
-        
+
         this._sb.AppendLine(value);
         this.Sync();
     }

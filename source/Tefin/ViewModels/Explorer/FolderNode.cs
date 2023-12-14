@@ -1,7 +1,6 @@
 namespace Tefin.ViewModels.Explorer;
 
 public class FolderNode : NodeBase {
-
     public FolderNode(string dirPath) {
         this.IsExpanded = true;
         this.FullPath = dirPath;

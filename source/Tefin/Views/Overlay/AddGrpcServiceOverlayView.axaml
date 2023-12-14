@@ -17,46 +17,48 @@
                 </StackPanel>
                 <DockPanel LastChildFill="True" Grid.Row="1" Margin="0 15 0 0">
                     <Button Command="{Binding DiscoverCommand}" Height="32" DockPanel.Dock="Right" Margin="6 0 0 0"
-                            VerticalAlignment ="Top"
+                            VerticalAlignment="Top"
                             ToolTip.Tip="Discover services">
 
-                      <Grid>
-                      <Viewbox Width="18" Height="18"   Stretch="Uniform" IsVisible="{Binding !IsDiscoveringUsingProto}" ToolTip.Tip="Click to explore the reflection service">
-                        <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
-                          <Canvas>
-                            <Path Data="M7.5,14.5c-3.866,0,-7,-3.134,-7,-7S3.634,0.5,7.5,0.5s7,3.134,7,7S11.366,14.5,7.5,14.5z" Fill="Transparent" Stroke="#00AFFF" StrokeThickness="1"/>
-                            <Path Data="M7.754,3.611L11.643,7.5l-3.889,3.889M3.025,7.5h8.264" Stroke="#00AFFF" StrokeThickness="1" />
-                          </Canvas>
-                        </Canvas>
-                      </Viewbox>
-                       
-                      <Viewbox Stretch="Uniform"  IsVisible="{Binding IsDiscoveringUsingProto}" ToolTip.Tip="Click to select a proto file">
-                        <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
-                          <Canvas>
-                            <Path Data="M14.5,14.5H1.5V2.074c0,-0.317,0.257,-0.574,0.574,-0.574h3.937c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C8.463,3.42,8.711,3.5,8.965,3.5H14.5V14.5z" Fill="#4E4E4E" Stroke="#FBD28A" StrokeThickness="1"
-                                  />
-                            <Polygon Points="14.5,14.5 1.5,14.5 0.6,6.5 15.4,6.5" Fill="#BA9B04" Stroke="#FBD28A" StrokeThickness="1"   />
-                          </Canvas>
-                        </Canvas>
-                      </Viewbox>
+                        <Grid>
+                            <Viewbox Width="18" Height="18" Stretch="Uniform" IsVisible="{Binding !IsDiscoveringUsingProto}" ToolTip.Tip="Click to explore the reflection service">
+                                <Canvas Width="16" Height="16">
+                                    <Canvas>
+                                        <Path Data="M7.5,14.5c-3.866,0,-7,-3.134,-7,-7S3.634,0.5,7.5,0.5s7,3.134,7,7S11.366,14.5,7.5,14.5z" Fill="Transparent" Stroke="#00AFFF"
+                                              StrokeThickness="1" />
+                                        <Path Data="M7.754,3.611L11.643,7.5l-3.889,3.889M3.025,7.5h8.264" Stroke="#00AFFF" StrokeThickness="1" />
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
 
-                      </Grid>
+                            <Viewbox Stretch="Uniform" IsVisible="{Binding IsDiscoveringUsingProto}" ToolTip.Tip="Click to select a proto file">
+                                <Canvas Width="16" Height="16">
+                                    <Canvas>
+                                        <Path
+                                            Data="M14.5,14.5H1.5V2.074c0,-0.317,0.257,-0.574,0.574,-0.574h3.937c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C8.463,3.42,8.711,3.5,8.965,3.5H14.5V14.5z"
+                                            Fill="#4E4E4E" Stroke="#FBD28A" StrokeThickness="1" />
+                                        <Polygon Points="14.5,14.5 1.5,14.5 0.6,6.5 15.4,6.5" Fill="#BA9B04" Stroke="#FBD28A" StrokeThickness="1" />
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
+
+                        </Grid>
                     </Button>
 
-                  <Grid>
-                    <TextBox HorizontalAlignment="Stretch" Text="{Binding ReflectionUrl}"  
-                             Watermark ="https://localhost:5001"
-                             IsVisible="{Binding !IsDiscoveringUsingProto}"/>
-                    <TextBox HorizontalAlignment="Stretch" Text="{Binding ProtoFile}"
-                             Watermark ="Select a *.proto file" IsVisible="{Binding IsDiscoveringUsingProto}"/>
-                  </Grid>
+                    <Grid>
+                        <TextBox HorizontalAlignment="Stretch" Text="{Binding ReflectionUrl}"
+                                 Watermark="https://localhost:5001"
+                                 IsVisible="{Binding !IsDiscoveringUsingProto}" />
+                        <TextBox HorizontalAlignment="Stretch" Text="{Binding ProtoFile}"
+                                 Watermark="Select a *.proto file" IsVisible="{Binding IsDiscoveringUsingProto}" />
+                    </Grid>
                 </DockPanel>
 
-              <TextBlock Grid.Row="2" Text="Address" Classes="FormField"  IsVisible="{Binding IsDiscoveringUsingProto}" />
-              <TextBox Grid.Row="3" HorizontalAlignment="Stretch"  IsVisible="{Binding IsDiscoveringUsingProto}"
-                        Watermark ="https://localhost:5001"
-                        ToolTip.Tip="Enter the gRPC address"
-                        Text="{Binding Address}" />
+                <TextBlock Grid.Row="2" Text="Address" Classes="FormField" IsVisible="{Binding IsDiscoveringUsingProto}" />
+                <TextBox Grid.Row="3" HorizontalAlignment="Stretch" IsVisible="{Binding IsDiscoveringUsingProto}"
+                         Watermark="https://localhost:5001"
+                         ToolTip.Tip="Enter the gRPC address"
+                         Text="{Binding Address}" />
 
                 <TextBlock Grid.Row="4" Text="Service*" Classes="FormField" />
                 <ComboBox Grid.Row="5" HorizontalAlignment="Stretch"

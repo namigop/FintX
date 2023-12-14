@@ -16,8 +16,8 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
-    private string _statusText;
     private bool _showTreeEditor;
+    private string _statusText;
 
     public ServerStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, true);
@@ -30,17 +30,10 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     }
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref this._showTreeEditor , value);
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
             this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
@@ -52,6 +45,13 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
+    }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
     }
 
     public override void Dispose() {
@@ -91,9 +91,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                     var end = new EndStreamingFeature();
                     callResponse = end.EndServerStreaming(callResponse);
 
-                    var model = new StandardResponseViewModel.GrpcStandardResponse() {
+                    var model = new StandardResponseViewModel.GrpcStandardResponse {
                         Headers = callResponse.Headers.Value,
-                        Trailers =   callResponse.Trailers.Value,
+                        Trailers = callResponse.Trailers.Value,
                         Status = callResponse.Status.Value
                     };
                     return model;

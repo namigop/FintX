@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Tabs.Grpc;
 
 public partial class UnaryView : UserControl {
-
     public UnaryView() {
         this.InitializeComponent();
     }

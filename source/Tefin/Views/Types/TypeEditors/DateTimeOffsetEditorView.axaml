@@ -8,7 +8,7 @@
              x:Class="Tefin.Views.Types.TypeEditors.DateTimeOffsetEditorView">
     <Border x:Name="MainBorder">
         <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"  />
+            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
         </StackPanel>
     </Border>
 </UserControl>

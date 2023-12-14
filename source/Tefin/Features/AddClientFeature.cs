@@ -1,16 +1,20 @@
+#region
+
 using Tefin.Core;
 using Tefin.Core.Interop;
+
+#endregion
 
 namespace Tefin.Features;
 
 public class AddClientFeature {
-    private readonly ProjectTypes.Project _project;
     private readonly string _clientName;
-    private readonly string _serviceName;
-    private readonly string _protoOrUrl;
-    private readonly string _description;
     private readonly string[] _csFiles;
+    private readonly string _description;
     private readonly IOResolver _io;
+    private readonly ProjectTypes.Project _project;
+    private readonly string _protoOrUrl;
+    private readonly string _serviceName;
     public AddClientFeature(ProjectTypes.Project project, string clientName, string serviceName, string protoOrUrl, string description, string[] csFiles, IOResolver io) {
         this._project = project;
         this._clientName = clientName;

@@ -1,7 +1,11 @@
+#region
+
 using System.Reflection;
 
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Tabs.Grpc;
+
+#endregion
 
 namespace Tefin.ViewModels.Explorer;
 

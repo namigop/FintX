@@ -17,7 +17,6 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Views.Explorer;
 
 public partial class ExplorerView : UserControl {
-
     public ExplorerView() {
         this.InitializeComponent();
         this.TreeDg.DoubleTapped += this.OnDoubleTapped;

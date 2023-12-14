@@ -1,16 +1,21 @@
+#region
+
 using System.Reflection;
+
 using ReactiveUI;
 
 using Tefin.Core.Execution;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryRespViewModel : ViewModelBase {
+    private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
+    private readonly TreeResponseEditorViewModel _treeRespEditor;
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
-    private readonly TreeResponseEditorViewModel _treeRespEditor;
-    private readonly JsonResponseEditorViewModel _jsonRespEditor;
 
     public UnaryRespViewModel(MethodInfo methodInfo) {
         this._methodInfo = methodInfo;
@@ -20,6 +25,15 @@ public class UnaryRespViewModel : ViewModelBase {
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
         this._responseEditor = this._treeRespEditor;
         this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor, this.OnIsShowingResponseTreeEditor);
+    }
+
+    public IResponseEditorViewModel ResponseEditor {
+        get => this._responseEditor;
+        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
+    }
+    public bool IsShowingResponseTreeEditor {
+        get => this._isShowingResponseTreeEditor;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
     }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
@@ -34,7 +48,6 @@ public class UnaryRespViewModel : ViewModelBase {
         }
         catch (Exception e) {
             Console.WriteLine(e);
-             
         }
     }
     private void ShowAsJson() {
@@ -51,21 +64,12 @@ public class UnaryRespViewModel : ViewModelBase {
             this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
     }
 
-    public IResponseEditorViewModel ResponseEditor {
-        get => this._responseEditor;
-        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
-    }
-    public bool IsShowingResponseTreeEditor {
-        get => this._isShowingResponseTreeEditor;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor , value);
-    }
 
-   
     public void Init() {
         this.ResponseEditor.Init();
     }
 
-     
+
 
     public void Show(bool ok, object response, Context context) {
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));

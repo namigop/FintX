@@ -9,14 +9,14 @@
              x:DataType="tabs:TreeRequestEditorViewModel"
              x:Class="Tefin.Views.Tabs.TreeRequestEditorView">
     <Border>
-        <TreeDataGrid Source="{Binding MethodTree}" ShowColumnHeaders="False" x:Name="TreeDg"  VerticalAlignment="Stretch">
+        <TreeDataGrid Source="{Binding MethodTree}" ShowColumnHeaders="False" x:Name="TreeDg" VerticalAlignment="Stretch">
             <TreeDataGrid.Resources>
                 <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
                     <ContentControl Content="{Binding}" Margin="4 0 0 0">
                         <ContentControl.DataTemplates>
                             <viewModels:NodeViewLocator /> <!-- will load *NodeView.axaml -->
                         </ContentControl.DataTemplates>
-                        
+
                     </ContentControl>
                 </DataTemplate>
                 <DataTemplate x:Key="CellEditTemplate" x:DataType="explorer:IExplorerItem">

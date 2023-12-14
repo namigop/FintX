@@ -40,7 +40,7 @@
                    VerticalAlignment="Center"
                    Foreground="WhiteSmoke" />
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
-        <ComboBox ItemsSource="{Binding EnumValues}" SelectedItem="{Binding SelectedEnumValue}" 
+        <ComboBox ItemsSource="{Binding EnumValues}" SelectedItem="{Binding SelectedEnumValue}"
                   Margin="6 0 0 0" />
     </StackPanel>
 </UserControl>

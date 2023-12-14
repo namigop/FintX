@@ -6,10 +6,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="footer:FooterViewModel"
              x:Class="Tefin.Views.Footer.FooterView">
-    <Grid Background="{Binding Background}" Height="32" >
-        <TextBlock Text="{Binding Message}" 
+    <Grid Background="{Binding Background}" Height="32">
+        <TextBlock Text="{Binding Message}"
                    Margin="12 0 0 0"
                    FontSize="13"
-                   VerticalAlignment="Center" Foreground="#FAF4F5"></TextBlock>
+                   VerticalAlignment="Center" Foreground="#FAF4F5" />
     </Grid>
 </UserControl>

@@ -14,17 +14,19 @@ using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.Messages;
 
+using ClientCompiler = Tefin.Core.Build.ClientCompiler;
+
 #endregion
 
 namespace Tefin.ViewModels.Explorer;
 
 public class ClientNode : NodeBase {
     private ProjectTypes.ClientGroup _client;
-    private string _clientName ="";
+    private string _clientName = "";
     private Type? _clientType;
+    private bool _compileInProgress;
     private string _desc = "";
     private string _url = "";
-    private bool _compileInProgress = false;
     public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
         this._client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
@@ -33,7 +35,7 @@ public class ClientNode : NodeBase {
         this.ClientConfigFile = "";
         this.ClientPath = "";
         this.ServiceName = "";
-        
+
         this.Update(cg);
 
         this.IsExpanded = true;
@@ -135,22 +137,19 @@ public class ClientNode : NodeBase {
         if (this._compileInProgress)
             return;
 
-        try
-        {
+        try {
             this._compileInProgress = true;
             var protoFiles = Array.Empty<string>(); //TODO
             var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
             var csFiles = this._client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
-            if (ok)
-            {
-                Type[]? types = Core.Build.ClientCompiler.getTypes(compileOutput.CompiledBytes);
+            if (ok) {
+                Type[]? types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 this.ClientType = ServiceClient.findClientType(types).Value;
                 this.Init();
             }
         }
-        finally
-        {
+        finally {
             this._compileInProgress = false;
         }
     }

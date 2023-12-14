@@ -1,3 +1,5 @@
+#region
+
 using System.Xml;
 
 using Avalonia;
@@ -8,6 +10,8 @@ using AvaloniaEdit.Highlighting;
 using AvaloniaEdit.Highlighting.Xshd;
 
 using Tefin.ViewModels.Misc;
+
+#endregion
 
 namespace Tefin.Views.Misc;
 
@@ -40,7 +44,6 @@ public partial class OutputMiscView : UserControl {
         if (temp != null && this._vm == null) {
             this._vm = (OutputMiscViewModel)temp;
             this._vm.Editor.SetTarget(this.Editor);
-            
         }
     }
 

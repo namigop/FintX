@@ -7,9 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Footer;
 
 public partial class FooterView : UserControl {
-
     public FooterView() {
         this.InitializeComponent();
-        
     }
 }

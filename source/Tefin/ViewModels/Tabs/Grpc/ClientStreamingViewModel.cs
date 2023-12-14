@@ -14,8 +14,8 @@ using Tefin.Grpc.Execution;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
-    private string _statusText = "";
     private bool _showTreeEditor;
+    private string _statusText = "";
 
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
@@ -30,13 +30,6 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     }
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
 
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
@@ -56,6 +49,13 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
+    }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
     }
 
     public override void Dispose() {

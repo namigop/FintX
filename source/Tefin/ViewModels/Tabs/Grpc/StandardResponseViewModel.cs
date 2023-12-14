@@ -1,17 +1,23 @@
+#region
+
 using System.Reflection;
 
 using Grpc.Core;
+
 using ReactiveUI;
+
 using Tefin.Core.Execution;
+
+#endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public abstract class StandardResponseViewModel : ViewModelBase {
+    private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
+    private readonly TreeResponseEditorViewModel _treeRespEditor;
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
-    private readonly TreeResponseEditorViewModel _treeRespEditor;
-    private readonly JsonResponseEditorViewModel _jsonRespEditor;
 
     protected StandardResponseViewModel(MethodInfo methodInfo) {
         this._methodInfo = methodInfo;
@@ -21,6 +27,15 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
         this._responseEditor = this._treeRespEditor;
         this.SubscribeTo(vm => ((StandardResponseViewModel)vm).IsShowingResponseTreeEditor, this.OnIsShowingResponseTreeEditor);
+    }
+
+    public IResponseEditorViewModel ResponseEditor {
+        get => this._responseEditor;
+        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
+    }
+    public bool IsShowingResponseTreeEditor {
+        get => this._isShowingResponseTreeEditor;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
     }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
@@ -35,14 +50,13 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         }
         catch (Exception e) {
             Console.WriteLine(e);
-             
         }
     }
     private void ShowAsJson() {
         var (ok, resp) = this._treeRespEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok)
-             this.ResponseEditor.Show(resp, this._treeRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this._treeRespEditor.ResponseType);
     }
 
     private void ShowAsTree() {
@@ -52,25 +66,16 @@ public abstract class StandardResponseViewModel : ViewModelBase {
             this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
     }
 
-    public IResponseEditorViewModel ResponseEditor {
-        get => this._responseEditor;
-        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
-    }
-    public bool IsShowingResponseTreeEditor {
-        get => this._isShowingResponseTreeEditor;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor , value);
-    }
 
-   
     public void Init() {
-      this.ResponseEditor.Init();
+        this.ResponseEditor.Init();
     }
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         await this.ResponseEditor.Complete(responseType, completeRead);
     }
 
-    public abstract void Show(bool ok, object response, Context context); 
+    public abstract void Show(bool ok, object response, Context context);
 
     public class GrpcStandardResponse {
         public required Metadata Headers { get; set; }

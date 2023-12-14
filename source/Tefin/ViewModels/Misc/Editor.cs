@@ -1,4 +1,8 @@
+#region
+
 using AvaloniaEdit;
+
+#endregion
 
 namespace Tefin.ViewModels.Misc;
 

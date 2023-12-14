@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 
 using ReactiveUI;
@@ -5,14 +7,16 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Core.Reflection;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs;
 
 public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
-    private readonly string _name;
-    private object? _listInstance;
-    private readonly Type _listItemType;
-    private string _json;
     private readonly MethodInfo _addMethod;
+    private readonly Type _listItemType;
+    private readonly string _name;
+    private string _json;
+    private object? _listInstance;
 
     public ListJsonEditorViewModel(string name, Type listType) {
         this._name = name;
@@ -23,13 +27,13 @@ public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
         this._json = "";
     }
 
-    public Type ListType {
-        get;
-    }
-
     public string Json {
         get => this._json;
         set => this.RaiseAndSetIfChanged(ref this._json, value);
+    }
+
+    public Type ListType {
+        get;
     }
 
     public (bool, object) GetList() {
@@ -44,10 +48,11 @@ public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
 
     public void Clear() {
         this.Json = "";
-
     }
     public void AddItem(object instance) {
-        this._addMethod.Invoke(this._listInstance, new[] { instance });
+        this._addMethod.Invoke(this._listInstance, new[] {
+            instance
+        });
         var jsonInstance = Instance.indirectSerialize(this._listItemType, instance);
         var startIndex = this.Json.Length - 1;
         var endPos = this.Json.LastIndexOf(']', startIndex);

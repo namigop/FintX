@@ -10,12 +10,13 @@ using Tefin.ViewModels;
 namespace Tefin;
 
 public class ViewLocator : IDataTemplate {
-
     public Control Build(object? data) {
         if (data == null) {
-            return new TextBlock { Text = "data cannot be null" };
+            return new TextBlock {
+                Text = "data cannot be null"
+            };
         }
-        
+
         var name = data.GetType().FullName!.Replace("ViewModel", "View");
         var type = Type.GetType(name);
 
@@ -23,7 +24,9 @@ public class ViewLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new TextBlock { Text = "Not Found: " + name };
+        return new TextBlock {
+            Text = "Not Found: " + name
+        };
     }
 
     public bool Match(object? data) {

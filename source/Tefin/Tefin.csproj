@@ -28,32 +28,32 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**" />
-        <AvaloniaResource Remove="Views\Types\**" />
+        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Remove="Views\Types\**"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.5" />
-        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
+        <PackageReference Include="Avalonia" Version="11.0.5"/>
+        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.5"/>
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.5"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
-        <PackageReference Include="DotNet.Bundle" Version="0.9.13" />
-        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.24.4" />
-        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5"/>
+        <PackageReference Include="DotNet.Bundle" Version="0.9.13"/>
+        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1"/>
+        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
-        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
+        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj"/>
+        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj"/>
     </ItemGroup>
 
 
@@ -206,179 +206,179 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ByteStringNodeEditView.axaml.cs">
-          <DependentUpon>ByteStringNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ByteStringNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ByteStringNodeView.axaml.cs">
-          <DependentUpon>ByteStringNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ByteStringNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ByteArrayNodeView.axaml.cs">
-          <DependentUpon>ByteArrayNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ByteArrayNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ByteArrayNodeEditView.axaml.cs">
-          <DependentUpon>ByteArrayNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ByteArrayNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\EnumNodeView.axaml.cs">
-          <DependentUpon>EnumNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>EnumNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\EnumNodeEditView.axaml.cs">
-          <DependentUpon>EnumNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>EnumNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ArrayNodeView.axaml.cs">
-          <DependentUpon>ArrayNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ArrayNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ArrayNodeEditView.axaml.cs">
-          <DependentUpon>ArrayNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ArrayNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\DictionaryNodeView.axaml.cs">
-          <DependentUpon>DictionaryNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DictionaryNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\DictionaryNodeEditView.axaml.cs">
-          <DependentUpon>DictionaryNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DictionaryNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Misc\ChartMiscView.axaml.cs">
-          <DependentUpon>ChartMiscView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ChartMiscView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\UnaryReqView.axaml.cs">
-          <DependentUpon>MethodInfoTypeItemView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MethodInfoTypeItemView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\UnaryRespView.axaml.cs">
-          <DependentUpon>UnaryRespView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>UnaryRespView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ResponseNodeView.axaml.cs">
-          <DependentUpon>ResponseNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ResponseNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ServerStreamingView.axaml.cs">
-          <DependentUpon>ServerStreamingView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ServerStreamingView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ServerStreamingReqView.axaml.cs">
-          <DependentUpon>ServerStreamingReqView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ServerStreamingReqView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ServerStreamingRespView.axaml.cs">
-          <DependentUpon>ServerStreamingRespView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ServerStreamingRespView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ResponseStreamNodeView.axaml.cs">
-          <DependentUpon>ResponseStreamNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ResponseStreamNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ResponseStreamNodeEditView.axaml.cs">
-          <DependentUpon>ResponseStreamNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ResponseStreamNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ResponseNodeEditView.axaml.cs">
-          <DependentUpon>ResponseNodeEditView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ResponseNodeEditView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ClientStreamingReqView.axaml.cs">
-          <DependentUpon>ClientStreamingReqView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientStreamingReqView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ClientStreamingRespView.axaml.cs">
-          <DependentUpon>ClientStreamingRespView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientStreamingRespView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\ClientStreamingView.axaml.cs">
-          <DependentUpon>ClientStreamingView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientStreamingView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\DuplexStreamingView.axaml.cs">
-          <DependentUpon>DuplexStreamingView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DuplexStreamingView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\DuplexStreamingReqView.axaml.cs">
-          <DependentUpon>DuplexStreamingReqView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DuplexStreamingReqView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\DuplexStreamingRespView.axaml.cs">
-          <DependentUpon>DuplexStreamingRespView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DuplexStreamingRespView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ClientNodeActionView.axaml.cs">
-          <DependentUpon>ClientNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\MainMenu\ConfigMenuItemView.axaml.cs">
-          <DependentUpon>ConfigMenuItemView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ConfigMenuItemView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Types\ExceptionNodeView.axaml.cs">
-          <DependentUpon>ExceptionNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ExceptionNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
 
     </ItemGroup>
 
 
     <ItemGroup>
-      <None Remove="Assets\fire.ico" />
-      <None Remove="Assets\fire.png" />
-      <None Remove="Resources\json.xshd" />
-      <EmbeddedResource Include="Resources\json.xshd" />
-      <None Remove="Resources\log.xshd" />
-      <Content Include="Assets\fire.ico" />
-      <EmbeddedResource Include="Resources\log.xshd" />
-      <None Update="Resources\fire.icns">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <None Remove="Assets\fire.ico"/>
+        <None Remove="Assets\fire.png"/>
+        <None Remove="Resources\json.xshd"/>
+        <EmbeddedResource Include="Resources\json.xshd"/>
+        <None Remove="Resources\log.xshd"/>
+        <Content Include="Assets\fire.ico"/>
+        <EmbeddedResource Include="Resources\log.xshd"/>
+        <None Update="Resources\fire.icns">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
 
     <ItemGroup>
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png" />
-      <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json"/>
     </ItemGroup>
 
 

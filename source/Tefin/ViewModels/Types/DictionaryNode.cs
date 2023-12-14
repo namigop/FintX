@@ -1,4 +1,10 @@
+#region
+
+using System.Reflection;
+
 using Google.Protobuf.Collections;
+
+#endregion
 
 namespace Tefin.ViewModels.Types;
 
@@ -8,9 +14,9 @@ public class DictionaryNode : ListNode {
 
     private readonly Type _internalListType;
 
-    private readonly ListTypeMethod _listMethods;
+    private readonly Type _itemType;
 
-    private Type _itemType;
+    private readonly ListTypeMethod _listMethods;
     //private readonly ListTypeMethod _listMethods;
 
     public DictionaryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
@@ -33,8 +39,10 @@ public class DictionaryNode : ListNode {
             return null;
 
         var lpInstance = Activator.CreateInstance(lpType);
-        var fromDictionary = lpType.GetMethod("FromDictionary", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
-        fromDictionary!.Invoke(lpInstance, new[] { dict });
+        var fromDictionary = lpType.GetMethod("FromDictionary", BindingFlags.Public | BindingFlags.Instance);
+        fromDictionary!.Invoke(lpInstance, new[] {
+            dict
+        });
         return lpInstance;
     }
 

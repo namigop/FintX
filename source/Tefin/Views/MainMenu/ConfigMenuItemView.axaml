@@ -6,8 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="mainMenu:ConfigMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.ConfigMenuItemView">
-   <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-    <TextBlock Text="This is not yet implemented." ></TextBlock>
-   <TextBlock Text="Here you can edit application config values" VerticalAlignment="Stretch"></TextBlock>
-   </StackPanel>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+        <TextBlock Text="This is not yet implemented." />
+        <TextBlock Text="Here you can edit application config values" VerticalAlignment="Stretch" />
+    </StackPanel>
 </UserControl>

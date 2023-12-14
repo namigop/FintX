@@ -14,8 +14,8 @@ using Tefin.Grpc.Execution;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
-    private string _statusText;
     private bool _showTreeEditor;
+    private string _statusText;
 
     public DuplexStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new DuplexStreamingReqViewModel(mi, true);
@@ -32,21 +32,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     }
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
-
-    private void OnIsBusyChanged(ViewModelBase obj) {
-        this.IsBusy = obj.IsBusy;
-    }
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref this._showTreeEditor , value);
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
             this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.ReqViewModel.IsShowingClientStreamTree = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
@@ -61,6 +50,17 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
+
+    private void OnIsBusyChanged(ViewModelBase obj) {
+        this.IsBusy = obj.IsBusy;
+    }
+
     public override void Init() {
         this.ReqViewModel.Init();
     }
@@ -70,13 +70,13 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         var resp = reqVm.CallResponse;
         if (resp == null)
             return;
-        
+
         if (resp.WriteCompleted) {
             Task<object> CompleteRead() {
                 var feature = new EndStreamingFeature();
                 var respWithStatus = feature.EndDuplexStreaming(resp);
 
-                object model = new StandardResponseViewModel.GrpcStandardResponse() {
+                object model = new StandardResponseViewModel.GrpcStandardResponse {
                     Headers = respWithStatus.Headers.Value,
                     Trailers = respWithStatus.Trailers.Value,
                     Status = respWithStatus.Status.Value

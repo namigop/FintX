@@ -65,7 +65,7 @@ public class DefaultNode : TypeBaseNode {
 
         //if (this.GeneratePropertyNodes && CanCreateChildNodes(this.Type, processedTypeNames, instance)) {
         if (CanCreateChildNodes(this.Type, processedTypeNames, this.Value)) {
-            List<PropertyInfo>? props = this.GetProperties();
+            var props = this.GetProperties();
             foreach (var propInfo in props) {
                 var propInstance = propInfo.GetValue(this.Value);
                 var type = propInstance?.GetType() ?? propInfo.PropertyType;
@@ -75,7 +75,7 @@ public class DefaultNode : TypeBaseNode {
                 node.Init();
             }
 
-            List<FieldInfo> fields = this.Type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.IsPublic).ToList();
+            var fields = this.Type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.IsPublic).ToList();
             foreach (var fieldInfo in fields)
                 try {
                     var fieldInstance = fieldInfo.GetValue(this.Value);
@@ -109,7 +109,7 @@ public class DefaultNode : TypeBaseNode {
             if (this.Parent?.Value != null) {
                 n = FSharpOption<object>.Some(this.Parent.Value);
             }
-            
+
             var (__, v) = TypeBuilder.getDefault(this.Type, true, n, 0);
             this.Value = v;
         }

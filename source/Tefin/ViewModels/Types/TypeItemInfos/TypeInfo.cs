@@ -36,9 +36,13 @@ public class TypeInfo : ITypeInfo {
 
     public bool CanRead { get; }
     public bool CanWrite { get; }
-    public FieldInfo? FieldInfo => this._fieldInfo;
+    public FieldInfo? FieldInfo {
+        get => this._fieldInfo;
+    }
     public string Name { get; }
-    public PropertyInfo? PropertyInfo => this._propertyInfo;
+    public PropertyInfo? PropertyInfo {
+        get => this._propertyInfo;
+    }
 
     public object? GetValue(object parent) {
         if (this._paramInfo != null)

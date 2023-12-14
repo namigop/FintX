@@ -21,7 +21,9 @@ public class MetadataEntryNode : TypeBaseNode {
         this.Key = "";
     }
 
-    public override string FormattedValue => this._entry.Value;
+    public override string FormattedValue {
+        get => this._entry.Value;
+    }
 
     public string Key { get; set; }
     public int TargetListItemsCount { get; set; }

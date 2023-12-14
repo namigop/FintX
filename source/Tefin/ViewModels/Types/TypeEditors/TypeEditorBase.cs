@@ -20,13 +20,15 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
         this.SubscribeTo(x => ((TypeEditorBase<T>)x).IsNull, this.OnIsNullChanged);
     }
 
-    public virtual bool AcceptsNull { get; } = typeof(T).Name.StartsWith("Nullable");
-
-    public virtual string FormattedValue => this.Node.Value?.ToString() ?? "null";
-
     public bool HasChanges {
         get;
         protected set;
+    }
+
+    public virtual bool AcceptsNull { get; } = typeof(T).Name.StartsWith("Nullable");
+
+    public virtual string FormattedValue {
+        get => this.Node.Value?.ToString() ?? "null";
     }
 
     public bool IsEditing {
@@ -66,7 +68,7 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
             this.Reset();
             this.Io.Log.Error(exc);
         }
-       
+
         this.HasChanges = false;
     }
 
@@ -80,7 +82,7 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
     }
 
     private void OnIsNullChanged(ViewModelBase obj) {
-        TypeEditorBase<T> sender = (TypeEditorBase<T>)obj;
+        var sender = (TypeEditorBase<T>)obj;
         if (sender._isNull) {
             this._og = this._tempValue;
             this.TempValue = default;

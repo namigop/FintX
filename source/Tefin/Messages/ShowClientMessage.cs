@@ -7,7 +7,6 @@ using Tefin.Core.Build;
 namespace Tefin.Messages;
 
 public class ShowClientMessage : MessageBase {
-
     public ShowClientMessage(CompileOutput output, string protoFilesOrUrl, string clientName, string? selectedDiscoveredService, string description, string[] csFiles) {
         this.Output = output;
         this.ProtoFilesOrUrl = protoFilesOrUrl;

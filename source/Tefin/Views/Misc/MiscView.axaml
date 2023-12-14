@@ -11,13 +11,13 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="*, Auto">
-                        <TextBlock Text="{Binding Title}"  VerticalAlignment="Center" />
+                        <TextBlock Text="{Binding Title}" VerticalAlignment="Center" />
                     </Grid>
                 </DataTemplate>
             </TabControl.ItemTemplate>
             <TabControl.ContentTemplate>
                 <DataTemplate x:DataType="misc:MiscViewModelTabItem">
-                    <ContentControl Content="{Binding}" />    
+                    <ContentControl Content="{Binding}" />
                 </DataTemplate>
             </TabControl.ContentTemplate>
         </TabControl>

@@ -1,4 +1,8 @@
+#region
+
 using Tefin.Core.Interop;
+
+#endregion
 
 namespace Tefin.Messages;
 

@@ -16,7 +16,7 @@ public partial class Number : UserControl {
     public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<Number, string>(nameof(Text), "0", defaultBindingMode: BindingMode.TwoWay);
 
     public static readonly StyledProperty<decimal?> ValueProperty =
-                    AvaloniaProperty.Register<Number, decimal?>(nameof(Value), 0, defaultBindingMode: BindingMode.TwoWay, coerce: OnCoerceValue);
+        AvaloniaProperty.Register<Number, decimal?>(nameof(Value), 0, defaultBindingMode: BindingMode.TwoWay, coerce: OnCoerceValue);
 
     public Number() {
         this.InitializeComponent();
@@ -46,7 +46,7 @@ public partial class Number : UserControl {
 
     private static decimal? OnCoerceValue(AvaloniaObject arg1, decimal? arg2) {
         var n = (Number)arg1;
-        
+
         n.Text = arg2.ToString() ?? "0";
         return arg2;
     }

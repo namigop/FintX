@@ -8,11 +8,11 @@ using System.Windows.Input;
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
+using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
-using Tefin.Core.Interop;
 using Tefin.ViewModels.Validations;
 
 #endregion
@@ -23,12 +23,12 @@ namespace Tefin.ViewModels.Overlay;
 
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
-    private string _clientName  ="";
+    private string _address = "";
+    private string _clientName = "";
     private bool _isDiscoveringUsingProto;
+    private string _protoFile = "";
     private string _protoFilesOrUrl = "";
     private string? _selectedDiscoveredService;
-    private string _protoFile = "";
-    private string _address = "";
 
     public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
@@ -63,18 +63,14 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     [IsHttp]
     public string ReflectionUrl {
         get => this._protoFilesOrUrl;
-        set {
-            this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
     }
 
 
     [IsHttp]
     public string Address {
         get => this._address;
-        set {
-            this.RaiseAndSetIfChanged(ref this._address, value);
-        }
+        set => this.RaiseAndSetIfChanged(ref this._address, value);
     }
 
     [IsProtoFile]
@@ -101,20 +97,23 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         if (!this.IsDiscoveringUsingProto) {
             //Discover using the reflection service
             discoParams = new DiscoverParameters(Array.Empty<string>(), new Uri(this.ReflectionUrl));
-           
         }
-        else { 
-            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new []{"*.proto"});
+        else {
+            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] {
+                "*.proto"
+            });
             if (ok) {
                 this.ProtoFile = files[0];
-               // PopulateServiceNamesFromProto();
-               discoParams = new DiscoverParameters(new[] { this.ProtoFile }, null);
+                // PopulateServiceNamesFromProto();
+                discoParams = new DiscoverParameters(new[] {
+                    this.ProtoFile
+                }, null);
             }
         }
 
         if (discoParams == null)
             return;
-        
+
         var res = await ServiceClient.discover(this.Io, discoParams);
 
         if (res.IsOk) {
@@ -130,8 +129,6 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         else {
             this.Io.Log.Error(res.ErrorValue);
         }
-
-
     }
 
     private async Task OnOkay() {
@@ -149,11 +146,15 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             this.Io.Log.Error("Client already exists.  Enter a new name");
             return;
         }
-        
+
 
         this.Close();
 
-        var protoFiles = this.IsDiscoveringUsingProto ? new[] { this.ProtoFile} : Array.Empty<string>(); 
+        var protoFiles = this.IsDiscoveringUsingProto
+            ? new[] {
+                this.ProtoFile
+            }
+            : Array.Empty<string>();
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (ok2, _) = await disco.Discover(this.Io);
         if (ok2) {
@@ -168,7 +169,5 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
                 GlobalHub.publish(msg);
             }
         }
-
-       
     }
 }

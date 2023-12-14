@@ -7,7 +7,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public class FileReqTabViewModel : TabViewModelBase {
-
     public FileReqTabViewModel(FileReqNode item) : base(item) {
     }
 

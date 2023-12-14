@@ -1,6 +1,10 @@
+#region
+
 using ReactiveUI;
 
 using Tefin.Utils;
+
+#endregion
 
 namespace Tefin.ViewModels.Types.TypeEditors;
 
@@ -22,7 +26,9 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
         }
     }
 
-    public override string FormattedValue => this.TempValue == null ? "null" : $"{this.TempValue:O}";
+    public override string FormattedValue {
+        get => this.TempValue == null ? "null" : $"{this.TempValue:O}";
+    }
 
     public bool IsUtc {
         get => this._isUtc;
@@ -56,7 +62,6 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
         else {
             this.TempValue = (this.IsUtc ? DateTime.UtcNow : DateTime.Now).Then(d => d.AddDays(1));
             this.DateTimeText = $"{this.TempValue:O}";
-
         }
     }
 }

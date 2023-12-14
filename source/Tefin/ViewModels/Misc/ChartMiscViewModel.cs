@@ -1,3 +1,5 @@
+#region
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -15,13 +17,15 @@ using SkiaSharp;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 
+#endregion
+
 //using Tefin.Messages;
 
 namespace Tefin.ViewModels.Misc;
 
 public class ChartMiscViewModel : MiscViewModelTabItem {
     private readonly LvcColor[] _colors = ColorPalletes.FluentDesign;
-    private int _currentColor = 0;
+    private int _currentColor;
     private SeriesModel? _selectedSeries;
 
     public ChartMiscViewModel() {
@@ -51,7 +55,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     public Axis[] XAxes { get; } = {
         new() {
             MinStep = 1,
-            TextSize = 0,
+            TextSize = 0
             // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
             // {
             //     StrokeThickness = 2,
@@ -69,7 +73,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
             TextSize = 14,
             LabelsPaint = new SolidColorPaint(SKColors.SlateGray),
             SeparatorsPaint = new SolidColorPaint(SKColors.DimGray) {
-                StrokeThickness = 0.5f,
+                StrokeThickness = 0.5f
                 //PathEffect = new DashEffect(new float[] { 3, 3 })
             }
         }
@@ -79,7 +83,9 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         lock (this) {
             var seriesModel = this.SeriesModels.FirstOrDefault(t => t.ClientName == clientName && t.Method == method);
             if (seriesModel == null) {
-                seriesModel = new SeriesModel(clientName, method, new ColumnSeries<double>() { Name = method });
+                seriesModel = new SeriesModel(clientName, method, new ColumnSeries<double> {
+                    Name = method
+                });
                 this.SeriesModels.Add(seriesModel);
                 this.Series.Add(seriesModel.Series);
 

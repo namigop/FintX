@@ -8,7 +8,7 @@
              x:Class="Tefin.Views.Types.TypeEditors.DateTimeEditorView">
     <Border x:Name="MainBorder">
         <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"  />
+            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
             <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" />
             <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
             <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->

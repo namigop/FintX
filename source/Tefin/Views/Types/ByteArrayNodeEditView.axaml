@@ -32,7 +32,7 @@
                        Foreground="WhiteSmoke" />
             <TextBlock Text="{Binding FormattedTypeName}" Classes="SubTitle" Margin="6 0 0 0" />
             <Grid RowDefinitions="Auto, *">
-                <StackPanel Orientation="Horizontal" Grid.Row="0"  Margin="6 0 0 0">
+                <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="6 0 0 0">
                     <RadioButton IsChecked="{Binding IsFromFile}" Content="File" />
                     <RadioButton IsChecked="{Binding !IsFromFile}" Content="Base64" Margin="6 0 0 0" />
                 </StackPanel>

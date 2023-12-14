@@ -9,7 +9,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public class MethodTabViewModel : TabViewModelBase {
-
     public MethodTabViewModel(MethodNode item) : base(item) {
         this.ClientMethod = item.CreateViewModel();
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
@@ -26,7 +25,7 @@ public class MethodTabViewModel : TabViewModelBase {
     public override string GenerateNewTitle(string[] existingNames) {
         //name format {Title}(count)
         var maxTabs = 1000;
-        for (int i = 1; i < maxTabs; i++) {
+        for (var i = 1; i < maxTabs; i++) {
             var suggestedName = $"{this.Title}({i})";
             if (!existingNames.Contains(suggestedName))
                 return suggestedName;

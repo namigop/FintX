@@ -12,7 +12,6 @@ using static Tefin.Core.Interop.Messages;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public abstract class GrpCallTypeViewModelBase : ViewModelBase {
-
     protected GrpCallTypeViewModelBase(MethodInfo mi, ProjectTypes.ClientGroup cg) {
         this.MethodInfo = mi;
         this.Client = cg;

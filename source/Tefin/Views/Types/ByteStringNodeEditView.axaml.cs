@@ -10,7 +10,6 @@ using Tefin.ViewModels.Types;
 namespace Tefin.Views.Types;
 
 public partial class ByteStringNodeEditView : UserControl {
-
     public ByteStringNodeEditView() {
         this.InitializeComponent();
     }

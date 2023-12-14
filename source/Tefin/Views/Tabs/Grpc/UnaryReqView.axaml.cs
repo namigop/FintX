@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Tabs.Grpc;
 
 public partial class UnaryReqView : UserControl {
-
     public UnaryReqView() {
         this.InitializeComponent();
         //this.TreeDg.RowDragStarted

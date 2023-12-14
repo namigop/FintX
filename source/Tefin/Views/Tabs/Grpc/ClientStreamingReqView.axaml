@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
-             xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              xmlns:grpc="clr-namespace:Tefin.ViewModels.Tabs.Grpc"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="grpc:ClientStreamingReqViewModel"
@@ -20,35 +18,35 @@
             </Grid>
             <GridSplitter CornerRadius="1" Grid.Row="1" Height="8" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
             <Grid Grid.Row="2" RowDefinitions="Auto, *">
-                <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}" 
+                <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}"
                         CornerRadius="0 0 8 8">
                     <StackPanel Orientation="Horizontal" Margin="6">
                         <Button Command="{Binding WriteCommand}" Classes="MenuButton" ToolTip.Tip="Write to the request stream" IsEnabled="{Binding CanWrite}">
-                            <TextBlock Text="Write"></TextBlock>
+                            <TextBlock Text="Write" />
                         </Button>
                         <Button Command="{Binding EndWriteCommand}" Classes="MenuButton" ToolTip.Tip="Finish writing to the request stream" IsEnabled="{Binding CanWrite}">
-                            <TextBlock Text="End write"></TextBlock>
+                            <TextBlock Text="End write" />
                         </Button>
-                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
+                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
                         <ToggleSwitch IsChecked="{Binding IsShowingClientStreamTree}"
                                       OnContent="Tree" OffContent="Json"
-                                      Margin="0 0 0 0"></ToggleSwitch>
+                                      Margin="0 0 0 0" />
                     </StackPanel>
                 </Border>
-                
+
                 <ContentControl Content="{Binding ClientStreamEditor}" Grid.Row="1" />
-                
-                
-                <TextBlock Text="Click run to enable writing to the client stream" FontSize="16" Opacity="0.5"  Grid.Row="0" Grid.RowSpan="2"
+
+
+                <TextBlock Text="Click run to enable writing to the client stream" FontSize="16" Opacity="0.5" Grid.Row="0" Grid.RowSpan="2"
                            IsVisible="{Binding !CanWrite}"
                            IsHitTestVisible="False"
                            VerticalAlignment="Center" HorizontalAlignment="Center"
                            Margin="10" />
-                
-                <StackPanel Orientation="Vertical"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2"
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2"
                             Opacity="0.25" Margin="10">
-                    <TextBlock Text="request stream" FontSize="20"  IsHitTestVisible="False" />
-                    <ProgressBar IsIndeterminate="True" Height="5" IsVisible="{Binding CanWrite}" MinWidth="100"></ProgressBar>
+                    <TextBlock Text="request stream" FontSize="20" IsHitTestVisible="False" />
+                    <ProgressBar IsIndeterminate="True" Height="5" IsVisible="{Binding CanWrite}" MinWidth="100" />
                 </StackPanel>
             </Grid>
         </Grid>

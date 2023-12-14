@@ -17,9 +17,9 @@ namespace Tefin.ViewModels.Types;
 
 public class ListNode : TypeBaseNode {
     private readonly Type _itemType;
+    private bool _isEditing;
     private int _listItemsCount;
     private int _targetListItemsCount;
-    private bool _isEditing;
 
     public ListNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this.IsExpanded = true;
@@ -27,11 +27,17 @@ public class ListNode : TypeBaseNode {
         this._itemType = type.GetGenericArguments().FirstOrDefault()!;
     }
 
-    public override string FormattedTypeName => $"{{{TypeHelper.getFormattedGenericName(this.Type)}}}";
+    public override string FormattedTypeName {
+        get => $"{{{TypeHelper.getFormattedGenericName(this.Type)}}}";
+    }
 
-    public override string FormattedValue => this.IsNull ? "null" : $"Count = {this.ListItemsCount}";
+    public override string FormattedValue {
+        get => this.IsNull ? "null" : $"Count = {this.ListItemsCount}";
+    }
 
-    public bool IsNullOrEmpty => this.IsNull || this.ListItemsCount == 0;
+    public bool IsNullOrEmpty {
+        get => this.IsNull || this.ListItemsCount == 0;
+    }
 
     public int ListItemsCount {
         get => this._listItemsCount;
@@ -43,15 +49,12 @@ public class ListNode : TypeBaseNode {
         }
     }
 
-    public override bool IsEditing
-    {
+    public override bool IsEditing {
         get => this._isEditing;
-        set
-        {
+        set {
             this._isEditing = value;
             if (!this._isEditing)
                 this.ListItemsCount = this.TargetListItemsCount;
-
         }
     }
 
@@ -64,11 +67,15 @@ public class ListNode : TypeBaseNode {
         }
     }
 
-    protected virtual string ItemName => "Item";
+    protected virtual string ItemName {
+        get => "Item";
+    }
 
     public void AddItem(object itemInstance) {
         var listInstance = this.GetListInstance();
-        this.GetMethods().AddMethod!.Invoke(listInstance, new[] { itemInstance });
+        this.GetMethods().AddMethod!.Invoke(listInstance, new[] {
+            itemInstance
+        });
         var itemType = this.GetItemType();
         var count = GetListSize(listInstance!);
         var name = $"{this.ItemName}[{count}]";
@@ -134,7 +141,7 @@ public class ListNode : TypeBaseNode {
         var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this), processedTypeNames, current, parent);
         return inner;
     }
-    
+
     protected virtual Type GetItemType() {
         return this._itemType;
     }
@@ -163,7 +170,9 @@ public class ListNode : TypeBaseNode {
                 Dictionary<string, int>? processedTypeNames = new();
                 var (ok, instance) = TypeBuilder.getDefault(itemType, true, FSharpOption<object>.Some(listInstance), 0);
                 if (ok) {
-                    this.GetMethods().AddMethod!.Invoke(listInstance, new[] { instance });
+                    this.GetMethods().AddMethod!.Invoke(listInstance, new[] {
+                        instance
+                    });
                     var node = this.CreateListItemNode(name, itemType, processedTypeNames, counter, instance, this);
                     node.Init();
                     node.IsExpanded = false;
@@ -179,7 +188,9 @@ public class ListNode : TypeBaseNode {
             for (var i = 0; i < delta; i++) {
                 var last = this.Items.Count - 1;
                 this.Items.RemoveAt(last);
-                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, new object[] { last });
+                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, new object[] {
+                    last
+                });
             }
         }
 
@@ -193,7 +204,7 @@ public class ListNode : TypeBaseNode {
         var listInstance = this.GetListInstance();
         if (listInstance == null)
             return;
-        
+
         if (targetCount > currentCount)
             AddNodes(targetCount, currentCount, listInstance, this.GetItemType());
 

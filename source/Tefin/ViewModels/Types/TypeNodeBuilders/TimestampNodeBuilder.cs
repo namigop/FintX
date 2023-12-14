@@ -9,7 +9,6 @@ using Type = System.Type;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class TimestampNodeBuilder : ITypeNodeBuilder {
-
     public bool CanHandle(Type type) {
         return type == typeof(Timestamp);
     }

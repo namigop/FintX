@@ -11,8 +11,8 @@
         <ContentControl Content="{Binding ClientMethod}" />
 
         <StackPanel Orientation="Vertical" IsVisible="{Binding IsBusy}" VerticalAlignment="Center" HorizontalAlignment="Center">
-           <TextBlock Text="running..." />
-           <ProgressBar IsIndeterminate="True" Margin="0 6 0 0" />
+            <TextBlock Text="running..." />
+            <ProgressBar IsIndeterminate="True" Margin="0 6 0 0" />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -11,55 +11,54 @@
             <StackPanel Orientation="Vertical" Grid.Row="0">
                 <StackPanel.Styles>
                     <Style Selector="StackPanel">
-                        <Setter Property="Margin" Value="0 8 0 0"></Setter>
+                        <Setter Property="Margin" Value="0 8 0 0" />
                     </Style>
                 </StackPanel.Styles>
                 <StackPanel>
-                    <TextBlock Text="Name" Classes="FormField"></TextBlock>
-                    <TextBox Text="{Binding ClientName}"></TextBox>
+                    <TextBlock Text="Name" Classes="FormField" />
+                    <TextBox Text="{Binding ClientName}" />
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Url" Classes="FormField"></TextBlock>
-                    <TextBox Text="{Binding Url}"></TextBox>
+                    <TextBlock Text="Url" Classes="FormField" />
+                    <TextBox Text="{Binding Url}" />
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Description" Classes="FormField"></TextBlock>
-                    <TextBox Text="{Binding Description}" Height="80"></TextBox>
+                    <TextBlock Text="Description" Classes="FormField" />
+                    <TextBox Text="{Binding Description}" Height="80" />
                 </StackPanel>
                 <StackPanel>
-                    <TextBlock Text="Json Web Token (JWT)" Classes="FormField"></TextBlock>
-                    <TextBox Text="{Binding Jwt}" Height="80"></TextBox>
+                    <TextBlock Text="Json Web Token (JWT)" Classes="FormField" />
+                    <TextBox Text="{Binding Jwt}" Height="80" />
                 </StackPanel>
-              
+
                 <StackPanel>
-                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" OnContent="Use client x509 certificate (https://)" OffContent="Don't use SSL (http://)"></ToggleSwitch>
+                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" OnContent="Use client x509 certificate (https://)" OffContent="Don't use SSL (http://)" />
                     <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSsl}" Margin="12 0 0 0">
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
-                            <RadioButton Content="File" Margin="0" IsChecked="{Binding IsCertFromFile}"></RadioButton>
-                            <RadioButton Content="Store" Margin="6" IsChecked="{Binding !IsCertFromFile}"></RadioButton>
+                            <RadioButton Content="File" Margin="0" IsChecked="{Binding IsCertFromFile}" />
+                            <RadioButton Content="Store" Margin="6" IsChecked="{Binding !IsCertFromFile}" />
                         </StackPanel>
                         <Grid Grid.Row="1">
                             <DockPanel IsVisible="{Binding IsCertFromFile}">
                                 <Button Margin="6 0 0 0" DockPanel.Dock="Right" Command="{Binding OpenCertFileCommand}">
-                                    <TextBlock Text="..."></TextBlock>
+                                    <TextBlock Text="..." />
                                 </Button>
-                                <TextBox Text="{Binding CertFile}" Watermark="Open certificate file"></TextBox>
+                                <TextBox Text="{Binding CertFile}" Watermark="Open certificate file" />
                             </DockPanel>
                             <DockPanel IsVisible="{Binding !IsCertFromFile}">
                                 <ComboBox ItemsSource="{Binding CertStoreLocations}"
                                           DockPanel.Dock="Left"
-                                          SelectedItem="{Binding SelectedCertStoreLocation}">
-                                </ComboBox>
+                                          SelectedItem="{Binding SelectedCertStoreLocation}" />
                                 <Button DockPanel.Dock="Right" Margin="6 0 0 0" Command="{Binding LoadStoreCertificatesCommand}">
-                                    <TextBlock Text="..."></TextBlock>
+                                    <TextBlock Text="..." />
                                     <Button.Flyout>
                                         <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
                                             <ListBox Padding="2" ItemsSource="{Binding StoreCertificates}" SelectedItem="{Binding SelectedStoreCertificate}">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel>
-                                                            <TextBlock Text="{Binding Subject}"></TextBlock>
-                                                            <TextBlock Text="{Binding Thumbprint}" FontSize="12" Foreground="CornflowerBlue"></TextBlock>
+                                                            <TextBlock Text="{Binding Subject}" />
+                                                            <TextBlock Text="{Binding Thumbprint}" FontSize="12" Foreground="CornflowerBlue" />
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ListBox.ItemTemplate>
@@ -68,7 +67,7 @@
                                     </Button.Flyout>
                                 </Button>
 
-                                <TextBox Margin="6 0 0 0" Text="{Binding Thumbprint}" Watermark="Enter cert thumbprint"></TextBox>
+                                <TextBox Margin="6 0 0 0" Text="{Binding Thumbprint}" Watermark="Enter cert thumbprint" />
 
                             </DockPanel>
                         </Grid>

@@ -9,11 +9,12 @@ using Tefin.ViewModels.Types.TypeNodeBuilders;
 namespace Tefin.ViewModels.Types;
 
 public class MetadataNode : ListNode {
-
     public MetadataNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
     }
 
-    public override string FormattedTypeName => $"{{{nameof(Metadata)}}}";
+    public override string FormattedTypeName {
+        get => $"{{{nameof(Metadata)}}}";
+    }
 
     protected override TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode? parent) {
         MetadataEntryTypeInfo? typeInfo = new(counter, this);

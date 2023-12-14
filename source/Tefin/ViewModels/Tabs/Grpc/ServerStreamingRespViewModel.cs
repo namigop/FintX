@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
@@ -8,17 +10,19 @@ using Tefin.Core.Execution;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ServerStreamingRespViewModel : StandardResponseViewModel {
-    private bool _canRead;
-    private readonly Type _responseItemType;
     private readonly Type _listType;
-    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
+    private readonly Type _responseItemType;
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
+    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
+    private bool _canRead;
+    private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
     private IListEditorViewModel _serverStreamEditor;
-    private CancellationTokenSource? _cs;
 
     public ServerStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
         var args = methodInfo.ReturnType.GetGenericArguments();
@@ -39,11 +43,6 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         get;
     }
 
-    private void OnEndRead() {
-      this._cs?.Cancel();
-      
-    }
-
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
@@ -57,6 +56,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
+
+    private void OnEndRead() {
+        this._cs?.Cancel();
+    }
     public async Task SetupServerStreamNode(object response) {
         var resp = (ServerStreamingCallResponse)response;
         var readServerStream = new ReadServerStreamFeature();
@@ -67,7 +70,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
             await foreach (var d in readServerStream.ReadResponseStream(resp, this._cs.Token)) {
                 if (this._cs.Token.IsCancellationRequested)
                     break;
-                
+
                 this.ServerStreamEditor.AddItem(d);
             }
         }

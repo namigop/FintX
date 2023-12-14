@@ -1,6 +1,10 @@
+#region
+
 using Avalonia.Controls;
 
-namespace Tefin.Views.MainMenu; 
+#endregion
+
+namespace Tefin.Views.MainMenu;
 
 public partial class ServerMenuItemView : UserControl {
     public ServerMenuItemView() {

@@ -7,7 +7,6 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Messages;
 
 public abstract class TabMessageBase : MessageBase {
-
     protected TabMessageBase(ITabViewModel tab) {
         this.Tab = tab;
     }

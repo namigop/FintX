@@ -1,11 +1,15 @@
+#region
+
 using System.Linq;
 using System.Reflection;
 
 using ReactiveUI;
 
+using Tefin.Core.Reflection;
 using Tefin.Grpc.Dynamic;
 using Tefin.Utils;
-using Tefin.Core.Reflection;
+
+#endregion
 
 namespace Tefin.ViewModels.Tabs;
 
@@ -14,6 +18,12 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     public JsonRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         this._json = "";
+    }
+
+
+    public string Json {
+        get => this._json;
+        set => this.RaiseAndSetIfChanged(ref this._json, value);
     }
 
     public MethodInfo MethodInfo {
@@ -33,23 +43,15 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         return (false, Array.Empty<object>());
     }
 
-
-    public string Json {
-        get => this._json;
-        set => this.RaiseAndSetIfChanged(ref this._json, value);
-    }
-
     public void Show(object?[] parameters) {
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
         if (!hasValues) {
-            parameters = methodParams.Select(paramInfo =>
-            {
+            parameters = methodParams.Select(paramInfo => {
                 var (ok, inst) = TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0);
                 return inst;
             }).ToArray();
-
         }
 
         var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));

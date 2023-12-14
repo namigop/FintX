@@ -7,15 +7,15 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="misc:OutputMiscViewModel"
              x:Class="Tefin.Views.Misc.OutputMiscView">
-   <Border>
-       <avaloniaEdit:TextEditor Name="Editor"
-                              FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
-                              Margin="8"
-                              HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Visible"
-                              FontWeight="Light"
-                              Foreground="SlateGray"
-                              Options=""
-                              FontSize="12" />
-   </Border>
+    <Border>
+        <avaloniaEdit:TextEditor Name="Editor"
+                                 FontFamily="Cascadia Code,Consolas,Menlo,Monospace"
+                                 Margin="8"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 VerticalScrollBarVisibility="Visible"
+                                 FontWeight="Light"
+                                 Foreground="SlateGray"
+                                 Options=""
+                                 FontSize="12" />
+    </Border>
 </UserControl>

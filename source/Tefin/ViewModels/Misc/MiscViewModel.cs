@@ -1,6 +1,10 @@
+#region
+
 using System.Collections.ObjectModel;
 
 using ReactiveUI;
+
+#endregion
 
 namespace Tefin.ViewModels.Misc;
 

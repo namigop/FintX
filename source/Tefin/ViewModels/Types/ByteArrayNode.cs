@@ -80,7 +80,9 @@ public class ByteArrayNode : TypeBaseNode {
     }
 
     private async Task OnOpenFile() {
-        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] { "*.*" });
+        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] {
+            "*.*"
+        });
         if (ok) {
             this.File = files[0];
             var bytes = System.IO.File.ReadAllBytes(this._file);

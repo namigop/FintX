@@ -1,8 +1,12 @@
+#region
+
 using System.Reflection;
 
 using ReactiveUI;
 
 using Tefin.Core;
+
+#endregion
 
 namespace Tefin.ViewModels.Tabs;
 
@@ -18,7 +22,7 @@ public class JsonResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         get => this._json;
         set => this.RaiseAndSetIfChanged(ref this._json, value);
     }
-    
+
     public Type? ResponseType {
         get => this._responseType;
     }

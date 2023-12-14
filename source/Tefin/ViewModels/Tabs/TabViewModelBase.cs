@@ -32,7 +32,9 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     public bool AllowDuplicates { get; set; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }
-    public string Id => this.GetTabId();
+    public string Id {
+        get => this.GetTabId();
+    }
 
     public string SubTitle {
         get => this._subTitle;

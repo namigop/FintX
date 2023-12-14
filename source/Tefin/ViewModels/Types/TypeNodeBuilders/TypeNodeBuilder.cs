@@ -1,4 +1,8 @@
+#region
+
 using Tefin.Core;
+
+#endregion
 
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
@@ -23,10 +27,10 @@ public static class TypeNodeBuilder {
 
         // nodeBuilders.Add(new InheritanceNodeBuilder());
         // nodeBuilders.Add(new InterfaceNodeBuilder());
-       
+
         NodeBuilders.Add(new DefaultNodeBuilder()); //always the last one
     }
-     
+
 
     public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         foreach (var builder in NodeBuilders)
@@ -38,7 +42,7 @@ public static class TypeNodeBuilder {
                     Resolver.value.Log.Warn(exc.Message);
                 }
             }
-        
+
         throw new NotSupportedException($"Unable to build a node for {type.FullName}");
     }
 }

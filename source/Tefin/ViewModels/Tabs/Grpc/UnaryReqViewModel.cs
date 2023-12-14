@@ -13,14 +13,13 @@ using Tefin.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryReqViewModel : ViewModelBase {
+    private readonly JsonRequestEditorViewModel _jsonEditor;
+    private readonly TreeRequestEditorViewModel _treeEditor;
     private object?[] _methodParameterInstances;
+    private IRequestEditorViewModel _requestEditor;
 
     //private readonly bool _generateFullTree;
     private bool _showTreeEditor;
-
-    private readonly JsonRequestEditorViewModel _jsonEditor;
-    private readonly TreeRequestEditorViewModel _treeEditor;
-    private IRequestEditorViewModel _requestEditor;
 
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
@@ -41,7 +40,7 @@ public class UnaryReqViewModel : ViewModelBase {
         get => this._showTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
     }
- 
+
     public MethodInfo MethodInfo { get; }
 
 
@@ -79,7 +78,9 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public virtual async Task ImportRequest() {
-        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var fileExtensions = new[] {
+            $"*{Ext.requestFileExt}"
+        };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
             var import = new ImportFeature(this.Io, files[0], this.MethodInfo);

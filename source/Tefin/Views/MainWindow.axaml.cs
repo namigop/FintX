@@ -9,7 +9,6 @@ using Tefin.ViewModels;
 namespace Tefin.Views;
 
 public partial class MainWindow : Window {
-
     public MainWindow() {
         this.InitializeComponent();
         this.DataContextChanged += (s, arg) => {
@@ -20,7 +19,6 @@ public partial class MainWindow : Window {
             catch (Exception exc) {
                 vm.Io.Log.Error(exc);
             }
-                
         };
     }
 }

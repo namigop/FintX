@@ -1,9 +1,12 @@
+#region
+
 using Tefin.Core.Reflection;
+
+#endregion
 
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class DictionaryNodeBuilder : ITypeNodeBuilder {
-
     public bool CanHandle(Type type) {
         return TypeHelper.isDictionaryType(type);
     }

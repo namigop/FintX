@@ -12,7 +12,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.Views.Explorer;
 
 public partial class ClientNodeActionView : UserControl {
-
     public ClientNodeActionView() {
         this.InitializeComponent();
     }
@@ -20,7 +19,7 @@ public partial class ClientNodeActionView : UserControl {
     private void DeleteButtonClick(object? sender, RoutedEventArgs e) {
         var vm = (ClientNode)this.DataContext!;
         vm.DeleteCommand.Execute(Unit.Default);
-        
+
         var fly = this.btnDelete.Flyout;
         fly?.Hide();
     }

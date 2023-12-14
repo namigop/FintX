@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Explorer;
 
 public partial class FileReqNodeView : UserControl {
-
     public FileReqNodeView() {
         this.InitializeComponent();
     }

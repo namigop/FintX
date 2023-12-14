@@ -15,9 +15,9 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryViewModel : GrpCallTypeViewModelBase {
-    private string _statusText;
     private UnaryReqViewModel _reqViewModel;
     private bool _showTreeEditor;
+    private string _statusText;
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this._reqViewModel = new UnaryReqViewModel(mi, true);
@@ -25,30 +25,17 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.StartCommand = this.CreateCommand(this.OnStart);
         this._statusText = "";
         this._showTreeEditor = true;
-        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged );
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
-
-    private void OnShowTreeEditorChanged(ViewModelBase obj) {
-        this.ReqViewModel = null!;
-        this.ReqViewModel = (UnaryReqViewModel)obj;
-        //this.RaisePropertyChanged(nameof(this.ReqViewModel));
-    }
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
-            this.RaiseAndSetIfChanged(ref this._showTreeEditor , value);
+            this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
             this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
@@ -63,6 +50,19 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
+    }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
+
+    private void OnShowTreeEditorChanged(ViewModelBase obj) {
+        this.ReqViewModel = null!;
+        this.ReqViewModel = (UnaryReqViewModel)obj;
+        //this.RaisePropertyChanged(nameof(this.ReqViewModel));
     }
 
     public override void Dispose() {

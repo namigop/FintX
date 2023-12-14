@@ -21,22 +21,21 @@
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
                             <controls:IconControl Icon="{StaticResource Icon.Start}" />
-                            <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
-                        <controls:IconControl Icon="{StaticResource Icon.Export}"></controls:IconControl>
+                        <controls:IconControl Icon="{StaticResource Icon.Export}" />
                     </Button>
                     <Button Command="{Binding ImportRequestCommand}" Margin="6 0 0 0" ToolTip.Tip="open a saved request (*.fxrq) file">
-                        <controls:IconControl Icon="{StaticResource Icon.Import}"></controls:IconControl>
+                        <controls:IconControl Icon="{StaticResource Icon.Import}" />
                     </Button>
-                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
 
                     <ToggleSwitch IsChecked="{Binding IsShowingRequestTreeEditor}"
                                   OnContent="Tree" OffContent="Json"
-                                  Margin="0 0 0 0">
-                    </ToggleSwitch>
+                                  Margin="0 0 0 0" />
                 </StackPanel>
 
             </Grid>

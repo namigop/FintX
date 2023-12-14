@@ -13,8 +13,8 @@
     <Border>
         <TreeDataGrid Source="{Binding ExplorerTree}" ShowColumnHeaders="False" x:Name="TreeDg">
             <TreeDataGrid.Resources>
-                <viewModels:NodeViewLocator x:Key="NodeViewLocator"/>
-                <viewModels:NodeActionViewLocator x:Key="NodeActionViewLocator"/>
+                <viewModels:NodeViewLocator x:Key="NodeViewLocator" />
+                <viewModels:NodeActionViewLocator x:Key="NodeActionViewLocator" />
                 <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
                     <ContentControl Content="{Binding}" Margin="4 0 0 0" ContentTemplate="{StaticResource NodeViewLocator}" />
                 </DataTemplate>

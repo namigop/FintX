@@ -17,6 +17,10 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase {
+    public MainWindowViewModel() {
+        this.SponsorCommand = this.CreateCommand(this.OnSponsor);
+        this.Root = default;
+    }
     public FooterViewModel Footer { get; } = new();
     public MainMenuViewModel MainMenu { get; } = new();
     public MiscViewModel Misc { get; } = new();
@@ -32,13 +36,8 @@ public class MainWindowViewModel : ViewModelBase {
 
     public string SponsorAlignment { get; } = Core.Utils.isWindows() ? "Left" : "Right";
 
-    public MainWindowViewModel() {
-        this.SponsorCommand = this.CreateCommand(this.OnSponsor);
-        this.Root = default;
-    }
-
     private void OnSponsor() {
-        Core.Utils.openBrowser("https://github.com/sponsors/namigop"); 
+        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
     }
 
     public void Init() {

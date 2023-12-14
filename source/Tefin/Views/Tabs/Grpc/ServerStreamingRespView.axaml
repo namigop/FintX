@@ -2,8 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
-             xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              xmlns:grpc="clr-namespace:Tefin.ViewModels.Tabs.Grpc"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="grpc:ServerStreamingRespViewModel"
@@ -12,7 +10,7 @@
     <Border>
         <Grid RowDefinitions="*, Auto, *">
             <Grid>
-                <ContentControl Content="{Binding ResponseEditor}"></ContentControl>
+                <ContentControl Content="{Binding ResponseEditor}" />
                 <TextBlock Text="response" FontSize="20" Opacity="0.25"
                            IsHitTestVisible="False"
                            VerticalAlignment="Bottom" HorizontalAlignment="Right"
@@ -20,30 +18,28 @@
             </Grid>
             <GridSplitter CornerRadius="4" Grid.Row="1" Height="8" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
             <Grid Grid.Row="2" RowDefinitions="Auto, *">
-                <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}" 
+                <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}"
                         CornerRadius="0 0 8 8">
                     <StackPanel Orientation="Horizontal" Margin="6">
-                        
-                        <Button Command="{Binding EndReadCommand}" 
+
+                        <Button Command="{Binding EndReadCommand}"
                                 IsEnabled="{Binding CanRead}"
                                 Classes="MenuButton" ToolTip.Tip="Stop reading the response stream">
-                            <TextBlock Text="End read"></TextBlock>
+                            <TextBlock Text="End read" />
                         </Button>
-                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" ></Separator>
+                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
                         <ToggleSwitch IsChecked="{Binding IsShowingServerStreamTree}"
                                       OnContent="Tree" OffContent="Json"
-                                      Margin="0 0 0 0"></ToggleSwitch>
+                                      Margin="0 0 0 0" />
                     </StackPanel>
                 </Border>
                 <ContentControl Content="{Binding ServerStreamEditor}" Grid.Row="1" />
 
-               
-                
-                <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0.25" Margin="10"  >
-                    <TextBlock Text="response stream" FontSize="20"  
-                               IsHitTestVisible="False"
-                    />
-                    <ProgressBar IsIndeterminate="True" MinWidth="100" Margin="0 0 0 0" IsVisible="{Binding CanRead}"></ProgressBar>
+
+                <StackPanel Grid.Row="1" Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right" Opacity="0.25" Margin="10">
+                    <TextBlock Text="response stream" FontSize="20"
+                               IsHitTestVisible="False" />
+                    <ProgressBar IsIndeterminate="True" MinWidth="100" Margin="0 0 0 0" IsVisible="{Binding CanRead}" />
                 </StackPanel>
             </Grid>
         </Grid>

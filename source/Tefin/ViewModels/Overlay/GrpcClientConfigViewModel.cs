@@ -1,3 +1,5 @@
+#region
+
 using System.Collections.ObjectModel;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
@@ -9,19 +11,21 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Messages;
 
+#endregion
+
 namespace Tefin.ViewModels.Overlay;
 
 public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _clientConfigFile;
     private readonly Action _onClientNameChanged;
     private readonly string _title = "Client Configuration";
-    private string _certFile ="";
+    private string _certFile = "";
     private ProjectTypes.ClientConfig _clientConfig = null!;
     private string _clientName = "";
     private string _description = "";
-    private bool _isCertFromFile = false;
-    private bool _isUsingSsl = false;
-    private string _jwt ="";
+    private bool _isCertFromFile;
+    private bool _isUsingSsl;
+    private string _jwt = "";
     private StoreLocation _selectedCertStoreLocation;
     private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
@@ -104,11 +108,13 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._thumbprint, value);
     }
 
-    public string Title => this._title;
-
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
+    }
+
+    public string Title {
+        get => this._title;
     }
 
     public void Close() {

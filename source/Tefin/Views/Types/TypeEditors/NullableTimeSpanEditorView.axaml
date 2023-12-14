@@ -8,7 +8,7 @@
              x:Class="Tefin.Views.Types.TypeEditors.NullableTimeSpanEditorView">
     <Border x:Name="MainBorder">
         <StackPanel Orientation="Horizontal">
-            <TimePicker SelectedTime="{Binding TempValue}" IsEnabled="{Binding !IsNull}"/>
+            <TimePicker SelectedTime="{Binding TempValue}" IsEnabled="{Binding !IsNull}" />
             <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
                       IsVisible="{Binding AcceptsNull}" />
         </StackPanel>

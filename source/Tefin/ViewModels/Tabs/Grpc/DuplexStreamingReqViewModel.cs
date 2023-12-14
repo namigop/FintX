@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using System.Windows.Input;
 
@@ -9,21 +11,22 @@ using Tefin.Grpc.Execution;
 
 using static Tefin.Core.Utils;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
+    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
+    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
+    private readonly Type _listType;
+    private readonly Type _requestItemType;
     private DuplexStreamingCallResponse _callResponse;
     private bool _canWrite;
-    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
-    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
-    private readonly Type _listType;
-    private readonly Type _requestItemType;
     public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
-         
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
         this._callResponse = DuplexStreamingCallResponse.Empty();
@@ -46,7 +49,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public ICommand EndWriteCommand { get; }
- 
+
     public ICommand WriteCommand { get; }
     public bool CanWrite {
         get => this._canWrite;
@@ -67,7 +70,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
         if (ok) {
             var add = this._listType.GetMethod("Add");
-            add!.Invoke(stream, new[] { reqInstance });
+            add!.Invoke(stream, new[] {
+                reqInstance
+            });
         }
         else
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
@@ -84,7 +89,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
             this.ShowAsJson();
         }
     }
-    
+
     private void ShowAsJson() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
@@ -98,7 +103,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         if (ok)
             this.ClientStreamEditor.Show(list);
     }
-    
+
     private async Task OnEndWrite() {
         try {
             var writer = new WriteDuplexStreamFeature();
@@ -119,14 +124,14 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
                 this.Io.Log.Warn("Unable to write to the request stream");
                 return;
             }
-            
+
             var resp = this.CallResponse;
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
 
             foreach (var i in this.ClientStreamEditor.GetListItems())
                 await writer.Write(resp, i);
-        } 
+        }
         catch (Exception exc) {
             this.Io.Log.Error(exc);
         }

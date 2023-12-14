@@ -1,3 +1,5 @@
+#region
+
 using System.Xml;
 
 using Avalonia;
@@ -12,8 +14,9 @@ using AvaloniaEdit.Highlighting.Xshd;
 
 using Tefin.Utils;
 
-namespace Tefin.Views.Controls; 
+#endregion
 
+namespace Tefin.Views.Controls;
 
 public partial class JsonEditor : UserControl {
     public static readonly StyledProperty<string> TextProperty =
@@ -42,10 +45,14 @@ public partial class JsonEditor : UserControl {
 
     public JsonEditor() {
         this.InitializeComponent();
-        this.Editor.Document = new TextDocument { Text = "" };
+        this.Editor.Document = new TextDocument {
+            Text = ""
+        };
         this.Editor.TextChanged += this.OnTextChanged;
         this._folding = new CharFoldingStrategy('{', '}');
-        this._foldingTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        this._foldingTimer = new DispatcherTimer {
+            Interval = TimeSpan.FromSeconds(1)
+        };
         this._foldingTimer.Tick += this.FoldingTimer_Tick;
         this._foldingTimer.IsEnabled = false;
 

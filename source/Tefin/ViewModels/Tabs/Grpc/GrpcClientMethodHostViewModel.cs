@@ -12,7 +12,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
-
     public GrpcClientMethodHostViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi) {
         var type = GrpcMethod.getMethodType(mi);
         if (type == MethodType.Unary)
@@ -23,7 +22,7 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
             this.CallType = new ClientStreamingViewModel(mi, cg);
         else
             this.CallType = new DuplexStreamingViewModel(mi, cg);
-        this.CallType.SubscribeTo(x => x.IsBusy, (vm) => this.IsBusy = vm.IsBusy);
+        this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
         ;
     }
 

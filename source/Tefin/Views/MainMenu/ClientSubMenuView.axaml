@@ -7,16 +7,16 @@
              x:DataType="mainMenu:ClientSubMenuViewModel"
              x:Class="Tefin.Views.MainMenu.ClientSubMenuView">
     <StackPanel>
-        <Button Command="{Binding AddClientCommand}" Classes="MenuButton" >
-         
-          <Viewbox Width="18" Height="18" Stretch="Uniform">
-            <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
-              <Canvas>
-                <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent" Stroke="#00A3EF" StrokeThickness="1" />
-                <Path Data="M3,7.5h9M7.5,12V3" Stroke="#00A3EF" StrokeThickness="1" />
-              </Canvas>
-            </Canvas>
-          </Viewbox>
+        <Button Command="{Binding AddClientCommand}" Classes="MenuButton">
+
+            <Viewbox Width="18" Height="18" Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent" Stroke="#00A3EF" StrokeThickness="1" />
+                        <Path Data="M3,7.5h9M7.5,12V3" Stroke="#00A3EF" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
         </Button>
     </StackPanel>
 </UserControl>

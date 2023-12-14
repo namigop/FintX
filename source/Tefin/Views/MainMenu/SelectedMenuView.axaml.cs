@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.MainMenu;
 
 public partial class SelectedMenuView : UserControl {
-
     public SelectedMenuView() {
         this.InitializeComponent();
     }

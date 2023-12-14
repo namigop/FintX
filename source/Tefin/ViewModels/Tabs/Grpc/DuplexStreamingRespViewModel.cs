@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using System.Threading;
 using System.Windows.Input;
@@ -8,18 +10,20 @@ using Tefin.Core.Execution;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingRespViewModel : StandardResponseViewModel {
-    private bool _canRead;
-    private readonly Type _responseItemType;
     private readonly Type _listType;
-    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
+    private readonly Type _responseItemType;
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
+    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
+    private bool _canRead;
+    private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
     private IListEditorViewModel _serverStreamEditor;
-    private CancellationTokenSource? _cs;
-    
+
     public DuplexStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._responseItemType = args[1];
@@ -34,25 +38,26 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
 
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
+
     public ICommand EndReadCommand {
         get;
     }
 
-    private void OnEndRead() {
-        this._cs?.Cancel();
-      
-    }
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
     public bool CanRead {
         get => this._canRead;
-        private set => this.RaiseAndSetIfChanged(ref this._canRead , value);
+        private set => this.RaiseAndSetIfChanged(ref this._canRead, value);
     }
     public IListEditorViewModel ServerStreamEditor {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
+    }
+
+    private void OnEndRead() {
+        this._cs?.Cancel();
     }
 
     public async Task SetupDuplexStreamNode(object response) {
@@ -66,10 +71,9 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
             await foreach (var d in readDuplexStream.ReadResponseStream(resp, this._cs.Token)) {
                 if (this._cs.Token.IsCancellationRequested)
                     break;
-                
+
                 this.ServerStreamEditor.AddItem(d);
             }
-                
         }
         catch (Exception exc) {
             this.Io.Log.Error(exc);

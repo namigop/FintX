@@ -36,10 +36,8 @@ public class TabHostViewModel : ViewModelBase {
                     this.SelectedItem = this.Items.Last();
                 }
             }
-            
+
             this.Items.Remove(obj.Tab);
-            
-            
         });
     }
 
@@ -48,7 +46,7 @@ public class TabHostViewModel : ViewModelBase {
         if (existing != null) {
             if (obj.Tab.AllowDuplicates) {
                 var existingNames = this.Items.Where(t => t.Title.StartsWith(obj.Tab.Title)).Select(t => t.Title).ToArray();
-                string title = obj.Tab.GenerateNewTitle(existingNames);
+                var title = obj.Tab.GenerateNewTitle(existingNames);
                 obj.Tab.Title = title;
                 this.Items.Add(obj.Tab);
                 this.SelectedItem = this.Items.Last();

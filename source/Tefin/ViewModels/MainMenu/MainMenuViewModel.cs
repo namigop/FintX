@@ -27,7 +27,9 @@ public class MainMenuViewModel : ViewModelBase {
             this.RaiseAndSetIfChanged(ref this._selectedMenuItem, value);
             this.SelectedMenu.MenuItem = this._selectedMenuItem;
 
-            foreach (var s in new IMenuItemViewModel[] { this.ClientMenuItem, this.ServerMenuItem, this.ConfigMenuItem }) {
+            foreach (var s in new IMenuItemViewModel[] {
+                         this.ClientMenuItem, this.ServerMenuItem, this.ConfigMenuItem
+                     }) {
                 s.IsSelected = s == this._selectedMenuItem;
             }
         }

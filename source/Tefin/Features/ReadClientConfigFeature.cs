@@ -1,5 +1,9 @@
+#region
+
 using Tefin.Core;
 using Tefin.Core.Interop;
+
+#endregion
 
 namespace Tefin.Features;
 

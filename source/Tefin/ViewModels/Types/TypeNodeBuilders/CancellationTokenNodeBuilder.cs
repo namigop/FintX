@@ -7,7 +7,6 @@ using System.Threading;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class CancellationTokenNodeBuilder : ITypeNodeBuilder {
-
     public bool CanHandle(Type type) {
         return type == typeof(CancellationToken);
     }

@@ -1,4 +1,8 @@
+#region
+
 using ReactiveUI;
+
+#endregion
 
 namespace Tefin.ViewModels.Types.TypeEditors;
 
@@ -17,7 +21,9 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
         set => this.RaiseAndSetIfChanged(ref this._dateTimeText, value);
     }
 
-    public override string FormattedValue => $"{this.TempValue:O}";
+    public override string FormattedValue {
+        get => $"{this.TempValue:O}";
+    }
 
     public bool IsUtc {
         get => this._isUtc;

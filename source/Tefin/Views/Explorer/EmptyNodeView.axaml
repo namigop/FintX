@@ -9,5 +9,5 @@
     <UserControl.Styles>
         <StyleInclude Source="/Views/Types/TypeItemStyles.axaml" />
     </UserControl.Styles>
-    <TextBlock Text="not loaded" Classes="SubTitle" Foreground="#BCA027" FontStyle="Italic"></TextBlock>
+    <TextBlock Text="not loaded" Classes="SubTitle" Foreground="#BCA027" FontStyle="Italic" />
 </UserControl>

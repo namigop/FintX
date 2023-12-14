@@ -1,3 +1,5 @@
+#region
+
 using System.Reflection;
 using System.Windows.Input;
 
@@ -9,18 +11,20 @@ using Tefin.Features;
 using Tefin.Grpc.Execution;
 using Tefin.Utils;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingReqViewModel : UnaryReqViewModel {
+    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
+    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
+    private readonly Type _listType;
+    private readonly Type _requestItemType;
     private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
-    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
-    private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
-    private readonly Type _listType;
-    private readonly Type _requestItemType;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
@@ -41,8 +45,36 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
     }
 
+    public bool IsShowingClientStreamTree {
+        get => this._isShowingClientStreamTree;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
+    }
+    public ClientStreamingCallResponse CallResponse {
+        get => this._callResponse;
+        private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
+    }
+
+    public ICommand EndWriteCommand {
+        get;
+    }
+
+    public ICommand WriteCommand {
+        get;
+    }
+
+    public IListEditorViewModel ClientStreamEditor {
+        get => this._clientStreamEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
+    }
+    public bool CanWrite {
+        get => this._canWrite;
+        set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
+    }
+
     public override async Task ImportRequest() {
-        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var fileExtensions = new[] {
+            $"*{Ext.requestFileExt}"
+        };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
             var requestStream = Activator.CreateInstance(this._listType);
@@ -55,7 +87,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             else {
                 this.Io.Log.Error(importReq.ErrorValue);
             }
-            
+
             if (importReqStream.IsOk) {
                 this.ClientStreamEditor.Show(importReqStream.ResultValue);
             }
@@ -63,16 +95,15 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
                 this.Io.Log.Error(importReqStream.ErrorValue);
             }
         }
-        
     }
     public override async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
             var (isValid, reqStream) = this._clientStreamEditor.GetList();
             if (!isValid) {
-                Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
+                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
             }
-            
+
             var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
             var exportReqJson = feature.Export();
             if (exportReqJson.IsOk) {
@@ -109,43 +140,19 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.ClientStreamEditor.Show(list);
     }
 
-    public bool IsShowingClientStreamTree {
-        get => this._isShowingClientStreamTree;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
-    }
-    public ClientStreamingCallResponse CallResponse {
-        get => this._callResponse;
-        private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
-    }
-
-    public ICommand EndWriteCommand {
-        get;
-    }
-
-    public ICommand WriteCommand {
-        get;
-    }
-
-    public IListEditorViewModel ClientStreamEditor {
-        get => this._clientStreamEditor;
-        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
-    }
-    public bool CanWrite {
-        get => this._canWrite;
-        set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
-    }
-
     public void SetupClientStream(ClientStreamingCallResponse response) {
         this._callResponse = response;
         var stream = Activator.CreateInstance(this._listType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
             var add = this._listType.GetMethod("Add");
-            add!.Invoke(stream, new[] {reqInstance});
+            add!.Invoke(stream, new[] {
+                reqInstance
+            });
         }
         else
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
-        
+
         this._clientStreamEditor.Show(stream!);
         this.CanWrite = true;
     }
@@ -169,7 +176,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             var resp = this.CallResponse;
             this.IsBusy = true;
             var writer = new WriteClientStreamFeature();
-            
+
             foreach (var i in this.ClientStreamEditor.GetListItems())
                 await writer.Write(resp, i);
         }

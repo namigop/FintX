@@ -1,10 +1,13 @@
-namespace Tefin.Utils;
+#region
 
 using AvaloniaEdit.Document;
 using AvaloniaEdit.Folding;
 
-public class CharFoldingStrategy {
+#endregion
 
+namespace Tefin.Utils;
+
+public class CharFoldingStrategy {
     /// <summary>
     ///     Creates a new BraceFoldingStrategy.
     /// </summary>

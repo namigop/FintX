@@ -1,3 +1,5 @@
+#region
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -13,6 +15,8 @@ using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeNodeBuilders;
 
 using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
+
+#endregion
 
 namespace Tefin.ViewModels.Tabs;
 

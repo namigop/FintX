@@ -17,7 +17,7 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
-      <!--<NativeMenu.Menu> 
+    <!--<NativeMenu.Menu> 
                  <NativeMenu> 
                      <NativeMenuItem Header="File"> 
                          <NativeMenu> 
@@ -38,7 +38,7 @@
                      </NativeMenuItem> 
                       
                  </NativeMenu> 
-             </NativeMenu.Menu>--> 
+             </NativeMenu.Menu>-->
 
     <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="Auto, *, 8, 3*">
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -47,10 +47,10 @@
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
                     VerticalAlignment="Center" HorizontalAlignment="{Binding SponsorAlignment}" Margin="0 0 10 0">
-           <Button Background="Transparent" Command="{Binding SponsorCommand}">
-               <TextBlock FontSize="12" Foreground="CornflowerBlue"
-                          Text="Support this project by becoming a sponsor"> </TextBlock>
-           </Button>
+            <Button Background="Transparent" Command="{Binding SponsorCommand}">
+                <TextBlock FontSize="12" Foreground="CornflowerBlue"
+                           Text="Support this project by becoming a sponsor" />
+            </Button>
         </StackPanel>
 
         <!-- left menu -->

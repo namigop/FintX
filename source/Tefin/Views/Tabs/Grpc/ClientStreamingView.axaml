@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="grpc:ClientStreamingViewModel"
              x:Class="Tefin.Views.Tabs.Grpc.ClientStreamingView">
-    <Border  BorderThickness="0">
+    <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
@@ -21,26 +21,25 @@
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
                             <controls:IconControl Icon="{StaticResource Icon.Start}" />
-                            <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center"></TextBlock>
+                            <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
-                        <controls:IconControl Icon="{StaticResource Icon.Export}"></controls:IconControl>
+                        <controls:IconControl Icon="{StaticResource Icon.Export}" />
                     </Button>
                     <Button Command="{Binding ImportRequestCommand}" Margin="6 0 0 0" ToolTip.Tip="open a saved request (*.fxrq) file">
-                        <controls:IconControl Icon="{StaticResource Icon.Import}"></controls:IconControl>
+                        <controls:IconControl Icon="{StaticResource Icon.Import}" />
                     </Button>
-                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2"></Separator>
+                    <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
 
                     <ToggleSwitch IsChecked="{Binding IsShowingRequestTreeEditor}"
                                   OnContent="Tree" OffContent="Json"
-                                  Margin="0 0 0 0">
-                    </ToggleSwitch>
+                                  Margin="0 0 0 0" />
                 </StackPanel>
 
             </Grid>
-            
+
             <Grid Grid.Row="0" Grid.Column="2">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <!-- <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" /> -->
@@ -52,13 +51,13 @@
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
-            
+
             <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="8" Margin="6" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
-           
+
             <Grid Grid.Row="2" Grid.Column="2">
                 <ContentControl Content="{Binding RespViewModel}" />
             </Grid>
-           
+
         </Grid>
     </Border>
 

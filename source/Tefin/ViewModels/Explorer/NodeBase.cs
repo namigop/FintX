@@ -17,14 +17,14 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     private string _subTitle = "";
     private string _title = "";
 
-    public bool CanOpen {
-        get => this._canOpen;
-        protected set => this._canOpen = value;
-    }
-
     public virtual bool IsEditing {
         get => this._isEditing;
         set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
+    }
+
+    public bool CanOpen {
+        get => this._canOpen;
+        protected set => this._canOpen = value;
     }
 
     public bool IsExpanded {

@@ -7,7 +7,6 @@ using System.Reflection;
 namespace Tefin.ViewModels.Explorer;
 
 public abstract class ClientMethodViewModelBase : ViewModelBase {
-
     protected ClientMethodViewModelBase(MethodInfo mi) {
         this.MethodInfo = mi;
     }

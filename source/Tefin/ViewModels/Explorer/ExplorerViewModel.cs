@@ -39,15 +39,15 @@ public class ExplorerViewModel : ViewModelBase {
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
     }
 
+    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
+    public Project? Project { get; set; }
+    private ObservableCollection<IExplorerItem> Items { get; } = new();
+
     private void OnClientDeleted(ClientDeletedMessage obj) {
         var target = this.Items.FirstOrDefault(t => t is ClientNode cn && cn.ClientPath == obj.Client.Path);
         if (target != null)
             this.Items.Remove(target);
     }
-
-    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
-    public Project? Project { get; set; }
-    private ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public void AddClientNode(ClientGroup cg, Type? type = null) {
         var cm = new ClientNode(cg, type);
@@ -63,7 +63,6 @@ public class ExplorerViewModel : ViewModelBase {
     }
 
     private async Task OnShowClient(ShowClientMessage obj) {
-        
         var compileOutput = obj.Output;
         Type[]? types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
         var type = ServiceClient.findClientType(types).Value;

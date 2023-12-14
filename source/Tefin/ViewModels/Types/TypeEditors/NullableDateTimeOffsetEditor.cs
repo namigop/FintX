@@ -1,6 +1,10 @@
-namespace Tefin.ViewModels.Types.TypeEditors;
+#region
 
 using ReactiveUI;
+
+#endregion
+
+namespace Tefin.ViewModels.Types.TypeEditors;
 
 public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
     private string _dateTimeText;
@@ -18,7 +22,9 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
         }
     }
 
-    public override string FormattedValue => this.TempValue == null ? "null" : $"{this.TempValue:O}";
+    public override string FormattedValue {
+        get => this.TempValue == null ? "null" : $"{this.TempValue:O}";
+    }
 
     public override void CommitEdit() {
         if (this.IsNull) {

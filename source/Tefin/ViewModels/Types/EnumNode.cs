@@ -1,4 +1,8 @@
+#region
+
 using ReactiveUI;
+
+#endregion
 
 namespace Tefin.ViewModels.Types;
 

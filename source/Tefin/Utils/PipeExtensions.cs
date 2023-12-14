@@ -1,7 +1,6 @@
 namespace Tefin.Utils;
 
 public static class PipeExtensions {
-
     /// <summary>
     /// Pipes 1 functions
     /// </summary>

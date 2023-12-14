@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Types.TypeEditors.NullableDecimalEditorView">
     <Border x:Name="MainBorder">
         <StackPanel>
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}" Width="80" IsEnabled="{Binding !IsNull}"/>
+            <controls:Number Value="{Binding TempValue, Mode=TwoWay}" Width="80" IsEnabled="{Binding !IsNull}" />
             <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
                       IsVisible="{Binding AcceptsNull}" />
         </StackPanel>

@@ -12,7 +12,7 @@
             <TextBox x:Name="TextBox"
                      MinWidth="200"
                      KeyDown="InputElement_OnKeyDown"
-                    Text="{Binding TempValue}"
+                     Text="{Binding TempValue}"
                      IsEnabled="{Binding !IsNull}"
                      x:CompileBindings="False" />
             <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />

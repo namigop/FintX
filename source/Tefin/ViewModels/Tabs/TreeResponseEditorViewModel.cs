@@ -1,3 +1,5 @@
+#region
+
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +10,8 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 
+#endregion
+
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
@@ -17,7 +21,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
-                        new GridLength(1, GridUnitType.Star)), 
+                        new GridLength(1, GridUnitType.Star)),
                     x => x.Items, //
                     x => x.Items.Any(), //
                     x => x.IsExpanded) //
@@ -46,7 +50,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         }
     }
 
-    
+
     public void Init() {
         this.Items.Clear();
     }
@@ -63,7 +67,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         this.Items.Clear();
         if (responseType == null)
             return;
-        
+
         try {
             this._responseType = responseType;
             var node = new ResponseNode(this.MethodInfo.Name, this._responseType, null, resp, null);

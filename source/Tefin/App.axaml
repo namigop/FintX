@@ -29,7 +29,7 @@
             <!--     </NativeMenu> -->
             <!-- </NativeMenuItem> -->
         </NativeMenu>
-         
+
     </NativeMenu.Menu>
     <Application.Styles>
         <FluentTheme />
@@ -40,7 +40,7 @@
         <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml" />
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.axaml" />
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.Button.axaml" />
-        <StyleInclude Source="/Views/Controls/IconControl.axaml"></StyleInclude>
+        <StyleInclude Source="/Views/Controls/IconControl.axaml" />
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
     </Application.Styles>
 </Application>

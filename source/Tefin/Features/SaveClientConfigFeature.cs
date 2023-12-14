@@ -1,11 +1,15 @@
+#region
+
 using Tefin.Core;
 using Tefin.Core.Interop;
+
+#endregion
 
 namespace Tefin.Features;
 
 public class SaveClientConfigFeature {
-    private readonly string _clientConfigFile;
     private readonly ProjectTypes.ClientConfig _cfg;
+    private readonly string _clientConfigFile;
     private readonly IOResolver _io;
     public SaveClientConfigFeature(string clientConfigFile, ProjectTypes.ClientConfig cfg, IOResolver io) {
         this._clientConfigFile = clientConfigFile;

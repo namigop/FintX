@@ -7,7 +7,7 @@
              x:DataType="mainMenu:ServerMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.ServerMenuItemView">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <TextBlock Text="This is not yet implemented." ></TextBlock>
-        <TextBlock Text="Here you can host a gRPC service and get automatic tracing of messages" VerticalAlignment="Stretch"></TextBlock>
+        <TextBlock Text="This is not yet implemented." />
+        <TextBlock Text="Here you can host a gRPC service and get automatic tracing of messages" VerticalAlignment="Stretch" />
     </StackPanel>
 </UserControl>

@@ -7,7 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class ExceptionNodeView : UserControl {
-
     public ExceptionNodeView() {
         this.InitializeComponent();
     }

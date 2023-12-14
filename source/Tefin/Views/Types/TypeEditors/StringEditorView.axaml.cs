@@ -10,7 +10,6 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class StringEditorView : UserControl {
-
     public StringEditorView() {
         this.InitializeComponent();
         //this.DataContextChanged += this.OnDataContextChanged;

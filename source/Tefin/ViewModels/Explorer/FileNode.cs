@@ -1,7 +1,6 @@
 namespace Tefin.ViewModels.Explorer;
 
 public class FileNode : NodeBase {
-
     public FileNode(string fullPath) {
         this.CanOpen = true;
         this.FullPath = fullPath;
