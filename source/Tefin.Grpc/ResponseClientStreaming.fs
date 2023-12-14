@@ -14,22 +14,21 @@ type ClientStreamingCallInfo =
     { ClientStreamItemType: Type
       ClientStreamType: Type
       RequestItemType: Type
-      ResponseItemType: Type      
+      ResponseItemType: Type
       GetStatusMethodInfo: MethodInfo
       GetTrailersMethodInfo: MethodInfo
       WriteAsyncMethodInfo: MethodInfo
       CompleteAsyncMethodInfo: MethodInfo
       ResponseHeadersAsyncPropInfo: PropertyInfo
-      RequestStreamPropInfo : PropertyInfo
-      }
+      RequestStreamPropInfo: PropertyInfo }
 
-    member this.GetStatus(callResult:obj) =
+    member this.GetStatus(callResult: obj) =
         this.GetStatusMethodInfo.Invoke(callResult, null) :?> Status
 
-    member this.GetTrailers(callResult:obj) =
+    member this.GetTrailers(callResult: obj) =
         this.GetTrailersMethodInfo.Invoke(callResult, null) :?> Metadata
 
-    member this.GetResponse(callResult:obj) =
+    member this.GetResponse(callResult: obj) =
         task {
             let pi = this.ClientStreamType.GetProperty("ResponseAsync")
             let task = pi.GetValue(callResult) :?> Task //Task<ResponseItemType)
@@ -39,7 +38,7 @@ type ClientStreamingCallInfo =
             return resultProperty.GetValue(task)
         }
 
-    member this.GetResponseHeaders(callResult:obj)=
+    member this.GetResponseHeaders(callResult: obj) =
         this.ResponseHeadersAsyncPropInfo.GetValue(callResult) :?> Task<Metadata>
 
 type ClientStreamingCallResponse =
@@ -47,7 +46,7 @@ type ClientStreamingCallResponse =
       Status: Status option
       Trailers: Metadata option
       WriteCompleted: bool
-      CallResult:obj
+      CallResult: obj
       RequestStream: obj
       CallInfo: ClientStreamingCallInfo }
 
@@ -56,8 +55,8 @@ type ClientStreamingCallResponse =
           Status = None
           Trailers = None
           WriteCompleted = false
-          CallResult =  Unchecked.defaultof<obj>
-          RequestStream =  Unchecked.defaultof<obj>
+          CallResult = Unchecked.defaultof<obj>
+          RequestStream = Unchecked.defaultof<obj>
           CallInfo = Unchecked.defaultof<ClientStreamingCallInfo> }
 
     member this.HasStatus = this.Status.IsSome
@@ -82,67 +81,82 @@ type ResponseClientStreaming =
         | Error err -> struct (true, err.Response, err.Context)
 
 module ClientStreamingResponse =
-    let private wrapResponse  =
+    let private wrapResponse =
         let cache = Dictionary<Type, ClientStreamingCallInfo>()
+
         fun (methodInfo: MethodInfo) (resp: obj) (isError: bool) ->
             let args = methodInfo.ReturnType.GetGenericArguments()
             let requestItemType = args[0]
             let responseItemType = args[1]
+
             let clientStreamType =
                 typedefof<AsyncClientStreamingCall<_, _>>
                     .MakeGenericType(requestItemType, responseItemType)
+
             let callInfo =
                 let found, temp = cache.TryGetValue clientStreamType
-                if found then temp
-                else
-                  let requestStreamPropInfo = clientStreamType.GetProperty("RequestStream") //IClientStreamWriter<TRequest>
-                  let requestStreamType = requestStreamPropInfo.GetValue(resp).GetType()  //requestStreamPropInfo.PropertyType
-                  let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
-                  let completeMethod = requestStreamType.GetMethod("CompleteAsync")
-                  let responseHeadersAsyncPropInfo = clientStreamType.GetProperty("ResponseHeadersAsync")
-                  let getStatusMethodInfo = clientStreamType.GetMethod("GetStatus")
-                  let getTrailersMethodInfo = clientStreamType.GetMethod("GetTrailers")
-                  let temp =
-                    { ClientStreamItemType = requestItemType
-                      ClientStreamType = clientStreamType
-                      RequestItemType = requestItemType
-                      ResponseItemType = responseItemType
-                      GetStatusMethodInfo = getStatusMethodInfo
-                      GetTrailersMethodInfo = getTrailersMethodInfo
-                      WriteAsyncMethodInfo = writeMethod
-                      CompleteAsyncMethodInfo = completeMethod
-                      ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
-                      RequestStreamPropInfo = requestStreamPropInfo}
-                  cache[clientStreamType] <- temp
-                  temp
 
-            let requestStream = callInfo.RequestStreamPropInfo.GetValue(resp)        
+                if found then
+                    temp
+                else
+                    let requestStreamPropInfo = clientStreamType.GetProperty("RequestStream") //IClientStreamWriter<TRequest>
+                    let requestStreamType = requestStreamPropInfo.GetValue(resp).GetType() //requestStreamPropInfo.PropertyType
+                    let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
+                    let completeMethod = requestStreamType.GetMethod("CompleteAsync")
+
+                    let responseHeadersAsyncPropInfo =
+                        clientStreamType.GetProperty("ResponseHeadersAsync")
+
+                    let getStatusMethodInfo = clientStreamType.GetMethod("GetStatus")
+                    let getTrailersMethodInfo = clientStreamType.GetMethod("GetTrailers")
+
+                    let temp =
+                        { ClientStreamItemType = requestItemType
+                          ClientStreamType = clientStreamType
+                          RequestItemType = requestItemType
+                          ResponseItemType = responseItemType
+                          GetStatusMethodInfo = getStatusMethodInfo
+                          GetTrailersMethodInfo = getTrailersMethodInfo
+                          WriteAsyncMethodInfo = writeMethod
+                          CompleteAsyncMethodInfo = completeMethod
+                          ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
+                          RequestStreamPropInfo = requestStreamPropInfo }
+
+                    cache[clientStreamType] <- temp
+                    temp
+
+            let requestStream = callInfo.RequestStreamPropInfo.GetValue(resp)
+
             { Headers = None
               Trailers = None
               Status = None
               WriteCompleted = false
               CallResult = resp
-              RequestStream =  requestStream
-              CallInfo =  callInfo                }
+              RequestStream = requestStream
+              CallInfo = callInfo }
 
     let completeCall (resp: ClientStreamingCallResponse) =
-        let status =
-            try
-                resp.CallInfo.GetStatus(resp.CallResult)
-            with exc ->
-                Status(StatusCode.Unknown, exc.Message)
-                
-        let trailers =
-            try
-                resp.CallInfo.GetTrailers(resp.CallResult) 
-            with exc -> Metadata()
-           
-        let d = resp.CallResult :?> IDisposable
-        d.Dispose()
+        task {
+            let status =
+                try
+                    resp.CallInfo.GetStatus(resp.CallResult)
+                with exc ->
+                    Status(StatusCode.Unknown, exc.Message)
 
-        { resp with
-            Trailers = Some trailers
-            Status = Some status }
+            let trailers =
+                try
+                    resp.CallInfo.GetTrailers(resp.CallResult)
+                with exc ->
+                    Metadata()
+
+            let d = resp.CallResult :?> IDisposable
+            d.Dispose()
+
+            return
+                { resp with
+                    Trailers = Some trailers
+                    Status = Some status }
+        }
 
     let getResponseHeader (resp: ClientStreamingCallResponse) =
         task {
@@ -156,7 +170,8 @@ module ClientStreamingResponse =
             return { resp with WriteCompleted = true }
         }
 
-    let getResponse (resp: ClientStreamingCallResponse) = resp.CallInfo.GetResponse(resp.CallResult)
+    let getResponse (resp: ClientStreamingCallResponse) =
+        resp.CallInfo.GetResponse(resp.CallResult)
 
     let toStandardCallResponse (resp: ClientStreamingCallResponse) =
         { Headers = resp.Headers

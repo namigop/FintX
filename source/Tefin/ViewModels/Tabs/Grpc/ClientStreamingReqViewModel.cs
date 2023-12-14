@@ -72,50 +72,20 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public override async Task ImportRequest() {
-        var fileExtensions = new[] {
-            $"*{Ext.requestFileExt}"
-        };
-        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
-        if (ok) {
-            var requestStream = Activator.CreateInstance(this._listType);
-            var import = new ImportFeature(this.Io, files[0], this.MethodInfo, requestStream);
-            var (importReq, importReqStream) = import.Run();
-            if (importReq.IsOk) {
-                var methodParams = importReq.ResultValue;
-                this.RequestEditor.Show(methodParams);
-            }
-            else {
-                this.Io.Log.Error(importReq.ErrorValue);
-            }
-
-            if (importReqStream.IsOk) {
-                this.ClientStreamEditor.Show(importReqStream.ResultValue);
-            }
-            else {
-                this.Io.Log.Error(importReqStream.ErrorValue);
-            }
-        }
+        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }
+
     public override async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
-            var (isValid, reqStream) = this._clientStreamEditor.GetList();
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
             if (!isValid) {
                 this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
             }
 
-            var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
-            }
-            else {
-                this.Io.Log.Error(exportReqJson.ErrorValue);
-            }
+            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
         }
     }
-
     private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
         var vm = (ClientStreamingReqViewModel)obj;
         if (vm._isShowingClientStreamTree) {

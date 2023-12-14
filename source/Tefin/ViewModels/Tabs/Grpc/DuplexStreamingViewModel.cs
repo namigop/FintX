@@ -72,16 +72,16 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             return;
 
         if (resp.WriteCompleted) {
-            Task<object> CompleteRead() {
+            async Task<object> CompleteRead() {
                 var feature = new EndStreamingFeature();
-                var respWithStatus = feature.EndDuplexStreaming(resp);
+                var respWithStatus = await feature.EndDuplexStreaming(resp);
 
                 object model = new StandardResponseViewModel.GrpcStandardResponse {
                     Headers = respWithStatus.Headers.Value,
                     Trailers = respWithStatus.Trailers.Value,
                     Status = respWithStatus.Status.Value
                 };
-                return Task.FromResult(model);
+                return model;
             }
 
             _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);

@@ -1,5 +1,6 @@
 #region
 
+using System.Collections;
 using System.Reflection;
 using System.Windows.Input;
 
@@ -20,7 +21,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
     private readonly Type _listType;
     private readonly Type _requestItemType;
-    private DuplexStreamingCallResponse _callResponse;
+    private DuplexStreamingCallResponse? _callResponse;
     private bool _canWrite;
 
     private IListEditorViewModel _clientStreamEditor;
@@ -43,7 +44,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
     }
 
-    public DuplexStreamingCallResponse CallResponse {
+    public DuplexStreamingCallResponse? CallResponse {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
@@ -108,16 +109,31 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         try {
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
-            this.CallResponse = await writer.CompleteWrite(this.CallResponse);
-            this.IsBusy = false;
+            if (this.CallResponse != null)
+                this.CallResponse = await writer.CompleteWrite(this.CallResponse);
         }
         finally {
             this.CanWrite = false;
-            this.ClientStreamEditor.Clear();
+            //this.ClientStreamEditor.Clear();
             this.IsBusy = false;
         }
     }
 
+    public override async Task ImportRequest() {
+        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
+    }
+
+    public override async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            if (!isValid) {
+                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
+            }
+
+            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
+        }
+    }
     private async Task OnWrite() {
         try {
             if (this.CallResponse == null) {

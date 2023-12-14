@@ -74,18 +74,17 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
         if (resp.WriteCompleted) {
             async Task<object> CompleteRead() {
+                //get the method call response
                 var callResponse = await ClientStreamingResponse.getResponse(resp);
+                
+                //get the headers/trailers
+                var feature = new EndStreamingFeature();
+                await feature.EndClientStreaming(resp); //TODO: use same emitted structure as UnaryAsync
                 return callResponse;
             }
 
 
-            this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead)
-                .ContinueWith(t => {
-                    if (t.Exception == null) {
-                        var feature = new EndStreamingFeature();
-                        feature.EndClientStreaming(resp);
-                    }
-                });
+            _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
         }
     }
 
