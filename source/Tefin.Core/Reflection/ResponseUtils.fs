@@ -92,13 +92,19 @@ module ResponseUtils =
                  let assemblyName = $"Tefin{className}"
                  let ok, v = generatedTypes.TryGetValue( { ClassName = className; IsErrorContainer = isContainerForError})
                  if ok then v
+                     
                  else
+                     let respType =
+                         if isContainerForError then
+                             typeof<ErrorResponse>
+                         else
+                            getReturnType methodInfo
                      let genType =
                         ClassGen.create
                             assemblyName
                             moduleName
                             className
-                            [| {IsMethod = false; Name = "Response"; Type = getReturnType methodInfo } |]
+                            [| {IsMethod = false; Name = "Response"; Type = respType } |]
                             
                      let key = {ClassName = className; IsErrorContainer = isContainerForError}
                      generatedTypes.Add(key, genType)
