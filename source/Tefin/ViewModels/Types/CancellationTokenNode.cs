@@ -20,6 +20,11 @@ public class CancellationTokenNode : TypeBaseNode {
     public override string FormattedValue {
         get => (CancellationToken)this.Value! == CancellationToken.None ? "None" : "Token";
     }
+    
+    public override bool IsEditing {
+        get => this.Editor.IsEditing;
+        set => this.Editor.IsEditing = value;
+    }
     public CancellationTokenSource? Source { get; set; }
 
     public override void Init(Dictionary<string, int> processedTypeNames) {

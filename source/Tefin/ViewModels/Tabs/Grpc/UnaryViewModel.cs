@@ -1,6 +1,8 @@
 #region
 
+using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -23,6 +25,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this._reqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
+        this.StopCommand = this.CreateCommand(this.OnStop);
         this._statusText = "";
         this._showTreeEditor = true;
         this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
@@ -46,7 +49,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     }
     public UnaryRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-
+    public ICommand StopCommand { get; }
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
@@ -75,6 +78,17 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.Init();
     }
 
+    public bool CanStop {
+        get => this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+
+    private async Task OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+        }
+    }
+
+
     private async Task OnStart() {
         this.IsBusy = true;
         try {
@@ -82,6 +96,8 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
+                this.RaisePropertyChanged(nameof(this.CanStop));
+
                 var clientConfig = this.Client.Config.Value;
                 var feature = new CallUnaryFeature(mi, mParams, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();

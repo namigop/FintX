@@ -2,6 +2,7 @@
 
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 using ReactiveUI;
 
@@ -20,6 +21,10 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         this._json = "";
     }
 
+    public CancellationTokenSource? CtsReq {
+        get;
+        private set;
+    }
 
     public string Json {
         get => this._json;
@@ -34,10 +39,18 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
         if (ret.IsOk & ret.ResultValue != null) {
             var val = ret.ResultValue;
-            return val!.GetType().GetProperties()
+            var mParams = val!.GetType().GetProperties()
                 .Select(prop => prop.GetValue(val))
-                .ToArray()
-                .Then(v => (true, v));
+                .ToArray();
+            var last = mParams.Last();
+            this.CtsReq = null;
+            if (last is CancellationToken token && token != CancellationToken.None) {
+                this.CtsReq = new CancellationTokenSource();
+                mParams[mParams.Length - 1] = this.CtsReq.Token;
+            }
+
+            return (true, mParams);
+
         }
 
         return (false, Array.Empty<object>());

@@ -3,6 +3,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -21,6 +22,11 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
+    public CancellationTokenSource? CtsReq {
+        get;
+        private set;
+    }
+
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -49,8 +55,15 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     }
 
     public (bool, object?[]) GetParameters() {
-        var items = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
-        return (items.Any(), items);
+        var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
+        var last = mParams.Last();
+        this.CtsReq = null;
+        if (last is CancellationToken token && token != CancellationToken.None) {
+            this.CtsReq = new CancellationTokenSource();
+            mParams[mParams.Length - 1] = this.CtsReq.Token;
+        }
+        
+        return (mParams.Any(), mParams);
     }
 
     public void Show(object?[] parameters) {
