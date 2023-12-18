@@ -38,8 +38,19 @@ module CallUnary =
 
     let run (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) =
         task {
-            let callConfig = CallConfig.From cfg io
-            let! ctx = runSteps io methodInfo mParams callConfig
+            let callConfig = CallConfig.From cfg io        
+            let isAsync = methodInfo.ReturnType.IsGenericType
+            
+                
+            let! ctx = task {
+                if not isAsync then
+                    //we execute the blockingunarycall in a separate task so that it doesnt
+                    //block the UI thread in case the call is slow
+                    let! ctx = Task.Run<Context> (fun () -> runSteps io methodInfo mParams callConfig )
+                    return ctx
+                else
+                    return! runSteps io methodInfo mParams callConfig
+                }
             let! resp = UnaryResponse.create methodInfo ctx
             return struct (ctx.Success, resp)
         }
