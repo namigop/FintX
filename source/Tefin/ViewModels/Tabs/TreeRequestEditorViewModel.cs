@@ -88,4 +88,12 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         this.RaisePropertyChanged(nameof(this.Items));
     }
+
+    public void StartRequest() {
+        
+    }
+
+    public void EndRequest() {
+        this.CtsReq = null;
+    }
 }

@@ -96,6 +96,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
+                this.ReqViewModel.RequestEditor.StartRequest();
                 this.RaisePropertyChanged(nameof(this.CanStop));
 
                 var clientConfig = this.Client.Config.Value;
@@ -109,6 +110,8 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         }
         finally {
             this.IsBusy = false;
+            this.ReqViewModel.RequestEditor.EndRequest();
+            this.RaisePropertyChanged(nameof(CanStop));
         }
     }
 

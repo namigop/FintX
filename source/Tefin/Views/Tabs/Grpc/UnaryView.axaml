@@ -13,11 +13,15 @@
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
                     <StackPanel.Styles>
                         <Style Selector="controls|IconControl">
-                            <Setter Property="Height" Value="20" />
-                            <Setter Property="Width" Value="20" />
+                            <Setter Property="Height" Value="18" />
+                            <Setter Property="Width" Value="18" />
+                        </Style>
+                        <Style Selector="Button[IsEnabled=False]">
+                            <Setter Property="Opacity" Value="0.5" />
                         </Style>
                     </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
+                            IsEnabled="{Binding !IsBusy}"
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">
                             <controls:IconControl Icon="{StaticResource Icon.Start}" />
@@ -25,10 +29,11 @@
                         </StackPanel>
                     </Button>
                     <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="0 0 0 0"
-                            ToolTip.Tip="Send the request">
+                            IsEnabled="{Binding CanStop}"
+                            ToolTip.Tip="cancel the request">
                         <StackPanel Orientation="Horizontal">
-                            <!-- <controls:IconControl Icon="missing}" /> -->
-                            <TextBlock Text="stop" Margin="6 0 0 0" VerticalAlignment="Center" />
+                            <controls:IconControl Icon="{StaticResource Icon.Cancel}" />  
+                            <TextBlock Text="cancel" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />

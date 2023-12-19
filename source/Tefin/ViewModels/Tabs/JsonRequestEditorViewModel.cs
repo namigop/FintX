@@ -71,4 +71,11 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         if (json.IsOk)
             this.Json = json.ResultValue;
     }
+
+    public void StartRequest() {
+    }
+
+    public void EndRequest() {
+        this.CtsReq = null;
+    }
 }

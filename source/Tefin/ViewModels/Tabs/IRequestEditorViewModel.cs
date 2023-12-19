@@ -14,5 +14,8 @@ public interface IRequestEditorViewModel {
     public (bool, object?[]) GetParameters();
 
     public void Show(object?[] parameters);
-    
+
+    void StartRequest();
+
+    void EndRequest();
 }
