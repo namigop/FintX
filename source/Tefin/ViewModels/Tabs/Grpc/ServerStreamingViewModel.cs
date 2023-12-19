@@ -23,11 +23,18 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, true);
         this.RespViewModel = new ServerStreamingRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
+        this.StopCommand = this.CreateCommand(this.OnStop);
         this._statusText = "";
         this._showTreeEditor = true;
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
+        this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged );
     }
+
+    private void OnCanReadChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+    }
+
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
     public bool IsShowingRequestTreeEditor {
@@ -41,7 +48,11 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public ServerStreamingReqViewModel ReqViewModel { get; set; }
     public ServerStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-
+    public ICommand StopCommand { get; }
+    public bool CanStop {
+        get => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+    
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
@@ -63,6 +74,13 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public override void Init() {
         this.ReqViewModel.Init();
     }
+    private async Task OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+        }
+    }
+
+
 
     private async Task OnStart() {
         this.IsBusy = true;
@@ -71,6 +89,8 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
+                this.ReqViewModel.RequestEditor.StartRequest();
+               
                 var clientConfig = this.Client.Config.Value;
                 var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
@@ -102,6 +122,8 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         }
         finally {
             this.IsBusy = false;
+            this.ReqViewModel.RequestEditor.EndRequest();
+            //this.RaisePropertyChanged(nameof(this.CanStop));
         }
     }
 }
