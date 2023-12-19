@@ -47,6 +47,7 @@ module TypeBuilder =
 module SystemType =
 
     let private info =
+        let markerToken = (new CancellationTokenSource()).Token
         let temp = Dictionary<Type, (unit -> obj) * string>()
         temp.Add(typeof<int>, ((fun () -> 0), "int"))
         temp.Add(typeof<int16>, ((fun () -> 0s), "int16"))
@@ -62,7 +63,8 @@ module SystemType =
         temp.Add(typeof<DateTimeOffset>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset"))
         temp.Add(typeof<Guid>, ((fun () -> Guid.NewGuid()), ""))
         temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1), "timespan"))
-        temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
+        //temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
+        temp.Add(typeof<CancellationToken>, ((fun () -> markerToken), "token"))
         temp.Add(typeof<string>, ((fun () -> ""), "string"))
         temp.Add(typeof<char>, ((fun () -> 'c'), "char"))
         temp.Add(typeof<byte>, ((fun () -> byte 0), "byte"))

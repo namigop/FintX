@@ -13,8 +13,8 @@
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
                     <StackPanel.Styles>
                         <Style Selector="controls|IconControl">
-                            <Setter Property="Height" Value="20" />
-                            <Setter Property="Width" Value="20" />
+                            <Setter Property="Height" Value="18" />
+                            <Setter Property="Width" Value="18" />
                         </Style>
                         <Style Selector="Button[IsEnabled=False]">
                             <Setter Property="Opacity" Value="0.5" />
