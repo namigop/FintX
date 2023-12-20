@@ -15,8 +15,8 @@ public class IconTemplate : IDataTemplate {
     public Control? Build(object? param) {
         if (param == null) {
             return new Border() {
-                Width = 24,
-                Height = 24,
+                Width = 18,
+                Height = 18,
                 Background = new SolidColorBrush(Colors.CornflowerBlue),
                 CornerRadius = new CornerRadius(4)
             };

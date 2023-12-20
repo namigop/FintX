@@ -28,6 +28,14 @@
                             <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="6 0 0 0"
+                            IsEnabled="{Binding CanStop}"
+                            ToolTip.Tip="cancel the request">
+                        <StackPanel Orientation="Horizontal">
+                            <controls:IconControl Icon="{StaticResource Icon.Cancel}" />  
+                            <TextBlock Text="cancel" Margin="6 0 0 0" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                     <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file">
                         <controls:IconControl Icon="{StaticResource Icon.Export}" />

@@ -28,11 +28,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this._showTreeEditor = true;
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
-        this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged );
-    }
-
-    private void OnCanReadChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
+        this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged);
     }
 
     public ICommand ExportRequestCommand { get; }
@@ -52,10 +48,14 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public bool CanStop {
         get => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
     }
-    
+
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
+    }
+
+    private void OnCanReadChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
     }
 
     private async Task OnImportRequest() {
@@ -90,7 +90,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
                 this.ReqViewModel.RequestEditor.StartRequest();
-               
+
                 var clientConfig = this.Client.Config.Value;
                 var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();

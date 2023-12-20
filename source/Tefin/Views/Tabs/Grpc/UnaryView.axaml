@@ -11,16 +11,14 @@
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
-                    <StackPanel.Styles>
-                        <Style Selector="controls|IconControl">
-                            <Setter Property="Height" Value="18" />
-                            <Setter Property="Width" Value="18" />
-                        </Style>
-                        <Style Selector="Button[IsEnabled=False]">
-                            <Setter Property="Opacity" Value="0.5" />
-                        </Style>
-                    </StackPanel.Styles>
-                    <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
+                    <!-- <StackPanel.Styles> -->
+                    <!--     <Style Selector="controls|IconControl"> -->
+                    <!--         <Setter Property="Height" Value="18" /> -->
+                    <!--         <Setter Property="Width" Value="18" /> -->
+                    <!--     </Style> -->
+                    <!--     -->
+                    <!-- </StackPanel.Styles> -->
+                    <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="6 0 0 0"
                             IsEnabled="{Binding !IsBusy}"
                             ToolTip.Tip="Send the request">
                         <StackPanel Orientation="Horizontal">

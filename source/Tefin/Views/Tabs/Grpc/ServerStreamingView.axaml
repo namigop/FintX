@@ -11,15 +11,13 @@
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
                 <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
-                    <StackPanel.Styles>
-                        <Style Selector="controls|IconControl">
-                            <Setter Property="Height" Value="18" />
-                            <Setter Property="Width" Value="18" />
-                        </Style>
-                        <Style Selector="Button[IsEnabled=False]">
-                            <Setter Property="Opacity" Value="0.5" />
-                        </Style>
-                    </StackPanel.Styles>
+                    <!-- <StackPanel.Styles> -->
+                    <!--     <Style Selector="controls|IconControl"> -->
+                    <!--         <Setter Property="Height" Value="18" /> -->
+                    <!--         <Setter Property="Width" Value="18" /> -->
+                    <!--     </Style> -->
+                    <!--     -->
+                    <!-- </StackPanel.Styles> -->
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
                             IsEnabled="{Binding !RespViewModel.CanRead}"
                             ToolTip.Tip="Send the request">
@@ -28,7 +26,7 @@
                             <TextBlock Text="Run" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="0 0 0 0"
+                    <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="6 0 0 0"
                             IsEnabled="{Binding CanStop}"
                             ToolTip.Tip="cancel the request">
                         <StackPanel Orientation="Horizontal">

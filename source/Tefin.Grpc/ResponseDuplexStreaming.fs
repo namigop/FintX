@@ -179,14 +179,18 @@ module DuplexStreamingResponse =
 
     let getResponseHeader (resp: DuplexStreamingCallResponse) =
         task {
-            let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
-            return { resp with Headers = Some meta }
+            try
+                let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
+                return { resp with Headers = Some meta }
+            with exc ->  return { resp with Headers = Some (Metadata()) }
         }
 
     let completeWrite (resp: DuplexStreamingCallResponse) =
         task {
-            do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
-            return { resp with WriteCompleted = true }
+            try
+                do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
+                return { resp with WriteCompleted = true }
+            with exc -> return { resp with WriteCompleted = true }
         }
 
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
