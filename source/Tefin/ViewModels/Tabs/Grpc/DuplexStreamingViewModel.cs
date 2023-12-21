@@ -35,10 +35,6 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).CanRead, _ => this.RaisePropertyChanged(nameof(this.CanStart)));
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
-
-    private void OnCanWriteChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
     public bool IsShowingRequestTreeEditor {
@@ -53,17 +49,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     public bool CanStop {
         get => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
     }
-    private async Task OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
-        }
-    }
     public DuplexStreamingReqViewModel ReqViewModel { get; }
     public DuplexStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-public ICommand StopCommand { get; }
+    public ICommand StopCommand { get; }
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
@@ -71,6 +60,17 @@ public ICommand StopCommand { get; }
 
     public bool CanStart {
         get => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
+    }
+
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+    }
+    private void OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
+            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
+        }
     }
 
     private async Task OnImportRequest() {
@@ -104,7 +104,7 @@ public ICommand StopCommand { get; }
                     Trailers = respWithStatus.Trailers.Value,
                     Status = respWithStatus.Status.Value
                 };
-                
+
                 this.ReqViewModel.RequestEditor.EndRequest();
                 this.RaisePropertyChanged(nameof(this.CanStop));
                 return model;

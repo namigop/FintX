@@ -74,7 +74,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public override void Init() {
         this.ReqViewModel.Init();
     }
-    private async Task OnStop() {
+    private void OnStop() {
         if (this.CanStop) {
             this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
         }

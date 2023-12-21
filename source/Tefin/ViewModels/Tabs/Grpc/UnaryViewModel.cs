@@ -1,8 +1,6 @@
 #region
 
-using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -55,6 +53,10 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
+    public bool CanStop {
+        get => this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+
     private async Task OnImportRequest() {
         await this.ReqViewModel.ImportRequest();
     }
@@ -78,11 +80,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.Init();
     }
 
-    public bool CanStop {
-        get => this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
-
-    private async Task OnStop() {
+    private void OnStop() {
         if (this.CanStop) {
             this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
         }
@@ -111,7 +109,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         finally {
             this.IsBusy = false;
             this.ReqViewModel.RequestEditor.EndRequest();
-            this.RaisePropertyChanged(nameof(CanStop));
+            this.RaisePropertyChanged(nameof(this.CanStop));
         }
     }
 

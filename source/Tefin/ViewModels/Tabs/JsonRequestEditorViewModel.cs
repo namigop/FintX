@@ -8,7 +8,6 @@ using ReactiveUI;
 
 using Tefin.Core.Reflection;
 using Tefin.Grpc.Dynamic;
-using Tefin.Utils;
 
 #endregion
 
@@ -21,14 +20,14 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         this._json = "";
     }
 
-    public CancellationTokenSource? CtsReq {
-        get;
-        private set;
-    }
-
     public string Json {
         get => this._json;
         set => this.RaiseAndSetIfChanged(ref this._json, value);
+    }
+
+    public CancellationTokenSource? CtsReq {
+        get;
+        private set;
     }
 
     public MethodInfo MethodInfo {
@@ -50,7 +49,6 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             }
 
             return (true, mParams);
-
         }
 
         return (false, Array.Empty<object>());

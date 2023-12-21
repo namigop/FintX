@@ -74,7 +74,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         var response = await completeRead();
         responseType = response?.GetType() ?? responseType;
-        await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response));
+        await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response!));
     }
 
     public abstract void Show(bool ok, object response, Context context);

@@ -22,11 +22,6 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-    public CancellationTokenSource? CtsReq {
-        get;
-        private set;
-    }
-
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -48,6 +43,11 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
 
     public ObservableCollection<IExplorerItem> Items { get; } = new();
+
+    public CancellationTokenSource? CtsReq {
+        get;
+        private set;
+    }
     //public List<object?> MethodParameterInstances { get; }
 
     public MethodInfo MethodInfo {
@@ -62,7 +62,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             this.CtsReq = new CancellationTokenSource();
             mParams[mParams.Length - 1] = this.CtsReq.Token;
         }
-        
+
         return (mParams.Any(), mParams);
     }
 
@@ -90,7 +90,6 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     }
 
     public void StartRequest() {
-        
     }
 
     public void EndRequest() {

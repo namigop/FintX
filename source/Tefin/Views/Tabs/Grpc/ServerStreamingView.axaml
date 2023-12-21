@@ -30,7 +30,7 @@
                             IsEnabled="{Binding CanStop}"
                             ToolTip.Tip="cancel the request">
                         <StackPanel Orientation="Horizontal">
-                            <controls:IconControl Icon="{StaticResource Icon.Cancel}" />  
+                            <controls:IconControl Icon="{StaticResource Icon.Cancel}" />
                             <TextBlock Text="cancel" Margin="6 0 0 0" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

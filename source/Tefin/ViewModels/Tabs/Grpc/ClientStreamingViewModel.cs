@@ -32,10 +32,6 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
-    private void OnCanWriteChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
-
     public ICommand StopCommand { get; }
 
     public ICommand ExportRequestCommand { get; }
@@ -43,13 +39,6 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
     public bool CanStop {
         get => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
-    private async Task OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
-        }
     }
 
     public bool IsShowingRequestTreeEditor {
@@ -72,6 +61,17 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+    }
+    private void  OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
+            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
+        }
+    }
+
     private async Task OnImportRequest() {
         await this.ReqViewModel.ImportRequest();
     }
@@ -88,7 +88,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public override void Init() {
         this.ReqViewModel.Init();
     }
-    
+
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
         var builder = new CompositeResponseFeature();
         var (type, response) = await builder.BuildClientStreamResponse(callResponse);
@@ -106,12 +106,12 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             async Task<object> CompleteRead() {
                 //get the method call response
                 var callResponse = await ClientStreamingResponse.getResponse(resp);
-                
+
                 //get the headers/trailers
                 var feature = new EndStreamingFeature();
                 callResponse = await feature.EndClientStreaming(callResponse); //TODO: use same emitted structure as UnaryAsync
                 var response = await this.EndClientStreamingCall(callResponse);
-                
+
                 return response;
             }
 

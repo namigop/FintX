@@ -20,7 +20,7 @@
             <Grid Grid.Row="2" RowDefinitions="Auto, *">
                 <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}"
                         CornerRadius="0 0 8 8">
-                    <StackPanel Orientation="Horizontal" Margin="6" >
+                    <StackPanel Orientation="Horizontal" Margin="6">
                         <Button Command="{Binding WriteCommand}" IsEnabled="{Binding CanWrite}" Classes="MenuButton" ToolTip.Tip="Write to the request stream">
                             <TextBlock Text="Write" />
                         </Button>
