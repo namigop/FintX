@@ -44,6 +44,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.ReqViewModel.IsShowingClientStreamTree = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
+            this.RespViewModel.IsShowingServerStreamTree = value;
         }
     }
     public bool CanStop {

@@ -1,7 +1,7 @@
 <Styles xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Style Selector="Button[IsEnabled=False]">
-    <Setter Property="Opacity" Value="0.5" />
+    <Setter Property="Opacity" Value="0.4" />
   </Style>
   <Style Selector="Button.MenuButton">
     <Setter Property="BorderThickness" Value="2"/>

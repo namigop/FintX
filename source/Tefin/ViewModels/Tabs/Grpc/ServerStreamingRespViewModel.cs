@@ -2,7 +2,6 @@
 
 using System.Reflection;
 using System.Threading;
-using System.Windows.Input;
 
 using ReactiveUI;
 
@@ -20,7 +19,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
     private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
-    private CancellationTokenSource? _cs;
+   // private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
     private IListEditorViewModel _serverStreamEditor;
 
@@ -34,15 +33,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         this._serverStreamJsonEditor = new ListJsonEditorViewModel("response stream", this._listType);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
-        this.EndReadCommand = this.CreateCommand(this.OnEndRead);
-
+        
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
-
-    public ICommand EndReadCommand {
-        get;
-    }
-
+    
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
@@ -56,21 +50,15 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
-
-    private void OnEndRead() {
-        this._cs?.Cancel();
-    }
+    
     public async Task SetupServerStreamNode(object response) {
         var resp = (ServerStreamingCallResponse)response;
         var readServerStream = new ReadServerStreamFeature();
 
-        try {
-            this._cs = new CancellationTokenSource();
+        try { 
             this.CanRead = true;
-            await foreach (var d in readServerStream.ReadResponseStream(resp, this._cs.Token)) {
-                if (this._cs.Token.IsCancellationRequested)
-                    break;
-
+            await foreach (var d in readServerStream.ReadResponseStream(resp, CancellationToken.None)) {
+               
                 this.ServerStreamEditor.AddItem(d);
             }
         }

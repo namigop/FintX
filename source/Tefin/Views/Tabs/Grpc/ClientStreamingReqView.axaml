@@ -21,16 +21,16 @@
                 <Border Grid.Row="0" BorderThickness="2 0 2 2" BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}"
                         CornerRadius="0 0 8 8">
                     <StackPanel Orientation="Horizontal" Margin="6">
-                        <Button Command="{Binding WriteCommand}" Classes="MenuButton" ToolTip.Tip="Write to the request stream" IsEnabled="{Binding CanWrite}">
-                            <TextBlock Text="Write" />
-                        </Button>
-                        <Button Command="{Binding EndWriteCommand}" Classes="MenuButton" ToolTip.Tip="Finish writing to the request stream" IsEnabled="{Binding CanWrite}">
-                            <TextBlock Text="End write" />
-                        </Button>
-                        <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" />
-                        <ToggleSwitch IsChecked="{Binding IsShowingClientStreamTree}"
-                                      OnContent="Tree" OffContent="Json"
-                                      Margin="0 0 0 0" />
+                        <!-- <Button Command="{Binding WriteCommand}" Classes="MenuButton" ToolTip.Tip="Write to the request stream" IsEnabled="{Binding CanWrite}"> -->
+                        <!--     <TextBlock Text="Write" /> -->
+                        <!-- </Button> -->
+                        <!-- <Button Command="{Binding EndWriteCommand}" Classes="MenuButton" ToolTip.Tip="Finish writing to the request stream" IsEnabled="{Binding CanWrite}"> -->
+                        <!--     <TextBlock Text="End write" /> -->
+                        <!-- </Button> -->
+                        <!-- <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" /> -->
+                        <!-- <ToggleSwitch IsChecked="{Binding IsShowingClientStreamTree}" -->
+                        <!--               OnContent="Tree" OffContent="Json" -->
+                        <!--               Margin="0 0 0 0" /> -->
                     </StackPanel>
                 </Border>
 

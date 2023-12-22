@@ -198,9 +198,9 @@ module DuplexStreamingResponse =
           Trailers = resp.Trailers
           Status = resp.Status }
 
-    let write (resp: DuplexStreamingCallResponse) (reqItem: obj) =
-        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
-
+    let write (resp: DuplexStreamingCallResponse) (reqItem: obj) = task  {
+      do!  (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
+    }
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 
         if ctx.Success then

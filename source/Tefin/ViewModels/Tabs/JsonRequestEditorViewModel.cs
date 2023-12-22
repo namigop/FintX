@@ -43,7 +43,9 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
                 .ToArray();
             var last = mParams.Last();
             this.CtsReq = null;
-            if (last is CancellationToken token && token != CancellationToken.None) {
+            if (last is CancellationToken) {
+                this.CtsReq?.Dispose();
+                this.CtsReq = null;
                 this.CtsReq = new CancellationTokenSource();
                 mParams[mParams.Length - 1] = this.CtsReq.Token;
             }

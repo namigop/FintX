@@ -8,18 +8,32 @@
   <system:String x:Key="Icon.Export">Icon.Export</system:String>
   <system:String x:Key="Icon.Import">Icon.Import</system:String>
   <system:String x:Key="Icon.Cancel">Icon.Cancel</system:String>
+  <system:String x:Key="Icon.Write">Icon.Write</system:String>
+  <system:String x:Key="Icon.StopWrite">Icon.StopWrite</system:String>
   <resources:IconTemplate x:Key="Icons">
+    <DataTemplate x:Key="{StaticResource Icon.Write}">
+      <Viewbox><Canvas Width="24" Height="24"><Path Fill="{StaticResource Bym.Color.Green}" Data="M5.59,7.41L7,6L13,12L7,18L5.59,16.59L10.17,12L5.59,7.41M11.59,7.41L13,6L19,12L13,18L11.59,16.59L16.17,12L11.59,7.41Z" /></Canvas>
+        
+        <!-- <Canvas  Width="24" Height="24"><Path Fill="{StaticResource Bym.Color.Green}" Data="M6,12H14.25L11,8.75L11.67,8L16.17,12.5L11.67,17L11,16.25L14.25,13H6V12M21,12.5C21,17.75 16.75,22 11.5,22C6.26,22 2,17.75 2,12.5C2,7.25 6.25,3 11.5,3C16.75,3 21,7.25 21,12.5M20,12.5C20,7.81 16.19,4 11.5,4C6.81,4 3,7.81 3,12.5C3,17.19 6.81,21 11.5,21C16.2,21 20,17.19 20,12.5Z" /></Canvas> -->
+      <!--    -->
+      </Viewbox>
+    </DataTemplate>
     <DataTemplate x:Key="{StaticResource Icon.Cancel}">
+      <Viewbox>
+        <Canvas  Width="24" Height="24"><Path Fill="#DEDEDE" Data="M17,18H6V7H17V18M7,8V17H16V8H7Z" /></Canvas>
+      </Viewbox>
+    </DataTemplate>
+    <DataTemplate x:Key="{StaticResource Icon.StopWrite}">
       
       <Viewbox>
-        <Canvas  Width="24" Height="24"><Path Fill="#228BCB" Data="M12 2C17.5 2 22 6.5 22 12S17.5 22 12 22 2 17.5 2 12 6.5 2 12 2M12 4C10.1 4 8.4 4.6 7.1 5.7L18.3 16.9C19.3 15.5 20 13.8 20 12C20 7.6 16.4 4 12 4M16.9 18.3L5.7 7.1C4.6 8.4 4 10.1 4 12C4 16.4 7.6 20 12 20C13.9 20 15.6 19.4 16.9 18.3Z" /></Canvas>
+        <Canvas  Width="24" Height="24"><Path Fill="#C8625F" Data="M12 2C17.5 2 22 6.5 22 12S17.5 22 12 22 2 17.5 2 12 6.5 2 12 2M12 4C10.1 4 8.4 4.6 7.1 5.7L18.3 16.9C19.3 15.5 20 13.8 20 12C20 7.6 16.4 4 12 4M16.9 18.3L5.7 7.1C4.6 8.4 4 10.1 4 12C4 16.4 7.6 20 12 20C13.9 20 15.6 19.4 16.9 18.3Z" /></Canvas>
 
       </Viewbox>
     </DataTemplate>
     <DataTemplate x:Key="{StaticResource Icon.Start}">
       <Viewbox>
         <Canvas Width="24" Height="24">
-          <Path Fill="#228BCB" Data="M3 20V14L11 12L3 10V4L22 12Z" />
+          <Path Fill="#DEDEDE" Data="M3 20V14L11 12L3 10V4L22 12Z" />
         </Canvas>
       </Viewbox>
     </DataTemplate>
@@ -30,7 +44,7 @@
           <Canvas>
             <Path Data="M1.5,14.5L6.174,14.5L6.055,14.21L5.929,13.78L5.852,13.33L5.825,12.87L5.908,12.05L6.145,11.29L6.52,10.6L7.017,9.994L7.618,9.497L8.309,9.122L9.071,8.885L9.889,8.802L11.14,8.802L10.31,7.963L11.17,7.124L12.38,5.93L12.5,5.815L12.5,4.557L8.533,0.5L1.5,0.5zz" Fill="#4E4E4E"/>
             <Path Data="M1,0.5L1,14.5L1,15L1.5,15L6.46,15L6.226,14.63L6.055,14.21L5.993,14L2,14L2,1L8.323,1L12,4.761L12,6.306L12.38,5.93L12.74,5.58L13,5.845L13,4.557L13,4.353L12.86,4.207L8.89,0.1504L8.743,0L8.533,0L1.5,0L1,0zz" Fill="#D8D8D8"/>
-            <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#D8D8D8"/>
+            <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#DEDEDE"/>
           </Canvas>
           <Canvas>
             <Path Data="M12.368,7.627L15.2,10.51l-2.832,2.868M15.158,10.501H9.889c-1.306,0,-2.364,1.058,-2.364,2.364v0c0,1.306,1.058,2.364,2.364,2.364h0.709" Stroke="#20A0E0" StrokeThickness="1" />

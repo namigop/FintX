@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Windows.Input;
 
 using ReactiveUI;
-
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
@@ -39,6 +38,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
             this.ReqViewModel.IsShowingRequestTreeEditor = value;
             this.RespViewModel.IsShowingResponseTreeEditor = value;
+            this.RespViewModel.IsShowingServerStreamTree = value;
         }
     }
     public ServerStreamingReqViewModel ReqViewModel { get; set; }

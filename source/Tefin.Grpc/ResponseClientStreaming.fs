@@ -220,9 +220,9 @@ module ClientStreamingResponse =
         }
 
 
-    let write (resp: ClientStreamingCallResponse) (reqItem: obj) =
-        (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
-
+    let write (resp: ClientStreamingCallResponse) (reqItem: obj) = task {
+      do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
+     }
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
         if ctx.Success then
             let w = wrapResponse methodInfo (Res.getValue ctx.Response) false
