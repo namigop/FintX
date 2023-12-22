@@ -56,7 +56,7 @@ public class MovableBorder : Border
             var offsetX = currentPosition.X -  _positionInBlock.X;
             var offsetY = currentPosition.Y - _positionInBlock.Y;
 
-            Console.WriteLine($"{currentPosition.X} , {currentPosition.Y}");
+            //Console.WriteLine($"{currentPosition.X} , {currentPosition.Y}");
             _transform = new TranslateTransform(offsetX, offsetY);
             RenderTransform = _transform;
             

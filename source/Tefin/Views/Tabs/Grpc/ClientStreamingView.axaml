@@ -77,15 +77,16 @@
                         <Button Command="{Binding ReqViewModel.WriteCommand}" Classes="MenuButton"
                                 CornerRadius="24 0 0 24"
                                 ToolTip.ShowDelay="0"
+                                Background="{StaticResource Bym.Color.Green}"
                                 ToolTip.Tip="Write to the request stream" IsEnabled="{Binding ReqViewModel.CanWrite}">
-                            <controls:IconControl Width="24" Height="24" Icon="{StaticResource Icon.Write}" />
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Write}" />
                         </Button>
                         <Button Command="{Binding ReqViewModel.EndWriteCommand}" Classes="MenuButton"
                                 ToolTip.ShowDelay="0"
                                 CornerRadius="0 24 24 0"
                                 Margin="1 0 0 0"
                                 ToolTip.Tip="Finish writing to the request stream" IsEnabled="{Binding ReqViewModel.CanWrite}">
-                            <controls:IconControl Width="24" Height="24" Icon="{StaticResource Icon.StopWrite}" />
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
                         </Button>
                     </StackPanel>
                     <Separator Background="DimGray" Height="1" Margin="6"></Separator>

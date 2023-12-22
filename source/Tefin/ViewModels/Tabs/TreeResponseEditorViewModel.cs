@@ -59,8 +59,12 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         if (this._responseType == null)
             return (false, null);
 
-        var node = (TypeBaseNode)this.Items[0];
-        return (node.Value != null, node.Value);
+        if (this.Items.Any()) {
+            var node = (TypeBaseNode)this.Items[0];
+            return (node.Value != null, node.Value);
+        }
+
+        return (false, null);
     }
 
     public void Show(object? resp, Type? responseType) {
