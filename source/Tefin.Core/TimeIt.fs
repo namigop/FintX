@@ -8,8 +8,10 @@ let private handleError exc (sw:Stopwatch) (onError: (Exception -> TimeSpan -> u
      sw.Stop()
      if onError.IsSome then
         onError.Value exc sw.Elapsed
-
-     raise exc
+     ()
+     //sw.Elapsed
+     
+    // raise exc
 let runAction (action: unit -> unit) (onSuccess: (TimeSpan -> unit) option) (onError: (Exception -> TimeSpan -> unit) option) =
     let sw = Stopwatch.StartNew()
 
@@ -20,7 +22,10 @@ let runAction (action: unit -> unit) (onSuccess: (TimeSpan -> unit) option) (onE
             onSuccess.Value sw.Elapsed
 
         sw.Elapsed
-    with exc -> handleError exc sw onError
+    with exc ->
+        handleError exc sw onError
+        sw.Stop()
+        sw.Elapsed
 
 let runActionWithReturnValue (action: unit -> 'T) (onSuccess: ('T -> TimeSpan -> unit) option) (onError: (Exception -> TimeSpan -> unit) option) =
     let sw = Stopwatch.StartNew()
@@ -31,7 +36,10 @@ let runActionWithReturnValue (action: unit -> 'T) (onSuccess: ('T -> TimeSpan ->
             onSuccess.Value ret sw.Elapsed
 
         struct (ret, sw.Elapsed)
-    with exc -> handleError exc sw onError
+    with exc ->
+        handleError exc sw onError
+        sw.Stop()
+        struct (Unchecked.defaultof<'T>, sw.Elapsed)
 
 let runTask (action: unit -> Task) (onSuccess: (TimeSpan -> unit) option) (onError: (Exception -> TimeSpan -> unit) option) = task {
     let sw = Stopwatch.StartNew()

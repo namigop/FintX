@@ -7,13 +7,14 @@ open Grpc.Core.Interceptors
 open Tefin.Core
 open System
 
-type CallInterceptor(clientName: string, io: IOResolver) =
+type CallInterceptor(clientName: string, io: IOResolver, onErr:Exception -> unit) =
     inherit Interceptor()
 
     let onSuccess (name: string) retVal (ts: TimeSpan) =
         io.Log.Info $"Call to {name} done. Elapsed {ts.TotalMilliseconds} msec"
 
     let onError (name: string) (exc: Exception) (ts: TimeSpan) =
+        onErr exc
         io.Log.Error $"Call to {name} failed. Elapsed {ts.TotalMilliseconds} msec"
         io.Log.Error $"{exc}"
 

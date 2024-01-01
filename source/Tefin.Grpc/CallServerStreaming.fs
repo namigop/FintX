@@ -18,7 +18,7 @@ module CallServerStreaming =
                     ctx.Io.Value.Log.Info $"Invoking {methodInfo.Name} @ {callConfig.Url}"
 
                     try
-                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig
+                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig (fun exc -> ())
                         return { ctx with Response = Res.ok resp.Value }
                     with exc ->
                         return { ctx with Response = Res.failed exc }

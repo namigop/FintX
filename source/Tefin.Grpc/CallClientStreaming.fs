@@ -1,12 +1,15 @@
 namespace Tefin.Grpc.Execution
 
+open System
 open System.Reflection
 open System.Threading.Tasks
+open Grpc.Core
 open Tefin.Core
 open Tefin.Core.Execution
 open Tefin.Core.Interop
 
 module CallClientStreaming =
+     
     let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
         task {
             let start (ctx: Context) =
@@ -18,10 +21,20 @@ module CallClientStreaming =
                     ctx.Io.Value.Log.Info $"Invoking {methodInfo.Name} @ {callConfig.Url}"
 
                     try
-                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig
-                        return { ctx with Response = Res.ok resp.Value }
+                        let  exc = ref (Unchecked.defaultof<Exception>)
+                        let  failed = ref false
+                        let errHandler exc2 =
+                             ctx.Error <- exc2
+                             failed.Value <- true
+                             exc.Value <- exc2
+                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig errHandler
+                        
+                        if failed.Value then
+                            return { ctx with Response = Res.failed exc.Value; Success = false }
+                        else
+                            return { ctx with Response = Res.ok resp.Value }
                     with exc ->
-                        return { ctx with Response = Res.failed exc }
+                        return { ctx with Response = Res.failed exc; Success = false}
                 }
 
             let stop (ctx: Context) = Task.FromResult ctx

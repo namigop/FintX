@@ -10,7 +10,7 @@ type Context = {
     StartTime : DateTime
     Steps : (string * TimeSpan) list
     Elapsed : TimeSpan option
-    //Error : Exception option
+    mutable Error : Exception
     Success : bool
     Response : Ret<obj>
     Io : IOResolver option
@@ -29,6 +29,7 @@ module CallPipeline =
           Steps = List.Empty
           Elapsed = None
           Success = false
+          Error = null 
           Response = Res.failedWith "not started"
           Io = None
           Variable = Dictionary<string, obj>() }

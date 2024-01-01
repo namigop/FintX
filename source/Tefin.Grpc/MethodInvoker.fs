@@ -66,7 +66,7 @@ module MethodInvoker =
     let createGrpcClient  =
         let cacheConfig = Dictionary<Type, CallConfig>()
         let cache = Dictionary<Type, obj>()
-        fun (clientType:Type) (cfg: CallConfig) ->
+        fun (clientType:Type) (cfg: CallConfig) (onErr:Exception->unit) ->
             if (cacheConfig.ContainsKey clientType) then
                 let prevCfg = cacheConfig[clientType]
                 let isConfigUnchanged =
@@ -87,16 +87,17 @@ module MethodInvoker =
 
                 //let clientType = methodInfo.DeclaringType
                 let channel = (ChannelBuilder.createGrpcChannel cfg) :> ChannelBase
-                let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io))
+                let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io, onErr))
 
                 let clientInstance = Activator.CreateInstance(clientType, callInvoker)
                 cache[clientType] <- clientInstance
                 cacheConfig[clientType] <- cfg
                 clientInstance
 
-    let invoke (methodInfo: MethodInfo) (mParams: obj array) (cfg: CallConfig) =
+    let invoke (methodInfo: MethodInfo) (mParams: obj array) (cfg: CallConfig) (onErr:Exception->unit)=
         task {
-            let client = createGrpcClient methodInfo.DeclaringType cfg
+            
+            let client = createGrpcClient methodInfo.DeclaringType cfg onErr
 
             //if the return type is a Task
             if (TypeHelper.isOfType typeof<Task> methodInfo.ReturnType) then

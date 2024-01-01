@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -10,6 +9,7 @@
         <AssemblyName>FintX</AssemblyName>
         <AssemblyVersion>0.2.0</AssemblyVersion>
         <FileVersion>0.2.0</FileVersion>
+        <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
         <CFBundleName>FintX</CFBundleName> <!-- Also defines .app file name -->
