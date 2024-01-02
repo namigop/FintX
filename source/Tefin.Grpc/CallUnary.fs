@@ -8,6 +8,7 @@ open Tefin.Core.Execution
 open Tefin.Core.Interop
 
 module CallUnary =
+    let callError = CallError()
     let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
         task {
             let start (ctx: Context) =
@@ -19,8 +20,11 @@ module CallUnary =
                     ctx.Io.Value.Log.Info $"Invoking {methodInfo.Name} @ {callConfig.Url}"
 
                     try
-                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig (fun exc -> ())
-                        return { ctx with Response = Res.ok resp.Value }
+                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig (callError.Receive)
+                        if (callError.Failed) then
+                            return  { ctx with Response = Res.ok resp.Value; Error = callError.Exception }
+                        else
+                            return { ctx with Response = Res.ok resp.Value }
                     with exc ->
                         return { ctx with Response = Res.failed exc }
                 }

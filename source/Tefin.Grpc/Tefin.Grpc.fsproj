@@ -23,8 +23,8 @@
         <Compile Include="ResponseServerStreaming.fs" />
         <Compile Include="ResponseClientStreaming.fs" />
         <Compile Include="ResponseDuplexStreaming.fs" />
-        <Compile Include="CallUnary.fs" />
         <Compile Include="CallError.fs" />
+        <Compile Include="CallUnary.fs" />
         <Compile Include="CallServerStreaming.fs" />
         <Compile Include="CallClientStreaming.fs" />
         <Compile Include="CallDuplexStreaming.fs" />

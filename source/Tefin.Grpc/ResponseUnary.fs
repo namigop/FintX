@@ -132,12 +132,12 @@ module UnaryResponse =
                 return (Okay t)
             else
                 let err =
-                    let exc = Res.getError ctx.Response
+                    let exc = ctx.GetError()
                     match exc with
                     | :? TargetInvocationException as t ->  t.InnerException.Message
                     | _ -> exc.Message
 
-                let! w = wrapResponse methodInfo (ErrorResponse(Error = err)) true
+                let! w = wrapResponse methodInfo (new ErrorResponse(Error = err)) true
 
                 let t: ErrorUnaryResponse =
                     { MethodInfo = methodInfo
