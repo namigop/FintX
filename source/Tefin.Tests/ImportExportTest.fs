@@ -42,7 +42,7 @@ type Sample() =
       AsyncDuplexStreaming<Test1, string>() 
   
 [<Fact>]
-let ``Can export gRPC DuplexStream`` () =
+let rec ``Can export gRPC DuplexStream`` () =
     let mi = typeof<Sample>.GetMethod("DuplexStreamTest")
     let struct (_,test1) = buildType typeof<Test1>
     typeof<Test1>.GetProperty("IntType").SetValue(test1, 42);
@@ -87,7 +87,10 @@ let ``Can export gRPC DuplexStream`` () =
     Assert.True(jTest2.HasValues)
     
     //validate that the json in the export file is matching our Test1 input instance
-    let fromExport = jTest1.ToObject<Test1>() |> fun i ->  Instance.jsonSerialize<Test1>(i)
+    let fromExport = jTest1.ToObject<Test1>()
+                     |> fun t -> t.CancellationTokenType <- CancellationToken.None; t
+                     |> fun i ->  Instance.jsonSerialize<Test1>(i)
+    (test1 :?> Test1).CancellationTokenType <- CancellationToken.None
     let fromInput = Instance.jsonSerialize<Test1>(test1 :?> Test1)
     Assert.Equal(fromInput, fromExport)
   
@@ -134,7 +137,12 @@ let ``Can export gRPC ClientStream`` () =
     Assert.True(jTest2.HasValues)
     
     //validate that the json in the export file is matching our Test1 input instance
-    let fromExport = jTest1.ToObject<Test1>() |> fun i ->  Instance.jsonSerialize<Test1>(i)
+    let fromExport = jTest1.ToObject<Test1>() 
+                     |> fun t -> t.CancellationTokenType <- CancellationToken.None; t
+                     |> fun i ->  Instance.jsonSerialize<Test1>(i)
+    (test1 :?> Test1).CancellationTokenType <- CancellationToken.None
+    
+    
     let fromInput = Instance.jsonSerialize<Test1>(test1 :?> Test1)
     Assert.Equal(fromInput, fromExport)
   

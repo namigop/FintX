@@ -1,5 +1,6 @@
 module SerializeDeseializeTests
 
+open System.Threading
 open Newtonsoft.Json.Linq
 open Tefin.Core
 open Tefin.Grpc.Dynamic
@@ -72,6 +73,9 @@ let ``Can deserialize methodArgs tree`` () =
     
     //validate the test1 arg
     let genTest1 = genType.GetProperty("arg").GetValue(genInstance)
+    (genTest1 :?> Test1).CancellationTokenType <- CancellationToken.None
+    (test1 :?> Test1).CancellationTokenType <- CancellationToken.None
+    
     let a = Instance.indirectSerialize typeof<Test1> genTest1
     let b = Instance.indirectSerialize typeof<Test1> test1
     Assert.Equal(b,a)

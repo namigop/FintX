@@ -103,6 +103,8 @@ let ``Can edit class object tree`` () =
     let typeNodes = node.Items |> Seq.map (fun c -> c :?> TypeBaseNode) |> Seq.toArray
     
     let typeProps = typeof<Test1>.GetProperties()
+                    |> Array.filter (fun p -> not( p.Name = "CancellationTokenType")) 
+    
     for p in typeProps do
         let propName = p.Name
         let targetPropValue = p.GetValue(target)
