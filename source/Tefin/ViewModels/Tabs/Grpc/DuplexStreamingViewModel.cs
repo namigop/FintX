@@ -96,23 +96,26 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             return;
 
         if (resp.WriteCompleted) {
-            async Task<object> CompleteRead() {
-                var feature = new EndStreamingFeature();
-                var respWithStatus = await feature.EndDuplexStreaming(resp);
-
-                object model = new StandardResponseViewModel.GrpcStandardResponse {
-                    Headers = respWithStatus.Headers.Value,
-                    Trailers = respWithStatus.Trailers.Value,
-                    Status = respWithStatus.Status.Value
-                };
-
-                this.ReqViewModel.RequestEditor.EndRequest();
-                this.RaisePropertyChanged(nameof(this.CanStop));
-                return model;
-            }
-
-            _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+            this.EndStreaming(resp);
         }
+    }
+    private void EndStreaming(DuplexStreamingCallResponse resp) {
+        async Task<object> CompleteRead() {
+            var feature = new EndStreamingFeature();
+            var respWithStatus = await feature.EndDuplexStreaming(resp);
+
+            object model = new StandardResponseViewModel.GrpcStandardResponse {
+                Headers = respWithStatus.Headers.Value,
+                Trailers = respWithStatus.Trailers.Value,
+                Status = respWithStatus.Status.Value
+            };
+
+            this.ReqViewModel.RequestEditor.EndRequest();
+            this.RaisePropertyChanged(nameof(this.CanStop));
+            return model;
+        }
+
+        _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
     }
 
     private async Task OnStart() {
@@ -130,6 +133,11 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                     this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response);
                     this.RespViewModel.Show(ok, response, context);
                     _ = this.RespViewModel.SetupDuplexStreamNode(response);
+                }
+                else {
+                    var d = (DuplexStreamingCallResponse)response;
+                    d = await DuplexStreamingResponse.getResponseHeader(d);
+                    this.EndStreaming(d);
                 }
             }
         }

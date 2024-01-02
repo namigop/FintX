@@ -85,11 +85,12 @@ module DuplexStreamingResponse =
     let private wrapResponse =
         let cache = Dictionary<Type, DuplexStreamingCallInfo>()
 
-        fun (methodInfo: MethodInfo) (resp: obj) (isError: bool) ->
+        fun (methodInfo: MethodInfo) (resp: obj)  (err: ErrorResponse option) ->
 
             let args = methodInfo.ReturnType.GetGenericArguments()
             let requestItemType = args[0]
             let responseItemType = args[1]
+            let isError = err.IsSome
 
             let duplexStreamType =
                 typedefof<AsyncDuplexStreamingCall<_, _>>
@@ -104,7 +105,11 @@ module DuplexStreamingResponse =
 
                     let requestStreamPropInfo = duplexStreamType.GetProperty("RequestStream") //IDuplexStreamWriter<TRequest>
                     let requestStream = requestStreamPropInfo.GetValue(resp)
-                    let requestStreamType = requestStream.GetType()
+                    let requestStreamType =
+                         if isError then
+                             typeof<Exception>
+                         else
+                            requestStream.GetType()
 
                     let responseStreamType =
                         typedefof<IAsyncStreamReader<_>>.MakeGenericType responseItemType
@@ -142,8 +147,16 @@ module DuplexStreamingResponse =
                     temp
 
 
-            let requestStream = callInfo.RequestStreamPropInfo.GetValue(resp)
-            let responseStream = callInfo.ResponseStreamPropInfo.GetValue(resp)
+            let requestStream =
+                if isError then
+                    box Unchecked.defaultof<Exception> 
+                else
+                    callInfo.RequestStreamPropInfo.GetValue(resp)
+            let responseStream =
+                if isError then
+                    box Unchecked.defaultof<Exception> 
+                else
+                    callInfo.ResponseStreamPropInfo.GetValue(resp)
 
             { Headers = None
               Trailers = None
@@ -151,7 +164,7 @@ module DuplexStreamingResponse =
               CallResult = resp
               RequestStream = requestStream
               ResponseStream = responseStream
-              WriteCompleted = false
+              WriteCompleted = isError
               CallInfo = callInfo }
 
     let completeCall (resp: DuplexStreamingCallResponse) =
@@ -204,7 +217,7 @@ module DuplexStreamingResponse =
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 
         if ctx.Success then
-            let w = wrapResponse methodInfo (Res.getValue ctx.Response) false
+            let w = wrapResponse methodInfo (Res.getValue ctx.Response) None
 
             let t: OkayDuplexStreamingResponse =
                 { MethodInfo = methodInfo
@@ -213,9 +226,8 @@ module DuplexStreamingResponse =
 
             Okay t
         else
-            let err = Res.getError ctx.Response
-
-            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let err = ctx.GetError()
+            let w = wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some) 
 
             let t: ErrorDuplexStreamingResponse =
                 { MethodInfo = methodInfo

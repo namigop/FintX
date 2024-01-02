@@ -88,10 +88,11 @@ module ClientStreamingResponse =
     let private wrapResponse =
         let cache = Dictionary<Type, ClientStreamingCallInfo>()
 
-        fun (methodInfo: MethodInfo) (resp: obj) (isError: bool) ->
+        fun (methodInfo: MethodInfo) (callResult: obj) (err: ErrorResponse option) ->
             let args = methodInfo.ReturnType.GetGenericArguments()
             let requestItemType = args[0]
             let responseItemType = args[1]
+            let isError = err.IsSome
 
             let clientStreamType =
                 typedefof<AsyncClientStreamingCall<_, _>>
@@ -104,7 +105,11 @@ module ClientStreamingResponse =
                     temp
                 else
                     let requestStreamPropInfo = clientStreamType.GetProperty("RequestStream") //IClientStreamWriter<TRequest>
-                    let requestStreamType = requestStreamPropInfo.GetValue(resp).GetType() //requestStreamPropInfo.PropertyType
+                    let requestStreamType =
+                        if isError then
+                            typeof<Exception>
+                        else
+                            requestStreamPropInfo.GetValue(callResult).GetType() //requestStreamPropInfo.PropertyType
                     let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
                     let completeMethod = requestStreamType.GetMethod("CompleteAsync")
 
@@ -130,14 +135,18 @@ module ClientStreamingResponse =
                     cache[clientStreamType] <- temp
                     temp
 
-            let requestStream = callInfo.RequestStreamPropInfo.GetValue(resp)
+            let requestStream =
+                if isError then
+                    box Unchecked.defaultof<Exception> 
+                else
+                    callInfo.RequestStreamPropInfo.GetValue(callResult)
                    
             { Headers = None
               Trailers = None
               Status = None
-              WriteCompleted = false
-              CallResult = resp
-              Response = Unchecked.defaultof<obj>
+              WriteCompleted = isError
+              CallResult = callResult
+              Response = if isError then box err else Unchecked.defaultof<obj>
               RequestStream = requestStream
               CallInfo = callInfo }
 
@@ -150,7 +159,7 @@ module ClientStreamingResponse =
         let response =
             if (isError) then
                 let exc = resp.Response :?> Exception
-                ErrorResponse(Error = exc.Message) |> box
+                new ErrorResponse(Error = exc.Message) |> box
             else
                 resp.Response
                 
@@ -228,7 +237,7 @@ module ClientStreamingResponse =
     
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
         if ctx.Success then
-            let w = wrapResponse methodInfo (Res.getValue ctx.Response) false
+            let w = wrapResponse methodInfo (Res.getValue ctx.Response) None
  
             let t: OkayClientStreamingResponse =
                 { MethodInfo = methodInfo
@@ -238,8 +247,8 @@ module ClientStreamingResponse =
            
             Okay t
         else
-            let err = Res.getError ctx.Response
-            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let err = ctx.GetError()
+            let w = wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some) 
 
             let t: ErrorClientStreamingResponse =
                 { MethodInfo = methodInfo

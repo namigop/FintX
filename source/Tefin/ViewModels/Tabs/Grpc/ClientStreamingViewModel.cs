@@ -103,21 +103,24 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         var resp = reqVm.CallResponse;
 
         if (resp.WriteCompleted) {
-            async Task<object> CompleteRead() {
-                //get the method call response
-                var callResponse = await ClientStreamingResponse.getResponse(resp);
-
-                //get the headers/trailers
-                var feature = new EndStreamingFeature();
-                callResponse = await feature.EndClientStreaming(callResponse); //TODO: use same emitted structure as UnaryAsync
-                var response = await this.EndClientStreamingCall(callResponse);
-
-                return response;
-            }
-
-
-            _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
+            this.EndStreaming(resp);
         }
+    }
+    private void EndStreaming(ClientStreamingCallResponse resp) {
+        async Task<object> CompleteRead() {
+            //get the method call response
+            var callResponse = await ClientStreamingResponse.getResponse(resp);
+
+            //get the headers/trailers
+            var feature = new EndStreamingFeature();
+            callResponse = await feature.EndClientStreaming(callResponse); //TODO: use same emitted structure as UnaryAsync
+            var response = await this.EndClientStreamingCall(callResponse);
+
+            return response;
+        }
+
+
+        _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
     }
 
     private async Task OnStart() {
@@ -133,6 +136,9 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok)
                     this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
+                else {
+                    this.EndStreaming((ClientStreamingCallResponse)response);
+                }
             }
         }
         finally {
