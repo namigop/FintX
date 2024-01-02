@@ -19,11 +19,22 @@ module ProjectTypes =
         member val CertStoreLocation = "" with get, set
         member val CertThumbprint = "" with get, set
 
+    type MethodGroup =
+        { Name: string
+          Path: string
+          RequestFiles: string array }
+
+        static member Empty() =
+            { Name = ""
+              Path = ""
+              RequestFiles = Array.empty }
+
     type ClientGroup =
         { Name: string
           CodeFiles: string array
           ConfigFile: string
           Config: ClientConfig option
+          Methods: MethodGroup array
           Path: string }
 
         static member ConfigFilename = "config.json"
@@ -33,6 +44,7 @@ module ProjectTypes =
               CodeFiles = Array.empty
               ConfigFile = ""
               Path = ""
+              Methods = Array.empty
               Config = None }
 
     type Project =

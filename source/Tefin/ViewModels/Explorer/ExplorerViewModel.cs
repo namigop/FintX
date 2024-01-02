@@ -67,9 +67,12 @@ public class ExplorerViewModel : ViewModelBase {
         Type[]? types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
         var type = ServiceClient.findClientType(types).Value;
         if (type != null && this.Project != null) {
+           
             //Update the currently loaded project
             var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!, obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
             await feature.Add();
+            
+            //reload the project to take in the newly added client
             var proj = Core.Project.loadProject(this.Project.Path);
             this.Project = proj;
 

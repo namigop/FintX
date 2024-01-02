@@ -57,6 +57,10 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         get => this.ReqViewModel.RequestEditor.CtsReq != null;
     }
 
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
+    }
+
     private async Task OnImportRequest() {
         await this.ReqViewModel.ImportRequest();
     }

@@ -65,6 +65,10 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         await this.ReqViewModel.ExportRequest();
     }
 
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
+    }
+
     public override void Dispose() {
         base.Dispose();
         this.ReqViewModel.Dispose();

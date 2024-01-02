@@ -24,6 +24,8 @@ public abstract class GrpCallTypeViewModelBase : ViewModelBase {
 
     public abstract void Init();
 
+    public abstract string GetRequestContent();
+
     private void OnClientUpdated(MsgClientUpdated obj) {
         if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
             this.Client = obj.Client;

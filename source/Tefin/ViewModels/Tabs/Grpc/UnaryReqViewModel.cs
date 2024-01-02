@@ -95,6 +95,21 @@ public class UnaryReqViewModel : ViewModelBase {
             }
         }
     }
+
+    public string GetRequestContent() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                return exportReqJson.ResultValue;
+            }
+        }
+
+        return "";
+    }
+
+    
     public virtual async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {

@@ -69,6 +69,21 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
+    public string GetRequestContent() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            if (isValid) {
+                var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
+                var exportReqJson = feature.Export();
+                if (exportReqJson.IsOk) {
+                    return exportReqJson.ResultValue;
+                }
+            }
+        }
+
+        return "";
+    }
     public override async Task ImportRequest() {
         await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }

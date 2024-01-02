@@ -61,6 +61,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
+    }
+
     private void OnCanWriteChanged(ViewModelBase obj) {
         this.RaisePropertyChanged(nameof(this.CanStop));
     }

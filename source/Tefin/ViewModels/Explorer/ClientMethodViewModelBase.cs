@@ -13,4 +13,6 @@ public abstract class ClientMethodViewModelBase : ViewModelBase {
 
     public abstract string ApiType { get; }
     public MethodInfo MethodInfo { get; }
+
+    public abstract string GetRequestContent();
 }

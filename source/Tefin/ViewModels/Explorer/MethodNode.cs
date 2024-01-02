@@ -25,7 +25,7 @@ public class MethodNode : NodeBase {
     public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this._methodInfo, this.Client);
     }
-
+    
     public override void Init() {
     }
 }
