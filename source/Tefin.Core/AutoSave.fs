@@ -46,35 +46,17 @@ module AutoSave =
          with exc -> ()
             
         match f.FullPath with
-        | Some file -> write file f.Json
-        
+        | Some file -> write file f.Json   
         | None ->
             let key = $"{methodPath}/{f.Header}"
-            let fileName =
-              
+            let fileName =            
                 let found, prevName = nameCache.TryGetValue key
                 if found then
                     prevName
                 else
-                    let existingFileNames =
-                        Directory.GetFiles(methodPath, "*" + Ext.requestFileExt)
-                        |> Array.map (fun c -> Path.GetFileName c)
-
-                    let max = 1000000
-
-                    seq {
-                        for i in 1..max do
-                            i
-                    }
-                    |> Seq.map (fun counter ->
-                        //Sample name : MethodName (1).frxq
-                        let targetName = $"{methodName} ({counter}){Ext.requestFileExt}"
-                        targetName)
-                    |> Seq.filter (fun name ->
-                        let existingFile = existingFileNames |> Array.contains name
-                        not existingFile)
-                    |> Seq.head
-                    use the header name
+                    Utils.getFileName methodPath f.Header Ext.requestFileExt
+                     
+                    
             let fullPath = Path.Combine (methodPath, fileName)
             nameCache[key] <- fullPath
             write fullPath f.Json

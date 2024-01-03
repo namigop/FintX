@@ -42,18 +42,10 @@ public class TabHostViewModel : ViewModelBase {
     }
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
+        obj.Tab.Init();
         var existing = this.Items.FirstOrDefault(t => t.Id == obj.Tab.Id);
         if (existing != null) {
-            if (obj.Tab.AllowDuplicates) {
-                var existingNames = this.Items.Where(t => t.Title.StartsWith(obj.Tab.Title)).Select(t => t.Title).ToArray();
-                var title = obj.Tab.GenerateNewTitle(existingNames);
-                obj.Tab.Title = title;
-                this.Items.Add(obj.Tab);
-                this.SelectedItem = this.Items.Last();
-            }
-            else {
-                this.SelectedItem = existing;
-            }
+            this.SelectedItem = existing;
         }
         else {
             this.Items.Add(obj.Tab);

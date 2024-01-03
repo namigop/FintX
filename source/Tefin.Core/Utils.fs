@@ -12,8 +12,8 @@ open Newtonsoft.Json
 
 let appName = "FintX"
 
-let appVersion =  Assembly.GetEntryAssembly().GetName().Version
-let appVersionSimple =  $"{appVersion.Major}.{appVersion.Minor}"
+let appVersion = Assembly.GetEntryAssembly().GetName().Version
+let appVersionSimple = $"{appVersion.Major}.{appVersion.Minor}"
 
 let some obj = Some obj
 let none = None
@@ -139,10 +139,33 @@ let cache fn =
             let value = fn c
             dict.Add(c, value)
             value
-        
-let openBrowser(url:string) =
-    if isLinux() then
-        Process.Start ("xdg-open", url)
+
+let openBrowser (url: string) =
+    if isLinux () then
+        Process.Start("xdg-open", url)
     else
-        let psi = new ProcessStartInfo (FileName = url, UseShellExecute = true)
-        Process.Start (psi) 
+        let psi = new ProcessStartInfo(FileName = url, UseShellExecute = true)
+        Process.Start(psi)
+
+let getFileName (path: string) (fileStart: string) (fileExt:string)=
+
+    let existingFileNames =
+        Directory.GetFiles(path, "*" + fileExt)
+        |> Array.map (fun c -> Path.GetFileName c)
+
+    
+    let max = 1000000
+
+    seq { for i in 0..max -> i }
+    |> Seq.map (fun counter ->
+        //Sample name : MethodName (1).frxq
+        let targetName =
+            if counter = 0 then
+                $"{fileStart}{fileExt}"           
+            else
+                $"{fileStart}({counter}){fileExt}"
+        targetName)
+    |> Seq.filter (fun name ->
+        let existingFile = existingFileNames |> Array.contains name
+        not existingFile)
+    |> Seq.head

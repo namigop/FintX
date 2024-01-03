@@ -13,6 +13,8 @@ type IFileIO =
     abstract Delete: file: string -> unit
     abstract WriteAllBytesAsync: file: string -> bytes: byte array -> Task
     abstract WriteAllTextAsync: file: string -> content: string -> Task
+    abstract WriteAllText: file: string -> content: string -> unit
+   
     abstract ReadAllBytesAsync: file: string -> Task<byte array>
     abstract ExtractZip: zipFile: string -> path: string -> unit
     abstract Exists: file: string -> bool
@@ -24,6 +26,7 @@ module File =
     let fileIO =
         { new IFileIO with
             member x.WriteAllTextAsync (file: string) (contents: string) = File.WriteAllTextAsync(file, contents)
+            member x.WriteAllText  (file: string) (contents: string) = File.WriteAllText(file, contents)
             member x.Copy(source: string, target: string) = File.Copy(source, target)
             member x.Copy(source: string, target: string, overwrite: bool) = File.Copy(source, target, overwrite)
             member x.Delete file = File.Delete file

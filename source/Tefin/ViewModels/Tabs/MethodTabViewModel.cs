@@ -2,8 +2,12 @@
 
 using System.Linq;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
+using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
+
+using File = Tefin.Core.File;
 
 #endregion
 
@@ -13,7 +17,7 @@ public class MethodTabViewModel : TabViewModelBase {
     public MethodTabViewModel(MethodNode item) : base(item) {
         this.ClientMethod = item.CreateViewModel();
         this.Client = item.Client;
-        
+
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
         this.AllowDuplicates = true;
     }
@@ -33,20 +37,31 @@ public class MethodTabViewModel : TabViewModelBase {
         return this.ClientMethod.GetRequestContent();
     }
 
-    public override string GenerateNewTitle(string[] existingNames) {
+    public override string GenerateNewTitle() {
         //name format {Title}(count)
-        var maxTabs = 1000;
-        for (var i = 1; i < maxTabs; i++) {
-            var suggestedName = $"{this.Title}({i})";
-            if (!existingNames.Contains(suggestedName))
-                return suggestedName;
-        }
+        var methodPath =
+            Project.getMethodPath(this.Client.Path)
+                .Then(p => Path.Combine(p, this.ClientMethod.MethodInfo.Name));
+        var name = Core.Utils.getFileName(methodPath, this.Title, Ext.requestFileExt);
+        return Path.GetFileNameWithoutExtension(name);
 
-        throw new Exception("Unable to generate a tab name");
+        //throw new Exception("Unable to generate a tab name");
+    }
+
+    public override void Init() {
+        this.Id = this.GetTabId();
+        this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
 
     protected override string GetTabId() {
-        return $"Todo/[url.config]/{this.Title}"; //TODO:
+
+        var methodName = this.ClientMethod.MethodInfo.Name;
+        var localMethodPath = Project.getMethodPath(this.Client.Path).Then(p => Path.Combine(p, methodName));
+
+        var fileName = Core.Utils.getFileName(localMethodPath, methodName, Ext.requestFileExt);
+        var id = Path.Combine(localMethodPath, fileName);
+        Io.File.WriteAllText(id, "");
+        return id;
     }
 
     private void OnIsBusyChanged(ViewModelBase obj) {

@@ -21,19 +21,20 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     protected TabViewModelBase(IExplorerItem item) {
         this.ExplorerItem = item;
         this._subTitle = item.SubTitle;
-        this._title = item.Title;
         this._disposable = item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title);
 
         this.CloseCommand = this.CreateCommand(this.OnClose);
-        //this.Id = $"{item.Title}-{item.SubTitle}-{Guid.NewGuid()}";
+        
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 
+    public abstract void Init();
     public bool AllowDuplicates { get; set; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }
     public string Id {
-        get => this.GetTabId();
+        get;
+        protected set;
     }
 
     public string SubTitle {
@@ -46,7 +47,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
 
-    public virtual string GenerateNewTitle(string[] existingNames) {
+    public virtual string GenerateNewTitle() {
         throw new Exception("Unable to generate a new tab title");
     }
 

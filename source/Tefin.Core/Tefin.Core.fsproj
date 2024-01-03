@@ -49,8 +49,8 @@
         <Compile Include="CallPipeline.fs" />
         <Compile Include="CoreExport.fs" />
         <Compile Include="CoreMethod.fs" />
-        <Compile Include="App.fs" />
         <Compile Include="AutoSave.fs" />
+        <Compile Include="App.fs" />
        
     </ItemGroup>
 

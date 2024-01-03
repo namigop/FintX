@@ -98,6 +98,7 @@ public class ClientNode : NodeBase {
         foreach (var m in methodInfos) {
             //string clientPath, ProjectTypes.ClientConfig clientConfig
             var item = new MethodNode(m, this._client);
+            item.Init();
             this.Items.Add(item);
             Log.logInfo.Invoke($"Found method {item.Title}");
         }

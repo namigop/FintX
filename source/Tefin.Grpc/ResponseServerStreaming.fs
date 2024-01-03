@@ -166,7 +166,7 @@ module ServerStreamingResponse =
             Okay t
         else
             let err = Res.getError ctx.Response
-            let w = wrapResponse methodInfo (ErrorResponse(Error = err.Message)) true
+            let w = wrapResponse methodInfo (new ErrorResponse(Error = err.Message)) true
 
             let t: ErrorServerStreamingResponse =
                 { MethodInfo = methodInfo

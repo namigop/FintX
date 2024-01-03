@@ -12,14 +12,18 @@ type AddClientRequest =
       Desc: string }
 
 module Project =
+    let getMethodPath (clientPath:string) =
+        Path.Combine(clientPath, "methods")
+        
     let loadMethods (clientPath: string) =
+        let methodPath = getMethodPath clientPath
         let methodDirs =
-            Directory.GetDirectories(clientPath, "*.*", SearchOption.TopDirectoryOnly)
+            Directory.GetDirectories(methodPath, "*.*", SearchOption.TopDirectoryOnly)
 
         methodDirs
         |> Array.map (fun m ->
             let methodName = Path.GetFileName m
-            let requestFiles = Directory.GetFiles(m, Ext.requestFileExt, SearchOption.AllDirectories)
+            let requestFiles = Directory.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
 
             { MethodGroup.Empty() with
                 RequestFiles = requestFiles

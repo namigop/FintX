@@ -76,7 +76,7 @@ module UnaryResponse =
                     | Ret.Error exc ->
                          let wrapperType = ResponseUtils.emitUnaryResponse methodInfo true true
                          let wrapperInst = Activator.CreateInstance(wrapperType)
-                         let c = ErrorResponse(Error = exc.Message)
+                         let c = new ErrorResponse(Error = exc.Message)
                          (wrapperType, wrapperInst, c)
                     
                 let responsePi = wrapperType.GetProperty("Response")

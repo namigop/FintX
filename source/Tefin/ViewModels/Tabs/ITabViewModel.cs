@@ -16,5 +16,5 @@ public interface ITabViewModel {
     string SubTitle { get; set; }
     string Title { get; set; }
 
-    string GenerateNewTitle(string[] existingNames);
+    void Init();
 }
