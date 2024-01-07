@@ -12,31 +12,30 @@ type AddClientRequest =
       Desc: string }
 
 module Project =
-    let getMethodPath (clientPath:string) =
-        Path.Combine(clientPath, "methods")
-        
+    let getMethodPath (clientPath: string) = Path.Combine(clientPath, "methods")
+
     let loadMethods (clientPath: string) =
         let methodPath = getMethodPath clientPath
-        let methodDirs =
-            Directory.GetDirectories(methodPath, "*.*", SearchOption.TopDirectoryOnly)
+        Directory.CreateDirectory methodPath
+        let methodDirs = Directory.GetDirectories(methodPath, "*.*", SearchOption.TopDirectoryOnly)
 
         methodDirs
         |> Array.map (fun m ->
             let methodName = Path.GetFileName m
-            let requestFiles = Directory.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
 
-            { MethodGroup.Empty() with
-                RequestFiles = requestFiles
+            let requestFiles =
+                Directory.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
+
+            {   RequestFiles = requestFiles
                 Name = methodName
                 Path = m }
-
         )
 
-    let saveRequestFile (clientGroup : ClientGroup) (methodName : string) (reqFileName:string) (reqFileJson:string) =
+    let saveRequestFile (clientGroup: ClientGroup) (methodName: string) (reqFileName: string) (reqFileJson: string) =
         let dir = Path.Combine(clientGroup.Path, methodName)
         let _ = Directory.CreateDirectory dir
-        File.WriteAllText(Path.Combine(dir,  reqFileName), reqFileJson)
-        
+        File.WriteAllText(Path.Combine(dir, reqFileName), reqFileJson)
+
     let loadClient (clientPath: string) =
         let configFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)
         let config = Instance.jsonDeserialize<ClientConfig> (File.ReadAllText configFile)
@@ -44,13 +43,12 @@ module Project =
         let codePath = Path.Combine(clientPath, "code")
         let files = Directory.GetFiles(codePath, "*.*")
 
-        { ClientGroup.Empty() with
-            ConfigFile = configFile
-            Config = Some config
-            CodeFiles = files
-            Methods = loadMethods clientPath
-            Name = config.Name
-            Path = clientPath }
+        { ConfigFile = configFile
+          Config = Some config
+          CodeFiles = files
+          Methods = loadMethods clientPath
+          Name = config.Name
+          Path = clientPath }
 
     let loadProject (projectPath: string) =
         let clientPaths =
@@ -60,14 +58,13 @@ module Project =
             files |> Array.map (fun file -> Path.GetDirectoryName file)
 
         let projectName = Path.GetFileName projectPath
-        let clients = clientPaths |> Array.map (fun path -> loadClient path)
+        let clients = clientPaths |> Array.map loadClient
         let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
-        { Project.Empty() with
-            Name = projectName
-            Clients = clients
-            ConfigFile = config
-            Path = projectPath }
+        { Name = projectName
+          Clients = clients
+          ConfigFile = config
+          Path = projectPath }
 
     let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
         task {
@@ -75,7 +72,7 @@ module Project =
 
             let file, filePath =
                 let fileName = Path.GetFileName clientConfigFile
-                let oldName = Path.GetDirectoryName clientConfigFile |> fun p -> Path.GetFileName p
+                let oldName = Path.GetDirectoryName clientConfigFile |> Path.GetFileName
 
                 let currentName = clientConfig.Name
                 let nameChanged = not (oldName = currentName)
@@ -102,7 +99,15 @@ module Project =
         io.Dir.Delete cfg.Path true //deletes everything
         io.Log.Info $"Deleted {cfg.Name}"
 
-    let addClient (io: IOResolver) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
+    let addClient
+        (io: IOResolver)
+        (project: Project)
+        clientName
+        serviceName
+        protoOrUrl
+        description
+        (csFiles: string array)
+        =
         task {
             //1. Create the client folder
             let clientPath = Path.Combine(project.Path, clientName)

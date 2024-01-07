@@ -147,12 +147,10 @@ let openBrowser (url: string) =
         let psi = new ProcessStartInfo(FileName = url, UseShellExecute = true)
         Process.Start(psi)
 
-let getFileName (path: string) (fileStart: string) (fileExt:string)=
-
+let getAvailableFileName (path: string) (fileStart: string) (fileExt:string)=
     let existingFileNames =
         Directory.GetFiles(path, "*" + fileExt)
         |> Array.map (fun c -> Path.GetFileName c)
-
     
     let max = 1000000
 

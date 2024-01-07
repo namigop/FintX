@@ -2,6 +2,7 @@ namespace Tefin.Core
 
 open System.Collections.Generic
 open System.IO
+open System.Reflection
 open Tefin.Core.Interop
 
 module AutoSave =
@@ -14,7 +15,7 @@ module AutoSave =
         static member Empty() = { Json = ""; Header = ""; FullPath = None }
         member x.WithJson j = { x with Json = j }
         member x.WithHeader h  = { x with Header = h }
-        member x.WithFullPath p = { x with FullPath = p }
+        member x.WithFullPath p = { x with FullPath = if (System.String.IsNullOrWhiteSpace p) then None else Some p }
 
     type MethodParam =
         { Name: string
@@ -39,55 +40,66 @@ module AutoSave =
         member x.WithMethods m = { x with Methods = m }
 
 
-    let rec private saveFile (methodName: string) (methodPath: string) (f: FileParam) (nameCache:Dictionary<string, string>) =
+    let rec private saveFile (io:IOResolver) (methodName: string) (methodPath: string) (f: FileParam) =
         let write (file:string) (json:string)=
          try
-             File.WriteAllText(file, json)
-         with exc -> ()
+             io.File.WriteAllText file json
+         with exc ->
+             io.Log.Warn ($"Unable to auto-save {Path.GetFileName(file)}. {exc.Message}");
             
         match f.FullPath with
-        | Some file -> write file f.Json   
+        | Some file ->
+            write file f.Json
+            f
         | None ->
-            let key = $"{methodPath}/{f.Header}"
-            let fileName =            
-                let found, prevName = nameCache.TryGetValue key
-                if found then
-                    prevName
-                else
-                    Utils.getFileName methodPath f.Header Ext.requestFileExt
-                     
-                    
-            let fullPath = Path.Combine (methodPath, fileName)
-            nameCache[key] <- fullPath
+            // if the json content was provided but no full path, we save it with the
+            // next available file name
+            let fileName = Utils.getAvailableFileName methodPath f.Header Ext.requestFileExt         
+            let fullPath = Path.Combine (methodPath, fileName)            
             write fullPath f.Json
-            
+            {Json = f.Json; Header = f.Header; FullPath = Some fullPath }
 
+    let private saveMethod (io:IOResolver) (clientPath: string) (m: MethodParam)  =
+        let methodPath = Path.Combine(clientPath, "methods", m.Name, "_autoSave")
+        let _ = io.Dir.CreateDirectory methodPath
+   
+        let autoSavedFiles = 
+            m.Files
+            |> Array.map (fun fileParam -> saveFile io m.Name methodPath fileParam)
+            |> Array.map (fun p -> p.FullPath.Value)
+        
+        //Delete any existing files that were not auto-saved
+        let existingFiles = io.Dir.GetFiles methodPath
+        for e in existingFiles do
+            if not (Array.contains e autoSavedFiles) then
+                io.File.Delete e
 
-    let private saveMethod (clientPath: string) (m: MethodParam) (nameCache:Dictionary<string, string>) =
-        let methodPath = Path.Combine(clientPath, "methods", m.Name)
-        let _ = Directory.CreateDirectory methodPath
-
-        for f in m.Files do
-            saveFile m.Name methodPath f nameCache
-
-    let private saveClient (clientParam: ClientParam) (nameCache:Dictionary<string, string>) =
+    let private saveClient (io:IOResolver) (clientParam: ClientParam)   =
         if (Directory.Exists clientParam.Client.Path) then
             for m in clientParam.Methods do
-                saveMethod clientParam.Client.Path m nameCache
+                saveMethod io clientParam.Client.Path m 
 
+    let getSaveLocation (io:IOResolver) (methodInfo:MethodInfo) (clientPath:string) =
+        let methodName = methodInfo.Name
+        let autoSavePath = Project.getMethodPath(clientPath) |> fun p -> Path.Combine(p, methodName, "_autoSave")
+        io.Dir.CreateDirectory autoSavePath
+        let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt
+        let id = Path.Combine(autoSavePath, fileName)
+        if not (io.File.Exists id) then 
+            io.File.WriteAllText id ""
+        id
     let run =
         let timer = new System.Timers.Timer()
         timer.AutoReset <- true
         timer.Interval <- 5000 //5 sec
         timer.Enabled <- true
-
-        let nameCache = Dictionary<string, string>()
+        let io = Resolver.value
         fun (getParam: System.Func<ClientParam array>) ->
             timer.Elapsed
             |> Observable.add (fun args ->
                 let clientParams = getParam.Invoke()
 
                 for clientParam in clientParams do
-                    saveClient clientParam nameCache
+                    saveClient io clientParam 
 
                 )

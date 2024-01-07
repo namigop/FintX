@@ -2,6 +2,7 @@
 
 using System.Linq;
 using System.Reflection;
+
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Tabs.Grpc;
 
@@ -9,12 +10,10 @@ using Tefin.ViewModels.Tabs.Grpc;
 
 namespace Tefin.ViewModels.Explorer;
 
-public class MethodNode : NodeBase
-{
+public class MethodNode : NodeBase {
     private readonly MethodInfo _methodInfo;
 
-    public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg)
-    {
+    public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         //this.ClientVm = clientVm;
         this._methodInfo = methodInfo;
         this.Client = cg;
@@ -24,22 +23,17 @@ public class MethodNode : NodeBase
 
     public ProjectTypes.ClientGroup Client { get; set; }
 
-    public ClientMethodViewModelBase CreateViewModel()
-    {
+    public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this._methodInfo, this.Client);
     }
 
-    public override void Init()
-    {
+    public override void Init() {
         var method = this.Client.Methods.FirstOrDefault(m => m.Name == this._methodInfo.Name);
-        foreach (var file in method.RequestFiles)
-        {
+        foreach (var file in method.RequestFiles) {
             var fn = new FileReqNode(file);
             fn.Init();
             this.Items.Add(fn);
-            
-            
         }
-        //load auto-saved files
+        //load auto-saved files 
     }
 }

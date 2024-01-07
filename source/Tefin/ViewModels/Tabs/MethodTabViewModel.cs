@@ -37,30 +37,13 @@ public class MethodTabViewModel : TabViewModelBase {
         return this.ClientMethod.GetRequestContent();
     }
 
-    public override string GenerateNewTitle() {
-        //name format {Title}(count)
-        var methodPath =
-            Project.getMethodPath(this.Client.Path)
-                .Then(p => Path.Combine(p, this.ClientMethod.MethodInfo.Name));
-        var name = Core.Utils.getFileName(methodPath, this.Title, Ext.requestFileExt);
-        return Path.GetFileNameWithoutExtension(name);
-
-        //throw new Exception("Unable to generate a tab name");
-    }
-
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
 
     protected override string GetTabId() {
-
-        var methodName = this.ClientMethod.MethodInfo.Name;
-        var localMethodPath = Project.getMethodPath(this.Client.Path).Then(p => Path.Combine(p, methodName));
-
-        var fileName = Core.Utils.getFileName(localMethodPath, methodName, Ext.requestFileExt);
-        var id = Path.Combine(localMethodPath, fileName);
-        Io.File.WriteAllText(id, "");
+        var id = AutoSave.getSaveLocation(this.Io, this.ClientMethod.MethodInfo, this.Client.Path);
         return id;
     }
 

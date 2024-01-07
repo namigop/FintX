@@ -64,9 +64,10 @@ public class MainWindowViewModel : ViewModelBase {
                 .Where(t => t is MethodTabViewModel)
                 .Cast<MethodTabViewModel>()
                 .ToArray();
+            
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
-
             var loadedClients = methodTabs.Select(m => m.Client).DistinctBy(c => c.Name).ToArray();
+            
             var clientParams = new List<AutoSave.ClientParam>();
             foreach (var client in loadedClients) {
                 var methodsOfClient = methodTabs.Where(m => m.Client.Name == client.Name).ToArray();
@@ -80,6 +81,7 @@ public class MainWindowViewModel : ViewModelBase {
                         var title = tab.Title;
                         var fileParam = AutoSave.FileParam.Empty()
                             .WithJson(json)
+                            .WithFullPath(tab.Id)
                             .WithHeader(title);
                         fileParams.Add(fileParam);
                     }

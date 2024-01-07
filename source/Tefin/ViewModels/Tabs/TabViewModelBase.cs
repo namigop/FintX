@@ -24,14 +24,16 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         this._disposable = item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title);
 
         this.CloseCommand = this.CreateCommand(this.OnClose);
-        
+
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 
     public abstract void Init();
+
     public bool AllowDuplicates { get; set; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }
+
     public string Id {
         get;
         protected set;
@@ -45,10 +47,6 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     public string Title {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
-    }
-
-    public virtual string GenerateNewTitle() {
-        throw new Exception("Unable to generate a new tab title");
     }
 
     protected virtual string GetTabId() {
