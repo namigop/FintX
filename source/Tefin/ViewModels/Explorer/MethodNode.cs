@@ -29,6 +29,9 @@ public class MethodNode : NodeBase {
 
     public override void Init() {
         var method = this.Client.Methods.FirstOrDefault(m => m.Name == this._methodInfo.Name);
+        if (method == null)
+            return;
+        
         foreach (var file in method.RequestFiles) {
             var fn = new FileReqNode(file);
             fn.Init();

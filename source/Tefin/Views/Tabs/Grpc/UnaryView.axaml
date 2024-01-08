@@ -79,7 +79,6 @@
                     </Style>
                 </StackPanel.Styles>
                 <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
-                        IsEnabled="{Binding !IsBusy}"
                         IsVisible="{Binding !IsBusy}"
                         Background="{StaticResource Bym.Color.Green}"
                         CornerRadius="24"
@@ -89,8 +88,7 @@
                        </StackPanel>
                 </Button>
                 <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="0 0 0 0"
-                        IsEnabled="{Binding CanStop}"
-                        IsVisible="{Binding CanStop}"
+                        IsVisible="{Binding IsBusy}"
                         CornerRadius="24"
                         Background="{StaticResource Bym.Color.Red}"
                         ToolTip.Tip="cancel the request" >

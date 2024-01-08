@@ -38,7 +38,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public ICommand ImportRequestCommand { get; }
 
     public bool CanStop {
-        get => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
+        get => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
     }
 
     public bool IsShowingRequestTreeEditor {
