@@ -83,20 +83,25 @@ public class UnaryReqViewModel : ViewModelBase {
         };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            var import = new ImportFeature(this.Io, files[0], this.MethodInfo);
-            var (export, _) = import.Run();
-            if (export.IsOk) {
-                var methodParams = export.ResultValue;
-                this._methodParameterInstances = methodParams;
-                this.Init();
-            }
-            else {
-                this.Io.Log.Error(export.ErrorValue);
-            }
+            this.ImportRequestFile(files[0]);
         }
     }
 
-    public string GetRequestContent() {
+    public virtual async Task ImportRequestFile(string file) {
+        var import = new ImportFeature(this.Io, file, this.MethodInfo);
+        var (export, _) = import.Run();
+        if (export.IsOk) {
+            var methodParams = export.ResultValue;
+            this._methodParameterInstances = methodParams;
+            this.Init();
+        }
+        else {
+            this.Io.Log.Error(export.ErrorValue);
+        }
+
+    }
+
+    public virtual string GetRequestContent() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
             var feature = new ExportFeature(this.MethodInfo, mParams);
@@ -109,7 +114,7 @@ public class UnaryReqViewModel : ViewModelBase {
         return "";
     }
 
-    
+
     public virtual async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {

@@ -31,4 +31,6 @@ public abstract class GrpCallTypeViewModelBase : ViewModelBase {
             this.Client = obj.Client;
         }
     }
+
+    public abstract void ImportRequest(string requestFile);
 }

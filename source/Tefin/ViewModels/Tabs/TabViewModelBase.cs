@@ -30,6 +30,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
+    public abstract void Import(string requestFile);
     public bool AllowDuplicates { get; set; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }

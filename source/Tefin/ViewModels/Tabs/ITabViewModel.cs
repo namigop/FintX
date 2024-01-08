@@ -17,4 +17,6 @@ public interface ITabViewModel {
     string Title { get; set; }
 
     void Init();
+
+    void Import(string requestFile);
 }

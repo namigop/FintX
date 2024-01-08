@@ -9,6 +9,7 @@ open System.Runtime.InteropServices
 open System.IO
 open System.Text
 open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 
 let appName = "FintX"
 
@@ -167,3 +168,11 @@ let getAvailableFileName (path: string) (fileStart: string) (fileExt:string)=
         let existingFile = existingFileNames |> Array.contains name
         not existingFile)
     |> Seq.head
+    
+let jSelectToken (json:string) (jPath:string) =
+    let jObj = JObject.Parse json
+    (jObj.SelectToken jPath)
+    
+let jSelectTokens (json:string) (jPath:string) =
+    let jObj = JObject.Parse json
+    (jObj.SelectTokens jPath)

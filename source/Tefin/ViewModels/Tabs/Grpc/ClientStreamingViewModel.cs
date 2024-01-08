@@ -92,6 +92,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public override void Init() {
         this.ReqViewModel.Init();
     }
+    
+    public override void ImportRequest(string requestFile) {
+        this.ReqViewModel.ImportRequestFile(requestFile);
+    }
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
         var builder = new CompositeResponseFeature();

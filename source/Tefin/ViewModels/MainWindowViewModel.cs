@@ -42,7 +42,7 @@ public class MainWindowViewModel : ViewModelBase {
     }
 
     public void Init() {
-        this.Root = new StartupFeature().Load();
+        this.Root = new StartupFeature().Load(this.Io);
         var defaultPackage = this.Root.Packages.First(t => t.Name == Core.App.defaultPackage);
         this.MainMenu.ClientMenuItem.Init(defaultPackage, ProjectTypes.Project.DefaultName);
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);

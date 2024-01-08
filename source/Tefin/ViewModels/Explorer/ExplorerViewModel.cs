@@ -73,7 +73,7 @@ public class ExplorerViewModel : ViewModelBase {
             await feature.Add();
             
             //reload the project to take in the newly added client
-            var proj = Core.Project.loadProject(this.Project.Path);
+            var proj = Core.Project.loadProject(this.Io, this.Project.Path);
             this.Project = proj;
 
             var client = proj.Clients.First(t => t.Name == obj.ClientName);

@@ -1,13 +1,8 @@
 #region
 
-using System.Linq;
-
 using Tefin.Core;
 using Tefin.Core.Interop;
-using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
-
-using File = Tefin.Core.File;
 
 #endregion
 
@@ -37,6 +32,10 @@ public class MethodTabViewModel : TabViewModelBase {
         return this.ClientMethod.GetRequestContent();
     }
 
+    public override void Import(string reqFile) {
+        this.ClientMethod.ImportRequest(reqFile);
+    }
+    
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileNameWithoutExtension(this.Id);

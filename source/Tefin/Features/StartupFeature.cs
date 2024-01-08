@@ -3,6 +3,7 @@
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Grpc;
 
@@ -22,8 +23,8 @@ public class StartupFeature {
         });
     }
 
-    public AppTypes.Root Load() {
-        Core.App.init();
-        return Core.App.loadRoot();
+    public AppTypes.Root Load(IOResolver io) {
+        Core.App.init(io);
+        return Core.App.loadRoot(io);
     }
 }

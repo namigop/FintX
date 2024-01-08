@@ -1,8 +1,5 @@
-namespace Tefin.Views.Controls; 
+namespace Tefin.Views.Controls;
 
-
-
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;

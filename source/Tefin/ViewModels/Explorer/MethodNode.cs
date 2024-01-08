@@ -11,11 +11,13 @@ using Tefin.ViewModels.Tabs.Grpc;
 namespace Tefin.ViewModels.Explorer;
 
 public class MethodNode : NodeBase {
-    private readonly MethodInfo _methodInfo;
+    public MethodInfo MethodInfo {
+        get;
+    }
 
     public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         //this.ClientVm = clientVm;
-        this._methodInfo = methodInfo;
+        this.MethodInfo = methodInfo;
         this.Client = cg;
         this.CanOpen = true;
         this.Title = methodInfo.Name;
@@ -24,14 +26,14 @@ public class MethodNode : NodeBase {
     public ProjectTypes.ClientGroup Client { get; set; }
 
     public ClientMethodViewModelBase CreateViewModel() {
-        return new GrpcClientMethodHostViewModel(this._methodInfo, this.Client);
+        return new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);
     }
 
     public override void Init() {
-        var method = this.Client.Methods.FirstOrDefault(m => m.Name == this._methodInfo.Name);
+        var method = this.Client.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
         if (method == null)
             return;
-        
+
         foreach (var file in method.RequestFiles) {
             var fn = new FileReqNode(file);
             fn.Init();

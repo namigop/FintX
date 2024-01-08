@@ -1,7 +1,5 @@
 #region
 
-using System.Diagnostics;
-
 using Tefin.ViewModels.Explorer;
 
 #endregion
@@ -19,6 +17,9 @@ public class FilePerfTabViewModel : TabViewModelBase {
 
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
+    }
+    public override void Import(string reqFile) {
+        throw new NotImplementedException();
     }
 
     protected override Task OnClose() {

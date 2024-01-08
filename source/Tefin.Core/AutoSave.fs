@@ -40,6 +40,7 @@ module AutoSave =
         member x.WithMethods m = { x with Methods = m }
 
 
+   
     let rec private saveFile (io:IOResolver) (methodName: string) (methodPath: string) (f: FileParam) =
         let write (file:string) (json:string)=
          try
@@ -57,11 +58,17 @@ module AutoSave =
             let fileName = Utils.getAvailableFileName methodPath f.Header Ext.requestFileExt         
             let fullPath = Path.Combine (methodPath, fileName)            
             write fullPath f.Json
-            {Json = f.Json; Header = f.Header; FullPath = Some fullPath }
+            { Json = f.Json
+              Header = f.Header
+              FullPath = Some fullPath }
 
     let private saveMethod (io:IOResolver) (clientPath: string) (m: MethodParam)  =
-        let methodPath = Path.Combine(clientPath, "methods", m.Name, "_autoSave")
-        let _ = io.Dir.CreateDirectory methodPath
+        
+        let methodPath =
+            Project.getMethodPath clientPath
+            |> fun p -> Path.Combine(p, m.Name, Project.autoSaveFolderName)
+            
+        io.Dir.CreateDirectory methodPath
    
         let autoSavedFiles = 
             m.Files
@@ -81,13 +88,20 @@ module AutoSave =
 
     let getSaveLocation (io:IOResolver) (methodInfo:MethodInfo) (clientPath:string) =
         let methodName = methodInfo.Name
-        let autoSavePath = Project.getMethodPath(clientPath) |> fun p -> Path.Combine(p, methodName, "_autoSave")
+        let autoSavePath = Project.getMethodPath(clientPath) |> fun p -> Path.Combine(p, methodName, Project.autoSaveFolderName)
         io.Dir.CreateDirectory autoSavePath
         let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt
-        let id = Path.Combine(autoSavePath, fileName)
-        if not (io.File.Exists id) then 
-            io.File.WriteAllText id ""
-        id
+        let fullPath = Path.Combine(autoSavePath, fileName)
+        if not (io.File.Exists fullPath) then 
+            io.File.WriteAllText fullPath ""
+        fullPath
+    
+    let getAutoSavedFiles (io:IOResolver) (clientPath:string) =
+        Project.getMethodPath clientPath
+        |> fun path -> io.Dir.GetFiles(path, "*"+Ext.requestFileExt, SearchOption.AllDirectories)
+        |> Array.filter (fun fp -> fp.Contains(Project.autoSaveFolderName))
+        |> Array.sortBy id
+        
     let run =
         let timer = new System.Timers.Timer()
         timer.AutoReset <- true

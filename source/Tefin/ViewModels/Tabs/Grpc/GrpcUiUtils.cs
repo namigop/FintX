@@ -22,29 +22,37 @@ public static class GrpcUiUtils {
             io.Log.Error(exportReqJson.ErrorValue);
         }
     }
+    
     public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, IOResolver io) {
         var fileExtensions = new[] {
             $"*{Ext.requestFileExt}"
         };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            var requestStream = Activator.CreateInstance(listType);
-            var import = new ImportFeature(io, files[0], methodInfo, requestStream);
-            var (importReq, importReqStream) = import.Run();
-            if (importReq.IsOk) {
-                var methodParams = importReq.ResultValue;
-                requestEditor.Show(methodParams);
-            }
-            else {
-                io.Log.Error(importReq.ErrorValue);
-            }
-
-            if (importReqStream.IsOk) {
-                listEditor.Show(importReqStream.ResultValue);
-            }
-            else {
-                io.Log.Error(importReqStream.ErrorValue);
-            }
+            ImportRequest(requestEditor, listEditor, listType, methodInfo, files[0], io);
         }
+    }
+
+    public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, string file,
+        IOResolver io) {
+
+        var requestStream = Activator.CreateInstance(listType);
+        var import = new ImportFeature(io, file, methodInfo, requestStream);
+        var (importReq, importReqStream) = import.Run();
+        if (importReq.IsOk) {
+            var methodParams = importReq.ResultValue;
+            requestEditor.Show(methodParams);
+        }
+        else {
+            io.Log.Error(importReq.ErrorValue);
+        }
+
+        if (importReqStream.IsOk) {
+            listEditor.Show(importReqStream.ResultValue);
+        }
+        else {
+            io.Log.Error(importReqStream.ErrorValue);
+        }
+
     }
 }

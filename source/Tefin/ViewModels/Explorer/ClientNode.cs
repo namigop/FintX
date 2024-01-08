@@ -1,6 +1,9 @@
 #region
 
+using System.Linq;
 using System.Windows.Input;
+
+using Newtonsoft.Json.Linq;
 
 using ReactiveUI;
 
@@ -11,6 +14,7 @@ using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.ViewModels.Overlay;
+using Tefin.ViewModels.Tabs;
 
 using static Tefin.Core.Interop.Messages;
 
@@ -104,7 +108,30 @@ public class ClientNode : NodeBase {
         }
 
         this.IsExpanded = true;
+        
+        this.LoadPreviousSession();
         this.RaisePropertyChanged(nameof(this.IsLoaded));
+
+    }
+    private void LoadPreviousSession() {
+
+        //Open auto-saved files into a tab
+        foreach (var reqFile in AutoSave.getAutoSavedFiles(this.Io, this._client.Path)) {
+            try {
+                var json = this.Io.File.ReadAllText(reqFile);
+                if (string.IsNullOrWhiteSpace(json))
+                    continue;
+                
+                var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
+                var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
+                var tab = TabFactory.From(item, this.Io);
+                if (tab != null)
+                    GlobalHub.publish(new OpenTabMessage(tab, reqFile));
+            }
+            catch (Exception exc                   ) {
+                Io.Log.Warn(exc.ToString());
+            }
+        }
     }
 
     private void OnDelete() {

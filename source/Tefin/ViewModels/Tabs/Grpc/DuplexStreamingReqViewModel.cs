@@ -121,7 +121,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     public override async Task ImportRequest() {
         await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }
-    public string GetRequestContent() {
+    public override string GetRequestContent() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
             var (isValid, reqStream) = this.ClientStreamEditor.GetList();

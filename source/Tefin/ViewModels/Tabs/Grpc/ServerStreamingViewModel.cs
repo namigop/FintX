@@ -61,12 +61,17 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private async Task OnImportRequest() {
         await this.ReqViewModel.ImportRequest();
     }
+    
     private async Task OnExportRequest() {
         await this.ReqViewModel.ExportRequest();
     }
 
     public override string GetRequestContent() {
         return this.ReqViewModel.GetRequestContent();
+    }
+
+    public override void ImportRequest(string requestFile) {
+        throw new NotImplementedException();
     }
 
     public override void Dispose() {
