@@ -18,7 +18,6 @@ namespace Tefin.ViewModels.Overlay;
 public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _clientConfigFile;
     private readonly Action _onClientNameChanged;
-    private readonly string _title = "Client Configuration";
     private string _certFile = "";
     private ProjectTypes.ClientConfig _clientConfig = null!;
     private string _clientName = "";
@@ -114,8 +113,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public string Title {
-        get => this._title;
-    }
+        get;
+    } = "Client Configuration";
 
     public void Close() {
         GlobalHub.publish(new CloseOverlayMessage(this));

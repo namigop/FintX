@@ -1,7 +1,6 @@
 #region
 
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 using Microsoft.FSharp.Core;

@@ -1,6 +1,5 @@
 #region
 
-using System.Linq;
 using System.Reactive;
 
 using Tefin.Core.Interop;
@@ -22,7 +21,9 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
         this.SubMenus = new ClientSubMenuViewModel(this.Explorer);
     }
 
-    public ExplorerViewModel Explorer { get; private set; }
+    public ExplorerViewModel Explorer {
+        get;
+    }
 
     public Project Project {
         get => this.Explorer.Project!;

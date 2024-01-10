@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 
@@ -57,7 +56,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     public (bool, object?[]) GetParameters() {
         if (this.Items.Count == 0 || this.Items[0].Items.Count == 0)
             return (false, Array.Empty<object?>());
-        
+
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
         this.CtsReq = null;

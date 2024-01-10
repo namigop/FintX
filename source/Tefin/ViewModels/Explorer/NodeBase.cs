@@ -9,11 +9,9 @@ using ReactiveUI;
 namespace Tefin.ViewModels.Explorer;
 
 public abstract class NodeBase : ViewModelBase, IExplorerItem {
-    private bool _canOpen;
     private bool _isEditing;
     private bool _isExpanded;
     private bool _isSelected;
-    private ObservableCollection<IExplorerItem> _items = new();
     private string _subTitle = "";
     private string _title = "";
 
@@ -23,8 +21,8 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public bool CanOpen {
-        get => this._canOpen;
-        protected set => this._canOpen = value;
+        get;
+        protected set;
     }
 
     public bool IsExpanded {
@@ -38,9 +36,9 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public ObservableCollection<IExplorerItem> Items {
-        get => this._items;
-        private set => this._items = value;
-    }
+        get;
+        private set;
+    } = new();
 
     public string SubTitle {
         get => this._subTitle;

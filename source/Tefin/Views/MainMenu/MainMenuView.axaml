@@ -58,7 +58,8 @@
 
 
             </StackPanel.Styles>
-            <ToggleButton x:Name="ButtonClient" Command="{Binding ClientMenuItem.SelectItemCommand}" ToolTip.Tip="{Binding ClientMenuItem.ToolTip}"
+            <ToggleButton x:Name="ButtonClient" Command="{Binding ClientMenuItem.SelectItemCommand}"
+                          ToolTip.Tip="{Binding ClientMenuItem.ToolTip}"
                           IsChecked="{Binding ClientMenuItem.IsSelected}">
                 <StackPanel>
                     <Viewbox Stretch="Uniform">
@@ -75,7 +76,8 @@
                     <TextBlock Text="{Binding ClientMenuItem.ShortName}" />
                 </StackPanel>
             </ToggleButton>
-            <ToggleButton x:Name="ButtonServer" Command="{Binding ServerMenuItem.SelectItemCommand}" ToolTip.Tip="{Binding ServerMenuItem.ToolTip}"
+            <ToggleButton x:Name="ButtonServer" Command="{Binding ServerMenuItem.SelectItemCommand}"
+                          ToolTip.Tip="{Binding ServerMenuItem.ToolTip}"
                           IsChecked="{Binding ServerMenuItem.IsSelected}">
                 <StackPanel>
 
@@ -88,7 +90,8 @@
                                 <Path
                                     Data="M12.05,2.1c-0.465,0,-0.928,0.083,-1.363,0.243C9.866,0.905,8.33,0,6.65,0C4.439,0,2.535,1.574,2.096,3.711C0.847,4.185,0,5.391,0,6.75c0,1.708,1.324,3.111,3,3.239V8.986c-1.123,-0.125,-2,-1.08,-2,-2.236c0,-1.017,0.686,-1.911,1.667,-2.173l0.322,-0.086l0.044,-0.331C3.275,2.358,4.83,1,6.65,1c1.451,0,2.765,0.86,3.346,2.191c0.202,0.462,0.304,0.953,0.304,1.459h1c0,-0.476,-0.071,-0.941,-0.212,-1.39c0.307,-0.107,0.629,-0.16,0.962,-0.16c1.627,0,2.95,1.323,2.95,2.95c0,1.294,-0.838,2.396,-2,2.792v1.042c1.721,-0.427,3,-1.983,3,-3.834C16,3.872,14.228,2.1,12.05,2.1z"
                                     Fill="SlateGray" />
-                                <Path Data="M11.5,9.5H4.5V6.5h7V9.5zM11.5,9.5H4.5v6h7V9.5z" Fill="#4E4E4E" StrokeThickness="1" />
+                                <Path Data="M11.5,9.5H4.5V6.5h7V9.5zM11.5,9.5H4.5v6h7V9.5z" Fill="#4E4E4E"
+                                      StrokeThickness="1" />
                                 <Path Data="M10,8.5H8V7.5h2V8.5z" Fill="#20A0E0" />
                                 <Ellipse Canvas.Left="7" Canvas.Top="12" Width="2" Height="2" Fill="#A0A0A0" />
                             </Canvas>

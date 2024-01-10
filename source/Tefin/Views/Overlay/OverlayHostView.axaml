@@ -13,7 +13,8 @@
             <Grid Grid.Row="1">
 
                 <Grid Background="{StaticResource Bym.Color.DefaultWindowBackground}">
-                    <StackPanel Orientation="Vertical" Margin="15" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Vertical" Margin="15" VerticalAlignment="Center"
+                                HorizontalAlignment="Center">
                         <TextBlock Text="{Binding Content.Title}" FontSize="18" VerticalAlignment="Center"
                                    Margin="16" HorizontalAlignment="Center" />
 

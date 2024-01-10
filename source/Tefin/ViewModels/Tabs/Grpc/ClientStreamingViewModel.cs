@@ -68,7 +68,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private void OnCanWriteChanged(ViewModelBase obj) {
         this.RaisePropertyChanged(nameof(this.CanStop));
     }
-    private void  OnStop() {
+    private void OnStop() {
         if (this.CanStop) {
             this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
             this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
@@ -92,7 +92,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     public override void Init() {
         this.ReqViewModel.Init();
     }
-    
+
     public override void ImportRequest(string requestFile) {
         this.ReqViewModel.ImportRequestFile(requestFile);
     }

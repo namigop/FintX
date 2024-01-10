@@ -13,7 +13,6 @@ using Tefin.Utils;
 namespace Tefin.ViewModels.Types;
 
 public class ByteStringNode : TypeBaseNode {
-    private readonly string _formattedTypeName = $"{{{nameof(ByteString)}}}";
     private readonly string? _og;
     private string _base64 = "";
     private string _file = "";
@@ -35,8 +34,8 @@ public class ByteStringNode : TypeBaseNode {
     }
 
     public override string FormattedTypeName {
-        get => this._formattedTypeName;
-    }
+        get;
+    } = $"{{{nameof(ByteString)}}}";
 
     public override string FormattedValue {
         get {

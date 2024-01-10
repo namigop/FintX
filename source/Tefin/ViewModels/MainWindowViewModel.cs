@@ -1,6 +1,5 @@
 ﻿#region
 
-using System.Linq;
 using System.Reactive;
 using System.Windows.Input;
 
@@ -64,10 +63,10 @@ public class MainWindowViewModel : ViewModelBase {
                 .Where(t => t is MethodTabViewModel)
                 .Cast<MethodTabViewModel>()
                 .ToArray();
-            
+
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
             var loadedClients = methodTabs.Select(m => m.Client).DistinctBy(c => c.Name).ToArray();
-            
+
             var clientParams = new List<AutoSave.ClientParam>();
             foreach (var client in loadedClients) {
                 var methodsOfClient = methodTabs.Where(m => m.Client.Name == client.Name).ToArray();

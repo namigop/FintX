@@ -34,17 +34,17 @@ public class MethodTabViewModel : TabViewModelBase {
         return this.ClientMethod.GetRequestContent();
     }
 
-  
-    
+
+
     public override void Init() {
         if (!string.IsNullOrEmpty(this._requestFile)) {
             this.Id = this._requestFile;
             this.ClientMethod.ImportRequestFile(this._requestFile);
         }
         else {
-            this.Id =  this.GetTabId();
+            this.Id = this.GetTabId();
         }
-        
+
         this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
 

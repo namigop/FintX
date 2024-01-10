@@ -10,9 +10,7 @@
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
             <Grid Grid.Row="0" Grid.Column="0">
-                <StackPanel Orientation="Horizontal" Margin="0 6 0 0">
-
-                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0 6 0 0" />
 
             </Grid>
 
@@ -28,7 +26,8 @@
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
 
-            <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="8" Margin="6" Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
+            <GridSplitter Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Width="8" Margin="6"
+                          Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
 
 
             <Grid Grid.Row="2" Grid.Column="2">
@@ -44,14 +43,14 @@
                             HorizontalAlignment="Center" Margin="2">
                     <StackPanel.Styles>
                         <Style Selector="Button">
-                            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+                            <Setter Property="HorizontalAlignment" Value="Center" />
                         </Style>
                         <Style Selector="Separator">
-                            <Setter Property="Width" Value="30"></Setter>
+                            <Setter Property="Width" Value="30" />
                         </Style>
                     </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
-                            
+
                             IsVisible="{Binding !CanStop}"
                             Background="{StaticResource Bym.Color.Green}"
                             CornerRadius="24"
@@ -61,7 +60,7 @@
                         </StackPanel>
                     </Button>
                     <Button Command="{Binding StopCommand}" Classes="MenuButton" Margin="0 0 0 0"
-                            
+
                             IsVisible="{Binding CanStop}"
                             Background="{StaticResource Bym.Color.Red}"
                             CornerRadius="24"
@@ -84,21 +83,23 @@
                                 ToolTip.ShowDelay="0"
                                 CornerRadius="0 24 24 0"
                                 Margin="1 0 0 0"
-                                ToolTip.Tip="Finish writing to the request stream" IsEnabled="{Binding ReqViewModel.CanWrite}">
+                                ToolTip.Tip="Finish writing to the request stream"
+                                IsEnabled="{Binding ReqViewModel.CanWrite}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
                         </Button>
                     </StackPanel>
-                    <Separator Background="DimGray" Height="1" Margin="6"></Separator>
+                    <Separator Background="DimGray" Height="1" Margin="6" />
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file"
                             IsEnabled="{Binding !CanStop}"
                             HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.Export}" />
                     </Button>
-                    <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !CanStop}" ToolTip.Tip="open a saved request (*.fxrq) file"
+                    <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !CanStop}"
+                            ToolTip.Tip="open a saved request (*.fxrq) file"
                             HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.Import}" />
                     </Button>
-                    <Separator Background="DimGray" Height="1" Margin="8"></Separator>
+                    <Separator Background="DimGray" Height="1" Margin="8" />
                     <!-- <ToggleSwitch IsChecked="{Binding IsShowingRequestTreeEditor}" HorizontalAlignment="Center" -->
                     <!--               OnContent="" OffContent="" -->
                     <!--               Margin="0 0 0 0" /> -->

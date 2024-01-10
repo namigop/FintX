@@ -1,6 +1,5 @@
 #region
 
-using System.Linq;
 using System.Reflection;
 
 using Tefin.Core.Reflection;
@@ -11,10 +10,9 @@ namespace Tefin.ViewModels.Types;
 
 public class ListTypeMethod {
     private static readonly List<ListTypeMethod> Cache = new();
-    private readonly Type _type;
 
     private ListTypeMethod(Type type) {
-        this._type = type;
+        this.Type = type;
         this.TrySetupReflectionMethods();
     }
 
@@ -23,8 +21,9 @@ public class ListTypeMethod {
     public MethodInfo? ClearMethod { get; private set; }
     public MethodInfo? GetEnumeratorMethod { get; private set; }
     public MethodInfo? RemoveAtMethod { get; private set; }
+
     public Type Type {
-        get => this._type;
+        get;
     }
 
     public static ListTypeMethod GetMethods(Type listType) {
@@ -38,7 +37,7 @@ public class ListTypeMethod {
 
     private void TrySetupReflectionMethods() {
         if (this.ClearMethod == null) {
-            var type = this._type;
+            var type = this.Type;
             this.ClearMethod = type.GetMethod("Clear", BindingFlags.Public | BindingFlags.Instance, Type.EmptyTypes);
             this.AddRangeMethod = type.GetMethod("AddRange", BindingFlags.Public | BindingFlags.Instance);
             this.GetEnumeratorMethod = type.GetMethod("GetEnumerator", BindingFlags.Public | BindingFlags.Instance);

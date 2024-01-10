@@ -70,7 +70,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
             this.CanWrite = true;
             return;
         }
-        
+
         var stream = Activator.CreateInstance(this._listType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
         if (ok) {

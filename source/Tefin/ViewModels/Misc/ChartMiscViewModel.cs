@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 using LiveChartsCore;
@@ -110,22 +109,28 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     }
 
     public class SeriesModel {
-        private readonly string _clientName;
-        private readonly string _method;
-        private readonly ColumnSeries<double> _series;
-
         public SeriesModel(string clientName, string method, ColumnSeries<double> series) {
-            this._clientName = clientName;
-            this._method = method;
-            this._series = series;
+            this.ClientName = clientName;
+            this.Method = method;
+            this.Series = series;
             series.Values = this.Values;
             series.MaxBarWidth = 20;
         }
 
-        public string ClientName { get => this._clientName; }
+        public string ClientName {
+            get;
+        }
+
         public string Id { get => $"{this.ClientName}/{this.Method}"; }
-        public string Method { get => this._method; }
-        public ColumnSeries<double> Series { get => this._series; }
+
+        public string Method {
+            get;
+        }
+
+        public ColumnSeries<double> Series {
+            get;
+        }
+
         public ObservableCollection<double> Values { get; } = new();
     }
 }

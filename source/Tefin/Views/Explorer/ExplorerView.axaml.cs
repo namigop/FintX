@@ -21,7 +21,6 @@ public partial class ExplorerView : UserControl {
         this.InitializeComponent();
         this.TreeDg.DoubleTapped += this.OnDoubleTapped;
         this.TreeDg.Tapped += this.TreeDgOnTapped;
-        this.TreeDg.SelectionChanging += this.TreeDgOnSelectionChanging;
     }
 
     private void OnDoubleTapped(object? sender, TappedEventArgs e) {
@@ -38,14 +37,7 @@ public partial class ExplorerView : UserControl {
             }
         }
     }
-
-    private void TreeDgOnSelectionChanging(object? sender, CancelEventArgs e) {
-        var node = this.TreeDg.RowSelection?.SelectedItem;
-        if (node is IExplorerItem item) {
-            item.IsSelected = false;
-        }
-    }
-
+ 
     private void TreeDgOnTapped(object? sender, TappedEventArgs e) {
         var node = this.TreeDg.RowSelection?.SelectedItem;
         if (node is IExplorerItem item) {

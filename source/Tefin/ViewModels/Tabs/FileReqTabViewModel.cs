@@ -13,6 +13,5 @@ public class FileReqTabViewModel(FileReqNode item) : TabViewModelBase(item) {
     }
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
-    }  
-     
+    }
 }

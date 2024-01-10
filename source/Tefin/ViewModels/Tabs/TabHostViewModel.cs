@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using Avalonia.Threading;
 
@@ -43,7 +42,7 @@ public class TabHostViewModel : ViewModelBase {
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
         obj.Tab.Init();
-        
+
         var existing = this.Items.FirstOrDefault(t => t.Id == obj.Tab.Id);
         if (existing != null) {
             this.SelectedItem = existing;
@@ -52,8 +51,7 @@ public class TabHostViewModel : ViewModelBase {
             this.Items.Add(obj.Tab);
             this.SelectedItem = this.Items.Last();
         }
-        
-       
+
 
     }
 }

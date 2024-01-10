@@ -12,7 +12,6 @@ namespace Tefin.ViewModels.Tabs;
 
 public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IResponseEditorViewModel {
     private string _json = "";
-    private Type? _responseType;
 
     public string Json {
         get => this._json;
@@ -20,13 +19,15 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
     }
 
     public Type? ResponseType {
-        get => this._responseType;
+        get;
+        private set;
     }
+
     public MethodInfo MethodInfo { get; } = methodInfo;
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         try {
-            this._responseType = responseType;
+            this.ResponseType = responseType;
             var resp = await completeRead();
             this.Json = Instance.indirectSerialize(responseType, resp);
         }
@@ -40,8 +41,8 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
     }
 
     public (bool, object?) GetResponse() {
-        if (this._responseType != null) {
-            var resp = Instance.indirectDeserialize(this._responseType, this.Json);
+        if (this.ResponseType != null) {
+            var resp = Instance.indirectDeserialize(this.ResponseType, this.Json);
             return (true, resp);
         }
 
@@ -50,8 +51,8 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
 
     public void Show(object? resp, Type? responseType) {
         if (responseType != null) {
-            this._responseType = responseType;
-            this.Json = Instance.indirectSerialize(this._responseType, resp);
+            this.ResponseType = responseType;
+            this.Json = Instance.indirectSerialize(this.ResponseType, resp);
         }
     }
 }

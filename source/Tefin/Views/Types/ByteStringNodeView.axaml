@@ -31,7 +31,8 @@
                        VerticalAlignment="Center"
                        Foreground="WhiteSmoke" />
             <TextBlock Text="{Binding FormattedTypeName}" Classes="SubTitle" Margin="6 0 0 0" />
-            <TextBlock Text="{Binding FormattedValue}" Margin="6 0 0 0" VerticalAlignment="Center" Classes="FormattedValue" />
+            <TextBlock Text="{Binding FormattedValue}" Margin="6 0 0 0" VerticalAlignment="Center"
+                       Classes="FormattedValue" />
 
         </StackPanel>
     </StackPanel>

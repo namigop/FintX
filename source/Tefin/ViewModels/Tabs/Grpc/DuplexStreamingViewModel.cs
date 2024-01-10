@@ -85,7 +85,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         return this.ReqViewModel.GetRequestContent();
     }
     public override void ImportRequest(string requestFile) {
-        throw new NotImplementedException();
+        this.ReqViewModel.ImportRequestFile(requestFile);
     }
     private void OnIsBusyChanged(ViewModelBase obj) {
         this.IsBusy = obj.IsBusy;

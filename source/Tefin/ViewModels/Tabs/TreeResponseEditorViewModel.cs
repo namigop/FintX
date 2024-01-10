@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Reflection;
 
 using Avalonia.Controls;
@@ -15,7 +14,6 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
-    private Type? _responseType;
     public TreeResponseEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
@@ -32,14 +30,16 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
     public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
 
     public Type? ResponseType {
-        get => this._responseType;
+        get;
+        private set;
     }
+
     public MethodInfo MethodInfo { get; }
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         this.Items.Clear();
         try {
-            this._responseType = responseType;
+            this.ResponseType = responseType;
             var resp = await completeRead();
             var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null);
             node.Init();
@@ -56,7 +56,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
     }
 
     public (bool, object?) GetResponse() {
-        if (this._responseType == null)
+        if (this.ResponseType == null)
             return (false, null);
 
         if (this.Items.Any()) {
@@ -73,8 +73,8 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
             return;
 
         try {
-            this._responseType = responseType;
-            var node = new ResponseNode(this.MethodInfo.Name, this._responseType, null, resp, null);
+            this.ResponseType = responseType;
+            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null);
             node.Init();
             this.Items.Add(node);
         }

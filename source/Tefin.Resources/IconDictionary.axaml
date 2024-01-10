@@ -10,7 +10,17 @@
     <system:String x:Key="Icon.Cancel">Icon.Cancel</system:String>
     <system:String x:Key="Icon.Write">Icon.Write</system:String>
     <system:String x:Key="Icon.StopWrite">Icon.StopWrite</system:String>
+    <system:String x:Key="Icon.OpenNew">Icon.OpenNew</system:String>
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.OpenNew}">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Fill="SlateGray"
+                          Data="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+
         <DataTemplate x:Key="{StaticResource Icon.Write}">
             <Viewbox>
                 <Canvas Width="24" Height="24">
@@ -60,8 +70,9 @@
                         <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#DEDEDE" />
                     </Canvas>
                     <Canvas>
-                        <Path Data="M12.368,7.627L15.2,10.51l-2.832,2.868M15.158,10.501H9.889c-1.306,0,-2.364,1.058,-2.364,2.364v0c0,1.306,1.058,2.364,2.364,2.364h0.709"
-                              Stroke="#20A0E0" StrokeThickness="1" />
+                        <Path
+                            Data="M12.368,7.627L15.2,10.51l-2.832,2.868M15.158,10.501H9.889c-1.306,0,-2.364,1.058,-2.364,2.364v0c0,1.306,1.058,2.364,2.364,2.364h0.709"
+                            Stroke="#20A0E0" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
@@ -70,11 +81,14 @@
             <Viewbox>
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
-                        <Path Data="M15.5,0.3v3.2h-3.7M15.525,3.525l-2.268,-2.308C12.805,0.758,12.187,0.5,11.543,0.5H8.3" Stroke="#1ED15D" StrokeThickness="1" />
+                        <Path
+                            Data="M15.5,0.3v3.2h-3.7M15.525,3.525l-2.268,-2.308C12.805,0.758,12.187,0.5,11.543,0.5H8.3"
+                            Stroke="#1ED15D" StrokeThickness="1" />
                         <Path
                             Data="M13.5,15.5H1.5V4.074c0,-0.317,0.257,-0.574,0.574,-0.574h3.437c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C7.963,5.42,8.211,5.5,8.465,5.5H13.5V15.5z"
                             Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
-                        <Polygon Points="13.5,15.5 1.5,15.5 0.6,7.5 14.4,7.5" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Polygon Points="13.5,15.5 1.5,15.5 0.6,7.5 14.4,7.5" Fill="#4E4E4E" Stroke="#D8D8D8"
+                                 StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

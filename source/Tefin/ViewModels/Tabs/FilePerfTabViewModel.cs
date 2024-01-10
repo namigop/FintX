@@ -15,7 +15,7 @@ public class FilePerfTabViewModel(FilePerfNode item) : TabViewModelBase(item) {
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
     }
-  
+
 
     protected override Task OnClose() {
         return base.OnClose();

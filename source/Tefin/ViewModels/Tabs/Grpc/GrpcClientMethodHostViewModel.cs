@@ -28,6 +28,7 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
     }
 
     public override string ApiType { get; } = GrpcPackage.packageName;
+    public GrpCallTypeViewModelBase CallType { get; }
 
     public override void ImportRequestFile(string requestFile) {
         this._importFile = requestFile;
@@ -36,7 +37,6 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
     public override string GetRequestContent() {
         return this.CallType.GetRequestContent();
     }
-    public GrpCallTypeViewModelBase CallType { get; }
 
     public override void Dispose() {
         base.Dispose();

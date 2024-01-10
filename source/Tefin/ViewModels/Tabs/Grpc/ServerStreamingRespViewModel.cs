@@ -19,7 +19,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
     private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
-   // private CancellationTokenSource? _cs;
+    // private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
     private IListEditorViewModel _serverStreamEditor;
 
@@ -33,10 +33,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         this._serverStreamJsonEditor = new ListJsonEditorViewModel("response stream", this._listType);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
-        
+
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
-    
+
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
@@ -50,15 +50,15 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
-    
+
     public async Task SetupServerStreamNode(object response) {
         var resp = (ServerStreamingCallResponse)response;
         var readServerStream = new ReadServerStreamFeature();
 
-        try { 
+        try {
             this.CanRead = true;
             await foreach (var d in readServerStream.ReadResponseStream(resp, CancellationToken.None)) {
-               
+
                 this.ServerStreamEditor.AddItem(d);
             }
         }

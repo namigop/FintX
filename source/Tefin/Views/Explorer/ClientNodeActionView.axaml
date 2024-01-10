@@ -35,7 +35,8 @@
                     </Style.Animations>
                 </Style>
             </StackPanel.Styles>
-            <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle" Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
+            <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle"
+                    Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
                 <Viewbox Width="18" Height="18">
                     <Canvas
                         Width="24" Height="24">
@@ -44,7 +45,8 @@
                     </Canvas>
                 </Viewbox>
             </Button>
-            <Button Classes="ClearButtonStyle" Command="{Binding OpenClientConfigCommand}" ToolTip.Tip="open client config">
+            <Button Classes="ClearButtonStyle" Command="{Binding OpenClientConfigCommand}"
+                    ToolTip.Tip="open client config">
                 <Viewbox Width="16" Height="16">
                     <Canvas Width="16" Height="16">
                         <Canvas>

@@ -33,11 +33,11 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         this._serverStreamJsonEditor = new ListJsonEditorViewModel("response stream", this._listType);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
-    
+
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
 
-   
+
 
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
@@ -51,7 +51,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
- 
+
     public async Task SetupDuplexStreamNode(object response) {
         var resp = (DuplexStreamingCallResponse)response;
         var readDuplexStream = new ReadDuplexStreamFeature();

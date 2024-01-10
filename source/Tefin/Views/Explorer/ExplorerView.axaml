@@ -16,10 +16,12 @@
                 <viewModels:NodeViewLocator x:Key="NodeViewLocator" />
                 <viewModels:NodeActionViewLocator x:Key="NodeActionViewLocator" />
                 <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
-                    <ContentControl Content="{Binding}" Margin="4 0 0 0" ContentTemplate="{StaticResource NodeViewLocator}" />
+                    <ContentControl Content="{Binding}" Margin="4 0 0 0"
+                                    ContentTemplate="{StaticResource NodeViewLocator}" />
                 </DataTemplate>
                 <DataTemplate x:Key="CellActionTemplate" x:DataType="explorer:IExplorerItem">
-                    <ContentControl Content="{Binding}" Margin="4 0 0 0" ContentTemplate="{StaticResource NodeActionViewLocator}" />
+                    <ContentControl Content="{Binding}" Margin="4 0 0 0"
+                                    ContentTemplate="{StaticResource NodeActionViewLocator}" />
                 </DataTemplate>
             </TreeDataGrid.Resources>
         </TreeDataGrid>

@@ -32,7 +32,9 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" OnContent="Use client x509 certificate (https://)" OffContent="Don't use SSL (http://)" />
+                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0"
+                                  OnContent="Use client x509 certificate (https://)"
+                                  OffContent="Don't use SSL (http://)" />
                     <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSsl}" Margin="12 0 0 0">
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
                             <RadioButton Content="File" Margin="0" IsChecked="{Binding IsCertFromFile}" />
@@ -49,16 +51,19 @@
                                 <ComboBox ItemsSource="{Binding CertStoreLocations}"
                                           DockPanel.Dock="Left"
                                           SelectedItem="{Binding SelectedCertStoreLocation}" />
-                                <Button DockPanel.Dock="Right" Margin="6 0 0 0" Command="{Binding LoadStoreCertificatesCommand}">
+                                <Button DockPanel.Dock="Right" Margin="6 0 0 0"
+                                        Command="{Binding LoadStoreCertificatesCommand}">
                                     <TextBlock Text="..." />
                                     <Button.Flyout>
                                         <Flyout ShowMode="TransientWithDismissOnPointerMoveAway">
-                                            <ListBox Padding="2" ItemsSource="{Binding StoreCertificates}" SelectedItem="{Binding SelectedStoreCertificate}">
+                                            <ListBox Padding="2" ItemsSource="{Binding StoreCertificates}"
+                                                     SelectedItem="{Binding SelectedStoreCertificate}">
                                                 <ListBox.ItemTemplate>
                                                     <DataTemplate>
                                                         <StackPanel>
                                                             <TextBlock Text="{Binding Subject}" />
-                                                            <TextBlock Text="{Binding Thumbprint}" FontSize="12" Foreground="CornflowerBlue" />
+                                                            <TextBlock Text="{Binding Thumbprint}" FontSize="12"
+                                                                       Foreground="CornflowerBlue" />
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </ListBox.ItemTemplate>

@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;

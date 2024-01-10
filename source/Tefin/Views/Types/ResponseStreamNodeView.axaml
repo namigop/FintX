@@ -14,8 +14,10 @@
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16">
                     <Canvas>
-                        <Path Data="M4,15H2v-2h2V15zM4,7H2v2h2V7zM3,3.5v3.45M3,9v4M4,8h2.5M4,14h2.35" Fill="Transparent" Stroke="#D8D8D8" StrokeThickness="1" />
-                        <Path Data="M11.5,3.5H0.5V0.5h11V3.5zM15.5,6.5H6.5v3h9V6.5zM15.5,12.5H6.5v3h9V12.5z" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Path Data="M4,15H2v-2h2V15zM4,7H2v2h2V7zM3,3.5v3.45M3,9v4M4,8h2.5M4,14h2.35"
+                              Fill="Transparent" Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Path Data="M11.5,3.5H0.5V0.5h11V3.5zM15.5,6.5H6.5v3h9V6.5zM15.5,12.5H6.5v3h9V12.5z"
+                              Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

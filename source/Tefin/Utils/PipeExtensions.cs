@@ -2,7 +2,7 @@ namespace Tefin.Utils;
 
 public static class PipeExtensions {
     /// <summary>
-    /// Pipes 1 functions
+    ///     Pipes 1 functions
     /// </summary>
     public static Void Then<A>(this A obj, Action func1) {
         func1();
@@ -10,7 +10,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 1 functions
+    ///     Pipes 1 functions
     /// </summary>
     public static Void Then<A>(this A obj, Action<A> func1) {
         func1(obj);
@@ -18,56 +18,56 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 1 functions
+    ///     Pipes 1 functions
     /// </summary>
     public static B Then<A, B>(this A obj, Func<B> func1) {
         return func1();
     }
 
     /// <summary>
-    /// Pipes 1 functions
+    ///     Pipes 1 functions
     /// </summary>
     public static B Then<A, B>(this A obj, Func<A, B> func1) {
         return func1(obj);
     }
 
     /// <summary>
-    /// Pipes 2 functions
+    ///     Pipes 2 functions
     /// </summary>
     public static C Then<A, B, C>(this A obj, Func<A, B> func1, Func<B, C> func2) {
         return func2(func1(obj));
     }
 
     /// <summary>
-    /// Pipes 3 functions
+    ///     Pipes 3 functions
     /// </summary>
     public static D Then<A, B, C, D>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3) {
         return func3(func2(func1(obj)));
     }
 
     /// <summary>
-    /// Pipes 4 functions
+    ///     Pipes 4 functions
     /// </summary>
     public static E Then<A, B, C, D, E>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4) {
         return func4(func3(func2(func1(obj))));
     }
 
     /// <summary>
-    /// Pipes 5 functions
+    ///     Pipes 5 functions
     /// </summary>
     public static F Then<A, B, C, D, E, F>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5) {
         return func5(func4(func3(func2(func1(obj)))));
     }
 
     /// <summary>
-    /// Pipes 6 functions
+    ///     Pipes 6 functions
     /// </summary>
     public static G Then<A, B, C, D, E, F, G>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6) {
         return func6(func5(func4(func3(func2(func1(obj))))));
     }
 
     /// <summary>
-    /// Pipes 7 functions
+    ///     Pipes 7 functions
     /// </summary>
     public static H Then<A, B, C, D, E, F, G, H>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6,
         Func<G, H> func7) {
@@ -75,7 +75,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 8 functions
+    ///     Pipes 8 functions
     /// </summary>
     public static I Then<A, B, C, D, E, F, G, H, I>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6,
         Func<G, H> func7, Func<H, I> func8) {
@@ -83,7 +83,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 9 functions
+    ///     Pipes 9 functions
     /// </summary>
     public static J Then<A, B, C, D, E, F, G, H, I, J>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6,
         Func<G, H> func7, Func<H, I> func8, Func<I, J> func9) {
@@ -91,7 +91,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 10 functions
+    ///     Pipes 10 functions
     /// </summary>
     public static K Then<A, B, C, D, E, F, G, H, I, J, K>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6,
         Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10) {
@@ -99,7 +99,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 11 functions
+    ///     Pipes 11 functions
     /// </summary>
     public static L Then<A, B, C, D, E, F, G, H, I, J, K, L>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5, Func<F, G> func6,
         Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11) {
@@ -107,7 +107,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 12 functions
+    ///     Pipes 12 functions
     /// </summary>
     public static M Then<A, B, C, D, E, F, G, H, I, J, K, L, M>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12) {
@@ -115,7 +115,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 13 functions
+    ///     Pipes 13 functions
     /// </summary>
     public static N Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13) {
@@ -123,7 +123,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 14 functions
+    ///     Pipes 14 functions
     /// </summary>
     public static O Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13, Func<N, O> func14) {
@@ -131,7 +131,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 15 functions
+    ///     Pipes 15 functions
     /// </summary>
     public static P Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13, Func<N, O> func14,
@@ -140,7 +140,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 16 functions
+    ///     Pipes 16 functions
     /// </summary>
     public static Q Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13, Func<N, O> func14,
@@ -149,7 +149,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 17 functions
+    ///     Pipes 17 functions
     /// </summary>
     public static R Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4, Func<E, F> func5,
         Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13, Func<N, O> func14,
@@ -158,7 +158,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 18 functions
+    ///     Pipes 18 functions
     /// </summary>
     public static S Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -167,7 +167,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 19 functions
+    ///     Pipes 19 functions
     /// </summary>
     public static T Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -176,7 +176,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 20 functions
+    ///     Pipes 20 functions
     /// </summary>
     public static U Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -185,7 +185,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 21 functions
+    ///     Pipes 21 functions
     /// </summary>
     public static V Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -194,7 +194,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 22 functions
+    ///     Pipes 22 functions
     /// </summary>
     public static W Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -204,7 +204,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 23 functions
+    ///     Pipes 23 functions
     /// </summary>
     public static X Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3, Func<D, E> func4,
         Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12, Func<M, N> func13,
@@ -215,7 +215,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 24 functions
+    ///     Pipes 24 functions
     /// </summary>
     public static Y Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3,
         Func<D, E> func4, Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12,
@@ -226,7 +226,7 @@ public static class PipeExtensions {
     }
 
     /// <summary>
-    /// Pipes 25 functions
+    ///     Pipes 25 functions
     /// </summary>
     public static Z Then<A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z>(this A obj, Func<A, B> func1, Func<B, C> func2, Func<C, D> func3,
         Func<D, E> func4, Func<E, F> func5, Func<F, G> func6, Func<G, H> func7, Func<H, I> func8, Func<I, J> func9, Func<J, K> func10, Func<K, L> func11, Func<L, M> func12,

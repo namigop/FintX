@@ -23,9 +23,11 @@
                             Fill="#FBD28A" />
                     </Canvas>
                     <Canvas>
-                        <Polyline Points="15.5,11.5 15.5,15.5 8.5,15.5 8.5,11.5" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Polyline Points="15.5,11.5 15.5,15.5 8.5,15.5 8.5,11.5" Fill="#4E4E4E" Stroke="#D8D8D8"
+                                  StrokeThickness="1" />
                         <Rectangle Canvas.Left="12" Canvas.Top="13" Width="2" Height="1" Fill="#20A0E0" />
-                        <Rectangle Canvas.Left="8.5" Canvas.Top="7.5" Width="7" Height="4" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="8.5" Canvas.Top="7.5" Width="7" Height="4" Fill="#4E4E4E"
+                                   Stroke="#D8D8D8" StrokeThickness="1" />
                         <Rectangle Canvas.Left="12" Canvas.Top="9" Width="2" Height="1" Fill="#20A0E0" />
                     </Canvas>
                 </Canvas>

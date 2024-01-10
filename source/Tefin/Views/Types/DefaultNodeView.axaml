@@ -15,9 +15,12 @@
                 <Canvas Width="16" Height="16">
                     <Canvas>
                         <Path Data="M10.6,6.5H5.1M7.5,6.5v7h3" Stroke="#D8D8D8" StrokeThickness="1" />
-                        <Path Data="M15.3,12.189l-3.165,3.11l-1.872,-1.839l3.165,-3.11L15.3,12.189z" Fill="#0A6DBD" Stroke="#92C6FF" StrokeThickness="1" />
-                        <Polygon Points="15.3,5.242 12.059,8.387 10.264,6.513 13.428,3.403" Fill="#A23E97" Stroke="#E2AAD7" StrokeThickness="1" />
-                        <Polygon Points="8.381,3.203 3.232,8.262 0.731,5.805 5.88,0.746" Fill="#BA9B04" Stroke="#FBD28A" StrokeThickness="1" />
+                        <Path Data="M15.3,12.189l-3.165,3.11l-1.872,-1.839l3.165,-3.11L15.3,12.189z" Fill="#0A6DBD"
+                              Stroke="#92C6FF" StrokeThickness="1" />
+                        <Polygon Points="15.3,5.242 12.059,8.387 10.264,6.513 13.428,3.403" Fill="#A23E97"
+                                 Stroke="#E2AAD7" StrokeThickness="1" />
+                        <Polygon Points="8.381,3.203 3.232,8.262 0.731,5.805 5.88,0.746" Fill="#BA9B04"
+                                 Stroke="#FBD28A" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

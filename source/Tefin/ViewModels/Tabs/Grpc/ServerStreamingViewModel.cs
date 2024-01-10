@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Windows.Input;
 
 using ReactiveUI;
+
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
@@ -61,7 +62,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private async Task OnImportRequest() {
         await this.ReqViewModel.ImportRequest();
     }
-    
+
     private async Task OnExportRequest() {
         await this.ReqViewModel.ExportRequest();
     }

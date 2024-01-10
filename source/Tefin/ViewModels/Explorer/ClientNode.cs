@@ -1,7 +1,8 @@
 #region
 
-using System.Linq;
 using System.Windows.Input;
+
+using Avalonia.Threading;
 
 using Newtonsoft.Json.Linq;
 
@@ -13,6 +14,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 using Tefin.ViewModels.Tabs;
 
@@ -108,30 +110,46 @@ public class ClientNode : NodeBase {
         }
 
         this.IsExpanded = true;
-        
-        this.LoadPreviousSession();
+
+        DispatcherTimer.RunOnce(this.LoadPreviousSession, TimeSpan.FromMilliseconds(500));
+        //this.LoadPreviousSession();
         this.RaisePropertyChanged(nameof(this.IsLoaded));
 
     }
     private void LoadPreviousSession() {
+        void LoadOne(string json, string reqFile) {
 
-        //Open auto-saved files into a tab
-        foreach (var reqFile in AutoSave.getAutoSavedFiles(this.Io, this._client.Path)) {
-            try {
+            var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
+            var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
+            var tab = TabFactory.From(item, this.Io, reqFile);
+            if (tab != null)
+                GlobalHub.publish(new OpenTabMessage(tab));
+        }
+
+
+        AutoSave.getAutoSavedFiles(this.Io, this._client.Path)
+            .Select(reqFile => {
                 var json = this.Io.File.ReadAllText(reqFile);
                 if (string.IsNullOrWhiteSpace(json))
-                    continue;
-                
-                var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
-                var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
-                var tab = TabFactory.From(item, this.Io, reqFile);
-                if (tab != null)
-                    GlobalHub.publish(new OpenTabMessage(tab));
-            }
-            catch (Exception exc                   ) {
-                Io.Log.Warn(exc.ToString());
-            }
-        }
+                    return null;
+                return (new Action(() => LoadOne(json, reqFile)));
+            })
+            .Where(a => a != null)
+            .ToArray()
+            .Then(actions => {
+                var pos = 0;
+                DispatcherTimer.Run(
+                    () => {
+                        if (pos < actions.Length) {
+                            actions[pos].Invoke();
+                            pos += 1;
+                            return true;
+                        }
+
+                        return false;
+                    },
+                    TimeSpan.FromMilliseconds(100));
+            });
     }
 
     private void OnDelete() {
@@ -172,7 +190,7 @@ public class ClientNode : NodeBase {
             var csFiles = this._client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
-                Type[]? types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
+                var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 this.ClientType = ServiceClient.findClientType(types).Value;
                 this.Init();
             }

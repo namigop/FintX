@@ -14,5 +14,4 @@ public class FileTestTabViewModel(FileTestNode item) : TabViewModelBase(item) {
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
     }
-    
 }

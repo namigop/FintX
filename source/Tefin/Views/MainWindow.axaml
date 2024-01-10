@@ -41,8 +41,10 @@
              </NativeMenu.Menu>-->
 
     <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="Auto, *, 8, 3*">
-        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center" HorizontalAlignment="Center" />
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
             <!-- <TextBlock Text="{Binding SubTitle}" FontSize="12" Foreground="DimGray" FontStyle="Italic" Margin="6 0 0 0" VerticalAlignment="Center" ></TextBlock> -->
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"

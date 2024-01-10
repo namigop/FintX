@@ -11,9 +11,12 @@
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16">
                     <Canvas>
-                        <Polygon Points="0.5,3.569 7.506,0.774 14.511,3.569 14.511,12.018 7.506,15.3 0.5,11.725" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
-                        <Line StartPoint="7.50,15.183" EndPoint="7.506, 6.87" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
-                        <Polyline Points="0.647,3.663 7.477,6.823 14.359,3.717" Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Polygon Points="0.5,3.569 7.506,0.774 14.511,3.569 14.511,12.018 7.506,15.3 0.5,11.725"
+                                 Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Line StartPoint="7.50,15.183" EndPoint="7.506, 6.87" Fill="Transparent" Stroke="#20A0E0"
+                              StrokeThickness="1" />
+                        <Polyline Points="0.647,3.663 7.477,6.823 14.359,3.717" Fill="Transparent" Stroke="#20A0E0"
+                                  StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
