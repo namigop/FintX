@@ -20,6 +20,7 @@ module CallClientStreaming =
                     ctx.Io.Value.Log.Info $"Invoking {methodInfo.Name} @ {callConfig.Url}"
 
                     try
+                        callError.Clear()
                         let! resp = MethodInvoker.invoke methodInfo mParams callConfig callError.Receive
                         
                         if callError.Failed then

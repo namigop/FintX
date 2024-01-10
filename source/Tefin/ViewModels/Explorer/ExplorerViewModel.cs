@@ -63,7 +63,9 @@ public class ExplorerViewModel : ViewModelBase {
 
     public override void Dispose() {
         base.Dispose();
-        this.ExplorerTree.RowSelection.SelectionChanged -= this.RowSelectionChanged;
+        var treeDataGridRowSelectionModel = this.ExplorerTree.RowSelection;
+        if (treeDataGridRowSelectionModel != null)
+            treeDataGridRowSelectionModel.SelectionChanged -= this.RowSelectionChanged;
     }
 
     public void AddClientNode(ClientGroup cg, Type? type = null) {

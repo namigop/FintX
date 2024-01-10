@@ -20,6 +20,7 @@ module CallDuplexStreaming =
                     ctx.Io.Value.Log.Info $"Invoking {methodInfo.Name} @ {callConfig.Url}"
 
                     try
+                        callError.Clear()
                         let! resp = MethodInvoker.invoke methodInfo mParams callConfig (callError.Receive)
                         if callError.Failed then
                             return { ctx with Response = Res.ok resp.Value; Error = callError.Exception }

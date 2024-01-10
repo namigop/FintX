@@ -64,12 +64,9 @@ public class UnaryRespViewModel : ViewModelBase {
             this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
     }
 
-
     public void Init() {
         this.ResponseEditor.Init();
     }
-
-
 
     public void Show(bool ok, object response, Context context) {
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
