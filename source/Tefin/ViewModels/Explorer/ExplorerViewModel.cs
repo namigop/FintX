@@ -1,10 +1,10 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Linq;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
 using Tefin.Core.Infra.Actors;
@@ -35,6 +35,7 @@ public class ExplorerViewModel : ViewModelBase {
         };
         this.ExplorerTree = temp;
 
+        this.ExplorerTree.RowSelection.SelectionChanged += this.RowSelectionChanged;
         GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
     }
@@ -43,10 +44,26 @@ public class ExplorerViewModel : ViewModelBase {
     public Project? Project { get; set; }
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
+    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+        foreach (var item in e.DeselectedItems) {
+            item.IsSelected = false;
+        }
+
+        foreach (var item in e.SelectedItems) {
+            item.IsSelected = true;
+        }
+
+    }
+
     private void OnClientDeleted(ClientDeletedMessage obj) {
         var target = this.Items.FirstOrDefault(t => t is ClientNode cn && cn.ClientPath == obj.Client.Path);
         if (target != null)
             this.Items.Remove(target);
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        this.ExplorerTree.RowSelection.SelectionChanged -= this.RowSelectionChanged;
     }
 
     public void AddClientNode(ClientGroup cg, Type? type = null) {
@@ -64,14 +81,14 @@ public class ExplorerViewModel : ViewModelBase {
 
     private async Task OnShowClient(ShowClientMessage obj) {
         var compileOutput = obj.Output;
-        Type[]? types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
+        var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
         var type = ServiceClient.findClientType(types).Value;
         if (type != null && this.Project != null) {
-           
+
             //Update the currently loaded project
             var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!, obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
             await feature.Add();
-            
+
             //reload the project to take in the newly added client
             var proj = Core.Project.loadProject(this.Io, this.Project.Path);
             this.Project = proj;

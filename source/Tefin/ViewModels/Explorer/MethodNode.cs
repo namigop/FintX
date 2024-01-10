@@ -1,9 +1,12 @@
 #region
 
-using System.Linq;
 using System.Reflection;
+using System.Windows.Input;
 
+using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Messages;
+using Tefin.ViewModels.Tabs;
 using Tefin.ViewModels.Tabs.Grpc;
 
 #endregion
@@ -11,19 +14,30 @@ using Tefin.ViewModels.Tabs.Grpc;
 namespace Tefin.ViewModels.Explorer;
 
 public class MethodNode : NodeBase {
-    public MethodInfo MethodInfo {
-        get;
-    }
-
     public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         //this.ClientVm = clientVm;
         this.MethodInfo = methodInfo;
         this.Client = cg;
         this.CanOpen = true;
         this.Title = methodInfo.Name;
+        this.OpenMethodCommand = this.CreateCommand(this.OnOpenMethod);
+    }
+
+    public ICommand OpenMethodCommand {
+        get;
+    }
+
+    public MethodInfo MethodInfo {
+        get;
     }
 
     public ProjectTypes.ClientGroup Client { get; set; }
+
+    private void OnOpenMethod() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null)
+            GlobalHub.publish(new OpenTabMessage(tab));
+    }
 
     public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);
