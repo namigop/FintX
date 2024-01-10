@@ -16,5 +16,5 @@ public abstract class ClientMethodViewModelBase : ViewModelBase {
 
     public abstract string GetRequestContent();
 
-    public abstract void ImportRequest(string requestFile);
+    public abstract void ImportRequestFile(string requestFile);
 }

@@ -130,13 +130,17 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     public void SetupClientStream(ClientStreamingCallResponse response) {
         this._callResponse = response;
+        if (this._clientStreamEditor.GetListItems().Any()) {
+            this.CanWrite = true;
+            return;
+        }
+        
+        
         var stream = Activator.CreateInstance(this._listType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
             var add = this._listType.GetMethod("Add");
-            add!.Invoke(stream, new[] {
-                reqInstance
-            });
+            add!.Invoke(stream, new[] { reqInstance });
         }
         else
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");

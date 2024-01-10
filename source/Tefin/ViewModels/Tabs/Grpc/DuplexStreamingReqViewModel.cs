@@ -66,6 +66,11 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this._callResponse = response;
+        if (this._clientStreamEditor.GetListItems().Any()) {
+            this.CanWrite = true;
+            return;
+        }
+        
         var stream = Activator.CreateInstance(this._listType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
         if (ok) {

@@ -29,7 +29,7 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public override string ApiType { get; } = GrpcPackage.packageName;
 
-    public override void ImportRequest(string requestFile) {
+    public override void ImportRequestFile(string requestFile) {
         this._importFile = requestFile;
     }
 
@@ -45,6 +45,10 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public void Init() {
         this.CallType.Init();
-        this.CallType.ImportRequest(this._importFile);
+        if (!string.IsNullOrEmpty(this._importFile) && this.Io.File.Exists(this._importFile)) {
+            this.CallType.ImportRequest(this._importFile);
+            this._importFile = null;
+
+        }
     }
 }

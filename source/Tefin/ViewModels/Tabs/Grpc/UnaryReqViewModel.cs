@@ -1,5 +1,6 @@
 #region
 
+using System.Diagnostics;
 using System.Reflection;
 
 using ReactiveUI;
@@ -92,6 +93,8 @@ public class UnaryReqViewModel : ViewModelBase {
         var (export, _) = import.Run();
         if (export.IsOk) {
             var methodParams = export.ResultValue;
+            if (methodParams == null)
+                Debugger.Break();
             this._methodParameterInstances = methodParams;
             this.Init();
         }

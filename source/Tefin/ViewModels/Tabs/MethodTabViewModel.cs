@@ -9,7 +9,9 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public class MethodTabViewModel : TabViewModelBase {
-    public MethodTabViewModel(MethodNode item) : base(item) {
+    private readonly string? _requestFile;
+    public MethodTabViewModel(MethodNode item, string requestFile = null) : base(item) {
+        this._requestFile = requestFile;
         this.ClientMethod = item.CreateViewModel();
         this.Client = item.Client;
 
@@ -32,12 +34,17 @@ public class MethodTabViewModel : TabViewModelBase {
         return this.ClientMethod.GetRequestContent();
     }
 
-    public override void Import(string reqFile) {
-        this.ClientMethod.ImportRequest(reqFile);
-    }
+  
     
     public override void Init() {
-        this.Id = this.GetTabId();
+        if (!string.IsNullOrEmpty(this._requestFile)) {
+            this.Id = this._requestFile;
+            this.ClientMethod.ImportRequestFile(this._requestFile);
+        }
+        else {
+            this.Id =  this.GetTabId();
+        }
+        
         this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
 

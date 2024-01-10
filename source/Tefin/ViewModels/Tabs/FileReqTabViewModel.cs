@@ -16,7 +16,5 @@ public class FileReqTabViewModel : TabViewModelBase {
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
     }  
-    public override void Import(string reqFile) {
-        throw new NotImplementedException();
-    }
+     
 }

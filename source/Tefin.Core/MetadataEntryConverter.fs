@@ -12,7 +12,7 @@ type MetadataEntryConverter() =
     override x.CanRead = true
     override x.CanWrite = false
     override x.CanConvert(objectType:Type) =   objectType = typeof<Metadata.Entry>
-    override x.WriteJson(writer:JsonWriter, value:obj, serializer:JsonSerializer) =
+    override x.WriteJson(writer:JsonWriter, value:obj, serializer:JsonSerializer) =        
         //Not needed since CanWrite= false
         failwith "not supported"
     

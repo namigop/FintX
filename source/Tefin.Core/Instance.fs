@@ -18,7 +18,7 @@ module Instance =
         settings.Converters.Add(ByteStringConverter())
         settings.Converters.Add(MetadataEntryConverter())
         settings.Converters.Add(StatusConverter())
-        //settings.Converters.Add(CancellationTokenConverter())
+        settings.Converters.Add(CancellationTokenConverter())
         settings
 
     let jsonSerialize<'T when 'T: equality> (objToSerialize: 'T) =
@@ -26,7 +26,7 @@ module Instance =
             if not (objToSerialize = Unchecked.defaultof<'T>) then
                 use sw = new StringWriter()
                 use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation =4)
-                let ser = JsonSerializer.CreateDefault()
+                let ser = JsonSerializer.Create jsonSettings // .CreateDefault()
                 ser.Serialize(jw, objToSerialize)
                 let json = sw.ToString()                
                 json

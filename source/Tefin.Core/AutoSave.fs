@@ -50,7 +50,8 @@ module AutoSave =
             
         match f.FullPath with
         | Some file ->
-            write file f.Json
+            if not (System.String.IsNullOrWhiteSpace f.Json) then
+                write file f.Json
             f
         | None ->
             // if the json content was provided but no full path, we save it with the

@@ -124,9 +124,9 @@ public class ClientNode : NodeBase {
                 
                 var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
                 var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
-                var tab = TabFactory.From(item, this.Io);
+                var tab = TabFactory.From(item, this.Io, reqFile);
                 if (tab != null)
-                    GlobalHub.publish(new OpenTabMessage(tab, reqFile));
+                    GlobalHub.publish(new OpenTabMessage(tab));
             }
             catch (Exception exc                   ) {
                 Io.Log.Warn(exc.ToString());

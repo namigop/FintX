@@ -7,11 +7,6 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Messages;
 
 public class OpenTabMessage : TabMessageBase {
-    public OpenTabMessage(ITabViewModel tab, string file) : base(tab) {
-        this.RequestFile = file;
-    }
-
-    public string RequestFile {
-        get;
+    public OpenTabMessage(ITabViewModel tab) : base(tab) {
     }
 }

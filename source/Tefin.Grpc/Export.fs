@@ -72,8 +72,11 @@ module Export =
             |> Res.map (fun info ->
                     let requestTyp = DynamicTypes.emitRequestClassForMethod(p.Method) |> Res.getValue
                     let objArray = DynamicTypes.toMethodParams p.Method requestTyp info.Request
-                    if not isStreaming then                       
-                        struct ((Res.ok objArray), (Res.failed (failwith "not expected")))
+                    if not isStreaming then
+                        let a = Res.ok objArray
+                        let b = Res.failed (Exception("not expected"))
+                        struct (a, b)
+                        //struct ((Res.ok objArray), (Res.failed (failwith "not expected")))
                     else
                         let reqStream = info.RequestStream.Value
                         struct ((Res.ok objArray), (Res.ok reqStream))

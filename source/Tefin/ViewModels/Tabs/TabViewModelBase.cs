@@ -22,7 +22,6 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         this.ExplorerItem = item;
         this._subTitle = item.SubTitle;
         this._disposable = item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title);
-
         this.CloseCommand = this.CreateCommand(this.OnClose);
 
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
@@ -30,7 +29,6 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
-    public abstract void Import(string requestFile);
     public bool AllowDuplicates { get; set; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }
