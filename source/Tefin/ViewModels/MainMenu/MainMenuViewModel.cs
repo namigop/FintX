@@ -11,11 +11,13 @@ public class MainMenuViewModel : ViewModelBase {
 
     public MainMenuViewModel() {
         this.ClientMenuItem = new ClientMenuItemViewModel(this);
+        this.InfoMenuItem = new InfoMenuItemViewModel(this);
         this.ServerMenuItem = new ServerMenuItemViewModel(this);
         this.ConfigMenuItem = new ConfigMenuItemViewModel(this);
         this.SelectedMenu = new SelectedMenuViewModel();
     }
 
+    public InfoMenuItemViewModel InfoMenuItem { get; }
     public ClientMenuItemViewModel ClientMenuItem { get; }
     public ConfigMenuItemViewModel ConfigMenuItem { get; }
     public ServerMenuItemViewModel ServerMenuItem { get; }
@@ -28,7 +30,7 @@ public class MainMenuViewModel : ViewModelBase {
             this.SelectedMenu.MenuItem = this._selectedMenuItem;
 
             foreach (var s in new IMenuItemViewModel[] {
-                         this.ClientMenuItem, this.ServerMenuItem, this.ConfigMenuItem
+                         this.ClientMenuItem, this.ServerMenuItem, this.ConfigMenuItem, this.InfoMenuItem
                      }) {
                 s.IsSelected = s == this._selectedMenuItem;
             }

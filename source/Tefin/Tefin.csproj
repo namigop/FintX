@@ -325,6 +325,10 @@
           <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\MainMenu\InfoMenuItemView.axaml.cs">
+          <DependentUpon>InfoMenuItemView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 
