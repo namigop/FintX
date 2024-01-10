@@ -6,12 +6,7 @@ using Tefin.ViewModels.Overlay;
 
 namespace Tefin.Messages;
 
-public class CloseOverlayMessage : MessageBase {
-    public CloseOverlayMessage(IOverlayViewModel overlayContent) {
-        this.Title = overlayContent.Title;
-        this.OverlayContent = overlayContent;
-    }
-
-    public IOverlayViewModel OverlayContent { get; }
-    public string Title { get; }
+public class CloseOverlayMessage(IOverlayViewModel overlayContent) : MessageBase {
+    public IOverlayViewModel OverlayContent { get; } = overlayContent;
+    public string Title { get; } = overlayContent.Title;
 }

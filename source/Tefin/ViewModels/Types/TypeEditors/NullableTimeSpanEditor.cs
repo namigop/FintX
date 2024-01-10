@@ -1,6 +1,3 @@
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class NullableTimeSpanEditor : TypeEditorBase<TimeSpan?> {
-    public NullableTimeSpanEditor(TypeBaseNode node) : base(node) {
-    }
-}
+public class NullableTimeSpanEditor(TypeBaseNode node) : TypeEditorBase<TimeSpan?>(node);

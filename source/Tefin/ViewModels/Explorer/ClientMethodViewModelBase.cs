@@ -6,13 +6,9 @@ using System.Reflection;
 
 namespace Tefin.ViewModels.Explorer;
 
-public abstract class ClientMethodViewModelBase : ViewModelBase {
-    protected ClientMethodViewModelBase(MethodInfo mi) {
-        this.MethodInfo = mi;
-    }
-
+public abstract class ClientMethodViewModelBase(MethodInfo mi) : ViewModelBase {
     public abstract string ApiType { get; }
-    public MethodInfo MethodInfo { get; }
+    public MethodInfo MethodInfo { get; } = mi;
 
     public abstract string GetRequestContent();
 

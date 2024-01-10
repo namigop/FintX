@@ -7,17 +7,8 @@ using Tefin.Core.Interop;
 
 namespace Tefin.Features;
 
-public class SaveClientConfigFeature {
-    private readonly ProjectTypes.ClientConfig _cfg;
-    private readonly string _clientConfigFile;
-    private readonly IOResolver _io;
-    public SaveClientConfigFeature(string clientConfigFile, ProjectTypes.ClientConfig cfg, IOResolver io) {
-        this._clientConfigFile = clientConfigFile;
-        this._cfg = cfg;
-        this._io = io;
-    }
-
+public class SaveClientConfigFeature(string clientConfigFile, ProjectTypes.ClientConfig cfg, IOResolver io) {
     public async Task Save() {
-        await Project.updateClientConfig(this._io, this._clientConfigFile, this._cfg);
+        await Project.updateClientConfig(io, clientConfigFile, cfg);
     }
 }

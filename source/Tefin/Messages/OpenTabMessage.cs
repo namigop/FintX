@@ -6,7 +6,4 @@ using Tefin.ViewModels.Tabs;
 
 namespace Tefin.Messages;
 
-public class OpenTabMessage : TabMessageBase {
-    public OpenTabMessage(ITabViewModel tab) : base(tab) {
-    }
-}
+public class OpenTabMessage(ITabViewModel tab) : TabMessageBase(tab);

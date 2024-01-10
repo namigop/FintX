@@ -1,6 +1,3 @@
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class GuidEditor : TypeEditorBase<Guid> {
-    public GuidEditor(TypeBaseNode node) : base(node) {
-    }
-}
+public class GuidEditor(TypeBaseNode node) : TypeEditorBase<Guid>(node);

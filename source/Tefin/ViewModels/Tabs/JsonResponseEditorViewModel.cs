@@ -10,13 +10,9 @@ using Tefin.Core;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class JsonResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
-    private string _json;
+public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IResponseEditorViewModel {
+    private string _json = "";
     private Type? _responseType;
-    public JsonResponseEditorViewModel(MethodInfo methodInfo) {
-        this.MethodInfo = methodInfo;
-        this._json = "";
-    }
 
     public string Json {
         get => this._json;
@@ -26,7 +22,7 @@ public class JsonResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
     public Type? ResponseType {
         get => this._responseType;
     }
-    public MethodInfo MethodInfo { get; }
+    public MethodInfo MethodInfo { get; } = methodInfo;
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         try {

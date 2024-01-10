@@ -6,15 +6,10 @@ using System.Reflection;
 
 namespace Tefin.ViewModels.Types;
 
-public class ListTypeInfo : ITypeInfo {
-    public ListTypeInfo(int index, Type itemType, ListNode parentNode) {
-        this.Index = index;
-        this.ItemType = itemType;
-        this.ParentNode = parentNode;
-    }
-    public int Index { get; }
-    public Type ItemType { get; }
-    public ListNode ParentNode { get; }
+public class ListTypeInfo(int index, Type itemType, ListNode parentNode) : ITypeInfo {
+    public int Index { get; } = index;
+    public Type ItemType { get; } = itemType;
+    public ListNode ParentNode { get; } = parentNode;
 
     public bool CanRead {
         get => true;

@@ -6,14 +6,8 @@ using System.Reflection;
 
 namespace Tefin.ViewModels.Types;
 
-public class TimestampTypeInfo : ITypeInfo {
-    private readonly int _index;
-
-    public TimestampTypeInfo(int index, TimestampNode parentNode) {
-        this._index = index;
-        this.ParentNode = parentNode;
-    }
-    public TimestampNode ParentNode { get; }
+public class TimestampTypeInfo(int index, TimestampNode parentNode) : ITypeInfo {
+    public TimestampNode ParentNode { get; } = parentNode;
 
     public bool CanRead {
         get => true;
@@ -35,14 +29,14 @@ public class TimestampTypeInfo : ITypeInfo {
     public object? GetValue(object parentInstance) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
         return pi?.GetValue(parentInstance, new object[] {
-            this._index
+            index
         });
     }
 
     public void SetValue(object parentInstance, object? value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
         pi?.SetValue(parentInstance, value, new object[] {
-            this._index
+            index
         });
     }
 }

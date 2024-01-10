@@ -13,12 +13,8 @@ using Tefin.Grpc.Dynamic;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-    private string _json;
-    public JsonRequestEditorViewModel(MethodInfo methodInfo) {
-        this.MethodInfo = methodInfo;
-        this._json = "";
-    }
+public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IRequestEditorViewModel {
+    private string _json = "";
 
     public string Json {
         get => this._json;
@@ -32,7 +28,7 @@ public class JsonRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
     public MethodInfo MethodInfo {
         get;
-    }
+    } = methodInfo;
 
     public (bool, object?[]) GetParameters() {
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);

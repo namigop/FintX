@@ -7,14 +7,8 @@ using Tefin.Core.Interop;
 
 namespace Tefin.Features;
 
-public class DeleteClientFeature {
-    private readonly ProjectTypes.ClientGroup _client;
-    private readonly IOResolver _io;
-    public DeleteClientFeature(ProjectTypes.ClientGroup client, IOResolver io) {
-        this._client = client;
-        this._io = io;
-    }
+public class DeleteClientFeature(ProjectTypes.ClientGroup client, IOResolver io) {
     public void Delete() {
-        Project.deleteClient(this._client, this._io);
+        Project.deleteClient(client, io);
     }
 }

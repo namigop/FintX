@@ -6,9 +6,7 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class FileReqTabViewModel : TabViewModelBase {
-    public FileReqTabViewModel(FileReqNode item) : base(item) {
-    }
+public class FileReqTabViewModel(FileReqNode item) : TabViewModelBase(item) {
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);

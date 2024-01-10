@@ -1,9 +1,6 @@
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class StringEditor : TypeEditorBase<string> {
-    public StringEditor(TypeBaseNode node) : base(node) {
-    }
-
+public class StringEditor(TypeBaseNode node) : TypeEditorBase<string>(node) {
     public override bool AcceptsNull {
         get => true;
     }

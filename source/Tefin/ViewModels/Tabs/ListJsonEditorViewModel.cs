@@ -11,21 +11,12 @@ using Tefin.Core.Reflection;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
-    private readonly MethodInfo _addMethod;
-    private readonly Type _listItemType;
-    private readonly string _name;
-    private string _json;
-    private object? _listInstance;
-
-    public ListJsonEditorViewModel(string name, Type listType) {
-        this._name = name;
-        this.ListType = listType;
-        this._listInstance = Activator.CreateInstance(listType);
-        this._listItemType = TypeHelper.getListItemType(listType).Value;
-        this._addMethod = listType.GetMethod("Add")!;
-        this._json = "";
-    }
+public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase, IListEditorViewModel {
+    private readonly MethodInfo _addMethod = listType.GetMethod("Add")!;
+    private readonly Type _listItemType = TypeHelper.getListItemType(listType).Value;
+    private readonly string _name = name;
+    private string _json = "";
+    private object? _listInstance = Activator.CreateInstance(listType);
 
     public string Json {
         get => this._json;
@@ -34,7 +25,7 @@ public class ListJsonEditorViewModel : ViewModelBase, IListEditorViewModel {
 
     public Type ListType {
         get;
-    }
+    } = listType;
 
     public (bool, object) GetList() {
         try {

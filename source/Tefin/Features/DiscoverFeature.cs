@@ -7,16 +7,9 @@ using Tefin.Grpc;
 
 namespace Tefin.Features;
 
-public class DiscoverFeature {
-    private readonly string[] _protoFiles;
-    private readonly string _reflectionUrl;
-    public DiscoverFeature(string[] protoFiles, string reflectionUrl) {
-        this._protoFiles = protoFiles;
-        this._reflectionUrl = reflectionUrl;
-    }
-
+public class DiscoverFeature(string[] protoFiles, string reflectionUrl) {
     public async Task<(bool, string[])> Discover(IOResolver io) {
-        var ret = await ServiceClient.discover(io, new DiscoverParameters(this._protoFiles, new Uri(this._reflectionUrl)));
+        var ret = await ServiceClient.discover(io, new DiscoverParameters(protoFiles, new Uri(reflectionUrl)));
         if (ret.IsOk) {
             io.Log.Info($"Service discovery successful. {ret.ResultValue}");
         }

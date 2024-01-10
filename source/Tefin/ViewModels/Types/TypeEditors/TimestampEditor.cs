@@ -6,7 +6,4 @@ using Google.Protobuf.WellKnownTypes;
 
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class TimestampEditor : TypeEditorBase<Timestamp> {
-    public TimestampEditor(TypeBaseNode node) : base(node) {
-    }
-}
+public class TimestampEditor(TypeBaseNode node) : TypeEditorBase<Timestamp>(node);

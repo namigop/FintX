@@ -1,6 +1,3 @@
 namespace Tefin.ViewModels.Explorer;
 
-public class FolderMethodNode : FolderNode {
-    public FolderMethodNode(string fullPath) : base(fullPath) {
-    }
-}
+public class FolderMethodNode(string fullPath) : FolderNode(fullPath);

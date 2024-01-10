@@ -88,12 +88,8 @@ public class DictionaryNode : ListNode {
         }
     }
 
-    public class Pair<K, V> {
-        public Pair(K key, V value) {
-            this.Key = key;
-            this.Value = value;
-        }
-        public K Key { get; }
-        public V Value { get; }
+    public class Pair<K, V>(K key, V value) {
+        public K Key { get; } = key;
+        public V Value { get; } = value;
     }
 }

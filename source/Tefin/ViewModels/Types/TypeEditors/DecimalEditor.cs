@@ -1,6 +1,3 @@
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class DecimalEditor : TypeEditorBase<decimal> {
-    public DecimalEditor(TypeBaseNode node) : base(node) {
-    }
-}
+public class DecimalEditor(TypeBaseNode node) : TypeEditorBase<decimal>(node);

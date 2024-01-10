@@ -1,6 +1,3 @@
 namespace Tefin.ViewModels.Types.TypeEditors;
 
-public class NullableIntEditor : TypeEditorBase<int?> {
-    public NullableIntEditor(TypeBaseNode node) : base(node) {
-    }
-}
+public class NullableIntEditor(TypeBaseNode node) : TypeEditorBase<int?>(node);

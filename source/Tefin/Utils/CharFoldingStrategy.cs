@@ -7,27 +7,22 @@ using AvaloniaEdit.Folding;
 
 namespace Tefin.Utils;
 
-public class CharFoldingStrategy {
+public class CharFoldingStrategy(char openingChar, char closingChar) {
     /// <summary>
     ///     Creates a new BraceFoldingStrategy.
     /// </summary>
     public CharFoldingStrategy() : this('{', '}') {
     }
 
-    public CharFoldingStrategy(char openingChar, char closingChar) {
-        this.OpeningBrace = openingChar;
-        this.ClosingBrace = closingChar;
-    }
-
     /// <summary>
     ///     Gets/Sets the closing brace. The default value is '}'.
     /// </summary>
-    private char ClosingBrace { get; }
+    private char ClosingBrace { get; } = closingChar;
 
     /// <summary>
     ///     Gets/Sets the opening brace. The default value is '{'.
     /// </summary>
-    private char OpeningBrace { get; }
+    private char OpeningBrace { get; } = openingChar;
 
     public void UpdateFoldings(FoldingManager manager, TextDocument document) {
         var newFoldings = this.CreateNewFoldings(document, out var firstErrorOffset);

@@ -6,10 +6,7 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class FilePerfTabViewModel : TabViewModelBase {
-    public FilePerfTabViewModel(FilePerfNode item) : base(item) {
-    }
-
+public class FilePerfTabViewModel(FilePerfNode item) : TabViewModelBase(item) {
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);

@@ -10,20 +10,9 @@ using Tefin.Grpc.Execution;
 
 namespace Tefin.Features;
 
-public class CallClientStreamingFeature {
-    private readonly ProjectTypes.ClientConfig _cfg;
-    private readonly IOResolver _io;
-    private readonly MethodInfo _mi;
-    private readonly object?[] _mParams;
-    public CallClientStreamingFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
-        this._mi = mi;
-        this._mParams = mParams;
-        this._cfg = cfg;
-        this._io = io;
-    }
-
+public class CallClientStreamingFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
     public async Task<(bool, ResponseClientStreaming)> Run() {
-        var (success, resp) = await CallClientStreaming.run(this._io, this._mi, this._mParams, this._cfg);
+        var (success, resp) = await CallClientStreaming.run(io, mi, mParams, cfg);
         return (success, resp);
     }
 }
