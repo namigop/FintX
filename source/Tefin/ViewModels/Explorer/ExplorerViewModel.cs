@@ -76,25 +76,33 @@ public class ExplorerViewModel : ViewModelBase {
             var dir = Path.GetDirectoryName(msg.FullPath);
             var methodPath = Core.Project.getMethodPath(node.Client.Path).Then(f => Path.Combine(f, node.MethodInfo.Name));
             if (dir == methodPath) {
-                var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
-                if (existing == null) {
+                var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
+                if (existing != null) {
+                    existing.UpdateFilePath(msg.FullPath);
+                }
+                else {
                     var n = new FileReqNode(msg.FullPath);
                     node.AddItem(n);
                 }
             }
-
         }
 
         void Rename(IExplorerItem item, FileChangeMessage msg) {
             if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt)
                 return;
 
-            if (item is FileReqNode fileReqNode && fileReqNode.FullPath == msg.OldFullPath) {
-                fileReqNode.UpdateFilePath(msg.FullPath);
-            }
-
-            if (item is MethodNode node) {
-                 TryAddToMethodNode(node, msg);
+            var node = (MethodNode)item;
+            var dir = Path.GetDirectoryName(msg.FullPath);
+            var methodPath = Core.Project.getMethodPath(node.Client.Path).Then(f => Path.Combine(f, node.MethodInfo.Name));
+            if (dir == methodPath) {
+                var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
+                if (existing != null) {
+                    existing.UpdateFilePath(msg.FullPath);
+                }
+                else {
+                    var n = new FileReqNode(msg.FullPath);
+                    node.AddItem(n);
+                }
             }
         }
 
@@ -102,8 +110,15 @@ public class ExplorerViewModel : ViewModelBase {
             if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt)
                 return;
 
-            if (item is MethodNode node) {
-                TryAddToMethodNode(node, msg);
+            var node = (MethodNode)item;
+            var dir = Path.GetDirectoryName(msg.FullPath);
+            var methodPath = Core.Project.getMethodPath(node.Client.Path).Then(f => Path.Combine(f, node.MethodInfo.Name));
+            if (dir == methodPath) {
+                var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
+                if (existing == null) {
+                    var n = new FileReqNode(msg.FullPath);
+                    node.AddItem(n);
+                }
             }
         }
 
@@ -112,7 +127,7 @@ public class ExplorerViewModel : ViewModelBase {
         }
 
         if (obj.ChangeType == WatcherChangeTypes.Renamed) {
-            Traverse(this.Items.ToArray(), obj, Rename, i => i.Items.Count == 0 || i is MethodNode);
+            Traverse(this.Items.ToArray(), obj, Rename, i => i is MethodNode);
         }
 
         if (obj.ChangeType == WatcherChangeTypes.Created) {

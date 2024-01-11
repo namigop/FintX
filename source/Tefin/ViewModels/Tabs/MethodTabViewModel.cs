@@ -50,4 +50,9 @@ public class MethodTabViewModel : PersistedTabViewModel {
     private void OnIsBusyChanged(ViewModelBase obj) {
         this.IsBusy = obj.IsBusy;
     }
+
+    public override void UpdateTitle(string oldFullPath, string newFullPath) {
+        this.Id = newFullPath;
+        this.Title = Path.GetFileNameWithoutExtension(this.Id);
+    }
 }

@@ -17,7 +17,7 @@ public class FileReqTabViewModel : PersistedTabViewModel {
     public override ProjectTypes.ClientGroup Client { get; }
     public override void Init() {
         this.Id = this.GetTabId();
-        this.Title = Path.GetFileName(this.Id);
+        this.Title = Path.GetFileName(this.FilePath);
         this.ClientMethod.ImportRequestFile(this.FilePath);
     }
     
@@ -37,5 +37,11 @@ public class FileReqTabViewModel : PersistedTabViewModel {
     }
     public override string GetRequestContent() {
         return this.ClientMethod.GetRequestContent();
+    }
+
+    public override void UpdateTitle(string oldFullPath, string newFullPath) {
+        //Note: the corresponding node has already been updated
+        this.Title = Path.GetFileName(this.FilePath);
+        this.Id = Path.GetFileName(this.FilePath);
     }
 }

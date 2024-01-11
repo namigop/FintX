@@ -14,4 +14,6 @@ public abstract class PersistedTabViewModel : TabViewModelBase {
     public abstract ClientMethodViewModelBase ClientMethod { get; }
 
     public abstract string GetRequestContent();
+
+    public abstract void UpdateTitle(string oldFullPath, string newFullPath); 
 }
