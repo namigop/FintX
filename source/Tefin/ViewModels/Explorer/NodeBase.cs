@@ -35,11 +35,16 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
+    public IExplorerItem Parent { get; set; }
     public ObservableCollection<IExplorerItem> Items {
         get;
         private set;
     } = new();
 
+    public void AddItem(IExplorerItem child) {
+        this.Items.Add(child);
+        child.Parent = this;
+    }
     public string SubTitle {
         get => this._subTitle;
         set => this.RaiseAndSetIfChanged(ref this._subTitle, value);

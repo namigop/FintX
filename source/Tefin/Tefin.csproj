@@ -329,6 +329,10 @@
           <DependentUpon>InfoMenuItemView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Explorer\FileReqNodeActionView.axaml.cs">
+          <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

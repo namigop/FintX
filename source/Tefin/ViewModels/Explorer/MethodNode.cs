@@ -15,7 +15,6 @@ namespace Tefin.ViewModels.Explorer;
 
 public class MethodNode : NodeBase {
     public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
-        //this.ClientVm = clientVm;
         this.MethodInfo = methodInfo;
         this.Client = cg;
         this.CanOpen = true;
@@ -48,10 +47,10 @@ public class MethodNode : NodeBase {
         if (method == null)
             return;
 
-        foreach (var file in method.RequestFiles) {
+        foreach (var file in method.RequestFiles.OrderBy(f => f)) {
             var fn = new FileReqNode(file);
             fn.Init();
-            this.Items.Add(fn);
+            this.AddItem(fn);
         }
         //load auto-saved files 
     }

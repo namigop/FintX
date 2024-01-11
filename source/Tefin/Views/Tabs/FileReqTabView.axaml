@@ -6,7 +6,13 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="tabs:FileReqTabViewModel"
              x:Class="Tefin.Views.Tabs.FileReqTabView">
-    <Border>
-        <TextBlock Text="{Binding Id}" />
-    </Border>
+    <Grid>
+        <ContentControl Content="{Binding ClientMethod}" />
+
+        <StackPanel Orientation="Vertical" IsVisible="{Binding IsBusy}" VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+            <TextBlock Text="running..." />
+            <ProgressBar IsIndeterminate="True" Margin="0 6 0 0" />
+        </StackPanel>
+    </Grid>
 </UserControl>

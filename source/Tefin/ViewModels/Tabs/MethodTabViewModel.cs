@@ -8,33 +8,27 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class MethodTabViewModel : TabViewModelBase {
+public class MethodTabViewModel : PersistedTabViewModel {
     private readonly string? _requestFile;
     public MethodTabViewModel(MethodNode item, string requestFile = null) : base(item) {
         this._requestFile = requestFile;
         this.ClientMethod = item.CreateViewModel();
         this.Client = item.Client;
-
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
-        this.AllowDuplicates = true;
     }
 
-    public ProjectTypes.ClientGroup Client {
-        get;
-    }
+    public override ProjectTypes.ClientGroup Client { get; }
 
-    public ClientMethodViewModelBase ClientMethod { get; }
+    public override ClientMethodViewModelBase ClientMethod { get; }
 
     public override void Dispose() {
         base.Dispose();
         this.ClientMethod.Dispose();
     }
 
-    public string GetRequestContent() {
+    public override string GetRequestContent() {
         return this.ClientMethod.GetRequestContent();
     }
-
-
 
     public override void Init() {
         if (!string.IsNullOrEmpty(this._requestFile)) {
@@ -49,7 +43,7 @@ public class MethodTabViewModel : TabViewModelBase {
     }
 
     protected override string GetTabId() {
-        var id = AutoSave.getSaveLocation(this.Io, this.ClientMethod.MethodInfo, this.Client.Path);
+        var id = AutoSave.getAutoSaveLocation(this.Io, this.ClientMethod.MethodInfo, this.Client.Path);
         return id;
     }
 

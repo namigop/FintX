@@ -53,19 +53,21 @@ public class MainWindowViewModel : ViewModelBase {
                 this.Io.Log.Warn("Recompile the client first to start testing the methods");
             }
         }
-
+        
         this.StartAutoSave();
     }
 
     private void StartAutoSave() {
         AutoSave.ClientParam[] Get() {
             var methodTabs = this.TabHost.Items
-                .Where(t => t is MethodTabViewModel)
-                .Cast<MethodTabViewModel>()
+                .Where(t => t.CanAutoSave)
+                .Cast<PersistedTabViewModel>()
                 .ToArray();
 
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
-            var loadedClients = methodTabs.Select(m => m.Client).DistinctBy(c => c.Name).ToArray();
+            var loadedClients = this.MainMenu.ClientMenuItem.Explorer.GetClientNodes()
+                .Where(c => c.IsLoaded)
+                .Select(c => c.Client); //methodTabs.Select(m => m.Client).DistinctBy(c => c.Name).ToArray();
 
             var clientParams = new List<AutoSave.ClientParam>();
             foreach (var client in loadedClients) {

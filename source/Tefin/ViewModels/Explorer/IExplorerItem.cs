@@ -13,4 +13,5 @@ public interface IExplorerItem {
     ObservableCollection<IExplorerItem> Items { get; }
     string SubTitle { get; set; }
     string Title { get; set; }
+    IExplorerItem Parent { get; set; }
 }

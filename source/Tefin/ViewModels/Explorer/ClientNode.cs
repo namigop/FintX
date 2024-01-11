@@ -27,14 +27,14 @@ using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 namespace Tefin.ViewModels.Explorer;
 
 public class ClientNode : NodeBase {
-    private ProjectTypes.ClientGroup _client;
     private string _clientName = "";
     private Type? _clientType;
     private bool _compileInProgress;
     private string _desc = "";
+    private bool _sessionLoaded;
     private string _url = "";
     public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
-        this._client = ProjectTypes.ClientGroup.Empty();
+        this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
         this.ClientType = clientType;
         this.ClientName = "";
@@ -45,13 +45,12 @@ public class ClientNode : NodeBase {
         this.Update(cg);
 
         this.IsExpanded = true;
-        this.Items.Add(new EmptyNode());
+        this.AddItem(new EmptyNode());
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
-
 
     public string ClientConfigFile { get; private set; }
 
@@ -86,8 +85,13 @@ public class ClientNode : NodeBase {
 
     public ICommand DeleteCommand { get; }
 
+    public ProjectTypes.ClientGroup Client {
+        get;
+        private set;
+    }
+
     public bool IsLoaded {
-        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode;
+        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
     }
 
     public override void Init() {
@@ -102,23 +106,20 @@ public class ClientNode : NodeBase {
 
         var methodInfos = ServiceClient.findMethods(this._clientType);
         foreach (var m in methodInfos) {
-            //string clientPath, ProjectTypes.ClientConfig clientConfig
-            var item = new MethodNode(m, this._client);
+            var item = new MethodNode(m, this.Client);
             item.Init();
-            this.Items.Add(item);
+            this.AddItem(item);
             Log.logInfo.Invoke($"Found method {item.Title}");
         }
 
         this.IsExpanded = true;
 
-        DispatcherTimer.RunOnce(this.LoadPreviousSession, TimeSpan.FromMilliseconds(500));
-        //this.LoadPreviousSession();
+        DispatcherTimer.RunOnce(this.TryLoadPreviousSession, TimeSpan.FromMilliseconds(100));
         this.RaisePropertyChanged(nameof(this.IsLoaded));
 
     }
-    private void LoadPreviousSession() {
+    private void TryLoadPreviousSession() {
         void LoadOne(string json, string reqFile) {
-
             var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
             var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
             var tab = TabFactory.From(item, this.Io, reqFile);
@@ -127,33 +128,39 @@ public class ClientNode : NodeBase {
         }
 
 
-        AutoSave.getAutoSavedFiles(this.Io, this._client.Path)
+        AutoSave.getAutoSavedFiles(this.Io, this.Client.Path)
             .Select(reqFile => {
                 var json = this.Io.File.ReadAllText(reqFile);
                 if (string.IsNullOrWhiteSpace(json))
                     return null;
-                return (new Action(() => LoadOne(json, reqFile)));
+                return new Action(() => LoadOne(json, reqFile));
             })
             .Where(a => a != null)
             .ToArray()
             .Then(actions => {
-                var pos = 0;
-                DispatcherTimer.Run(
-                    () => {
-                        if (pos < actions.Length) {
-                            actions[pos].Invoke();
-                            pos += 1;
-                            return true;
-                        }
+                if (actions.Any()) {
+                    var pos = 0;
+                    DispatcherTimer.Run(
+                        () => {
+                            if (pos < actions.Length) {
+                                actions[pos].Invoke();
+                                pos += 1;
+                                return true;
+                            }
 
-                        return false;
-                    },
-                    TimeSpan.FromMilliseconds(100));
+                            this._sessionLoaded = true;
+                            return false;
+                        },
+                        TimeSpan.FromMilliseconds(100));
+                }
+                else {
+                    this._sessionLoaded = true;
+                }
             });
     }
 
     private void OnDelete() {
-        var feature = new DeleteClientFeature(this._client, this.Io);
+        var feature = new DeleteClientFeature(this.Client, this.Io);
         feature.Delete();
 
         foreach (var m in this.Items) {
@@ -161,7 +168,7 @@ public class ClientNode : NodeBase {
         }
 
         this.Items.Clear();
-        GlobalHub.publish(new ClientDeletedMessage(this._client));
+        GlobalHub.publish(new ClientDeletedMessage(this.Client));
     }
 
     public void Clear() {
@@ -187,7 +194,7 @@ public class ClientNode : NodeBase {
             this._compileInProgress = true;
             var protoFiles = Array.Empty<string>(); //TODO
             var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
-            var csFiles = this._client.CodeFiles;
+            var csFiles = this.Client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
@@ -206,7 +213,7 @@ public class ClientNode : NodeBase {
     }
 
     private void Update(ProjectTypes.ClientGroup cg) {
-        this._client = cg;
+        this.Client = cg;
         this.CanOpen = true;
         this.ClientPath = cg.Path;
         this.ClientName = cg.Name;

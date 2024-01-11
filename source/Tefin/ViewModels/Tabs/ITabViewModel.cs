@@ -9,7 +9,7 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public interface ITabViewModel {
-    bool AllowDuplicates { get; set; }
+    bool CanAutoSave { get; }
     ICommand CloseCommand { get; }
     IExplorerItem ExplorerItem { get; }
     string Id { get; }

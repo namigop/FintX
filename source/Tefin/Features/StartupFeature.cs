@@ -25,6 +25,11 @@ public class StartupFeature {
 
     public AppTypes.Root Load(IOResolver io) {
         Core.App.init(io);
-        return Core.App.loadRoot(io);
+        var root = Core.App.loadRoot(io);
+        var proj = root.Packages.First().Projects.First();
+        var mon = new MonitorChangesFeature(io);
+        mon.Run(proj);
+
+        return root;
     }
 }

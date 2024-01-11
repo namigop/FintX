@@ -29,7 +29,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
-    public bool AllowDuplicates { get; set; } = false;
+    public virtual bool CanAutoSave { get; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }
 

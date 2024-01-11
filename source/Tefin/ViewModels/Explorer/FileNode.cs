@@ -7,8 +7,18 @@ public class FileNode : NodeBase {
         this.Title = Path.GetFileName(fullPath);
     }
 
-    public string FullPath { get; }
+    public string FullPath { get; private set; }
 
     public override void Init() {
+    }
+
+    public void UpdateFilePath(string newFilePath) {
+        if (Io.File.Exists(newFilePath)) {
+            this.FullPath = newFilePath;
+            this.Title = Path.GetFileName(newFilePath);
+        }
+        else {
+            Io.Log.Warn($"Unable to update file path. {newFilePath} does not exist");
+        }
     }
 }
