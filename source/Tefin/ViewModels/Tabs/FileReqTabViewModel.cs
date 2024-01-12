@@ -41,7 +41,7 @@ public class FileReqTabViewModel : PersistedTabViewModel {
 
     public override void UpdateTitle(string oldFullPath, string newFullPath) {
         //Note: the corresponding node has already been updated
-        this.Title = Path.GetFileName(this.FilePath);
-        this.Id = Path.GetFileName(this.FilePath);
+        this.Title = Path.GetFileName(newFullPath);
+        this.Id = newFullPath;
     }
 }

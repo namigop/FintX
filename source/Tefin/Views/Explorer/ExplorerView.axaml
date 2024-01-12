@@ -19,6 +19,7 @@
                 <KeyBinding Gesture="Cmd+C" Command="{Binding CopyCommand}" />
                 <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteCommand}" />  
                 <KeyBinding Gesture="Cmd+V" Command="{Binding PasteCommand}" />
+                <KeyBinding Gesture="F2" Command="{Binding EditCommand}" />
             </TreeDataGrid.KeyBindings>
             <TreeDataGrid.Resources>
                 <viewModels:NodeViewLocator x:Key="NodeViewLocator" />

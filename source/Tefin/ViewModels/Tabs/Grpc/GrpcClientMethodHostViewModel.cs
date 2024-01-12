@@ -45,10 +45,15 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public void Init() {
         this.CallType.Init();
-        if (!string.IsNullOrEmpty(this._importFile) && this.Io.File.Exists(this._importFile)) {
-            this.CallType.ImportRequest(this._importFile);
-            this._importFile = null;
-
+        if (!string.IsNullOrEmpty(this._importFile) )
+        {
+            if (this.Io.File.Exists(this._importFile)) {
+                this.CallType.ImportRequest(this._importFile);
+            }
+            else {
+                var content = this.GetRequestContent();
+                this.Io.File.WriteAllText(this._importFile, content);
+            }
         }
     }
 }

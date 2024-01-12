@@ -1,11 +1,14 @@
 #region
 
+using System.Reactive;
 using System.Reflection;
 using System.Windows.Input;
 
+using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
 using Tefin.ViewModels.Tabs.Grpc;
 
@@ -20,15 +23,22 @@ public class MethodNode : NodeBase {
         this.CanOpen = true;
         this.Title = methodInfo.Name;
         this.OpenMethodCommand = this.CreateCommand(this.OnOpenMethod);
+        this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
     }
 
-    public ICommand OpenMethodCommand {
-        get;
+    private void OnNewRequest() {
+        var path = Core.Project.getMethodPath(this.Client.Path, this.MethodInfo.Name);
+        var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
+        
+        var fn = new FileReqNode(file);
+        this.AddItem(fn);
+        fn.OpenCommand.Execute(Unit.Default);
     }
 
-    public MethodInfo MethodInfo {
-        get;
-    }
+    public ICommand OpenMethodCommand { get; }
+
+    public ICommand NewRequestCommand { get; }
+    public MethodInfo MethodInfo { get; }
 
     public ProjectTypes.ClientGroup Client { get; set; }
 

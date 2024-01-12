@@ -1,14 +1,13 @@
 #region
 
 using System.Collections.ObjectModel;
+using System.Reactive;
 using System.Windows.Input;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using Avalonia.Threading;
-
-using Google.Protobuf.WellKnownTypes;
 
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
@@ -19,9 +18,7 @@ using Tefin.Messages;
 using Tefin.Utils;
 
 using static Tefin.Core.Interop.ProjectTypes;
-
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
-using File = System.IO.File;
 using Type = System.Type;
 
 #endregion
@@ -49,8 +46,24 @@ public class ExplorerViewModel : ViewModelBase {
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
         GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged);
 
-        this.CopyCommand = CreateCommand(OnCopy);
-        this.PasteCommand = CreateCommand(OnPaste);
+        this.CopyCommand = this.CreateCommand(this.OnCopy);
+        this.PasteCommand = this.CreateCommand(this.OnPaste);
+        this.EditCommand = this.CreateCommand(this.OnEdit);
+    }
+
+    private void OnEdit() {
+        foreach (var item in this.Items) {
+            var selected = item.FindSelected();
+            switch (selected) {
+                case FileNode fn:
+                    fn.IsEditing = true;
+                    break;
+
+                case ClientNode cn:
+                    cn.OpenClientConfigCommand.Execute(Unit.Default);
+                    break;
+            }
+        }
     }
 
     private void OnCopy() {
@@ -116,7 +129,7 @@ public class ExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = Core.Project.getMethodPath(node.Client.Path).Then(f => Path.Combine(f, node.MethodInfo.Name));
+            var methodPath = Core.Project.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
                 if (existing != null) {
@@ -135,7 +148,7 @@ public class ExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = Core.Project.getMethodPath(node.Client.Path).Then(f => Path.Combine(f, node.MethodInfo.Name));
+            var methodPath = Core.Project.getMethodPath(node.Client.Path,  node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
                 if (existing == null) {
@@ -164,6 +177,8 @@ public class ExplorerViewModel : ViewModelBase {
 
     public ICommand CopyCommand { get; }
     public ICommand PasteCommand { get; }
+
+    public ICommand EditCommand { get; }
 
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
         foreach (var item in e.DeselectedItems) {

@@ -50,7 +50,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._subTitle, value);
     }
 
-    public string Title {
+    public virtual string Title {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
@@ -78,6 +78,9 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             return null;
         }
 
+        if (this.IsSelected)
+            return this;
+        
         return Find(this.Items);
     }
 }

@@ -12,7 +12,25 @@
     <system:String x:Key="Icon.StopWrite">Icon.StopWrite</system:String>
     <system:String x:Key="Icon.OpenNew">Icon.OpenNew</system:String>
     <system:String x:Key="Icon.VerticalDots">Icon.VerticalDots</system:String>
+    <system:String x:Key="Icon.FileReq">Icon.FileReq</system:String>
+    <system:String x:Key="Icon.FileReqNew">Icon.FileReqNew</system:String>
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.FileReqNew}">
+            <Viewbox>
+                <Canvas Width="24" Height="24">
+                    <Path Fill="LightSlateGray"
+                          Data="M23 18H20V15H18V18H15V20H18V23H20V20H23M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H13.81C13.45 21.38 13.2 20.7 13.08 20H6V4H13V9H18V13.08C18.33 13.03 18.67 13 19 13C19.34 13 19.67 13.03 20 13.08V8L14 2M8 12V14H16V12M8 16V18H13V16Z" />
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.FileReq}">
+            <Viewbox VerticalAlignment="Center">
+                <Canvas Width="24" Height="24">
+                    <Path Fill="LightSlateGray"
+                          Data="M14 2H6C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H18C19.11 22 20 21.11 20 20V8L14 2M18 20H6V4H13V9H18V20M9.54 15.65L11.63 17.74L10.35 19L7 15.65L10.35 12.3L11.63 13.56L9.54 15.65M17 15.65L13.65 19L12.38 17.74L14.47 15.65L12.38 13.56L13.65 12.3L17 15.65Z" />
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.VerticalDots}">
             <Viewbox>
                 <Canvas Width="24" Height="24">

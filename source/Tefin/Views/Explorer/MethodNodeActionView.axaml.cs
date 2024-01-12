@@ -1,11 +1,6 @@
 #region
 
-using System.Reactive;
-
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-
-using Tefin.ViewModels.Explorer;
 
 #endregion
 

@@ -97,10 +97,7 @@ module AutoSave =
               FullPath = Some fullPath }
 
     let private saveMethod (io: IOResolver) (clientPath: string) (m: MethodParam) (writer: Writer) =
-        let autoSavePath =
-            Project.getMethodPath clientPath
-            |> fun p -> Path.Combine(p, m.Name, Project.autoSaveFolderName)
-
+        let autoSavePath = Project.getAutoSavePath clientPath m.Name            
         io.Dir.CreateDirectory autoSavePath
 
         let autoSavedFiles =
@@ -117,7 +114,7 @@ module AutoSave =
                 writer.Remove e
 
     let getAutoSavedFiles (io: IOResolver) (clientPath: string) =
-        Project.getMethodPath clientPath
+        Project.getMethodsPath clientPath
         |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
         |> Array.filter (fun fp -> fp.Contains(Project.autoSaveFolderName))
         |> Array.sortBy id
@@ -133,10 +130,7 @@ module AutoSave =
 
     let getAutoSaveLocation (io: IOResolver) (methodInfo: MethodInfo) (clientPath: string) =
         let methodName = methodInfo.Name
-
-        let autoSavePath =
-            Project.getMethodPath (clientPath)
-            |> fun p -> Path.Combine(p, methodName, Project.autoSaveFolderName)
+        let autoSavePath = Project.getAutoSavePath (clientPath) methodName            
 
         io.Dir.CreateDirectory autoSavePath
         let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt

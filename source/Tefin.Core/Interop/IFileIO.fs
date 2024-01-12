@@ -9,6 +9,7 @@ open System.Threading.Tasks
 
 type IFileIO =
     abstract Copy: source: string * target: string -> unit
+    abstract Move: source: string * target: string -> unit
     abstract Copy: source: string * target: string * overwrite: bool -> unit
     abstract Delete: file: string -> unit
     abstract WriteAllBytesAsync: file: string -> bytes: byte array -> Task
@@ -28,6 +29,7 @@ module File =
             member x.WriteAllTextAsync (file: string) (contents: string) = File.WriteAllTextAsync(file, contents)
             member x.WriteAllText  (file: string) (contents: string) = File.WriteAllText(file, contents)
             member x.Copy(source: string, target: string) = File.Copy(source, target)
+            member x.Move(source: string, target: string) = File.Move(source, target)
             member x.Copy(source: string, target: string, overwrite: bool) = File.Copy(source, target, overwrite)
             member x.Delete file = File.Delete file
 

@@ -14,10 +14,16 @@ type AddClientRequest =
 module Project =
     
     let autoSaveFolderName = "_autoSave"
-    let getMethodPath (clientPath: string) = Path.Combine(clientPath, "methods")
-
+    let getMethodsPath (clientPath: string) = Path.Combine(clientPath, "methods")
+    let getMethodPath (clientPath: string) (methodName:string) =
+        getMethodsPath clientPath
+        |> fun m -> Path.Combine(m, methodName)
+    let getAutoSavePath (clientPath: string) (methodName:string) =
+        getMethodPath clientPath methodName
+        |> fun m -> Path.Combine(m, autoSaveFolderName)
+        
     let loadMethods (io: IOResolver) (clientPath: string) =
-        let methodPath = getMethodPath clientPath
+        let methodPath = getMethodsPath clientPath
         io.Dir.CreateDirectory methodPath
         let methodDirs = io.Dir.GetDirectories methodPath //"*.*" SearchOption.TopDirectoryOnly)
 
@@ -33,11 +39,6 @@ module Project =
             { RequestFiles = requestFiles
               Name = methodName
               Path = m })
-
-    let saveRequestFile (io: IOResolver) (clientGroup: ClientGroup) (methodName: string) (reqFileName: string) (reqFileJson: string) =
-        let dir = Path.Combine(clientGroup.Path, methodName)
-        let _ = Directory.CreateDirectory dir
-        io.File.WriteAllText (Path.Combine(dir, reqFileName)) reqFileJson
 
     let loadClient (io: IOResolver) (clientPath: string) =
         let configFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)

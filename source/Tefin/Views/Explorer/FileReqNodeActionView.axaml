@@ -51,8 +51,7 @@
                     </Canvas>
                 </Viewbox>
             </Button>
-            <Button Classes="ClearButtonStyle" 
-                    ToolTip.Tip="More actions">
+            <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
                     <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
@@ -61,13 +60,13 @@
                 </Button.Resources>
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Copy" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding CopyCommand}" >
+                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding RenameCommand}" >
                             <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Export}"></controls:IconControl>
+                                <controls:IconControl Icon="{StaticResource Icon.Write}"></controls:IconControl>
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="-"/>
-                        <MenuItem Header="Close"/>        
+                        <!-- <MenuItem Header="-"/> -->
+                        <!-- <MenuItem Header="Close"/>         -->
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
