@@ -14,4 +14,6 @@ public interface IExplorerItem {
     string SubTitle { get; set; }
     string Title { get; set; }
     IExplorerItem Parent { get; set; }
+
+    IExplorerItem FindSelected();
 }

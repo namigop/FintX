@@ -41,9 +41,7 @@
                                     </Button>
                                 </StackPanel>
                             </Border>
-
                         </Grid>
-
                     </Flyout>
                 </Button.Flyout>
                 <Viewbox Width="18" Height="18">
@@ -53,7 +51,26 @@
                     </Canvas>
                 </Viewbox>
             </Button>
-            
+            <Button Classes="ClearButtonStyle" 
+                    ToolTip.Tip="More actions">
+                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
+                <Button.Resources>
+                    <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
+                        <TextBlock Text="{Binding}"></TextBlock>
+                    </DataTemplate>
+                </Button.Resources>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Copy" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding CopyCommand}" >
+                            <MenuItem.Icon>
+                                <controls:IconControl Icon="{StaticResource Icon.Export}"></controls:IconControl>
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="-"/>
+                        <MenuItem Header="Close"/>        
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
              
         </StackPanel>
     </Grid>

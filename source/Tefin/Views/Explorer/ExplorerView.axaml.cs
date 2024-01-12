@@ -20,7 +20,7 @@ public partial class ExplorerView : UserControl {
     public ExplorerView() {
         this.InitializeComponent();
         this.TreeDg.DoubleTapped += this.OnDoubleTapped;
-        this.TreeDg.Tapped += this.TreeDgOnTapped;
+        //this.TreeDg.Tapped += this.TreeDgOnTapped;
     }
 
     private void OnDoubleTapped(object? sender, TappedEventArgs e) {
@@ -38,10 +38,10 @@ public partial class ExplorerView : UserControl {
         }
     }
  
-    private void TreeDgOnTapped(object? sender, TappedEventArgs e) {
-        var node = this.TreeDg.RowSelection?.SelectedItem;
-        if (node is IExplorerItem item) {
-            item.IsSelected = true;
-        }
-    }
+    // private void TreeDgOnTapped(object? sender, TappedEventArgs e) {
+    //     var node = this.TreeDg.RowSelection?.SelectedItem;
+    //     if (node is IExplorerItem item) {
+    //         item.IsSelected = true;
+    //     }
+    // }
 }

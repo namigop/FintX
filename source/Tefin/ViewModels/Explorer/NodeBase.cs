@@ -64,4 +64,20 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public abstract void Init();
+
+    public IExplorerItem FindSelected() {
+        IExplorerItem Find(ObservableCollection<IExplorerItem> items) {
+            foreach (var item in items) {
+                if (item.IsSelected)
+                    return item;
+                var selected = Find(item.Items);
+                if (selected != null)
+                    return selected;
+            }
+
+            return null;
+        }
+
+        return Find(this.Items);
+    }
 }

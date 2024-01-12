@@ -11,11 +11,12 @@ public class FileReqNode : FileNode {
         this.CanOpen = true;
         this.OpenCommand = CreateCommand(this.OnOpen);
         this.DeleteCommand = CreateCommand(this.OnDelete);
+        
     }
 
     private void OnDelete() {
-        // Delete from the file system *only*.  The OS event notification will
-        // get handled by ExplorerViewModel and the delete file will be removed
+        // Delete from the file system *only*.  The OS event notification FileSystemWatcher
+        // will get handled by ExplorerViewModel and the delete file will be removed
         // from the explorer tree
          Io.File.Delete(this.FullPath);
     }
@@ -23,6 +24,10 @@ public class FileReqNode : FileNode {
     public ICommand OpenCommand { get; }
 
     public ICommand DeleteCommand { get; }
+
+    public ICommand CopyCommand {
+        get;
+    }
 
     public ClientMethodViewModelBase? CreateViewModel() {
         return ((MethodNode)this.Parent).CreateViewModel();
