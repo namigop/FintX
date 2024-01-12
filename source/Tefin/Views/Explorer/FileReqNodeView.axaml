@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
-             xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:FileReqNode"
              x:Class="Tefin.Views.Explorer.FileReqNodeView">
@@ -19,7 +18,6 @@
                    VerticalAlignment="Center" />
 
         <TextBox Text="{Binding TempTitle}" x:Name="tbEditor" IsVisible="{Binding IsEditing}"
-                 Margin="6 0 0 0">
-        </TextBox>
+                 Margin="6 0 0 0" />
     </StackPanel>
 </UserControl>

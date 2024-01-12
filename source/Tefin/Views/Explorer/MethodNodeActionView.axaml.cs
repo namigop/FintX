@@ -10,6 +10,4 @@ public partial class MethodNodeActionView : UserControl {
     public MethodNodeActionView() {
         this.InitializeComponent();
     }
-
-   
 }

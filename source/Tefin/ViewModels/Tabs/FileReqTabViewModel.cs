@@ -15,14 +15,14 @@ public class FileReqTabViewModel : PersistedTabViewModel {
     }
     public override ClientMethodViewModelBase ClientMethod { get; }
     public override ProjectTypes.ClientGroup Client { get; }
+
+    public string FilePath {
+        get => ((FileNode)this.ExplorerItem).FullPath;
+    }
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.FilePath);
         this.ClientMethod.ImportRequestFile(this.FilePath);
-    }
-    
-    public string FilePath {
-        get => ((FileNode)this.ExplorerItem).FullPath;
     }
     protected override string GetTabId() {
         return this.FilePath;

@@ -18,8 +18,8 @@
                     Margin="0 0 14 0"
                     IsVisible="{Binding IsSelected}"
                     HorizontalAlignment="Right">
-            
-            <Button Classes="ClearButtonStyle" Command="{Binding OpenCommand}" 
+
+            <Button Classes="ClearButtonStyle" Command="{Binding OpenCommand}"
                     ToolTip.Tip="Open in new tab">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
             </Button>
@@ -55,14 +55,15 @@
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
                     <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
-                        <TextBlock Text="{Binding}"></TextBlock>
+                        <TextBlock Text="{Binding}" />
                     </DataTemplate>
                 </Button.Resources>
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding RenameCommand}" >
+                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}"
+                                  Command="{Binding RenameCommand}">
                             <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Write}"></controls:IconControl>
+                                <controls:IconControl Icon="{StaticResource Icon.Write}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <!-- <MenuItem Header="-"/> -->
@@ -70,7 +71,7 @@
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
-             
+
         </StackPanel>
     </Grid>
 

@@ -15,9 +15,9 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
-using Tefin.Utils;
 
 using static Tefin.Core.Interop.ProjectTypes;
+
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 using Type = System.Type;
 
@@ -51,6 +51,15 @@ public class ExplorerViewModel : ViewModelBase {
         this.EditCommand = this.CreateCommand(this.OnEdit);
     }
 
+    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
+    public ProjectTypes.Project? Project { get; set; }
+    private ObservableCollection<IExplorerItem> Items { get; } = new();
+
+    public ICommand CopyCommand { get; }
+    public ICommand PasteCommand { get; }
+
+    public ICommand EditCommand { get; }
+
     private void OnEdit() {
         foreach (var item in this.Items) {
             var selected = item.FindSelected();
@@ -76,7 +85,7 @@ public class ExplorerViewModel : ViewModelBase {
                 var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
                 fileCopy = Path.Combine(path, fileCopy);
 
-                this._copyPastePending = new CopyPasteArg() {
+                this._copyPastePending = new CopyPasteArg {
                     Container = fn.Parent,
                     FileToCopy = fn.FullPath
                 };
@@ -86,7 +95,7 @@ public class ExplorerViewModel : ViewModelBase {
     private void OnPaste() {
         if (this._copyPastePending == null)
             return;
-        
+
         foreach (var item in this.Items) {
             var selected = item.FindSelected();
             if (selected != null && (selected == this._copyPastePending.Container || selected.Parent == this._copyPastePending.Container)) {
@@ -116,7 +125,7 @@ public class ExplorerViewModel : ViewModelBase {
                 Traverse(items.Skip(1).ToArray(), msg, doAction, check);
             }
         }
-        
+
         void Delete(IExplorerItem item, FileChangeMessage msg) {
             if (item is FileReqNode node && node.FullPath == msg.FullPath) {
                 node.Parent.Items.Remove(node);
@@ -148,7 +157,7 @@ public class ExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = Core.Project.getMethodPath(node.Client.Path,  node.MethodInfo.Name);
+            var methodPath = Core.Project.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
                 if (existing == null) {
@@ -170,15 +179,6 @@ public class ExplorerViewModel : ViewModelBase {
             Traverse(this.Items.ToArray(), obj, Create, i => i is MethodNode);
         }
     }
-
-    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
-    public ProjectTypes.Project? Project { get; set; }
-    private ObservableCollection<IExplorerItem> Items { get; } = new();
-
-    public ICommand CopyCommand { get; }
-    public ICommand PasteCommand { get; }
-
-    public ICommand EditCommand { get; }
 
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
         foreach (var item in e.DeselectedItems) {
@@ -240,7 +240,7 @@ public class ExplorerViewModel : ViewModelBase {
         }
     }
 
-    class CopyPasteArg {
+    private class CopyPasteArg {
         public string FileToCopy { get; set; }
         public IExplorerItem Container { get; set; }
     }

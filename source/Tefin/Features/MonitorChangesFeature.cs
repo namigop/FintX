@@ -21,21 +21,21 @@ public class MonitorChangesFeature(IOResolver io) {
     private void OnCreated(object sender, FileSystemEventArgs e) {
         io.Log.Info($"File created: {e.Name}");
         var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
-        GlobalHub.publish( msg);
+        GlobalHub.publish(msg);
     }
 
     private void OnDeleted(object sender, FileSystemEventArgs e) {
         io.Log.Info($"File deleted: {e.Name}");
         var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
-        GlobalHub.publish( msg);
+        GlobalHub.publish(msg);
     }
 
     private void OnRenamed(object sender, RenamedEventArgs e) {
         io.Log.Info($"File renamed from \"{e.OldName}\" to \"{e.Name}\"");
         var msg = new FileChangeMessage(e.FullPath, e.OldFullPath, e.ChangeType);
-        GlobalHub.publish( msg);
+        GlobalHub.publish(msg);
     }
-    
+
     private void OnError(object sender, ErrorEventArgs e) {
         io.Log.Warn(e.GetException().ToString());
     }

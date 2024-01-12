@@ -1,7 +1,5 @@
 using System.Windows.Input;
 
-using Avalonia.Styling;
-
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;

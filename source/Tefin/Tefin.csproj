@@ -322,16 +322,16 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\MethodNodeActionView.axaml.cs">
-          <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\MainMenu\InfoMenuItemView.axaml.cs">
-          <DependentUpon>InfoMenuItemView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>InfoMenuItemView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\FileReqNodeActionView.axaml.cs">
-          <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
 
     </ItemGroup>

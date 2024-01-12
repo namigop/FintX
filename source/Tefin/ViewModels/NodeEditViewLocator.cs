@@ -2,7 +2,6 @@
 
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using Avalonia.Metadata;
 
 using Tefin.ViewModels.Explorer;
 

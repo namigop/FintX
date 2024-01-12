@@ -36,15 +36,11 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public IExplorerItem Parent { get; set; }
+
     public ObservableCollection<IExplorerItem> Items {
         get;
-        private set;
     } = new();
 
-    public void AddItem(IExplorerItem child) {
-        this.Items.Add(child);
-        child.Parent = this;
-    }
     public string SubTitle {
         get => this._subTitle;
         set => this.RaiseAndSetIfChanged(ref this._subTitle, value);
@@ -54,16 +50,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
-
-    public override void Dispose() {
-        base.Dispose();
-        foreach (var explorerItem in this.Items) {
-            var n = (NodeBase)explorerItem;
-            n.Dispose();
-        }
-    }
-
-    public abstract void Init();
 
     public IExplorerItem FindSelected() {
         IExplorerItem Find(ObservableCollection<IExplorerItem> items) {
@@ -80,7 +66,22 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
         if (this.IsSelected)
             return this;
-        
+
         return Find(this.Items);
     }
+
+    public void AddItem(IExplorerItem child) {
+        this.Items.Add(child);
+        child.Parent = this;
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        foreach (var explorerItem in this.Items) {
+            var n = (NodeBase)explorerItem;
+            n.Dispose();
+        }
+    }
+
+    public abstract void Init();
 }

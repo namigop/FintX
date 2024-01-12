@@ -53,7 +53,7 @@ public class MainWindowViewModel : ViewModelBase {
                 this.Io.Log.Warn("Recompile the client first to start testing the methods");
             }
         }
-        
+
         this.StartAutoSave();
     }
 

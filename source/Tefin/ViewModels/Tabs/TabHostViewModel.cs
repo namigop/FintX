@@ -22,6 +22,13 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribe<FileChangeMessage>(this.OnReceiveFileChangeMessage);
     }
 
+    public ObservableCollection<ITabViewModel> Items { get; } = new();
+
+    public ITabViewModel? SelectedItem {
+        get => this._selectedItem;
+        set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
+    }
+
     private void OnReceiveFileChangeMessage(FileChangeMessage msg) {
         if (msg.ChangeType == WatcherChangeTypes.Deleted) {
             var existingTab = this.Items.FirstOrDefault(t => t is PersistedTabViewModel && t.Id == msg.FullPath);
@@ -34,15 +41,8 @@ public class TabHostViewModel : ViewModelBase {
                 pt.UpdateTitle(msg.OldFullPath, msg.FullPath);
             }
         }
-        
-        
-    }
 
-    public ObservableCollection<ITabViewModel> Items { get; } = new();
 
-    public ITabViewModel? SelectedItem {
-        get => this._selectedItem;
-        set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
     }
 
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
