@@ -9,10 +9,11 @@ namespace Tefin.ViewModels.Tabs;
 
 public class FileReqTabViewModel : PersistedTabViewModel {
     public FileReqTabViewModel(FileReqNode item) : base(item) {
-        this.ClientMethod = item.CreateViewModel();
+        this.ClientMethod = item.CreateViewModel()!;
         this.Client = ((MethodNode)item.Parent).Client;
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
     }
+    public override string Icon {get => "Icon.Grpc2";}
     public override ClientMethodViewModelBase ClientMethod { get; }
     public override ProjectTypes.ClientGroup Client { get; }
 

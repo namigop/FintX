@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "FintX"
-#define MyAppVersion "0.1"
+#define MyAppVersion "1.0"
 #define MyAppPublisher "Erik Araojo"
 #define MyAppURL "https://github.com/namigop/FintX/"
 #define MyAppExeName "FintX.exe"
@@ -24,7 +24,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName=C:\Program Files\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DisableDirPage=no
 DefaultGroupName=FintX
 DisableProgramGroupPage=yes
@@ -37,10 +37,13 @@ ArchitecturesInstallIn64BitMode=x64
 UsePreviousAppDir=no
 SourceDir={#SourceFileDir}
 OutputDir={#Installer}
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=dialog commandline
+
 ;WizardImageBackColor=$000099FF
 
-[Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\FintX.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\FintX.exe"; Flags: uninsdeletekey
+;[Registry]
+;Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\FintX.exe"; ValueType: string; ValueName: ""; ValueData: "{app}\FintX.exe"; Flags: uninsdeletekey
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

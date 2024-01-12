@@ -2,12 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              xmlns:mainMenu="clr-namespace:Tefin.ViewModels.MainMenu"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="mainMenu:InfoMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.InfoMenuItemView">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <TextBlock Text="{Binding AppInfo}" FontSize="20" Margin="0 0 0 10" />
+        <controls:IconControl Icon="{StaticResource Icon.AppLarge}" HorizontalAlignment="Left"  Height="64" Width="64"  />
+        <TextBlock Text="{Binding AppInfo}" FontSize="20" Margin="0 10 0 10" />
         <Button Padding="0" Command="{Binding OpenBrowserCommand}" Background="Transparent">
             <TextBlock Text="{Binding GitHubUrl}" Foreground="CornflowerBlue" VerticalAlignment="Stretch" />
         </Button>

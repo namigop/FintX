@@ -3,6 +3,7 @@
         xmlns:vm="using:Tefin.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Tefin.Views.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Tefin.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -43,12 +44,13 @@
     <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="Auto, *, 8, 3*">
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
+            <controls:IconControl Icon="{StaticResource Icon.AppSmall}"  VerticalAlignment="Center" />
             <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center"
-                       HorizontalAlignment="Center" />
+                       HorizontalAlignment="Center" Margin="10 0 0 0" />
             <!-- <TextBlock Text="{Binding SubTitle}" FontSize="12" Foreground="DimGray" FontStyle="Italic" Margin="6 0 0 0" VerticalAlignment="Center" ></TextBlock> -->
         </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
-                    VerticalAlignment="Center" HorizontalAlignment="{Binding SponsorAlignment}" Margin="0 0 10 0">
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
+                    VerticalAlignment="Center" HorizontalAlignment="{Binding SponsorAlignment}" Margin="10 0 10 0">
             <Button Background="Transparent" Command="{Binding SponsorCommand}">
                 <TextBlock FontSize="12" Foreground="CornflowerBlue"
                            Text="Support this project by becoming a sponsor" />

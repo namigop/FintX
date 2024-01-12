@@ -15,6 +15,8 @@ public interface ITabViewModel {
     string Id { get; }
     string SubTitle { get; set; }
     string Title { get; set; }
+    string Icon { get; }
 
+    bool HasIcon { get; }
     void Init();
 }

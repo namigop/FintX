@@ -10,13 +10,14 @@ namespace Tefin.ViewModels.Tabs;
 
 public class MethodTabViewModel : PersistedTabViewModel {
     private readonly string? _requestFile;
-    public MethodTabViewModel(MethodNode item, string requestFile = null) : base(item) {
+    public MethodTabViewModel(MethodNode item, string requestFile = "") : base(item) {
         this._requestFile = requestFile;
         this.ClientMethod = item.CreateViewModel();
         this.Client = item.Client;
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
     }
 
+    public override string Icon { get; } = "";//"Icon.Method";
     public override ProjectTypes.ClientGroup Client { get; }
 
     public override ClientMethodViewModelBase ClientMethod { get; }

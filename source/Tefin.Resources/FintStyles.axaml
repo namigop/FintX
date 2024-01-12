@@ -79,8 +79,9 @@
         <Setter Property="Background" Value="Transparent"></Setter>
     </Style>
 
+  
     <Style Selector="TextBlock">
-        <Setter Property="Foreground" Value="#969faa" />
+        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor }" />
     </Style>
 
     <Style Selector="TextBox">

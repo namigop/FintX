@@ -4,17 +4,17 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
   <!--Brushes-->
-  <SolidColorBrush x:Key="DefaultPanelBackground">White</SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.EditorTextBackground">#FFFCF4</SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground">#16191F</SolidColorBrush>
+  <SolidColorBrush x:Key="DefaultPanelBackground" Color="White"></SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.EditorTextBackground" Color="#FFFCF4"></SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#16191F"></SolidColorBrush>
   <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#101217"></SolidColorBrush>
-<SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultMenuBackground">#09162D</SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultTextColor">#CFDCEC</SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657"></SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.DefaultMenuBackground" Color="#09162D"></SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.DefaultTextColor" Color="#a3abb5"></SolidColorBrush>
   <SolidColorBrush x:Key="Bym.Color.DefaultTextInputColor">#40424C</SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor">White</SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor" Color="White"></SolidColorBrush>
   <SolidColorBrush x:Key="Bym.Color.Red" Color="#A84E4B"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor">#101217</SolidColorBrush>
+  <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor" Color="#101217"></SolidColorBrush>
   <!--end of Brushes-->
  
 

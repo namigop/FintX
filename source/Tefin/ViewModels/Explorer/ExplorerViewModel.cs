@@ -26,7 +26,7 @@ using Type = System.Type;
 namespace Tefin.ViewModels.Explorer;
 
 public class ExplorerViewModel : ViewModelBase {
-    private CopyPasteArg _copyPastePending;
+    private CopyPasteArg? _copyPastePending;
     public ExplorerViewModel() {
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
@@ -39,16 +39,23 @@ public class ExplorerViewModel : ViewModelBase {
                     new GridLength(1, GridUnitType.Auto))
             }
         };
+        
         this.ExplorerTree = temp;
 
-        this.ExplorerTree.RowSelection.SelectionChanged += this.RowSelectionChanged;
+        this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
         GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
         GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged);
+        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile);
+
 
         this.CopyCommand = this.CreateCommand(this.OnCopy);
         this.PasteCommand = this.CreateCommand(this.OnPaste);
         this.EditCommand = this.CreateCommand(this.OnEdit);
+    }
+
+    private void OnClientCompile(ClientCompileMessage message) {
+        this.IsBusy = message.InProgress;
     }
 
     public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }

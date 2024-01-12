@@ -29,6 +29,10 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
+    public abstract string Icon { get; }
+
+    public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
+
     public virtual bool CanAutoSave { get; } = false;
     public ICommand CloseCommand { get; }
     public IExplorerItem ExplorerItem { get; }

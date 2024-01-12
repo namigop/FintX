@@ -60,10 +60,9 @@
                 </Button.Resources>
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}"
-                                  Command="{Binding RenameCommand}">
+                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding RenameCommand}">
                             <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Write}" />
+                                <controls:IconControl Icon="{StaticResource Icon.Rename}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <!-- <MenuItem Header="-"/> -->

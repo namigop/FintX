@@ -2,13 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:MethodNode"
              x:Class="Tefin.Views.Explorer.MethodNodeView">
     <StackPanel Orientation="Horizontal">
         <Border>
-            <Viewbox Stretch="Uniform">
+          <controls:IconControl Icon="{StaticResource Icon.Method}" Width="16" Height="16" />
+            <!--<Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16">
                     <Canvas>
                         <Polygon Points="0.5,3.569 7.506,0.774 14.511,3.569 14.511,12.018 7.506,15.3 0.5,11.725"
@@ -19,7 +21,7 @@
                                   StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
-            </Viewbox>
+            </Viewbox>-->
         </Border>
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" VerticalAlignment="Center" />
     </StackPanel>

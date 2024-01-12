@@ -8,6 +8,7 @@ using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
 using Tefin.ViewModels.Tabs.Grpc;
 
@@ -38,6 +39,7 @@ public class MethodNode : NodeBase {
 
         var fn = new FileReqNode(file);
         this.AddItem(fn);
+        this.IsExpanded = true;
         fn.OpenCommand.Execute(Unit.Default);
     }
 
@@ -52,6 +54,9 @@ public class MethodNode : NodeBase {
     }
 
     public override void Init() {
+        Project.getMethodPath(this.Client.Path, this.MethodInfo.Name)
+           .Then(d => this.Io.Dir.CreateDirectory(d));
+
         var method = this.Client.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
         if (method == null)
             return;
@@ -61,6 +66,5 @@ public class MethodNode : NodeBase {
             fn.Init();
             this.AddItem(fn);
         }
-        //load auto-saved files 
     }
 }

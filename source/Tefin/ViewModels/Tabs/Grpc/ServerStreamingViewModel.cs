@@ -72,7 +72,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public override void ImportRequest(string requestFile) {
-        throw new NotImplementedException();
+        _ = this.ReqViewModel.ImportRequestFile(requestFile);
     }
 
     public override void Dispose() {

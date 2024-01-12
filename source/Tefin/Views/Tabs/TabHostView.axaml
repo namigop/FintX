@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="tabs:TabHostViewModel"
              x:Class="Tefin.Views.Tabs.TabHostView">
@@ -11,17 +12,14 @@
         <TabControl ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
-                    <Grid ColumnDefinitions="*, Auto">
-                        <TextBlock Text="{Binding Title}" />
-                        <!-- <Grid.Styles> -->
-                        <!--   <Style Selector="Button"> -->
-                        <!--     <Setter Property="Opacity" Value="0.5"></Setter> -->
-                        <!--   </Style> -->
-                        <!--   <Style Selector="Button:pointerover"> -->
-                        <!--     <Setter Property="Opacity" Value="1"></Setter> -->
-                        <!--   </Style> -->
-                        <!-- </Grid.Styles> -->
-                        <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="1"
+                    <Grid ColumnDefinitions="Auto, *, Auto">
+                         <controls:IconControl Grid.Column="0" IsVisible="{Binding HasIcon}" 
+                                               Icon="{Binding Icon}" Width="12" Height="12" 
+                                               Margin="0 0 10 0" VerticalAlignment="Center"/>
+                           
+                        <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center" />
+                       
+                        <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="2"
                                 VerticalAlignment="Center"
                                 Padding="2"
                                 Margin="12 0 0 0">
