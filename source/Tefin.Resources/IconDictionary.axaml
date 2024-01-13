@@ -23,7 +23,16 @@
   <system:String x:Key="Icon.Grpc2">Icon.Grpc2</system:String>
   <system:String x:Key="Icon.Web">Icon.Web</system:String>
   <system:String x:Key="Icon.Method">Icon.Method</system:String>
+  <system:String x:Key="Icon.CurlyBrace">Icon.CurlyBrace</system:String>
   <resources:IconTemplate x:Key="Icons">
+    <DataTemplate x:Key="{StaticResource Icon.CurlyBrace}">
+      <Viewbox Height="18" Width="18">
+        <Canvas Width="24" Height="24">
+          <Path Fill="#a3abb5"
+                Data="M8,3A2,2 0 0,0 6,5V9A2,2 0 0,1 4,11H3V13H4A2,2 0 0,1 6,15V19A2,2 0 0,0 8,21H10V19H8V14A2,2 0 0,0 6,12A2,2 0 0,0 8,10V5H10V3M16,3A2,2 0 0,1 18,5V9A2,2 0 0,0 20,11H21V13H20A2,2 0 0,0 18,15V19A2,2 0 0,1 16,21H14V19H16V14A2,2 0 0,1 18,12A2,2 0 0,1 16,10V5H14V3H16Z" />
+        </Canvas>
+      </Viewbox>
+    </DataTemplate>
     <DataTemplate x:Key="{StaticResource Icon.Method}">
       <Viewbox Stretch="Uniform">
         <Canvas Width="16" Height="16">
@@ -228,8 +237,8 @@
                 Fill="#4E4E4E" />
             <Path
                 Data="M1,0.5L1,14.5L1,15L1.5,15L6.46,15L6.226,14.63L6.055,14.21L5.993,14L2,14L2,1L8.323,1L12,4.761L12,6.306L12.38,5.93L12.74,5.58L13,5.845L13,4.557L13,4.353L12.86,4.207L8.89,0.1504L8.743,0L8.533,0L1.5,0L1,0zz"
-                Fill="#D8D8D8" />
-            <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#DEDEDE" />
+                Fill="#a3abb5" />
+            <Path Data="M8,4.5L8,5L8.5,5L12.5,5L12.5,4L9,4L9,0.5L8,0.5zz" Fill="#a3abb5" />
           </Canvas>
           <Canvas>
             <Path
@@ -248,8 +257,8 @@
                 Stroke="#1ED15D" StrokeThickness="1" />
             <Path
                 Data="M13.5,15.5H1.5V4.074c0,-0.317,0.257,-0.574,0.574,-0.574h3.437c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C7.963,5.42,8.211,5.5,8.465,5.5H13.5V15.5z"
-                Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
-            <Polygon Points="13.5,15.5 1.5,15.5 0.6,7.5 14.4,7.5" Fill="#4E4E4E" Stroke="#D8D8D8"
+                Fill="#4E4E4E" Stroke="#a3abb5" StrokeThickness="1" />
+            <Polygon Points="13.5,15.5 1.5,15.5 0.6,7.5 14.4,7.5" Fill="#4E4E4E" Stroke="#a3abb5"
                      StrokeThickness="1" />
           </Canvas>
         </Canvas>
