@@ -99,13 +99,25 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     }
 
     private void OnClearSeries() {
-        this.Series.Clear();
-        this.SeriesModels.Clear();
-        // this._currentColor = 0;
+        try {
+            this.Series.Clear();
+            this.SeriesModels.Clear();
+            // this._currentColor = 0;
+        }
+        catch (Exception exc) {
+            this.Io.Log.Warn(exc.ToString());
+
+        }
     }
 
     private void OnReceiveMethodCall(MethodCallMessage obj) {
-        this.AddPoint(obj.ClientName, obj.Method, obj.Point);
+        try {
+            this.AddPoint(obj.ClientName, obj.Method, obj.Point);
+        }
+        catch (Exception exc) {
+            this.Io.Log.Warn(exc.ToString());
+
+        }
     }
 
     public class SeriesModel {
