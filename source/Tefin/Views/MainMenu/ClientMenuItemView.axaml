@@ -8,6 +8,13 @@
              x:DataType="mainMenu:ClientMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.ClientMenuItemView">
     <Border>
-        <explorer:ExplorerView DataContext="{Binding Explorer}" />
+        <Grid RowDefinitions="*, Auto">
+          
+            <explorer:ExplorerView DataContext="{Binding Explorer}" />
+            <Border Grid.Row="1" Background="{StaticResource Bym.Color.DefaultWindowBackground}" 
+                    CornerRadius="4" Margin="6">
+                <TextBlock Text="{Binding Explorer.Project.Path }"></TextBlock>
+            </Border>
+        </Grid>
     </Border>
 </UserControl>

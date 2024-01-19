@@ -42,6 +42,15 @@ public static class DialogUtils {
         }
     }
 
+    public static async Task<string> SelectFolder() {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+        var folders = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() {
+            Title = "Select a project folder",
+            AllowMultiple = false,
+        });
+
+        return folders.Any() ? folders.First().Path.LocalPath : "";
+    }
     public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
         var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {

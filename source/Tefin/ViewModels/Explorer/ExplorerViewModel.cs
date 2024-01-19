@@ -9,6 +9,8 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
+using ReactiveUI;
+
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
@@ -27,6 +29,7 @@ namespace Tefin.ViewModels.Explorer;
 
 public class ExplorerViewModel : ViewModelBase {
     private CopyPasteArg? _copyPastePending;
+    private ProjectTypes.Project? _project;
     public ExplorerViewModel() {
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
@@ -59,7 +62,10 @@ public class ExplorerViewModel : ViewModelBase {
     }
 
     public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
-    public ProjectTypes.Project? Project { get; set; }
+    public ProjectTypes.Project? Project {
+        get => this._project;
+        set => this.RaiseAndSetIfChanged(ref _project , value);
+    }
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public ICommand CopyCommand { get; }
@@ -67,6 +73,23 @@ public class ExplorerViewModel : ViewModelBase {
 
     public ICommand EditCommand { get; }
 
+    public void LoadProject(string path) {
+        if (path == this.Project.Path)
+            return;
+
+        this.Project = Core.Project.loadProject(this.Io, path);
+        this.Items.Clear();
+        foreach (var client in this.Project.Clients) {
+            this.AddClientNode(client);
+        }
+        
+        //Close all tabs
+        GlobalHub.publish(new CloseAllTabsMessage());
+        
+        //monitor file changes in the new project path
+        var fsMonitor = new MonitorChangesFeature(this.Io);
+        fsMonitor.Run(this.Project);
+    }
     private void OnEdit() {
         foreach (var item in this.Items) {
             var selected = item.FindSelected();
@@ -86,12 +109,6 @@ public class ExplorerViewModel : ViewModelBase {
         foreach (var item in this.Items) {
             var selected = item.FindSelected();
             if (selected is FileNode fn) {
-                var path = Path.GetDirectoryName(fn.FullPath);
-                var ext = Path.GetExtension(fn.FullPath);
-                var start = Path.GetFileNameWithoutExtension(fn.FullPath);
-                var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
-                fileCopy = Path.Combine(path, fileCopy);
-
                 this._copyPastePending = new CopyPasteArg {
                     Container = fn.Parent,
                     FileToCopy = fn.FullPath
