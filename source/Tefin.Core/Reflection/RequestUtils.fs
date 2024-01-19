@@ -2,7 +2,6 @@ namespace Tefin.Core.Reflection
 
 open System.Collections.Generic
 open Tefin.Core.Reflection
-open Tefin.Core.Interop
 open System
 open System.Reflection
 
@@ -39,7 +38,7 @@ module RequestUtils =
 
         emitRequest getClassName getProperties
 
-    
+
     let emitStreamingRequestClass (prefix: string) (methodInfo: MethodInfo) =
         let requestType = methodInfo.ReturnType.GetGenericArguments()[0]
 
@@ -49,5 +48,9 @@ module RequestUtils =
 
             className
 
-        let getProperties () = [| { IsMethod = false; Name = "Request"; Type = requestType } |]
+        let getProperties () =
+            [| { IsMethod = false
+                 Name = "Request"
+                 Type = requestType } |]
+
         emitRequest getClassName getProperties

@@ -9,11 +9,11 @@ type LogType =
     | Error
 
 type ILog =
-    abstract Info : string -> unit
-    abstract Warn : string -> unit
-    abstract Error : string -> unit
-    abstract Error : Exception -> unit
-    abstract Debug : string -> unit
+    abstract Info: string -> unit
+    abstract Warn: string -> unit
+    abstract Error: string -> unit
+    abstract Error: Exception -> unit
+    abstract Debug: string -> unit
 
 let private write (msg: string) = Console.WriteLine msg
 

@@ -63,22 +63,24 @@ module MethodInvoker =
         let result = mi.Invoke(instance, args)
         Some result
 
-    let createGrpcClient  =
+    let createGrpcClient =
         let cacheConfig = Dictionary<Type, CallConfig>()
         let cache = Dictionary<Type, obj>()
-        fun (clientType:Type) (cfg: CallConfig) (onErr:Exception->unit) ->
+
+        fun (clientType: Type) (cfg: CallConfig) (onErr: Exception -> unit) ->
             if (cacheConfig.ContainsKey clientType) then
                 let prevCfg = cacheConfig[clientType]
+
                 let isConfigUnchanged =
-                    prevCfg.Url = cfg.Url &&
-                    prevCfg.X509Cert = cfg.X509Cert &&
-                    prevCfg.JWT = cfg.JWT &&
-                    prevCfg.IsUsingSSL = cfg.IsUsingSSL
+                    prevCfg.Url = cfg.Url
+                    && prevCfg.X509Cert = cfg.X509Cert
+                    && prevCfg.JWT = cfg.JWT
+                    && prevCfg.IsUsingSSL = cfg.IsUsingSSL
 
                 //if the config was changed clear the cached instance
                 if not isConfigUnchanged then
-                   let _ = cache.Remove(clientType)
-                   ()
+                    let _ = cache.Remove(clientType)
+                    ()
 
             if cache.ContainsKey clientType then
                 cache[clientType]
@@ -94,9 +96,9 @@ module MethodInvoker =
                 cacheConfig[clientType] <- cfg
                 clientInstance
 
-    let invoke (methodInfo: MethodInfo) (mParams: obj array) (cfg: CallConfig) (onErr:Exception->unit)=
+    let invoke (methodInfo: MethodInfo) (mParams: obj array) (cfg: CallConfig) (onErr: Exception -> unit) =
         task {
-            
+
             let client = createGrpcClient methodInfo.DeclaringType cfg onErr
 
             //if the return type is a Task

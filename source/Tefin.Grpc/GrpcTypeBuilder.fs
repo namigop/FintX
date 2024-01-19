@@ -12,7 +12,7 @@ module GrpcTypeBuilder =
     let private buildMeta (createInstance: bool) =
         if (createInstance) then
             let meta = new Metadata()
-            
+
             meta.Add("client", $"{Utils.appName} {Utils.appVersionSimple}({RuntimeInformation.FrameworkDescription})/@{Environment.MachineName}")
             struct (true, box meta)
         else
@@ -39,9 +39,9 @@ module GrpcTypeBuilder =
 
     let private buildTimestamp (createInstance: bool) =
         if (createInstance) then
-            let now = DateTime.Now.AddDays(1).ToUniversalTime();
+            let now = DateTime.Now.AddDays(1).ToUniversalTime()
             let t = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(now)
-            struct (true,  box t )
+            struct (true, box t)
         else
             struct (false, Unchecked.defaultof<obj>)
 
@@ -52,11 +52,11 @@ module GrpcTypeBuilder =
             | Some itemType ->
                 let addMethod = thisType.GetMethod("Add", [| itemType |])
                 let struct (ok, itemInstance) = TypeBuilder.getDefault itemType true None depth
-                let rAdd = addMethod.Invoke(parentInstance, [| itemInstance |]) 
+                let rAdd = addMethod.Invoke(parentInstance, [| itemInstance |])
                 struct (true, parentInstance)
             | None -> struct (false, Unchecked.defaultof<obj>)
         | None -> struct (false, Unchecked.defaultof<obj>)
-        
+
 
     let getDefault (thisType: System.Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
         if (thisType = typeof<Nullable<DateTime>>) then

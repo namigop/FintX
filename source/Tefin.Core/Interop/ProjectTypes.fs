@@ -1,8 +1,5 @@
 namespace Tefin.Core.Interop
 
-open System.Globalization
-open System.IO
-open Tefin.Core
 
 [<AutoOpen>]
 module ProjectTypes =

@@ -8,7 +8,7 @@ open Tefin.Core
 open Tefin.Core.Utils
 
 module ProtocProcess =
-    let private cleanupWorkingDirectory (io:IOResolver) (grpcRoot: string) (protosPath: string) =
+    let private cleanupWorkingDirectory (io: IOResolver) (grpcRoot: string) (protosPath: string) =
         //Clean up old proto files in the working directory
         let existingFiles =
             //io.DirIO.G
@@ -18,12 +18,12 @@ module ProtocProcess =
             io.File.Delete(f)
 
         //Clean up old C# source files
-        for cs in io.Dir.GetFiles (protosPath, "*.cs", SearchOption.AllDirectories) do
+        for cs in io.Dir.GetFiles(protosPath, "*.cs", SearchOption.AllDirectories) do
             io.File.Delete(cs)
 
-    let private getProtocArgs  (io:IOResolver) (grpcRoot: string) (csharpPlugin: string) (protoFiles: string array) =
+    let private getProtocArgs (io: IOResolver) (grpcRoot: string) (csharpPlugin: string) (protoFiles: string array) =
         let googlePath = Path.Combine(grpcRoot, "google", "protobuf")
-        let sourceProtoPath = Path.GetDirectoryName(protoFiles[0]);
+        let sourceProtoPath = Path.GetDirectoryName(protoFiles[0])
 
         let args =
             $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\" --proto_path=\"{googlePath}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
@@ -35,7 +35,7 @@ module ProtocProcess =
             let files = String.Join(" ", names)
             $"{args} {files}"
 
-    let extractExecutablesAndGoogleProtos  (io:IOResolver) (grpcRootPath: string) (protocExe: string) (csharpPluginExe: string) =
+    let extractExecutablesAndGoogleProtos (io: IOResolver) (grpcRootPath: string) (protocExe: string) (csharpPluginExe: string) =
         task {
 
             let toolsPath = Path.Combine(grpcRootPath, "tools")
@@ -61,10 +61,12 @@ module ProtocProcess =
                     Path.Combine(linuxPath, protocExe), Path.Combine(linuxPath, csharpPluginExe)
 
             let p = Path.Combine(grpcRootPath, protocExe)
+
             if not (io.File.Exists p) then
                 io.File.Copy(protocFile, p)
 
             let c = Path.Combine(grpcRootPath, csharpPluginExe)
+
             if not (io.File.Exists c) then
                 io.File.Copy(csharpPluginFile, c)
 
@@ -97,7 +99,7 @@ module ProtocProcess =
                     do! io.File.WriteAllBytesAsync target bytes
         }
 
-    let generateSourceFiles  (io:IOResolver) (grpcRoot: string) (protosPath: string) (protosFiles: string array) =
+    let generateSourceFiles (io: IOResolver) (grpcRoot: string) (protosPath: string) (protosFiles: string array) =
         task {
             //        protoc.exe
             //          --proto_path = protos ????
@@ -129,8 +131,7 @@ module ProtocProcess =
             //var args = $"--proto_path={googlePath} --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos {Path.GetFileName(tempProtosFile)}";
             let args = getProtocArgs io grpcRoot csharpPlugin (workingProtoFiles.ToArray())
 
-            let! files =
-                Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly))
+            let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly))
 
             return files
         }

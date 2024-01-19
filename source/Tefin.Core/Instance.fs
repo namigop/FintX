@@ -2,8 +2,6 @@ namespace Tefin.Core
 
 open System
 open System.IO
-open System.Reflection
-open System.Threading
 open Newtonsoft.Json
 open Tefin.Core.Json
 open Tefin.Core.Reflection
@@ -25,10 +23,10 @@ module Instance =
         try
             if not (objToSerialize = Unchecked.defaultof<'T>) then
                 use sw = new StringWriter()
-                use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation =4)
+                use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation = 4)
                 let ser = JsonSerializer.Create jsonSettings // .CreateDefault()
                 ser.Serialize(jw, objToSerialize)
-                let json = sw.ToString()                
+                let json = sw.ToString()
                 json
             else
                 ""
@@ -42,7 +40,7 @@ module Instance =
             let obj = JsonConvert.DeserializeObject<'T>(json, jsonSettings)
             obj
         with exc ->
-            Log.logError (exc.ToString())            
+            Log.logError (exc.ToString())
             Unchecked.defaultof<'T>
 
     //this is just a marker type

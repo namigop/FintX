@@ -83,14 +83,18 @@ module GrpcReflectionClient =
         task {
             do! writer.WriteAsync(indentation)
             do! writer.WriteLineAsync($"message {message.Name} {{")
+
             for nestedType in message.NestedTypes do
                 do! writeMessageDescriptor nestedType writer (indentation + Indent)
+
             for field in
                 message.Fields.InDeclarationOrder()
                 |> Seq.filter (fun f -> f.ContainingOneof = null) do
                 do! writeFieldDescriptor field writer (indentation + Indent)
+
             for oneof in message.Oneofs do
                 do! writeOneOfDescriptor oneof writer (indentation + Indent)
+
             do! writer.WriteLineAsync($"{indentation}}}")
         }
 
@@ -126,6 +130,7 @@ module GrpcReflectionClient =
                 let stream = client.ServerReflectionInfo()
                 do! stream.RequestStream.WriteAsync(ServerReflectionRequest(FileContainingSymbol = service))
                 let! _ = stream.ResponseStream.MoveNext(CancellationToken.None)
+
                 let protos =
                     stream.ResponseStream.Current.FileDescriptorResponse.FileDescriptorProto.Reverse()
 
@@ -138,7 +143,7 @@ module GrpcReflectionClient =
         descriptor.Name.StartsWith("google/protobuf/")
         && descriptor.Package.Equals("google.protobuf")
 
-    let private getProtos (io:IOResolver) (path: string) (descriptors: IReadOnlyList<FileDescriptor>) =
+    let private getProtos (io: IOResolver) (path: string) (descriptors: IReadOnlyList<FileDescriptor>) =
         task {
             let protos = List<string>()
 
@@ -162,9 +167,10 @@ module GrpcReflectionClient =
         else
             address2
 
-    let createProtoFile (io:IOResolver) (address2: string) (service: string) (path: string) =
+    let createProtoFile (io: IOResolver) (address2: string) (service: string) (path: string) =
         task {
             let address = getAddress address2
+
             let! protos =
                 Task.FromResult(createReflectionClient address)
                 |> mapTask (getDescriptors service)
@@ -173,7 +179,7 @@ module GrpcReflectionClient =
             return protos
         }
 
-    let getServices (io:IOResolver) (address2: string) =
+    let getServices (io: IOResolver) (address2: string) =
         task {
             let address = getAddress address2
 
@@ -192,7 +198,7 @@ module GrpcReflectionClient =
                             |> Seq.toArray
 
                         do! stream.RequestStream.CompleteAsync()
-                        io.Log.Info ("Found services: " + String.Join(",", services))
+                        io.Log.Info("Found services: " + String.Join(",", services))
                         return Ret.Ok services
                     })
 

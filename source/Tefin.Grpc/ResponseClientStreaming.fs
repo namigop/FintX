@@ -22,7 +22,7 @@ type ClientStreamingCallInfo =
       CompleteAsyncMethodInfo: MethodInfo
       ResponseHeadersAsyncPropInfo: PropertyInfo
       RequestStreamPropInfo: PropertyInfo
-      Method : MethodInfo}
+      Method: MethodInfo }
 
     member this.GetStatus(callResult: obj) =
         this.GetStatusMethodInfo.Invoke(callResult, null) :?> Status
@@ -105,11 +105,13 @@ module ClientStreamingResponse =
                     temp
                 else
                     let requestStreamPropInfo = clientStreamType.GetProperty("RequestStream") //IClientStreamWriter<TRequest>
+
                     let requestStreamType =
                         if isError then
                             typeof<Exception>
                         else
                             requestStreamPropInfo.GetValue(callResult).GetType() //requestStreamPropInfo.PropertyType
+
                     let writeMethod = requestStreamType.GetMethod("WriteAsync", [| requestItemType |])
                     let completeMethod = requestStreamType.GetMethod("CompleteAsync")
 
@@ -130,17 +132,17 @@ module ClientStreamingResponse =
                           CompleteAsyncMethodInfo = completeMethod
                           ResponseHeadersAsyncPropInfo = responseHeadersAsyncPropInfo
                           RequestStreamPropInfo = requestStreamPropInfo
-                          Method = methodInfo}
+                          Method = methodInfo }
 
                     cache[clientStreamType] <- temp
                     temp
 
             let requestStream =
                 if isError then
-                    box Unchecked.defaultof<Exception> 
+                    box Unchecked.defaultof<Exception>
                 else
                     callInfo.RequestStreamPropInfo.GetValue(callResult)
-                   
+
             { Headers = None
               Trailers = None
               Status = None
@@ -150,35 +152,57 @@ module ClientStreamingResponse =
               RequestStream = requestStream
               CallInfo = callInfo }
 
-    let emitClientStreamResponse (resp: ClientStreamingCallResponse) = task {
-        let isError = resp.Response :? Exception
-         
-        let wrapperType = ResponseUtils.emitClientStreamResponse resp.CallInfo.Method isError
-        let wrapperInst = Activator.CreateInstance wrapperType
-        let responsePi = wrapperType.GetProperty("Response")
-        let response =
-            if (isError) then
-                let exc = resp.Response :?> Exception
-                new ErrorResponse(Error = exc.Message) |> box
-            else
-                resp.Response
-                
-        responsePi.SetValue(wrapperInst, response)
-       
-        let headerProp = wrapperType.GetProperty("Headers")
-        headerProp.SetValue(wrapperInst, match resp.Headers with | Some m -> m | None -> Metadata())
-        
-        let statusProp = wrapperType.GetProperty("Status")       
-        statusProp.SetValue(wrapperInst, match resp.Status with | Some s -> s | None -> Status(StatusCode.Unknown, "check the logs") )
-        
-        let trailersProp =wrapperType.GetProperty("Trailers")
-        trailersProp.SetValue(wrapperInst, match resp.Trailers with | Some m -> m | None -> Metadata())
-            
-        return struct (wrapperType, wrapperInst)                            
-       
+    let emitClientStreamResponse (resp: ClientStreamingCallResponse) =
+        task {
+            let isError = resp.Response :? Exception
+
+            let wrapperType =
+                ResponseUtils.emitClientStreamResponse resp.CallInfo.Method isError
+
+            let wrapperInst = Activator.CreateInstance wrapperType
+            let responsePi = wrapperType.GetProperty("Response")
+
+            let response =
+                if (isError) then
+                    let exc = resp.Response :?> Exception
+                    new ErrorResponse(Error = exc.Message) |> box
+                else
+                    resp.Response
+
+            responsePi.SetValue(wrapperInst, response)
+
+            let headerProp = wrapperType.GetProperty("Headers")
+
+            headerProp.SetValue(
+                wrapperInst,
+                match resp.Headers with
+                | Some m -> m
+                | None -> Metadata()
+            )
+
+            let statusProp = wrapperType.GetProperty("Status")
+
+            statusProp.SetValue(
+                wrapperInst,
+                match resp.Status with
+                | Some s -> s
+                | None -> Status(StatusCode.Unknown, "check the logs")
+            )
+
+            let trailersProp = wrapperType.GetProperty("Trailers")
+
+            trailersProp.SetValue(
+                wrapperInst,
+                match resp.Trailers with
+                | Some m -> m
+                | None -> Metadata()
+            )
+
+            return struct (wrapperType, wrapperInst)
+
         }
-        
-        
+
+
     let completeCall (resp: ClientStreamingCallResponse) =
         task {
             let status =
@@ -207,7 +231,8 @@ module ClientStreamingResponse =
             try
                 let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
                 return { resp with Headers = Some meta }
-            with exc -> return resp
+            with exc ->
+                return resp
         }
 
     let completeWrite (resp: ClientStreamingCallResponse) =
@@ -223,32 +248,36 @@ module ClientStreamingResponse =
         task {
             try
                 let! methodCallResponse = resp.CallInfo.GetResponse(resp.CallResult)
-                return { resp with Response = methodCallResponse }
+
+                return
+                    { resp with
+                        Response = methodCallResponse }
             with exc ->
                 return { resp with Response = exc }
         }
 
 
-    let write (resp: ClientStreamingCallResponse) (reqItem: obj) = task {
-      do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
-     }
-    
-    
-    
+    let write (resp: ClientStreamingCallResponse) (reqItem: obj) =
+        task { do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task) }
+
+
+
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseClientStreaming =
         if ctx.Success then
             let w = wrapResponse methodInfo (Res.getValue ctx.Response) None
- 
+
             let t: OkayClientStreamingResponse =
                 { MethodInfo = methodInfo
                   Context = ctx
                   Response = w }
 
-           
+
             Okay t
         else
             let err = ctx.GetError()
-            let w = wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some) 
+
+            let w =
+                wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some)
 
             let t: ErrorClientStreamingResponse =
                 { MethodInfo = methodInfo

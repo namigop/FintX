@@ -1,10 +1,6 @@
 namespace Tefin.Core.Interop
 
-open System
 open System.Collections.ObjectModel
-open System.Globalization
-open System.IO
-open System.Reflection
 open System.Threading.Tasks
 
 open Tefin.Core

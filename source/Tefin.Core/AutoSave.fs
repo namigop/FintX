@@ -3,7 +3,6 @@ namespace Tefin.Core
 open System.Collections.Generic
 open System.IO
 open System.Reflection
-open System.Runtime.InteropServices.JavaScript
 open Tefin.Core.Interop
 
 module AutoSave =
@@ -97,7 +96,7 @@ module AutoSave =
               FullPath = Some fullPath }
 
     let private saveMethod (io: IOResolver) (clientPath: string) (m: MethodParam) (writer: Writer) =
-        let autoSavePath = Project.getAutoSavePath clientPath m.Name            
+        let autoSavePath = Project.getAutoSavePath clientPath m.Name
         io.Dir.CreateDirectory autoSavePath
 
         let autoSavedFiles =
@@ -118,19 +117,18 @@ module AutoSave =
         |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
         |> Array.filter (fun fp -> fp.Contains(Project.autoSaveFolderName))
         |> Array.sortBy id
-        
+
     let private saveClient (io: IOResolver) (clientParam: ClientParam) (writer: Writer) =
         if (Directory.Exists clientParam.Client.Path) then
             if (clientParam.Methods.Length = 0) then
-                getAutoSavedFiles io clientParam.Client.Path
-                |> Array.iter File.Delete
-            
+                getAutoSavedFiles io clientParam.Client.Path |> Array.iter File.Delete
+
             for m in clientParam.Methods do
                 saveMethod io clientParam.Client.Path m writer
 
     let getAutoSaveLocation (io: IOResolver) (methodInfo: MethodInfo) (clientPath: string) =
         let methodName = methodInfo.Name
-        let autoSavePath = Project.getAutoSavePath (clientPath) methodName            
+        let autoSavePath = Project.getAutoSavePath (clientPath) methodName
 
         io.Dir.CreateDirectory autoSavePath
         let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt
@@ -145,13 +143,14 @@ module AutoSave =
         let timer = new System.Timers.Timer()
         timer.AutoReset <- true
         timer.Interval <- 5000 //5 sec
-      
+
         let io = Resolver.value
         let w = writer
 
         fun (getParam: System.Func<ClientParam array>) ->
             if not timer.Enabled then
                 timer.Enabled <- true
+
                 timer.Elapsed
                 |> Observable.add (fun args ->
                     let clientParams = getParam.Invoke()

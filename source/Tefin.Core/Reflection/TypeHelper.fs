@@ -36,9 +36,13 @@ module TypeHelper =
         typ2.GetInterfaces()
         |> Array.filter (fun i -> i.IsGenericType)
         |> Array.tryFind (fun i ->
-            let isList () = i.GetGenericTypeDefinition() |> typedefof<IList<_>>.IsAssignableFrom
-            let isEnumerable () = i.GetGenericTypeDefinition() |> typedefof<IEnumerable<_>>.IsAssignableFrom
-            isList() || isEnumerable ())
+            let isList () =
+                i.GetGenericTypeDefinition() |> typedefof<IList<_>>.IsAssignableFrom
+
+            let isEnumerable () =
+                i.GetGenericTypeDefinition() |> typedefof<IEnumerable<_>>.IsAssignableFrom
+
+            isList () || isEnumerable ())
         |> fun t -> t.IsSome
 
     let isNullable type2 =

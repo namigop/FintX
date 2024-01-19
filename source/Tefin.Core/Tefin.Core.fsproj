@@ -6,60 +6,60 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Log.fs" />
-        <Compile Include="Ext.fs" />
-        <Compile Include="Colors.fs" />
-        <Compile Include="Utils.fs" />
-        <Compile Include="TimeIt.fs" />
-        <Compile Include="CertUtils.fs" />
-        <Compile Include="Proc.fs" />
-        <Compile Include="Res.fs" />
-        <Compile Include="Config.fs" />
-        <Compile Include="LoadContext.fs" />
-        <Compile Include="Actors\Actor.fs" />
-        <Compile Include="Actors\Hub.fs" />
-        <Compile Include="Actors\GlobalHub.fs" />
-        <Compile Include="Actors\LogActor.fs" />
-     
-        <Compile Include="Interop\ProjectTypes.fs" />
-     
-        <Compile Include="Interop\AppTypes.fs" />
-     
-        <Compile Include="Interop\ErrorResponse.fs" />
-        <Compile Include="Interop\IFileIO.fs" />
-        <Compile Include="Interop\IMethodCallIO.fs" />
-        <Compile Include="Interop\IDirIO.fs" />
-        <Compile Include="Interop\ITextWriter.fs" />
-        <Compile Include="Interop\Messages.fs" />
-        <Compile Include="Interop\Resolver.fs" />
-        <Compile Include="Reflection\TypeCast.fs" />
-        <Compile Include="Reflection\TypeHelper.fs" />
-        <Compile Include="Reflection\TypeBuilder.fs" />
-        <Compile Include="Reflection\MethodInfoHelper.fs" />
-        <Compile Include="Reflection\ClassGen.fs" />
-        <Compile Include="Reflection\RequestUtils.fs" />
-        <Compile Include="Reflection\ResponseUtils.fs" />
-        <Compile Include="ByteStringConverter.fs" />
-        <Compile Include="MetadataEntryConverter.fs" />
-        <Compile Include="StatusConverter.fs" />
-        <Compile Include="CancellationTokenConverter.fs" />
-        <Compile Include="Instance.fs" />
-        <Compile Include="Project.fs" />
-        <Compile Include="ClientCompiler.fs" />
-        <Compile Include="CallPipeline.fs" />
-        <Compile Include="CoreExport.fs" />
-        <Compile Include="CoreMethod.fs" />
-        <Compile Include="AutoSave.fs" />
-        <Compile Include="App.fs" />
-       
+        <Compile Include="Log.fs"/>
+        <Compile Include="Ext.fs"/>
+        <Compile Include="Colors.fs"/>
+        <Compile Include="Utils.fs"/>
+        <Compile Include="TimeIt.fs"/>
+        <Compile Include="CertUtils.fs"/>
+        <Compile Include="Proc.fs"/>
+        <Compile Include="Res.fs"/>
+        <Compile Include="Config.fs"/>
+        <Compile Include="LoadContext.fs"/>
+        <Compile Include="Actors\Actor.fs"/>
+        <Compile Include="Actors\Hub.fs"/>
+        <Compile Include="Actors\GlobalHub.fs"/>
+        <Compile Include="Actors\LogActor.fs"/>
+
+        <Compile Include="Interop\ProjectTypes.fs"/>
+
+        <Compile Include="Interop\AppTypes.fs"/>
+
+        <Compile Include="Interop\ErrorResponse.fs"/>
+        <Compile Include="Interop\IFileIO.fs"/>
+        <Compile Include="Interop\IMethodCallIO.fs"/>
+        <Compile Include="Interop\IDirIO.fs"/>
+        <Compile Include="Interop\ITextWriter.fs"/>
+        <Compile Include="Interop\Messages.fs"/>
+        <Compile Include="Interop\Resolver.fs"/>
+        <Compile Include="Reflection\TypeCast.fs"/>
+        <Compile Include="Reflection\TypeHelper.fs"/>
+        <Compile Include="Reflection\TypeBuilder.fs"/>
+        <Compile Include="Reflection\MethodInfoHelper.fs"/>
+        <Compile Include="Reflection\ClassGen.fs"/>
+        <Compile Include="Reflection\RequestUtils.fs"/>
+        <Compile Include="Reflection\ResponseUtils.fs"/>
+        <Compile Include="ByteStringConverter.fs"/>
+        <Compile Include="MetadataEntryConverter.fs"/>
+        <Compile Include="StatusConverter.fs"/>
+        <Compile Include="CancellationTokenConverter.fs"/>
+        <Compile Include="Instance.fs"/>
+        <Compile Include="Project.fs"/>
+        <Compile Include="ClientCompiler.fs"/>
+        <Compile Include="CallPipeline.fs"/>
+        <Compile Include="CoreExport.fs"/>
+        <Compile Include="CoreMethod.fs"/>
+        <Compile Include="AutoSave.fs"/>
+        <Compile Include="App.fs"/>
+
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Google.Protobuf" Version="3.24.4" />
-      <PackageReference Include="Grpc.Core.Api" Version="2.57.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.7.0" />
-      <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
+        <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.7.0"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 
 </Project>

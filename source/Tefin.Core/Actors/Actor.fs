@@ -27,46 +27,48 @@ module Actor =
         { Post: MessageType<'a> -> unit
           ReqType: Type }
 
-    type Actor2<'a, 'b>(r:Type, b:MessageType<'a> -> 'b, dispose) =
+    type Actor2<'a, 'b>(r: Type, b: MessageType<'a> -> 'b, dispose) =
         member val ReqType = r
         member val PostAndReply = b
+
         interface IDisposable with
-            member x.Dispose() = dispose()
+            member x.Dispose() = dispose ()
 
     let createOneWay<'a> handleSys handleMsg =
         let proc =
-            MailboxProcessor<MessageType<'a>>.Start
-                (fun inbox ->
-                    let mutable run = true
-                    let rec loop () =
-                        async {
-                            if (run) then
-                                let! message = inbox.Receive()
-                                Debug.WriteLine($"Actor: processing message: {message.GetType().Name}")
-                                match message with
-                                | System systemType ->
-                                    if systemType = SystemType.Stop then
-                                        run <- false
+            MailboxProcessor<MessageType<'a>>.Start(fun inbox ->
+                let mutable run = true
 
-                                    (handleSys systemType)
-                                    |> Async.Catch
-                                    |> Async.RunSynchronously
-                                    |> function
-                                        | Choice1Of2 () -> ()
-                                        | Choice2Of2 exn -> Console.WriteLine(exn)
+                let rec loop () =
+                    async {
+                        if (run) then
+                            let! message = inbox.Receive()
+                            Debug.WriteLine($"Actor: processing message: {message.GetType().Name}")
 
-                                | Message m -> //do! handleMsg m
-                                    (handleMsg m)
-                                    |> Async.Catch
-                                    |> Async.RunSynchronously
-                                    |> function
-                                        | Choice1Of2 () -> ()
-                                        | Choice2Of2 exn -> Console.WriteLine(exn)
+                            match message with
+                            | System systemType ->
+                                if systemType = SystemType.Stop then
+                                    run <- false
 
-                                do! loop ()
-                        }
+                                (handleSys systemType)
+                                |> Async.Catch
+                                |> Async.RunSynchronously
+                                |> function
+                                    | Choice1Of2() -> ()
+                                    | Choice2Of2 exn -> Console.WriteLine(exn)
 
-                    loop ())
+                            | Message m -> //do! handleMsg m
+                                (handleMsg m)
+                                |> Async.Catch
+                                |> Async.RunSynchronously
+                                |> function
+                                    | Choice1Of2() -> ()
+                                    | Choice2Of2 exn -> Console.WriteLine(exn)
+
+                            do! loop ()
+                    }
+
+                loop ())
 
         //return record IActor<'a,'b>
         { Post = fun msg -> proc.Post(msg)
@@ -74,42 +76,45 @@ module Actor =
 
     let createTwoWay<'a, 'b> handleSys (handleMsg) =
         let proc =
-            MailboxProcessor<TwoWay<'a, Ret<'b>>>.Start
-                (fun inbox ->
-                    let mutable run = true
-                    let rec loop () =
-                        async {
-                            if (run) then
-                                let! message, rc = inbox.Receive()
-                                match message with
-                                | System systemType ->
-                                    if systemType = SystemType.Stop then
-                                        run <- false
+            MailboxProcessor<TwoWay<'a, Ret<'b>>>.Start(fun inbox ->
+                let mutable run = true
 
-                                    (handleSys systemType)
-                                    |> Async.Catch
-                                    |> Async.RunSynchronously
-                                    |> function
-                                        | Choice1Of2 r ->  rc.Reply (Ret.Ok r)
-                                        | Choice2Of2 exn -> rc.Reply (Ret.Error exn)
+                let rec loop () =
+                    async {
+                        if (run) then
+                            let! message, rc = inbox.Receive()
 
-                                | Message m ->
-                                     //let! result = handleMsg m
-                                     //rc.Reply result
-                                    (handleMsg m)
-                                    |> Async.Catch
-                                    |> Async.RunSynchronously
-                                    |> function
-                                        | Choice1Of2 r ->  rc.Reply (Ret.Ok r)
-                                        | Choice2Of2 exn -> rc.Reply (Ret.Error exn)
-                                do! loop ()
-                        }
-                    loop ())
+                            match message with
+                            | System systemType ->
+                                if systemType = SystemType.Stop then
+                                    run <- false
 
-        let dispose() =
+                                (handleSys systemType)
+                                |> Async.Catch
+                                |> Async.RunSynchronously
+                                |> function
+                                    | Choice1Of2 r -> rc.Reply(Ret.Ok r)
+                                    | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
+
+                            | Message m ->
+                                //let! result = handleMsg m
+                                //rc.Reply result
+                                (handleMsg m)
+                                |> Async.Catch
+                                |> Async.RunSynchronously
+                                |> function
+                                    | Choice1Of2 r -> rc.Reply(Ret.Ok r)
+                                    | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
+
+                            do! loop ()
+                    }
+
+                loop ())
+
+        let dispose () =
             let stop = SystemType.Stop
-            let stopMsg : MessageType<'a>  = System stop
-            let _ = proc.PostAndReply (fun rc -> stopMsg, rc)
+            let stopMsg: MessageType<'a> = System stop
+            let _ = proc.PostAndReply(fun rc -> stopMsg, rc)
             ()
 
         let m = fun msg -> proc.PostAndReply(fun rc -> msg, rc)

@@ -7,8 +7,9 @@ open Tefin.Core.Execution
 open Tefin.Core.Interop
 
 module CallServerStreaming =
-    
+
     let callError = CallError()
+
     let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
         task {
             let start (ctx: Context) =
@@ -22,12 +23,18 @@ module CallServerStreaming =
                     try
                         callError.Clear()
                         let! resp = MethodInvoker.invoke methodInfo mParams callConfig callError.Receive
+
                         if callError.Failed then
-                            return { ctx with Response = Res.ok resp.Value; Error = callError.Exception }
+                            return
+                                { ctx with
+                                    Response = Res.ok resp.Value
+                                    Error = callError.Exception }
                         else
-                            return { ctx with Response = Res.ok resp.Value }
-                            
-                        //return { ctx with Response = Res.ok resp.Value }
+                            return
+                                { ctx with
+                                    Response = Res.ok resp.Value }
+
+                    //return { ctx with Response = Res.ok resp.Value }
                     with exc ->
                         return { ctx with Response = Res.failed exc }
                 }
