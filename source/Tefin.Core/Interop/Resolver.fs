@@ -4,6 +4,7 @@ open System.Collections.Generic
 open System
 open System.IO
 open Tefin.Core.Infra.Actors
+open Tefin.Core.Infra.Actors.Logging
 open Tefin.Core.Interop
 open Tefin.Core.Log
 
@@ -34,7 +35,7 @@ module Resolver =
             failwith $"Unable to resolve {typeof<'a>.FullName}"
 
     let private wrappedLogger =
-        let temp = Tefin.Core.Infra.Actors.Logging.LogActor.create () :> ILog
+        let temp = LogActor.create () :> ILog
 
         { new ILog with
             member x.Info msg = temp.Info msg

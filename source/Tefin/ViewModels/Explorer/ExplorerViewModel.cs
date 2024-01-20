@@ -45,7 +45,6 @@ public class ExplorerViewModel : ViewModelBase {
         };
 
         this.ExplorerTree = temp;
-
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
         GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
@@ -106,6 +105,12 @@ public class ExplorerViewModel : ViewModelBase {
         if (path == this.Project?.Path)
             return;
 
+        var stateFile = Path.Combine(path, ProjectSaveState.FileName);
+        if (!this.Io.File.Exists(stateFile)) {
+            this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
+            return;
+        }
+        
         this.Project = Core.Project.loadProject(this.Io, path);
         this.Items.Clear();
         foreach (var client in this.Project.Clients) {

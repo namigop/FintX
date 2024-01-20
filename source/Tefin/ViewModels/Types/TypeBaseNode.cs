@@ -40,7 +40,7 @@ public abstract class TypeBaseNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._isNull, value);
     }
 
-    public TypeBaseNode? Parent { get; }
+    //public TypeBaseNode? Parent { get; }
     public Type Type { get; }
 
     //  set => this.RaiseAndSetIfChanged(ref this._formattedValue, value);
@@ -74,7 +74,7 @@ public abstract class TypeBaseNode : NodeBase {
 
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
         try {
-            var parentInstance = this.Parent?.Value;
+            var parentInstance = (this.Parent as TypeBaseNode)?.Value;
             if (parentInstance != null)
                 this._typeInfo?.SetValue(parentInstance, newValue);
         }

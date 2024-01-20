@@ -7,7 +7,7 @@ open Tefin.Core
 
 type IPackage =
     abstract Name: string
-    abstract Init: unit -> Task
+    abstract Init : io:Tefin.Core.IOResolver -> Task
     abstract GetConfig: unit -> ReadOnlyDictionary<string, string>
 
 [<AutoOpen>]

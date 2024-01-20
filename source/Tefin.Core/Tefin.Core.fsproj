@@ -20,18 +20,20 @@
         <Compile Include="Actors\Hub.fs"/>
         <Compile Include="Actors\GlobalHub.fs"/>
         <Compile Include="Actors\LogActor.fs"/>
+        <Compile Include="Interop\ITextWriter.fs" />
+        <Compile Include="Interop\IMethodCallIO.fs" />
+        <Compile Include="Interop\IDirIO.fs" />
+        <Compile Include="Interop\IFileIO.fs" />
+        <Compile Include="Interop\MessageBase.fs" />
+        <Compile Include="Interop\Resolver.fs" />
 
         <Compile Include="Interop\ProjectTypes.fs"/>
 
         <Compile Include="Interop\AppTypes.fs"/>
 
+        <Compile Include="Interop\Messages.fs" />
+
         <Compile Include="Interop\ErrorResponse.fs"/>
-        <Compile Include="Interop\IFileIO.fs"/>
-        <Compile Include="Interop\IMethodCallIO.fs"/>
-        <Compile Include="Interop\IDirIO.fs"/>
-        <Compile Include="Interop\ITextWriter.fs"/>
-        <Compile Include="Interop\Messages.fs"/>
-        <Compile Include="Interop\Resolver.fs"/>
         <Compile Include="Reflection\TypeCast.fs"/>
         <Compile Include="Reflection\TypeHelper.fs"/>
         <Compile Include="Reflection\TypeBuilder.fs"/>

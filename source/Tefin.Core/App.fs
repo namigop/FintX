@@ -18,11 +18,11 @@ module App =
 
         for p in packageTypes do
             let pack = (Activator.CreateInstance p) :?> IPackage
-            let _ = pack.Init()
+            let _ = pack.Init(Resolver.value)
             ()
 
     let loadPackage (io: IOResolver) (packagePath: string) =
-        let dirs = Directory.GetDirectories(Path.Combine(packagePath, "projects"))
+        let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))        
         let projects = dirs |> Array.map (loadProject io)
         let packageName = Path.GetFileName packagePath
 
@@ -33,14 +33,13 @@ module App =
     let loadRoot (io: IOResolver) =
         let packages =
             Path.Combine(Root.Path, "packages")
-            |> Directory.GetDirectories
+            |> io.Dir.GetDirectories
             |> Array.map (loadPackage io)
 
         { Packages = packages
           AppConfigFile = Config.configFile }
 
     let setupRoot (io: IOResolver) =
-
         io.Dir.CreateDirectory(Root.Path)
         setupPackage ()
 
@@ -51,7 +50,8 @@ module App =
 
         root.Packages
         |> Array.find (fun c -> c.Name = packageName)
-        |> fun p -> p.Projects |> Array.find (fun c -> c.Name = projName)
+        |> fun p -> p.Projects
+                    |> Array.find (fun c -> c.Name = projName)
 
     let getDefaultProject (io: IOResolver) =
         getProject io defaultPackage Project.DefaultName

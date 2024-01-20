@@ -48,6 +48,7 @@ module ProjectTypes =
         { Clients: ClientGroup array
           ConfigFile: string
           Name: string
+          Package : string
           Path: string }
 
         static member ProjectConfigFileName = "projectConfig.json" //TODO
@@ -56,5 +57,15 @@ module ProjectTypes =
         static member Empty() =
             { Clients = Array.empty
               ConfigFile = ""
+              Package = "" 
               Name = ""
               Path = "" }
+
+    type ClientSaveState = {
+        Name : string
+        OpenFiles : string array
+    }
+    type ProjectSaveState =
+        { Package: string
+          ClientState: ClientSaveState array }
+        static member FileName = "projectState.json"

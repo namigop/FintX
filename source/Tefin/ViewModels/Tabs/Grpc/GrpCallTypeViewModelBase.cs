@@ -5,7 +5,7 @@ using System.Reflection;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 
-using static Tefin.Core.Interop.Messages;
+using static Tefin.Core.Interop.MessageProject;
 
 #endregion
 

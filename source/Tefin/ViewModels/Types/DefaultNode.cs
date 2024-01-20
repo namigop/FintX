@@ -105,8 +105,9 @@ public class DefaultNode : TypeBaseNode {
         }
         else {
             var n = FSharpOption<object>.None;
-            if (this.Parent?.Value != null) {
-                n = FSharpOption<object>.Some(this.Parent.Value);
+            var parent = this.Parent as TypeBaseNode;
+            if (parent?.Value != null) {
+                n = FSharpOption<object>.Some(parent?.Value);
             }
 
             var (__, v) = TypeBuilder.getDefault(this.Type, true, n, 0);

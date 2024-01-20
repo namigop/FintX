@@ -49,10 +49,17 @@ module GrpcPackage =
 
             member x.Name = packageName
 
-            member x.Init() =
+            member x.Init (io:IOResolver) =
                 task {
                     for d in allPaths do
-                        ignore (Directory.CreateDirectory d)
+                        ignore (io.Dir.CreateDirectory d)
+                    
+                    let projectsRootPath = grpcConfigValues["ProjectsPath"]
+                    for projPath in io.Dir.GetDirectories projectsRootPath do                        
+                        let stateFile = Path.Combine(projPath, ProjectSaveState.FileName)
+                        if not (io.File.Exists stateFile) then
+                            let content = Instance.jsonSerialize { Package  = packageName; ClientState = Array.empty }
+                            do! io.File.WriteAllTextAsync stateFile content
                 }
 
             member x.GetConfig() = grpcConfigValues

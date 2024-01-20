@@ -18,7 +18,7 @@ using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 using Tefin.ViewModels.Tabs;
 
-using static Tefin.Core.Interop.Messages;
+using static Tefin.Core.Interop.MessageProject;
 
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 

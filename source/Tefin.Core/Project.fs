@@ -57,16 +57,20 @@ module Project =
 
     let loadProject (io: IOResolver) (projectPath: string) =
         let clientPaths =
-            let files =
-                Directory.GetFiles(projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
-
+            let files = io.Dir.GetFiles(projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
             files |> Array.map (fun file -> Path.GetDirectoryName file)
 
+        let projSaveState =
+            Path.Combine (projectPath, ProjectSaveState.FileName)
+            |> io.File.ReadAllText
+            |> Instance.jsonDeserialize<ProjectSaveState>
+        
         let projectName = Path.GetFileName projectPath
         let clients = clientPaths |> Array.map (fun path -> loadClient io path)
         let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
         { Name = projectName
+          Package =  projSaveState.Package
           Clients = clients
           ConfigFile = config
           Path = projectPath }
@@ -83,10 +87,8 @@ module Project =
                 let nameChanged = not (oldName = currentName)
 
                 if nameChanged then
-                    let newClientPath =
-                        Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
-
-                    Directory.Move(oldClientPath, newClientPath)
+                    let newClientPath = Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
+                    io.Dir.Move oldClientPath newClientPath
 
                     let newConfigFile = Path.Combine(newClientPath, fileName)
                     newConfigFile, newClientPath

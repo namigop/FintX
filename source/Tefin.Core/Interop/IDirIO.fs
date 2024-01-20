@@ -11,10 +11,13 @@ type IDirIO =
     abstract Exists: path: string -> bool
     abstract GetDirectories: path: string -> string array
     abstract Delete: path: string -> recursive: bool -> unit
+    abstract Move : oldPath:string -> newPath:string -> unit
 
 module Dir =
     let dirIO =
         { new IDirIO with
+            
+            member x.Move oldPath newPath = Directory.Move(oldPath, newPath)
             member x.GetFiles(path: string, searchPattern: string) = Directory.GetFiles(path, searchPattern)
             member x.GetDirectories path = Directory.GetDirectories path
 
