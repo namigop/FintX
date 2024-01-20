@@ -34,7 +34,7 @@ public class MainWindowViewModel : ViewModelBase {
         get;
     }
 
-    public string SponsorAlignment { get; } = Core.Utils.isWindows() ? "Left" : "Right";
+    public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
 
     private void OnSponsor() {
         Core.Utils.openBrowser("https://github.com/sponsors/namigop");
