@@ -398,3 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 /source/Setup/Output
 /source/Setup/sign.cmd
+/source/Setup/wingetupdate.cmd
+/source/Setup/manifests/e/ErikAraojo/FintX/1.0.0
