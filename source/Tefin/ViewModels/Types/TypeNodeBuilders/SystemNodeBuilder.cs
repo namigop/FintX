@@ -7,6 +7,7 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class SystemNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return SystemType.isSystemType(type);
     }

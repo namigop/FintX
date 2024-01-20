@@ -26,12 +26,11 @@ public partial class OutputMiscView : UserControl {
         this.DetachedFromVisualTree += this.OnDetached;
     }
 
-    private void OnTextChanged(object? sender, EventArgs e) {
-        var editor = (TextEditor)sender!;
-        if (string.IsNullOrEmpty(editor.Document.Text)) {
-            if (this._vm != null) {
-                this._vm.Editor.Clear();
-            }
+    private void OnDataContextChanged(object? sender, EventArgs e) {
+        var temp = ((OutputMiscView)sender!).DataContext;
+        if (temp != null && this._vm == null) {
+            this._vm = (OutputMiscViewModel)temp;
+            this._vm.Editor.SetTarget(this.Editor);
         }
     }
 
@@ -39,11 +38,12 @@ public partial class OutputMiscView : UserControl {
         this.Editor.TextChanged -= this.OnTextChanged;
     }
 
-    private void OnDataContextChanged(object? sender, EventArgs e) {
-        var temp = ((OutputMiscView)sender!).DataContext;
-        if (temp != null && this._vm == null) {
-            this._vm = (OutputMiscViewModel)temp;
-            this._vm.Editor.SetTarget(this.Editor);
+    private void OnTextChanged(object? sender, EventArgs e) {
+        var editor = (TextEditor)sender!;
+        if (string.IsNullOrEmpty(editor.Document.Text)) {
+            if (this._vm != null) {
+                this._vm.Editor.Clear();
+            }
         }
     }
 

@@ -15,7 +15,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class TabHostViewModel : ViewModelBase {
     private ITabViewModel? _selectedItem;
-   
+
     public TabHostViewModel() {
         GlobalHub.subscribe<OpenTabMessage>(this.OnReceiveTabOpenMessage);
         GlobalHub.subscribeTask<CloseTabMessage>(this.OnReceiveTabCloseMessage);
@@ -23,16 +23,17 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage);
     }
 
-    private async Task OnReceiveCloseAllTabsMessage(CloseAllTabsMessage arg) {
-        var tabs = this.Items.Where(t => t is PersistedTabViewModel);
-        foreach (var tab  in tabs)
-            await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
-    }
-
     public ObservableCollection<ITabViewModel> Items { get; } = new();
+
     public ITabViewModel? SelectedItem {
         get => this._selectedItem;
         set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
+    }
+
+    private async Task OnReceiveCloseAllTabsMessage(CloseAllTabsMessage arg) {
+        var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
+        foreach (var tab in tabs)
+            await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
     }
 
     private async Task OnReceiveFileChangeMessage(FileChangeMessage msg) {
@@ -62,7 +63,7 @@ public class TabHostViewModel : ViewModelBase {
     }
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
-        obj.Tab.Init();        
+        obj.Tab.Init();
         var existing = this.Items.FirstOrDefault(t => t.Id == obj.Tab.Id);
         if (existing != null) {
             this.SelectedItem = existing;
@@ -71,7 +72,5 @@ public class TabHostViewModel : ViewModelBase {
             this.Items.Add(obj.Tab);
             this.SelectedItem = this.Items.Last();
         }
-
-
     }
 }

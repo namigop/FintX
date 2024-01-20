@@ -13,6 +13,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
     private string _importFile;
+
     public GrpcClientMethodHostViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi) {
         var type = GrpcMethod.getMethodType(mi);
         if (type == MethodType.Unary)
@@ -30,17 +31,17 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
     public override string ApiType { get; } = GrpcPackage.packageName;
     public GrpCallTypeViewModelBase CallType { get; }
 
-    public override void ImportRequestFile(string requestFile) {
-        this._importFile = requestFile;
+    public override void Dispose() {
+        base.Dispose();
+        this.CallType.Dispose();
     }
 
     public override string GetRequestContent() {
         return this.CallType.GetRequestContent();
     }
 
-    public override void Dispose() {
-        base.Dispose();
-        this.CallType.Dispose();
+    public override void ImportRequestFile(string requestFile) {
+        this._importFile = requestFile;
     }
 
     public void Init() {

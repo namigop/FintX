@@ -11,13 +11,13 @@ using Tefin.Messages;
 namespace Tefin.Features;
 
 public class CompileFeature(string serviceName, string clientName, string description, string[] protoFiles, string reflectionUrl, IOResolver io) {
+
     public async Task<(bool, CompileOutput)> CompileExisting(string[] csFiles) {
-        try  {
+        try {
             GlobalHub.publish(new ClientCompileMessage(true));
             CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, Array.Empty<string>(), reflectionUrl, null);
             var com = await ServiceClient.compile(io, csFiles, cParams);
-            if (com.IsOk)
-            {
+            if (com.IsOk) {
                 return (true, com.ResultValue);
             }
 
@@ -36,8 +36,7 @@ public class CompileFeature(string serviceName, string clientName, string descri
             var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles, reflectionUrl, null);
             var csFilesRet = await ServiceClient.generateSourceFiles(io, cParams);
             var com = await ServiceClient.compile(Resolver.value, csFilesRet.ResultValue, cParams);
-            if (com.IsOk)
-            {
+            if (com.IsOk) {
                 return (true, com.ResultValue);
             }
 

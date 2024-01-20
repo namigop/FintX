@@ -7,6 +7,7 @@ using Google.Protobuf;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class ByteStringNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return type == typeof(ByteString);
     }

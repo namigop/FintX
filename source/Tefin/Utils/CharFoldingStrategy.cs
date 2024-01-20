@@ -8,6 +8,7 @@ using AvaloniaEdit.Folding;
 namespace Tefin.Utils;
 
 public class CharFoldingStrategy(char openingChar, char closingChar) {
+
     /// <summary>
     ///     Creates a new BraceFoldingStrategy.
     /// </summary>

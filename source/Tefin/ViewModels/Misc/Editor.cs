@@ -14,11 +14,11 @@ public class Editor {
         Console.SetOut(this._ci);
     }
 
-    public void SetTarget(TextEditor textEditor) {
-        this._ci.TextEditor = textEditor;
-    }
-
     public void Clear() {
         this._ci.Clear();
+    }
+
+    public void SetTarget(TextEditor textEditor) {
+        this._ci.TextEditor = textEditor;
     }
 }

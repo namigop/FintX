@@ -11,6 +11,7 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.Views.Explorer;
 
 public partial class FileReqNodeView : UserControl {
+
     public FileReqNodeView() {
         this.InitializeComponent();
         this.tbEditor.KeyDown += this.OnEditorKeyDown;
@@ -30,12 +31,6 @@ public partial class FileReqNodeView : UserControl {
             });
     }
 
-    private void OnEditorLostFocus(object? sender, RoutedEventArgs e) {
-        var node = (sender as TextBox)!.DataContext as FileNode;
-        if (node.IsEditing)
-            node.CancelEdit();
-    }
-
     private void OnEditorKeyDown(object? sender, KeyEventArgs e) {
         if (e.Key == Key.Enter) {
             var node = (sender as TextBox)!.DataContext as FileNode;
@@ -46,5 +41,11 @@ public partial class FileReqNodeView : UserControl {
             var node = (sender as TextBox)!.DataContext as FileNode;
             node.CancelEdit();
         }
+    }
+
+    private void OnEditorLostFocus(object? sender, RoutedEventArgs e) {
+        var node = (sender as TextBox)!.DataContext as FileNode;
+        if (node.IsEditing)
+            node.CancelEdit();
     }
 }

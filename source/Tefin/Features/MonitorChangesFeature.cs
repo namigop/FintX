@@ -7,6 +7,7 @@ namespace Tefin.Features;
 
 public class MonitorChangesFeature(IOResolver io) {
     private static FileSystemWatcher watcher;
+
     public void Run(ProjectTypes.Project project) {
         watcher?.Dispose();
         watcher = new FileSystemWatcher(project.Path);
@@ -30,13 +31,13 @@ public class MonitorChangesFeature(IOResolver io) {
         GlobalHub.publish(msg);
     }
 
+    private void OnError(object sender, ErrorEventArgs e) {
+        io.Log.Warn(e.GetException().ToString());
+    }
+
     private void OnRenamed(object sender, RenamedEventArgs e) {
         io.Log.Info($"File renamed from \"{e.OldName}\" to \"{e.Name}\"");
         var msg = new FileChangeMessage(e.FullPath, e.OldFullPath, e.ChangeType);
         GlobalHub.publish(msg);
-    }
-
-    private void OnError(object sender, ErrorEventArgs e) {
-        io.Log.Warn(e.GetException().ToString());
     }
 }

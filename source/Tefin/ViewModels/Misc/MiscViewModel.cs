@@ -17,10 +17,10 @@ public class MiscViewModel : ViewModelBase {
         this._selectedItem = this.MiscItems[0];
     }
 
+    public ObservableCollection<MiscViewModelTabItem> MiscItems { get; } = new();
+
     public MiscViewModelTabItem SelectedItem {
         get => this._selectedItem;
         set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
     }
-
-    public ObservableCollection<MiscViewModelTabItem> MiscItems { get; } = new();
 }

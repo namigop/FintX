@@ -7,6 +7,7 @@ using Tefin.Grpc.Execution;
 namespace Tefin.Features;
 
 public class EndStreamingFeature {
+
     public async Task<ClientStreamingCallResponse> EndClientStreaming(ClientStreamingCallResponse response) {
         return await ClientStreamingResponse.completeCall(response);
     }

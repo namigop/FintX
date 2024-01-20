@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Explorer;
 
 public partial class MethodNodeActionView : UserControl {
+
     public MethodNodeActionView() {
         this.InitializeComponent();
     }

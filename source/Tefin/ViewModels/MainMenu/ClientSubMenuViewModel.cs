@@ -2,7 +2,6 @@
 
 using System.Windows.Input;
 
-using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
 using Tefin.Utils;
@@ -22,7 +21,6 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
         this.OpenFolderCommand = this.CreateCommand(this.OnOpenFolder);
     }
 
-   
     public ICommand AddClientCommand { get; }
     public ICommand OpenFolderCommand { get; }
 
@@ -31,9 +29,9 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
         OpenOverlayMessage msg = new(overlayVm);
         GlobalHub.publish(msg);
     }
+
     private async Task OnOpenFolder() {
         var proj = await DialogUtils.SelectFolder();
         this._explorerViewModel.LoadProject(proj);
     }
-
 }

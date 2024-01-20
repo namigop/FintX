@@ -17,28 +17,26 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase {
+
     public MainWindowViewModel() {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
     }
+
     public FooterViewModel Footer { get; } = new();
     public MainMenuViewModel MainMenu { get; } = new();
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
     public AppTypes.Root? Root { get; private set; }
-    public string SubTitle { get; } = "Native, cross-platform gRPC testing";
-    public TabHostViewModel TabHost { get; } = new();
-    public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
+    public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
 
     public ICommand SponsorCommand {
         get;
     }
 
-    public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
-
-    private void OnSponsor() {
-        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
-    }
+    public string SubTitle { get; } = "Native, cross-platform gRPC testing";
+    public TabHostViewModel TabHost { get; } = new();
+    public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
 
     public void Init() {
         this.Root = new StartupFeature().Load(this.Io);
@@ -55,6 +53,10 @@ public class MainWindowViewModel : ViewModelBase {
         }
 
         this.StartAutoSave();
+    }
+
+    private void OnSponsor() {
+        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
     }
 
     private void StartAutoSave() {

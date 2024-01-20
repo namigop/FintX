@@ -1,9 +1,8 @@
 namespace Tefin.ViewModels.MainMenu;
 
 public interface IMenuItemViewModel {
+    bool IsSelected { get; set; }
     string Name { get; }
     string ShortName { get; }
-
-    bool IsSelected { get; set; }
     ISubMenusViewModel? SubMenus { get; }
 }

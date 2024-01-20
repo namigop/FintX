@@ -25,6 +25,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
+
     public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.WriteCommand = this.CreateCommand(this.OnWrite);
@@ -48,20 +49,55 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
 
-    public ICommand EndWriteCommand { get; }
-
-    public ICommand WriteCommand { get; }
     public bool CanWrite {
         get => this._canWrite;
         private set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
+
+    public IListEditorViewModel ClientStreamEditor {
+        get => this._clientStreamEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
+    }
+
+    public ICommand EndWriteCommand { get; }
+
     public bool IsShowingClientStreamTree {
         get => this._isShowingClientStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
     }
-    public IListEditorViewModel ClientStreamEditor {
-        get => this._clientStreamEditor;
-        private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
+
+    public ICommand WriteCommand { get; }
+
+    public override async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            if (!isValid) {
+                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
+            }
+
+            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
+        }
+    }
+
+    public override string GetRequestContent() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            if (isValid) {
+                var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
+                var exportReqJson = feature.Export();
+                if (exportReqJson.IsOk) {
+                    return exportReqJson.ResultValue;
+                }
+            }
+        }
+
+        return "";
+    }
+
+    public override async Task ImportRequest() {
+        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
@@ -85,29 +121,6 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this._clientStreamEditor.Show(stream!);
         this.CanWrite = true;
     }
-    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
-        var vm = (DuplexStreamingReqViewModel)obj;
-        if (vm._isShowingClientStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
-    }
-
-    private void ShowAsJson() {
-        var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamJsonEditor;
-        if (ok)
-            this.ClientStreamEditor.Show(list);
-    }
-
-    private void ShowAsTree() {
-        var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamTreeEditor;
-        if (ok)
-            this.ClientStreamEditor.Show(list);
-    }
 
     private async Task OnEndWrite() {
         try {
@@ -123,35 +136,16 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         }
     }
 
-    public override async Task ImportRequest() {
-        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
-    }
-    public override string GetRequestContent() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
-            if (isValid) {
-                var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
-                var exportReqJson = feature.Export();
-                if (exportReqJson.IsOk) {
-                    return exportReqJson.ResultValue;
-                }
-            }
+    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
+        var vm = (DuplexStreamingReqViewModel)obj;
+        if (vm._isShowingClientStreamTree) {
+            this.ShowAsTree();
         }
-
-        return "";
-    }
-    public override async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
-            if (!isValid) {
-                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
-            }
-
-            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
+        else {
+            this.ShowAsJson();
         }
     }
+
     private async Task OnWrite() {
         try {
             if (this.CallResponse == null) {
@@ -172,5 +166,19 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         finally {
             this.IsBusy = false;
         }
+    }
+
+    private void ShowAsJson() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamJsonEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
+    }
+
+    private void ShowAsTree() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamTreeEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
     }
 }

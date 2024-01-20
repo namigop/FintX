@@ -39,6 +39,12 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = "";
     }
 
+    [IsHttp]
+    public string Address {
+        get => this._address;
+        set => this.RaiseAndSetIfChanged(ref this._address, value);
+    }
+
     public ICommand CancelCommand { get; }
 
     [Required(ErrorMessage = "Enter a unique name")]
@@ -59,23 +65,16 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     public ICommand OkayCommand { get; }
 
-    [IsHttp]
-    public string ReflectionUrl {
-        get => this._protoFilesOrUrl;
-        set => this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
-    }
-
-
-    [IsHttp]
-    public string Address {
-        get => this._address;
-        set => this.RaiseAndSetIfChanged(ref this._address, value);
-    }
-
     [IsProtoFile]
     public string ProtoFile {
         get => this._protoFile;
         set => this.RaiseAndSetIfChanged(ref this._protoFile, value);
+    }
+
+    [IsHttp]
+    public string ReflectionUrl {
+        get => this._protoFilesOrUrl;
+        set => this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
     }
 
     [Required(ErrorMessage = "Service is required")]
@@ -145,7 +144,6 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             this.Io.Log.Error("Client already exists.  Enter a new name");
             return;
         }
-
 
         this.Close();
 

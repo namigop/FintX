@@ -43,30 +43,44 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
     }
 
-    public bool IsShowingClientStreamTree {
-        get => this._isShowingClientStreamTree;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
-    }
     public ClientStreamingCallResponse CallResponse {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
 
-    public ICommand EndWriteCommand {
-        get;
-    }
-
-    public ICommand WriteCommand {
-        get;
+    public bool CanWrite {
+        get => this._canWrite;
+        set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
     public IListEditorViewModel ClientStreamEditor {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
-    public bool CanWrite {
-        get => this._canWrite;
-        set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
+
+    public ICommand EndWriteCommand {
+        get;
+    }
+
+    public bool IsShowingClientStreamTree {
+        get => this._isShowingClientStreamTree;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
+    }
+
+    public ICommand WriteCommand {
+        get;
+    }
+
+    public override async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            if (!isValid) {
+                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
+            }
+
+            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
+        }
     }
 
     public override string GetRequestContent() {
@@ -85,47 +99,12 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         return "";
     }
 
-    public override async Task ImportRequestFile(string file) {
-        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
-    }
-
     public override async Task ImportRequest() {
         await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }
 
-    public override async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
-            if (!isValid) {
-                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
-            }
-
-            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
-        }
-    }
-    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
-        var vm = (ClientStreamingReqViewModel)obj;
-        if (vm._isShowingClientStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
-    }
-
-    private void ShowAsJson() {
-        var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamJsonEditor;
-        if (ok)
-            this.ClientStreamEditor.Show(list);
-    }
-
-    private void ShowAsTree() {
-        var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamTreeEditor;
-        if (ok)
-            this.ClientStreamEditor.Show(list);
+    public override async Task ImportRequestFile(string file) {
+        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
     }
 
     public void SetupClientStream(ClientStreamingCallResponse response) {
@@ -134,7 +113,6 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.CanWrite = true;
             return;
         }
-
 
         var stream = Activator.CreateInstance(this._listType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
@@ -165,6 +143,16 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
     }
 
+    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
+        var vm = (ClientStreamingReqViewModel)obj;
+        if (vm._isShowingClientStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
     private async Task OnWrite() {
         try {
             var resp = this.CallResponse;
@@ -180,5 +168,19 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         finally {
             this.IsBusy = false;
         }
+    }
+
+    private void ShowAsJson() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamJsonEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
+    }
+
+    private void ShowAsTree() {
+        var (ok, list) = this._clientStreamEditor.GetList();
+        this.ClientStreamEditor = this._clientStreamTreeEditor;
+        if (ok)
+            this.ClientStreamEditor.Show(list);
     }
 }

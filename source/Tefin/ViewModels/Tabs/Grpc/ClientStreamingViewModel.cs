@@ -32,14 +32,12 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
-    public ICommand StopCommand { get; }
-
-    public ICommand ExportRequestCommand { get; }
-    public ICommand ImportRequestCommand { get; }
-
     public bool CanStop {
         get => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
     }
+
+    public ICommand ExportRequestCommand { get; }
+    public ICommand ImportRequestCommand { get; }
 
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
@@ -50,10 +48,9 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
     }
+
     public ClientStreamingReqViewModel ReqViewModel { get; }
-
     public ClientStreamingRespViewModel RespViewModel { get; }
-
     public ICommand StartCommand { get; }
 
     public string StatusText {
@@ -61,27 +58,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
-
-    private void OnCanWriteChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
-    private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
-        }
-    }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
+    public ICommand StopCommand { get; }
 
     public override void Dispose() {
         base.Dispose();
@@ -89,12 +66,16 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override void Init() {
-        this.ReqViewModel.Init();
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
     }
 
     public override void ImportRequest(string requestFile) {
         _ = this.ReqViewModel.ImportRequestFile(requestFile);
+    }
+
+    public override void Init() {
+        this.ReqViewModel.Init();
     }
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
@@ -106,14 +87,6 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         return response;
     }
 
-    private void OnCallResponseChanged(ViewModelBase obj) {
-        var reqVm = (ClientStreamingReqViewModel)obj;
-        var resp = reqVm.CallResponse;
-
-        if (resp.WriteCompleted) {
-            this.EndStreaming(resp);
-        }
-    }
     private void EndStreaming(ClientStreamingCallResponse resp) {
         async Task<object> CompleteRead() {
             //get the method call response
@@ -127,8 +100,28 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             return response;
         }
 
-
         _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
+    }
+
+    private void OnCallResponseChanged(ViewModelBase obj) {
+        var reqVm = (ClientStreamingReqViewModel)obj;
+        var resp = reqVm.CallResponse;
+
+        if (resp.WriteCompleted) {
+            this.EndStreaming(resp);
+        }
+    }
+
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+    }
+
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
     }
 
     private async Task OnStart() {
@@ -151,6 +144,14 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         }
         finally {
             this.IsBusy = false;
+        }
+    }
+
+    private void OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
+            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
         }
     }
 }

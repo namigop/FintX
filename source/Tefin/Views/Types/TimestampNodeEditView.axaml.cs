@@ -10,6 +10,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.Views.Types;
 
 public partial class TimestampNodeEditView : UserControl {
+
     public TimestampNodeEditView() {
         this.InitializeComponent();
         this.TextBox.KeyDown += this.OnKeyDown;

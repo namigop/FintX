@@ -31,7 +31,6 @@ public static class TypeNodeBuilder {
         NodeBuilders.Add(new DefaultNodeBuilder()); //always the last one
     }
 
-
     public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
         foreach (var builder in NodeBuilders)
             if (builder.CanHandle(type)) {

@@ -19,14 +19,6 @@ using Tefin.Utils;
 namespace Tefin.Views.Controls;
 
 public partial class JsonEditor : UserControl {
-    public static readonly StyledProperty<string> TextProperty =
-        AvaloniaProperty.Register<JsonEditor, string>(
-            "Text",
-            "",
-            false,
-            BindingMode.TwoWay,
-            null,
-            OnCoerceText);
 
     public static readonly StyledProperty<bool> IsReadOnlyProperty =
         AvaloniaProperty.Register<JsonEditor, bool>(
@@ -37,9 +29,18 @@ public partial class JsonEditor : UserControl {
             null,
             OnCoerceIsReadOnly);
 
+    public static readonly StyledProperty<string> TextProperty =
+            AvaloniaProperty.Register<JsonEditor, string>(
+            "Text",
+            "",
+            false,
+            BindingMode.TwoWay,
+            null,
+            OnCoerceText);
 
     //private TextEditor editor;
     private readonly CharFoldingStrategy _folding;
+
     private readonly DispatcherTimer _foldingTimer;
     private FoldingManager? _foldingManager;
 
@@ -62,22 +63,14 @@ public partial class JsonEditor : UserControl {
         this.SetupSyntaxHighlighting();
     }
 
-
-    public string Text {
-        get => this.GetValue(TextProperty);
-        set => this.SetValue(TextProperty, value);
-    }
-
     public bool IsReadOnly {
         get => this.GetValue(IsReadOnlyProperty);
         set => this.SetValue(IsReadOnlyProperty, value);
     }
 
-    private void JsonTextEditor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e) {
-        var t = sender as JsonEditor;
-        t!._foldingTimer.Stop();
-        t._foldingTimer.Tick -= this.FoldingTimer_Tick;
-        t.Editor.TextChanged -= this.OnTextChanged;
+    public string Text {
+        get => this.GetValue(TextProperty);
+        set => this.SetValue(TextProperty, value);
     }
 
     private static bool OnCoerceIsReadOnly(AvaloniaObject d, bool arg2) {
@@ -85,7 +78,6 @@ public partial class JsonEditor : UserControl {
         sender.Editor.IsReadOnly = arg2;
         return arg2;
     }
-
 
     private static string OnCoerceText(AvaloniaObject d, string arg2) {
         var sender = (JsonEditor)d;
@@ -97,16 +89,6 @@ public partial class JsonEditor : UserControl {
         return arg2;
     }
 
-
-    private void SetupSyntaxHighlighting() {
-        using var resource =
-            typeof(JsonEditor).Assembly.GetManifestResourceStream("Tefin.Resources.json.xshd");
-        if (resource != null) {
-            using var reader = new XmlTextReader(resource);
-            this.Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
-        }
-    }
-
     private void FoldingTimer_Tick(object? sender, EventArgs e) {
         if (this._foldingManager == null)
             this._foldingManager = FoldingManager.Install(this.Editor.TextArea);
@@ -115,7 +97,23 @@ public partial class JsonEditor : UserControl {
             this._folding.UpdateFoldings(this._foldingManager, this.Editor.Document);
     }
 
+    private void JsonTextEditor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e) {
+        var t = sender as JsonEditor;
+        t!._foldingTimer.Stop();
+        t._foldingTimer.Tick -= this.FoldingTimer_Tick;
+        t.Editor.TextChanged -= this.OnTextChanged;
+    }
+
     private void OnTextChanged(object? sender, EventArgs e) {
         this.Text = this.Editor.Text;
+    }
+
+    private void SetupSyntaxHighlighting() {
+        using var resource =
+            typeof(JsonEditor).Assembly.GetManifestResourceStream("Tefin.Resources.json.xshd");
+        if (resource != null) {
+            using var reader = new XmlTextReader(resource);
+            this.Editor.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+        }
     }
 }

@@ -7,6 +7,7 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class ExceptionNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return TypeHelper.isOfType_<Exception>(type);
     }

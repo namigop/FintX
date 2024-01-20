@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class NullableUInt64EditorView : UserControl {
+
     public NullableUInt64EditorView() {
         this.InitializeComponent();
     }

@@ -7,6 +7,7 @@ using Avalonia;
 namespace Tefin.Utils;
 
 public static class UIExtensions {
+
     public static T? FindParent<T>(this StyledElement? parent, Func<T, bool>? check = null) where T : StyledElement {
         if (parent == null)
             return default;

@@ -55,6 +55,7 @@ public class ByteStringNode : TypeBaseNode {
     }
 
     public ICommand OpenFileCommand { get; }
+
     public ByteString? TypedValue {
         get => this.Value as ByteString;
     }

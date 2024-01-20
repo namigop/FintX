@@ -16,6 +16,7 @@ namespace Tefin.ViewModels.MainMenu;
 //sub menus of the menu item
 
 public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel {
+
     public ClientMenuItemViewModel(MainMenuViewModel main) : base(main) {
         this.Explorer = new ExplorerViewModel();
         this.SubMenus = new ClientSubMenuViewModel(this.Explorer);
@@ -25,17 +26,16 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
         get;
     }
 
+    public override string Name { get; } = "Clients";
+
     public Project Project {
         get => this.Explorer.Project!;
         private set => this.Explorer.Project = value;
     }
-    public override string ToolTip { get; } = "View clients";
-    public override string Name { get; } = "Clients";
 
     public override string ShortName { get; } = "clients";
     public override ISubMenusViewModel? SubMenus { get; }
-
-
+    public override string ToolTip { get; } = "View clients";
 
     public void Init(AppTypes.Package package, string projName) {
         //Note: A project is just a folder that contains "client" folders. We

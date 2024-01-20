@@ -32,11 +32,6 @@ public class UnaryReqViewModel : ViewModelBase {
         this._requestEditor = this._treeEditor;
     }
 
-    public IRequestEditorViewModel RequestEditor {
-        get => this._requestEditor;
-        private set => this.RaiseAndSetIfChanged(ref this._requestEditor, value);
-    }
-
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
@@ -44,38 +39,41 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public MethodInfo MethodInfo { get; }
 
+    public IRequestEditorViewModel RequestEditor {
+        get => this._requestEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._requestEditor, value);
+    }
+
+    public virtual async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
+            }
+            else {
+                this.Io.Log.Error(exportReqJson.ErrorValue);
+            }
+        }
+    }
 
     public (bool, object?[]) GetMethodParameters() {
         return this.RequestEditor.GetParameters();
     }
 
-    public void Init() {
-        this._requestEditor.Show(this._methodParameterInstances);
-    }
-
-
-    private void OnShowTreeEditorChanged(ViewModelBase obj) {
-        var vm = (UnaryReqViewModel)obj;
-        if (vm.IsShowingRequestTreeEditor) {
-            this.ShowAsTree();
+    public virtual string GetRequestContent() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                return exportReqJson.ResultValue;
+            }
         }
-        else {
-            this.ShowAsJson();
-        }
-    }
 
-    private void ShowAsJson() {
-        var (ok, parameters) = this._requestEditor.GetParameters();
-        this.RequestEditor = this._jsonEditor;
-        if (ok)
-            this.RequestEditor.Show(parameters);
-    }
-
-    private void ShowAsTree() {
-        var (ok, parameters) = this._requestEditor.GetParameters();
-        this.RequestEditor = this._treeEditor;
-        if (ok)
-            this.RequestEditor.Show(parameters);
+        return "";
     }
 
     public virtual async Task ImportRequest() {
@@ -101,35 +99,33 @@ public class UnaryReqViewModel : ViewModelBase {
         else {
             this.Io.Log.Error(export.ErrorValue);
         }
-
     }
 
-    public virtual string GetRequestContent() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                return exportReqJson.ResultValue;
-            }
-        }
-
-        return "";
+    public void Init() {
+        this._requestEditor.Show(this._methodParameterInstances);
     }
 
-
-    public virtual async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
-            }
-            else {
-                this.Io.Log.Error(exportReqJson.ErrorValue);
-            }
+    private void OnShowTreeEditorChanged(ViewModelBase obj) {
+        var vm = (UnaryReqViewModel)obj;
+        if (vm.IsShowingRequestTreeEditor) {
+            this.ShowAsTree();
         }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
+    private void ShowAsJson() {
+        var (ok, parameters) = this._requestEditor.GetParameters();
+        this.RequestEditor = this._jsonEditor;
+        if (ok)
+            this.RequestEditor.Show(parameters);
+    }
+
+    private void ShowAsTree() {
+        var (ok, parameters) = this._requestEditor.GetParameters();
+        this.RequestEditor = this._treeEditor;
+        if (ok)
+            this.RequestEditor.Show(parameters);
     }
 }

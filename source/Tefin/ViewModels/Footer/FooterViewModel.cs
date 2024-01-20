@@ -31,15 +31,15 @@ public class FooterViewModel : ViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._message, value);
     }
 
-    private void OnShowFooter(Core.Interop.Messages.MsgShowFooter obj) {
-        this.Background = obj.Color;
-        this.Message = obj.Message;
-        DispatcherTimer.Run(this.OnReset, TimeSpan.FromSeconds(30));
-    }
-
     private bool OnReset() {
         this.Background = "#2D3035";
         this.Message = "Ready...";
         return false; //Will stop the timer
+    }
+
+    private void OnShowFooter(Core.Interop.Messages.MsgShowFooter obj) {
+        this.Background = obj.Color;
+        this.Message = obj.Message;
+        DispatcherTimer.Run(this.OnReset, TimeSpan.FromSeconds(30));
     }
 }

@@ -27,15 +27,15 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 
-    public abstract void Init();
+    public virtual bool CanAutoSave { get; } = false;
 
-    public abstract string Icon { get; }
+    public ICommand CloseCommand { get; }
+
+    public IExplorerItem ExplorerItem { get; }
 
     public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
 
-    public virtual bool CanAutoSave { get; } = false;
-    public ICommand CloseCommand { get; }
-    public IExplorerItem ExplorerItem { get; }
+    public abstract string Icon { get; }
 
     public string Id {
         get;
@@ -51,6 +51,8 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
+
+    public abstract void Init();
 
     protected virtual string GetTabId() {
         return $"{this.Title}-{this.ExplorerItem.GetType().FullName}";

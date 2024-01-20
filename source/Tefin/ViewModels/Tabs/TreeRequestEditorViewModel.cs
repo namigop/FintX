@@ -21,6 +21,7 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
+
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -36,23 +37,27 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             }
         };
 
-
         this.Items.Add(new EmptyNode());
     }
-    public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
-
-    public ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public CancellationTokenSource? CtsReq {
         get;
         private set;
     }
-    //public List<object?> MethodParameterInstances { get; }
+
+    public ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public MethodInfo MethodInfo {
         get;
     }
 
+    public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
+
+    public void EndRequest() {
+        this.CtsReq = null;
+    }
+
+    //public List<object?> MethodParameterInstances { get; }
     public (bool, object?[]) GetParameters() {
         if (this.Items.Count == 0 || this.Items[0].Items.Count == 0)
             return (false, Array.Empty<object?>());
@@ -78,7 +83,6 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         var methodNode = new MethodInfoNode(this.MethodInfo);
         this.Items.Add(methodNode);
 
-
         var counter = 0;
         foreach (var paramInfo in methodParams) {
             var instance = hasValues ? parameters[counter] : TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0).Item2;
@@ -89,14 +93,9 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             counter += 1;
         }
 
-
         this.RaisePropertyChanged(nameof(this.Items));
     }
 
     public void StartRequest() {
-    }
-
-    public void EndRequest() {
-        this.CtsReq = null;
     }
 }

@@ -7,20 +7,24 @@ using System.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class MetadataEntryTypeInfo(int index, MetadataNode parentNode) : ITypeInfo {
-    public MetadataNode ParentNode { get; } = parentNode;
 
     public bool CanRead {
         get => true;
     }
+
     public bool CanWrite {
         get => true;
     }
+
     public FieldInfo FieldInfo {
         get => throw new NotImplementedException();
     }
+
     public string Name {
         get => "Item";
     }
+
+    public MetadataNode ParentNode { get; } = parentNode;
 
     public PropertyInfo PropertyInfo {
         get => throw new NotImplementedException(); //these are list items, not properties of class

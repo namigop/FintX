@@ -30,6 +30,7 @@ namespace Tefin.ViewModels.Explorer;
 public class ExplorerViewModel : ViewModelBase {
     private CopyPasteArg? _copyPastePending;
     private ProjectTypes.Project? _project;
+
     public ExplorerViewModel() {
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
@@ -42,7 +43,7 @@ public class ExplorerViewModel : ViewModelBase {
                     new GridLength(1, GridUnitType.Auto))
             }
         };
-        
+
         this.ExplorerTree = temp;
 
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
@@ -51,30 +52,58 @@ public class ExplorerViewModel : ViewModelBase {
         GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged);
         GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile);
 
-
         this.CopyCommand = this.CreateCommand(this.OnCopy);
         this.PasteCommand = this.CreateCommand(this.OnPaste);
         this.EditCommand = this.CreateCommand(this.OnEdit);
     }
 
-    private void OnClientCompile(ClientCompileMessage message) {
-        this.IsBusy = message.InProgress;
-    }
-
-    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
-    public ProjectTypes.Project? Project {
-        get => this._project;
-        set => this.RaiseAndSetIfChanged(ref _project , value);
-    }
-    private ObservableCollection<IExplorerItem> Items { get; } = new();
-
     public ICommand CopyCommand { get; }
-    public ICommand PasteCommand { get; }
 
     public ICommand EditCommand { get; }
 
+    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
+
+    public ICommand PasteCommand { get; }
+
+    public ProjectTypes.Project? Project {
+        get => this._project;
+        set => this.RaiseAndSetIfChanged(ref _project, value);
+    }
+
+    private ObservableCollection<IExplorerItem> Items { get; } = new();
+
+    public void AddClientNode(ClientGroup cg, Type? type = null) {
+        var cm = new ClientNode(cg, type);
+
+        Dispatcher.UIThread.Invoke(() => {
+            cm.Init();
+            this.Items.Add(cm);
+            //cm.IsSelected = true;
+            this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
+        }, DispatcherPriority.Input);
+
+        GlobalHub.publish(new ExplorerUpdatedMessage());
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        var treeDataGridRowSelectionModel = this.ExplorerTree.RowSelection;
+        if (treeDataGridRowSelectionModel != null)
+            treeDataGridRowSelectionModel.SelectionChanged -= this.RowSelectionChanged;
+    }
+
+    public ClientNode[] GetClientNodes() {
+        return this.Items.Where(c => c is ClientNode).Cast<ClientNode>().ToArray();
+    }
+
     public void LoadProject(string path) {
-        if (path == this.Project.Path)
+        if (string.IsNullOrWhiteSpace(path))
+            return;
+
+        if (!Directory.Exists(path))
+            return;
+
+        if (path == this.Project?.Path)
             return;
 
         this.Project = Core.Project.loadProject(this.Io, path);
@@ -82,14 +111,37 @@ public class ExplorerViewModel : ViewModelBase {
         foreach (var client in this.Project.Clients) {
             this.AddClientNode(client);
         }
-        
+
         //Close all tabs
         GlobalHub.publish(new CloseAllTabsMessage());
-        
+
         //monitor file changes in the new project path
         var fsMonitor = new MonitorChangesFeature(this.Io);
         fsMonitor.Run(this.Project);
     }
+
+    private void OnClientCompile(ClientCompileMessage message) {
+        this.IsBusy = message.InProgress;
+    }
+
+    private void OnClientDeleted(ClientDeletedMessage obj) {
+        var target = this.Items.FirstOrDefault(t => t is ClientNode cn && cn.ClientPath == obj.Client.Path);
+        if (target != null)
+            this.Items.Remove(target);
+    }
+
+    private void OnCopy() {
+        foreach (var item in this.Items) {
+            var selected = item.FindSelected();
+            if (selected is FileNode fn) {
+                this._copyPastePending = new CopyPasteArg {
+                    Container = fn.Parent,
+                    FileToCopy = fn.FullPath
+                };
+            }
+        }
+    }
+
     private void OnEdit() {
         foreach (var item in this.Items) {
             var selected = item.FindSelected();
@@ -105,36 +157,7 @@ public class ExplorerViewModel : ViewModelBase {
         }
     }
 
-    private void OnCopy() {
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            if (selected is FileNode fn) {
-                this._copyPastePending = new CopyPasteArg {
-                    Container = fn.Parent,
-                    FileToCopy = fn.FullPath
-                };
-            }
-        }
-    }
-    private void OnPaste() {
-        if (this._copyPastePending == null)
-            return;
-
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            if (selected != null && (selected == this._copyPastePending.Container || selected.Parent == this._copyPastePending.Container)) {
-                var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
-                var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
-                var start = Path.GetFileNameWithoutExtension(this._copyPastePending.FileToCopy);
-                var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
-                fileCopy = Path.Combine(path, fileCopy);
-                this.Io.File.Copy(this._copyPastePending.FileToCopy, fileCopy);
-            }
-        }
-    }
-
     private void OnFileChanged(FileChangeMessage obj) {
-
         void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction, Func<IExplorerItem, bool> check) {
             lock (this) {
                 var item = items.FirstOrDefault();
@@ -204,45 +227,21 @@ public class ExplorerViewModel : ViewModelBase {
         }
     }
 
-    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
-        foreach (var item in e.DeselectedItems) {
-            item.IsSelected = false;
+    private void OnPaste() {
+        if (this._copyPastePending == null)
+            return;
+
+        foreach (var item in this.Items) {
+            var selected = item.FindSelected();
+            if (selected != null && (selected == this._copyPastePending.Container || selected.Parent == this._copyPastePending.Container)) {
+                var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
+                var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
+                var start = Path.GetFileNameWithoutExtension(this._copyPastePending.FileToCopy);
+                var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
+                fileCopy = Path.Combine(path, fileCopy);
+                this.Io.File.Copy(this._copyPastePending.FileToCopy, fileCopy);
+            }
         }
-
-        foreach (var item in e.SelectedItems) {
-            item.IsSelected = true;
-        }
-
-    }
-
-    private void OnClientDeleted(ClientDeletedMessage obj) {
-        var target = this.Items.FirstOrDefault(t => t is ClientNode cn && cn.ClientPath == obj.Client.Path);
-        if (target != null)
-            this.Items.Remove(target);
-    }
-
-    public override void Dispose() {
-        base.Dispose();
-        var treeDataGridRowSelectionModel = this.ExplorerTree.RowSelection;
-        if (treeDataGridRowSelectionModel != null)
-            treeDataGridRowSelectionModel.SelectionChanged -= this.RowSelectionChanged;
-    }
-
-    public void AddClientNode(ClientGroup cg, Type? type = null) {
-        var cm = new ClientNode(cg, type);
-
-        Dispatcher.UIThread.Invoke(() => {
-            cm.Init();
-            this.Items.Add(cm);
-            //cm.IsSelected = true;
-            this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
-        }, DispatcherPriority.Input);
-
-        GlobalHub.publish(new ExplorerUpdatedMessage());
-    }
-
-    public ClientNode[] GetClientNodes() {
-        return this.Items.Where(c => c is ClientNode).Cast<ClientNode>().ToArray();
     }
 
     private async Task OnShowClient(ShowClientMessage obj) {
@@ -250,7 +249,6 @@ public class ExplorerViewModel : ViewModelBase {
         var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
         var type = ServiceClient.findClientType(types).Value;
         if (type != null && this.Project != null) {
-
             //Update the currently loaded project
             var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!, obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
             await feature.Add();
@@ -264,8 +262,18 @@ public class ExplorerViewModel : ViewModelBase {
         }
     }
 
+    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+        foreach (var item in e.DeselectedItems) {
+            item.IsSelected = false;
+        }
+
+        foreach (var item in e.SelectedItems) {
+            item.IsSelected = true;
+        }
+    }
+
     private class CopyPasteArg {
-        public string FileToCopy { get; set; }
         public IExplorerItem Container { get; set; }
+        public string FileToCopy { get; set; }
     }
 }

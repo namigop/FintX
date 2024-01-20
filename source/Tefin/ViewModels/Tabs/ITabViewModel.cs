@@ -12,11 +12,11 @@ public interface ITabViewModel {
     bool CanAutoSave { get; }
     ICommand CloseCommand { get; }
     IExplorerItem ExplorerItem { get; }
+    bool HasIcon { get; }
+    string Icon { get; }
     string Id { get; }
     string SubTitle { get; set; }
     string Title { get; set; }
-    string Icon { get; }
 
-    bool HasIcon { get; }
     void Init();
 }

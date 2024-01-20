@@ -106,7 +106,6 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         }
         catch (Exception exc) {
             this.Io.Log.Warn(exc.ToString());
-
         }
     }
 
@@ -116,11 +115,11 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         }
         catch (Exception exc) {
             this.Io.Log.Warn(exc.ToString());
-
         }
     }
 
     public class SeriesModel {
+
         public SeriesModel(string clientName, string method, ColumnSeries<double> series) {
             this.ClientName = clientName;
             this.Method = method;

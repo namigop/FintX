@@ -107,14 +107,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._thumbprint, value);
     }
 
+    public string Title {
+        get;
+    } = "Client Configuration";
+
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
-
-    public string Title {
-        get;
-    } = "Client Configuration";
 
     public void Close() {
         GlobalHub.publish(new CloseOverlayMessage(this));

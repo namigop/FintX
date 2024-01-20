@@ -17,6 +17,7 @@ using Tefin.ViewModels.Tabs.Grpc;
 namespace Tefin.ViewModels.Explorer;
 
 public class MethodNode : NodeBase {
+
     public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         this.MethodInfo = methodInfo;
         this.Client = cg;
@@ -26,28 +27,10 @@ public class MethodNode : NodeBase {
         this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
     }
 
-    public ICommand OpenMethodCommand { get; }
-
-    public ICommand NewRequestCommand { get; }
-    public MethodInfo MethodInfo { get; }
-
     public ProjectTypes.ClientGroup Client { get; set; }
-
-    private void OnNewRequest() {
-        var path = Project.getMethodPath(this.Client.Path, this.MethodInfo.Name);
-        var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
-
-        var fn = new FileReqNode(file);
-        this.AddItem(fn);
-        this.IsExpanded = true;
-        fn.OpenCommand.Execute(Unit.Default);
-    }
-
-    private void OnOpenMethod() {
-        var tab = TabFactory.From(this, this.Io);
-        if (tab != null)
-            GlobalHub.publish(new OpenTabMessage(tab));
-    }
+    public MethodInfo MethodInfo { get; }
+    public ICommand NewRequestCommand { get; }
+    public ICommand OpenMethodCommand { get; }
 
     public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);
@@ -66,5 +49,21 @@ public class MethodNode : NodeBase {
             fn.Init();
             this.AddItem(fn);
         }
+    }
+
+    private void OnNewRequest() {
+        var path = Project.getMethodPath(this.Client.Path, this.MethodInfo.Name);
+        var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
+
+        var fn = new FileReqNode(file);
+        this.AddItem(fn);
+        this.IsExpanded = true;
+        fn.OpenCommand.Execute(Unit.Default);
+    }
+
+    private void OnOpenMethod() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null)
+            GlobalHub.publish(new OpenTabMessage(tab));
     }
 }

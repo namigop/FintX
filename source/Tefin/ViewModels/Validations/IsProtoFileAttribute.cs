@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Tefin.ViewModels.Validations;
 
 public class IsHttpAttribute : ValidationAttribute {
+
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
         if (value == null)
             return new ValidationResult("Value cannot be null. Enter a valid http address");
@@ -26,6 +27,7 @@ public class IsHttpAttribute : ValidationAttribute {
 }
 
 public class IsProtoFileAttribute : ValidationAttribute {
+
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
         if (value == null)
             return new ValidationResult("Value cannot be null. Please select a proto file");
@@ -39,6 +41,7 @@ public class IsProtoFileAttribute : ValidationAttribute {
 }
 
 public class IsValidFolderNameAttribute : ValidationAttribute {
+
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
         if (value == null)
             return new ValidationResult("Value cannot be null. Enter a valid folder name");

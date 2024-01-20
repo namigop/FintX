@@ -14,8 +14,19 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Views.Tabs;
 
 public partial class TabHostView : UserControl {
+
     public TabHostView() {
         this.InitializeComponent();
+    }
+
+    private void CancelButtonClick(object? sender, RoutedEventArgs e) {
+        if (sender is StyledElement element) {
+            //Search for the close button on the tab header
+            var btn = element.FindParent<Button>(btn => btn.Flyout != null);
+            if (btn != null) {
+                btn.Flyout!.Hide();
+            }
+        }
     }
 
     private void CloseButtonClick(object? sender, RoutedEventArgs e) {
@@ -26,16 +37,6 @@ public partial class TabHostView : UserControl {
                 btn.Flyout!.Hide();
                 var vm = (ITabViewModel)btn.DataContext!;
                 vm.CloseCommand.Execute(Unit.Default);
-            }
-        }
-    }
-
-    private void CancelButtonClick(object? sender, RoutedEventArgs e) {
-        if (sender is StyledElement element) {
-            //Search for the close button on the tab header
-            var btn = element.FindParent<Button>(btn => btn.Flyout != null);
-            if (btn != null) {
-                btn.Flyout!.Hide();
             }
         }
     }

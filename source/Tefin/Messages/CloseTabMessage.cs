@@ -7,4 +7,5 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Messages;
 
 public class CloseTabMessage(ITabViewModel tab) : TabMessageBase(tab);
+
 public class CloseAllTabsMessage() : MessageBase();

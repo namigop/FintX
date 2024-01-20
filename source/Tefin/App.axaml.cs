@@ -13,6 +13,7 @@ using Tefin.Views;
 namespace Tefin;
 
 public class App : Application {
+
     public override void Initialize() {
         var start = new StartupFeature();
         start.Init();

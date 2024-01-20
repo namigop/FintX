@@ -31,8 +31,13 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
 
+    public bool CanStop {
+        get => this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
@@ -41,40 +46,21 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             this.RespViewModel.IsShowingResponseTreeEditor = value;
         }
     }
+
     public UnaryReqViewModel ReqViewModel {
         get => this._reqViewModel;
         private set => this.RaiseAndSetIfChanged(ref this._reqViewModel, value);
     }
+
     public UnaryRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-    public ICommand StopCommand { get; }
+
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
-    public bool CanStop {
-        get => this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
-
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
-    public override void ImportRequest(string requestFile) {
-        _ =this.ReqViewModel.ImportRequestFile(requestFile);
-    }
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
-
-    private void OnShowTreeEditorChanged(ViewModelBase obj) {
-        this.ReqViewModel = null!;
-        this.ReqViewModel = (UnaryReqViewModel)obj;
-        //this.RaisePropertyChanged(nameof(this.ReqViewModel));
-    }
+    public ICommand StopCommand { get; }
 
     public override void Dispose() {
         base.Dispose();
@@ -82,16 +68,31 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
+    }
+
+    public override void ImportRequest(string requestFile) {
+        _ = this.ReqViewModel.ImportRequestFile(requestFile);
+    }
+
     public override void Init() {
         this.ReqViewModel.Init();
     }
 
-    private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-        }
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
     }
 
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+
+    private void OnShowTreeEditorChanged(ViewModelBase obj) {
+        this.ReqViewModel = null!;
+        this.ReqViewModel = (UnaryReqViewModel)obj;
+        //this.RaisePropertyChanged(nameof(this.ReqViewModel));
+    }
 
     private async Task OnStart() {
         this.IsBusy = true;
@@ -116,6 +117,12 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             this.IsBusy = false;
             this.ReqViewModel.RequestEditor.EndRequest();
             this.RaisePropertyChanged(nameof(this.CanStop));
+        }
+    }
+
+    private void OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
         }
     }
 

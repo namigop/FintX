@@ -19,8 +19,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
     private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
+
     // private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
+
     private IListEditorViewModel _serverStreamEditor;
 
     public ServerStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
@@ -37,13 +39,14 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
 
-    public bool IsShowingServerStreamTree {
-        get => this._isShowingServerStreamTree;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
-    }
     public bool CanRead {
         get => this._canRead;
         private set => this.RaiseAndSetIfChanged(ref this._canRead, value);
+    }
+
+    public bool IsShowingServerStreamTree {
+        get => this._isShowingServerStreamTree;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
 
     public IListEditorViewModel ServerStreamEditor {
@@ -58,7 +61,6 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         try {
             this.CanRead = true;
             await foreach (var d in readServerStream.ReadResponseStream(resp, CancellationToken.None)) {
-
                 this.ServerStreamEditor.AddItem(d);
             }
         }
@@ -76,6 +78,17 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var stream = Activator.CreateInstance(this._listType);
         this.ServerStreamEditor.Show(stream!);
     }
+
+    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
+        var vm = (ServerStreamingRespViewModel)obj;
+        if (vm._isShowingServerStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
     private void ShowAsJson() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
@@ -88,14 +101,5 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         this.ServerStreamEditor = this._serverStreamTreeEditor;
         if (ok)
             this.ServerStreamEditor.Show(list);
-    }
-    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
-        var vm = (ServerStreamingRespViewModel)obj;
-        if (vm._isShowingServerStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
     }
 }

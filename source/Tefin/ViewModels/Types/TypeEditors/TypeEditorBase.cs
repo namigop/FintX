@@ -20,15 +20,15 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
         this.SubscribeTo(x => ((TypeEditorBase<T>)x).IsNull, this.OnIsNullChanged);
     }
 
-    public bool HasChanges {
-        get;
-        protected set;
-    }
-
     public virtual bool AcceptsNull { get; } = typeof(T).Name.StartsWith("Nullable");
 
     public virtual string FormattedValue {
         get => this.Node.Value?.ToString() ?? "null";
+    }
+
+    public bool HasChanges {
+        get;
+        protected set;
     }
 
     public bool IsEditing {

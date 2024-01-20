@@ -30,6 +30,7 @@ public abstract class TypeBaseNode : NodeBase {
 
     public bool CanSetAsNull { get; }
     public virtual string FormattedTypeName { get; }
+
     public virtual string FormattedValue {
         get => this._value?.ToString() ?? "null";
     }

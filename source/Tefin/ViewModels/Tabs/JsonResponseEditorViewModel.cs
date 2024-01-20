@@ -18,12 +18,12 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         set => this.RaiseAndSetIfChanged(ref this._json, value);
     }
 
+    public MethodInfo MethodInfo { get; } = methodInfo;
+
     public Type? ResponseType {
         get;
         private set;
     }
-
-    public MethodInfo MethodInfo { get; } = methodInfo;
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         try {
@@ -36,10 +36,6 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         }
     }
 
-    public void Init() {
-        this.Json = "";
-    }
-
     public (bool, object?) GetResponse() {
         if (this.ResponseType != null) {
             var resp = Instance.indirectDeserialize(this.ResponseType, this.Json);
@@ -47,6 +43,10 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         }
 
         return (false, null);
+    }
+
+    public void Init() {
+        this.Json = "";
     }
 
     public void Show(object? resp, Type? responseType) {

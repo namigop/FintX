@@ -10,23 +10,6 @@ public class MovableBorder : Border {
     private Point _positionInBlock;
     private TranslateTransform _transform = null!;
 
-    protected override void OnPointerPressed(PointerPressedEventArgs e) {
-        this._isPressed = true;
-        this._positionInBlock = e.GetPosition(this.Parent as Visual);
-
-        if (this._transform != null!)
-            this._positionInBlock = new Point(this._positionInBlock.X - this._transform.X, this._positionInBlock.Y - this._transform.Y);
-
-        base.OnPointerPressed(e);
-    }
-
-    protected override void OnPointerReleased(PointerReleasedEventArgs e) {
-        this._isPressed = false;
-
-        base.OnPointerReleased(e);
-    }
-
-
     protected override void OnPointerMoved(PointerEventArgs e) {
         if (!this._isPressed)
             return;
@@ -43,7 +26,6 @@ public class MovableBorder : Border {
             return;
         }
 
-
         var offsetX = currentPosition.X - this._positionInBlock.X;
         var offsetY = currentPosition.Y - this._positionInBlock.Y;
 
@@ -52,5 +34,21 @@ public class MovableBorder : Border {
         this.RenderTransform = this._transform;
 
         base.OnPointerMoved(e);
+    }
+
+    protected override void OnPointerPressed(PointerPressedEventArgs e) {
+        this._isPressed = true;
+        this._positionInBlock = e.GetPosition(this.Parent as Visual);
+
+        if (this._transform != null!)
+            this._positionInBlock = new Point(this._positionInBlock.X - this._transform.X, this._positionInBlock.Y - this._transform.Y);
+
+        base.OnPointerPressed(e);
+    }
+
+    protected override void OnPointerReleased(PointerReleasedEventArgs e) {
+        this._isPressed = false;
+
+        base.OnPointerReleased(e);
     }
 }

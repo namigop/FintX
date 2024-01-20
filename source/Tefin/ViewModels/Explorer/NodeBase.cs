@@ -15,14 +15,14 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     private string _subTitle = "";
     private string _title = "";
 
-    public virtual bool IsEditing {
-        get => this._isEditing;
-        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
-    }
-
     public bool CanOpen {
         get;
         protected set;
+    }
+
+    public virtual bool IsEditing {
+        get => this._isEditing;
+        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
     }
 
     public bool IsExpanded {
@@ -35,11 +35,11 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
-    public IExplorerItem Parent { get; set; }
-
     public ObservableCollection<IExplorerItem> Items {
         get;
     } = new();
+
+    public IExplorerItem Parent { get; set; }
 
     public string SubTitle {
         get => this._subTitle;
@@ -49,6 +49,19 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     public virtual string Title {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
+    }
+
+    public void AddItem(IExplorerItem child) {
+        this.Items.Add(child);
+        child.Parent = this;
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        foreach (var explorerItem in this.Items) {
+            var n = (NodeBase)explorerItem;
+            n.Dispose();
+        }
     }
 
     public IExplorerItem FindSelected() {
@@ -68,19 +81,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             return this;
 
         return Find(this.Items);
-    }
-
-    public void AddItem(IExplorerItem child) {
-        this.Items.Add(child);
-        child.Parent = this;
-    }
-
-    public override void Dispose() {
-        base.Dispose();
-        foreach (var explorerItem in this.Items) {
-            var n = (NodeBase)explorerItem;
-            n.Dispose();
-        }
     }
 
     public abstract void Init();

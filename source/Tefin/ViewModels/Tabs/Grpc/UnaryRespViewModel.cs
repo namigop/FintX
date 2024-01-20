@@ -27,13 +27,22 @@ public class UnaryRespViewModel : ViewModelBase {
         this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor, this.OnIsShowingResponseTreeEditor);
     }
 
+    public bool IsShowingResponseTreeEditor {
+        get => this._isShowingResponseTreeEditor;
+        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
+    }
+
     public IResponseEditorViewModel ResponseEditor {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-    public bool IsShowingResponseTreeEditor {
-        get => this._isShowingResponseTreeEditor;
-        set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
+
+    public void Init() {
+        this.ResponseEditor.Init();
+    }
+
+    public void Show(bool ok, object response, Context context) {
+        this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
     }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
@@ -50,6 +59,7 @@ public class UnaryRespViewModel : ViewModelBase {
             Console.WriteLine(e);
         }
     }
+
     private void ShowAsJson() {
         var (ok, resp) = this._treeRespEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
@@ -62,13 +72,5 @@ public class UnaryRespViewModel : ViewModelBase {
         this.ResponseEditor = this._treeRespEditor;
         if (ok)
             this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
-    }
-
-    public void Init() {
-        this.ResponseEditor.Init();
-    }
-
-    public void Show(bool ok, object response, Context context) {
-        this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
     }
 }

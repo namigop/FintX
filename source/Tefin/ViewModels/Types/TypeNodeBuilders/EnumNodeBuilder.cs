@@ -7,6 +7,7 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class EnumNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return type.IsEnum || TypeHelper.isNullable(type) && Nullable.GetUnderlyingType(type)!.IsEnum;
     }
