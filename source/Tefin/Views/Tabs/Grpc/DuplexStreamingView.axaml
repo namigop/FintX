@@ -50,7 +50,7 @@
                         </Style>
                     </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
-
+                            HotKey="F5"
                             IsVisible="{Binding !CanStop}"
                             Background="{StaticResource Bym.Color.Green}"
                             CornerRadius="24"
