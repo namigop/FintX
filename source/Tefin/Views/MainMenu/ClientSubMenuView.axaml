@@ -11,8 +11,6 @@
         <Button Command="{Binding AddClientCommand}" Classes="MenuButton">
             <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
         </Button>
-        <Button Command="{Binding OpenFolderCommand}" Classes="MenuButton" Margin="6 0 0 0">
-            <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}" Height="18" Width="18"/>
-        </Button>
+        
     </StackPanel>
 </UserControl>

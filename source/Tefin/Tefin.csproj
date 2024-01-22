@@ -333,6 +333,10 @@
             <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\ProjectMenu\ProjectActions.axaml.cs">
+          <DependentUpon>Number.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

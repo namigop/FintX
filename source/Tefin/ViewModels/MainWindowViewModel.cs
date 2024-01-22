@@ -10,6 +10,7 @@ using Tefin.ViewModels.Footer;
 using Tefin.ViewModels.MainMenu;
 using Tefin.ViewModels.Misc;
 using Tefin.ViewModels.Overlay;
+using Tefin.ViewModels.ProjectEnv;
 using Tefin.ViewModels.Tabs;
 
 #endregion
@@ -21,10 +22,12 @@ public class MainWindowViewModel : ViewModelBase {
     public MainWindowViewModel() {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
+        this.MainMenu = new();
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer);
     }
 
     public FooterViewModel Footer { get; } = new();
-    public MainMenuViewModel MainMenu { get; } = new();
+    public MainMenuViewModel MainMenu { get; }  
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
     public AppTypes.Root? Root { get; private set; }
@@ -37,6 +40,7 @@ public class MainWindowViewModel : ViewModelBase {
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
     public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
+    public ProjectMenuViewModel ProjectMenuViewModel { get; }
 
     public void Init() {
         this.Root = new StartupFeature().Load(this.Io);
