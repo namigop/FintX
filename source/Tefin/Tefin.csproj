@@ -337,6 +337,10 @@
           <DependentUpon>Number.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Overlay\AddNewProjectOverlayView.axaml.cs">
+          <DependentUpon>AddNewProjectOverlayView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

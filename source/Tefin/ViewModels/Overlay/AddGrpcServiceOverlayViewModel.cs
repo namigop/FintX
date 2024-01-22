@@ -97,15 +97,11 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             discoParams = new DiscoverParameters(Array.Empty<string>(), new Uri(this.ReflectionUrl));
         }
         else {
-            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] {
-                "*.proto"
-            });
+            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] { "*.proto" });
             if (ok) {
                 this.ProtoFile = files[0];
                 // PopulateServiceNamesFromProto();
-                discoParams = new DiscoverParameters(new[] {
-                    this.ProtoFile
-                }, null);
+                discoParams = new DiscoverParameters(new[] { this.ProtoFile }, null);
             }
         }
 
@@ -148,21 +144,21 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.Close();
 
         var protoFiles = this.IsDiscoveringUsingProto
-            ? new[] {
-                this.ProtoFile
-            }
+            ? new[] { this.ProtoFile }
             : Array.Empty<string>();
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (ok2, _) = await disco.Discover(this.Io);
         if (ok2) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
+                this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
                 var address = this.IsDiscoveringUsingProto ? this.Address : this.ReflectionUrl;
 
                 address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
-                var msg = new ShowClientMessage(output, address, this.ClientName, this.SelectedDiscoveredService, this.Description, csFiles);
+                var msg = new ShowClientMessage(output, address, this.ClientName, this.SelectedDiscoveredService,
+                    this.Description, csFiles);
                 GlobalHub.publish(msg);
             }
         }

@@ -25,11 +25,37 @@
     <system:String x:Key="Icon.Method">Icon.Method</system:String>
     <system:String x:Key="Icon.CurlyBrace">Icon.CurlyBrace</system:String>
     <system:String x:Key="Icon.Plus">Icon.Plus</system:String>
+    <system:String x:Key="Icon.PlusGray">Icon.PlusGray</system:String>
     <system:String x:Key="Icon.FolderWithFile">Icon.FolderWithFile</system:String>
     <system:String x:Key="Icon.FolderOpen">Icon.FolderOpen</system:String>
     <system:String x:Key="Icon.FolderPlus">Icon.FolderPlus</system:String>
+    <system:String x:Key="Icon.Folder">Icon.Folder</system:String>
+    <system:String x:Key="Icon.ChevronDown">Icon.ChevronDown</system:String>
 
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.ChevronDown}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M14.524,4.758L8,11.2L1.476,4.758" Stroke="LightSlateGray" StrokeThickness="1.1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Folder}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path
+                            Data="M9.4,4.5H0.5V2.074C0.5,1.757,0.757,1.5,1.074,1.5h4.937c0.221,0,0.437,0.07,0.617,0.199l1.629,1.573C8.463,3.42,8.711,3.5,8.965,3.5H9.4V4.5z"
+                            Fill="Transparent" Stroke="LightSlateGray" StrokeThickness="1"  />
+                        <Path Data="M15.5,14.5H0.5V4.5h5.953c0.302,0,0.602,-0.041,0.894,-0.121L8.537,3.5H15.5V14.5z"
+                              Fill="Transparent" Stroke="LightSlateGray" StrokeThickness="1"   />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.FolderPlus}">
 
             <Viewbox Stretch="Uniform">
@@ -37,21 +63,21 @@
                     <Canvas>
                         <Path
                             Data="M0.8506,0.5451L0.6682,0.6682L0.5451,0.8506L0.5,1.074L0.5,3.5L9.4,3.5L9.4,2.5L8.965,2.5L8.593,2.441L8.257,2.272L6.628,0.699L6.335,0.5512L6.011,0.5L1.074,0.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="Transparent" />
                         <Path
                             Data="M0.975,0.009961L0.7516,0.05508L0.6537,0.0748L0.5711,0.1305L0.3887,0.2535L0.308,0.308L0.2535,0.3887L0.1305,0.5711L0.0748,0.6537L0.05508,0.7516L0.009961,0.975L0,1.024L0,1.074L0,3.5L0,4L0.5,4L9.4,4L9.9,4L9.9,3.5L9.9,2.5L9.9,2L9.4,2L9.004,2L8.748,1.96L8.55,1.86L6.975,0.3393L6.921,0.2867L6.853,0.2525L6.56,0.1047L6.49,0.06953L6.413,0.05723L6.089,0.006055L6.05,0L6.011,0L1.074,0L1.024,0zM5.971,1L6.18,1.033L6.336,1.112L7.91,2.632L7.964,2.684L8.032,2.718L8.368,2.888L8.438,2.923L8.515,2.935L8.887,2.994L8.9,2.996L8.9,3L1,3L1,1.124L1.015,1.047L1.028,1.028L1.047,1.015L1.124,1zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                         <Path
                             Data="M7.347,3.379L6.904,3.47L6.453,3.5L0.5,3.5L0.5,13.5L6.165,13.5L6.145,13.45L5.956,12.83L5.84,12.18L5.8,11.5L5.829,10.92L5.916,10.35L6.057,9.807L6.249,9.283L6.489,8.785L6.775,8.315L7.103,7.876L7.471,7.471L7.876,7.103L8.315,6.775L8.785,6.489L9.283,6.249L9.807,6.057L10.35,5.916L10.92,5.829L11.5,5.8L12.18,5.84L12.83,5.956L13.45,6.145L14.04,6.401L14.5,6.663L14.5,2.5L8.537,2.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="LightSlateGray" />
                         <Path
                             Data="M8.24,2.098L7.139,2.911L6.837,2.973L6.437,3L0.5,3L0,3L0,3.5L0,13.5L0,14L0.5,14L6.382,14L6.145,13.45L6.008,13L1,13L1,4L6.453,4L6.47,4L6.487,3.999L6.938,3.968L6.971,3.966L7.004,3.959L7.447,3.869L7.555,3.847L7.644,3.781L8.702,3L14,3L14,6.382L14.04,6.401L14.6,6.72L15,7.014L15,2.5L15,2L14.5,2L8.537,2L8.372,2zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                     </Canvas>
                     <Canvas>
-                        <Ellipse Canvas.Left="7" Canvas.Top="7" Width="9" Height="9" Fill="#4E4E4E" Stroke="#1ED15D"
+                        <Ellipse Canvas.Left="7" Canvas.Top="7" Width="9" Height="9" Fill="Transparent" Stroke="#1ED15D"
                                  StrokeThickness="1" />
-                        <Path Data="M11.5,9v5M9,11.5h5" Fill="#4E4E4E" Stroke="#1ED15D" StrokeThickness="1" />
+                        <Path Data="M11.5,9v5M9,11.5h5" Fill="Transparent" Stroke="#1ED15D" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
@@ -63,22 +89,22 @@
                     <Canvas>
                         <Path
                             Data="M1.851,1.545L1.668,1.668L1.545,1.851L1.5,2.074L1.5,14.5L13.5,14.5L13.5,9.835L13.45,9.855L12.83,10.04L12.18,10.16L11.5,10.2L10.92,10.17L10.35,10.08L9.807,9.943L9.283,9.751L8.785,9.511L8.315,9.225L7.876,8.897L7.471,8.529L7.103,8.124L6.775,7.685L6.489,7.215L6.249,6.717L6.057,6.193L5.916,5.647L5.829,5.082L5.8,4.5L5.84,3.825L5.956,3.172L6.145,2.548L6.252,2.301L5.628,1.699L5.335,1.551L5.011,1.5L2.074,1.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="Transparent" />
                         <Path
                             Data="M1.975,1.01L1.752,1.055L1.654,1.075L1.571,1.13L1.389,1.254L1.308,1.308L1.254,1.389L1.13,1.571L1.075,1.654L1.055,1.752L1.01,1.975L1,2.024L1,2.074L1,14.5L1,15L1.5,15L13.5,15L14,15L14,14.5L14,9.618L13.45,9.855L13,9.992L13,14L2,14L2,2.124L2.015,2.047L2.028,2.028L2.047,2.015L2.124,2L4.971,2L5.18,2.033L5.336,2.112L6.064,2.815L6.145,2.548L6.401,1.956L6.477,1.824L5.975,1.339L5.921,1.287L5.853,1.253L5.56,1.105L5.49,1.07L5.413,1.057L5.089,1.006L5.05,1L5.011,1L2.074,1L2.024,1zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                         <Path
                             Data="M1.5,14.5L13.5,14.5L14.05,9.595L14.04,9.599L13.45,9.855L12.83,10.04L12.18,10.16L11.5,10.2L10.92,10.17L10.35,10.08L9.807,9.943L9.283,9.751L8.785,9.511L8.315,9.225L7.876,8.897L7.471,8.529L7.103,8.124L6.775,7.685L6.489,7.215L6.249,6.717L6.169,6.5L0.6,6.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="LightSlateGray" />
                         <Path
                             Data="M0.1031,6.556L1.003,14.56L1.053,15L1.5,15L13.5,15L13.95,15L14,14.56L14.59,9.286L14.04,9.599L13.52,9.825L13.05,14L1.947,14L1.159,7L6.385,7L6.249,6.717L6.057,6.193L6.007,6L0.6,6L0.04062,6zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                     </Canvas>
                     <Canvas>
                         <Path
                             Data="M14.328,7.328c-1.562,1.562,-4.095,1.562,-5.657,0s-1.562,-4.095,0,-5.657s4.095,-1.562,5.657,0S15.891,5.766,14.328,7.328z"
-                            Fill="#4E4E4E" Stroke="#20A0E0" StrokeThickness="1" />
-                        <Path Data="M13,2.787V6H9.787M12.944,5.944L9.721,2.721" Fill="#4E4E4E" Stroke="#20A0E0"
+                            Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Path Data="M13,2.787V6H9.787M12.944,5.944L9.721,2.721" Fill="Transparent" Stroke="#20A0E0"
                               StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
@@ -92,19 +118,19 @@
                     <Canvas>
                         <Path
                             Data="M0.8506,0.5451L0.6682,0.6682L0.5451,0.8506L0.5,1.074L0.5,3.5L9.4,3.5L9.4,2.5L8.965,2.5L8.593,2.441L8.257,2.272L6.628,0.699L6.335,0.5512L6.011,0.5L1.074,0.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="Transparent" />
                         <Path
                             Data="M0.975,0.009961L0.7516,0.05508L0.6537,0.0748L0.5711,0.1305L0.3887,0.2535L0.308,0.308L0.2535,0.3887L0.1305,0.5711L0.0748,0.6537L0.05508,0.7516L0.009961,0.975L0,1.024L0,1.074L0,3.5L0,4L0.5,4L9.4,4L9.9,4L9.9,3.5L9.9,2.5L9.9,2L9.4,2L9.004,2L8.748,1.96L8.55,1.86L6.975,0.3393L6.921,0.2867L6.853,0.2525L6.56,0.1047L6.49,0.06953L6.413,0.05723L6.089,0.006055L6.05,0L6.011,0L1.074,0L1.024,0zM5.971,1L6.18,1.033L6.336,1.112L7.91,2.632L7.964,2.684L8.032,2.718L8.368,2.888L8.438,2.923L8.515,2.935L8.887,2.994L8.9,2.996L8.9,3L1,3L1,1.124L1.015,1.047L1.028,1.028L1.047,1.015L1.124,1zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                         <Path
                             Data="M7.347,3.379L6.904,3.47L6.453,3.5L0.5,3.5L0.5,13.5L6.165,13.5L6.145,13.45L5.956,12.83L5.84,12.18L5.8,11.5L5.829,10.92L5.916,10.35L6.057,9.807L6.249,9.283L6.489,8.785L6.775,8.315L7.103,7.876L7.471,7.471L7.876,7.103L8.315,6.775L8.785,6.489L9.283,6.249L9.807,6.057L10.35,5.916L10.92,5.829L11.5,5.8L12.18,5.84L12.83,5.956L13.45,6.145L14.04,6.401L14.5,6.663L14.5,2.5L8.537,2.5zz"
-                            Fill="#4E4E4E" />
+                            Fill="Transparent" />
                         <Path
                             Data="M8.24,2.098L7.139,2.911L6.837,2.973L6.437,3L0.5,3L0,3L0,3.5L0,13.5L0,14L0.5,14L6.382,14L6.145,13.45L6.008,13L1,13L1,4L6.453,4L6.47,4L6.487,3.999L6.938,3.968L6.971,3.966L7.004,3.959L7.447,3.869L7.555,3.847L7.644,3.781L8.702,3L14,3L14,6.382L14.04,6.401L14.6,6.72L15,7.014L15,2.5L15,2L14.5,2L8.537,2L8.372,2zz"
-                            Fill="#D8D8D8" />
+                            Fill="LightSlateGray" />
                     </Canvas>
                     <Canvas>
-                        <Ellipse Canvas.Left="7" Canvas.Top="7" Width="9" Height="9" Fill="#4E4E4E" Stroke="#20A0E0"
+                        <Ellipse Canvas.Left="7" Canvas.Top="7" Width="9" Height="9" Fill="Transparent" Stroke="#20A0E0"
                                  StrokeThickness="1" />
                         <Path
                             Data="M11.486,7.512c-0.913,0.547,-1.486,2.505,-1.486,4.002c0,1.478,0.525,3.435,1.45,3.964M11.513,15.479c0.902,-0.529,1.487,-2.486,1.487,-3.964c0,-1.496,-0.612,-3.455,-1.502,-4.002M7.7,12.55h7.6M7.7,10.45h7.6"
@@ -112,7 +138,6 @@
                     </Canvas>
                 </Canvas>
             </Viewbox>
-
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.Plus}">
             <Viewbox Stretch="Uniform">
@@ -121,6 +146,17 @@
                         <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent"
                                  Stroke="#20A0E0" StrokeThickness="1" />
                         <Path Data="M3,7.5h9M7.5,12V3" Stroke="#00A3EF" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.PlusGray}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent"
+                                 Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M3,7.5h9M7.5,12V3" Stroke="LightSlateGray" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

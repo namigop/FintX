@@ -21,8 +21,16 @@ module App =
             let _ = pack.Init(Resolver.value)
             ()
 
+    let getPackagesPath () = Path.Combine(Root.Path, "packages")
+
+    let getDefaultProjectsPath packageName =
+        Path.Combine(getPackagesPath (), packageName, "projects")
+
+    let getDefaultProjectPath package =
+        Path.Combine(getDefaultProjectsPath package, Project.DefaultName)
+
     let loadPackage (io: IOResolver) (packagePath: string) =
-        let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))        
+        let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))
         let projects = dirs |> Array.map (loadProject io)
         let packageName = Path.GetFileName packagePath
 
@@ -32,9 +40,7 @@ module App =
 
     let loadRoot (io: IOResolver) =
         let packages =
-            Path.Combine(Root.Path, "packages")
-            |> io.Dir.GetDirectories
-            |> Array.map (loadPackage io)
+            getPackagesPath () |> io.Dir.GetDirectories |> Array.map (loadPackage io)
 
         { Packages = packages
           AppConfigFile = Config.configFile }
@@ -50,8 +56,7 @@ module App =
 
         root.Packages
         |> Array.find (fun c -> c.Name = packageName)
-        |> fun p -> p.Projects
-                    |> Array.find (fun c -> c.Name = projName)
+        |> fun p -> p.Projects |> Array.find (fun c -> c.Name = projName)
 
     let getDefaultProject (io: IOResolver) =
         getProject io defaultPackage Project.DefaultName

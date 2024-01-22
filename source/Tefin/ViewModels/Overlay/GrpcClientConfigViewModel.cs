@@ -107,18 +107,16 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._thumbprint, value);
     }
 
-    public string Title {
-        get;
-    } = "Client Configuration";
-
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
-    public void Close() {
-        GlobalHub.publish(new CloseOverlayMessage(this));
-    }
+    public string Title {
+        get;
+    } = "Client Configuration";
+
+    public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string clientConfigFile) {
         this._clientConfig = new ReadClientConfigFeature(clientConfigFile, this.Io).Read();
@@ -133,7 +131,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
             this.SelectedCertStoreLocation = StoreLocation.LocalMachine;
         }
         else {
-            this.SelectedCertStoreLocation = (StoreLocation)Enum.Parse(typeof(StoreLocation), this._clientConfig.CertStoreLocation);
+            this.SelectedCertStoreLocation =
+                (StoreLocation)Enum.Parse(typeof(StoreLocation), this._clientConfig.CertStoreLocation);
         }
 
         this.Thumbprint = this._clientConfig.CertThumbprint;
@@ -180,7 +179,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public class StoreCertSelection(string subject, string thumbprint) {
-        public string Subject { get => subject; }
-        public string Thumbprint { get => thumbprint; }
+        public string Subject => subject;
+        public string Thumbprint => thumbprint;
     }
 }

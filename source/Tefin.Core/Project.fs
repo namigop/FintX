@@ -36,7 +36,6 @@ module Project =
                 io.Dir.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
                 |> Array.filter (fun fp -> not <| fp.Contains(autoSaveFolderName)) //ignore auto-saved files
 
-
             { RequestFiles = requestFiles
               Name = methodName
               Path = m })
@@ -74,7 +73,13 @@ module Project =
           Clients = clients
           ConfigFile = config
           Path = projectPath }
-
+        
+    let createSaveState (io:IOResolver) package  (projectPath:string) =
+        let state = { Package = package ; ClientState = Array.empty}
+        let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+        let content = Instance.jsonSerialize state
+        io.File.WriteAllText file content
+        
     let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
         task {
             let oldClientPath = Path.GetDirectoryName clientConfigFile

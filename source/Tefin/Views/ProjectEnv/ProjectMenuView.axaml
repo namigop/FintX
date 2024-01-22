@@ -9,23 +9,17 @@
              x:DataType="project:ProjectMenuViewModel"
              x:Class="Tefin.Views.ProjectEnv.ProjectMenuView">
 
-    <Button ToolTip.Tip="PAth/to/my/project">
+    <Button ToolTip.Tip="{Binding SelectedProject.Path }" Classes="ClearButtonStyle">
         <StackPanel Orientation="Horizontal">
 
             <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}" Width="18" Height="18" />
-            <TextBlock Text="MyProject" Margin="6 0 0 0"></TextBlock>
-
-            <Viewbox Margin="12 0 0 0" Stretch="Uniform">
-                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
-                    <Canvas>
-                        <Path Data="M14.524,4.758L8,11.2L1.476,4.758" Stroke="LightSlateGray" StrokeThickness="1.1" />
-                    </Canvas>
-                </Canvas>
-            </Viewbox>
-
+            <TextBlock Text="{Binding SelectedProject.Name}" Margin="6 0 0 0"></TextBlock>
+            <controls:IconControl Icon="{StaticResource Icon.ChevronDown}" Width="16" Height="16" 
+                                  Margin="12 0 0 0"/>
+            
         </StackPanel>
         <Button.Flyout>
-            <Flyout Placement="BottomEdgeAlignedLeft" x:DataType="project:ProjectMenuViewModel">
+            <Flyout Placement="BottomEdgeAlignedLeft" x:DataType="project:ProjectMenuViewModel" ShowMode="TransientWithDismissOnPointerMoveAway">
                 <Border>
                     <Border.Styles>
                         <Style Selector="controls|IconControl">
@@ -36,34 +30,45 @@
                     </Border.Styles>
                     <StackPanel Orientation="Vertical">
 
-                        <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding NewProjectCommand}">
+                        <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding NewProjectCommand}" MinWidth="250">
                             <StackPanel Orientation="Horizontal">
-                                <controls:IconControl Icon="{StaticResource Icon.FolderPlus}"></controls:IconControl>
+                                <controls:IconControl Icon="{StaticResource Icon.PlusGray}"></controls:IconControl> 
                                 <TextBlock Text="New project" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
                             </StackPanel>
                         </Button>
 
 
-                        <StackPanel Orientation="Horizontal">
-                            <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding OpenProjectCommand}">
-                                <controls:IconControl Icon="{StaticResource Icon.FolderOpen}"></controls:IconControl>
+                        <StackPanel Orientation="Horizontal" Margin = "0 6 0 0">
+                            <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding OpenProjectCommand}" MinWidth="250">
+                                <StackPanel Orientation="Horizontal">
+                                    <controls:IconControl Icon="{StaticResource Icon.Folder}"></controls:IconControl> 
+                                    <TextBlock Text="Open project" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
+                                </StackPanel>
                             </Button>
-                            <TextBlock Text="Open project" VerticalAlignment="Center"></TextBlock>
+                           
                         </StackPanel>
 
 
                         <Separator Height="1" CornerRadius="2" Margin="0 10 0 10" Background="DarkSlateGray" HorizontalAlignment="Stretch"></Separator>
                         <StackPanel>
-                            <TextBlock Text="Recent Projects" FontWeight="SemiBold" Margin="0 0 0 0"></TextBlock>
-                            <ListBox Background="Transparent" ItemsSource="{Binding RecentProjects}">
+                            <TextBlock Text="Recent Projects" FontWeight="SemiBold" Margin="0 0 0 6"></TextBlock>
+                            <ListBox Background="Transparent" ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
                                             <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}"  VerticalAlignment="Center"></controls:IconControl>
-                                            <TextBlock Text="{Binding}" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
+                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
+                                <ListBox.Styles>
+                                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="Green" />
+                                    </Style>
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="Background" Value="LightGray" />
+                                    </Style>
+                                </ListBox.Styles>
                             </ListBox>
                         </StackPanel>
                     </StackPanel>
