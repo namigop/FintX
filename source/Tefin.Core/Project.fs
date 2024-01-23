@@ -74,11 +74,16 @@ module Project =
           ConfigFile = config
           Path = projectPath }
         
-    let createSaveState (io:IOResolver) package  (projectPath:string) =
+    let createSaveState (io:IOResolver) package (projectPath:string) =
         let state = { Package = package ; ClientState = Array.empty}
         let file = Path.Combine(projectPath, ProjectSaveState.FileName)
         let content = Instance.jsonSerialize state
         io.File.WriteAllText file content
+        
+    let getSaveState (io:IOResolver) (projectPath:string) =
+        let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+        let saveState = Instance.jsonDeserialize<ProjectSaveState>(io.File.ReadAllText file)
+        saveState
         
     let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
         task {
