@@ -1,11 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
+using Tefin.Core.Interop;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
@@ -17,17 +16,28 @@ public class ProjectMenuViewModel : ViewModelBase {
     private readonly ExplorerViewModel _explorerViewModel;
     private ProjectSelection _selectedProject;
 
-    public ProjectMenuViewModel(ExplorerViewModel explorerViewModel) {
+    public ProjectMenuViewModel(ExplorerViewModel explorerViewModel, AppTypes.AppState? appState) {
         this._explorerViewModel = explorerViewModel;
         this.NewProjectCommand = CreateCommand(OnNewProject);
         this.OpenProjectCommand = CreateCommand(OnOpenProject);
         this.RecentProjects = new ObservableCollection<ProjectSelection>();
 
         //read from app state file
-        this.RecentProjects.Add(new ProjectSelection(Core.App.getDefaultProjectPath(Core.App.defaultPackage)));
+        var defaultProject = Core.App.getDefaultProjectPath(Core.App.defaultPackage);
+        if (appState == null || appState.RecentProjects.Length == 0) {
+            this.RecentProjects.Add(new ProjectSelection(Core.App.defaultPackage, defaultProject));
+            this._selectedProject = this.RecentProjects.First();
+            this._selectedProject.IsSelected = true;
+        }
+        else {
+            foreach (var proj in appState.RecentProjects) {
+                var selection = new ProjectSelection(proj.Package, proj.Path);               
+                this.RecentProjects.Add(selection);
+            }
 
-        this._selectedProject = this.RecentProjects.First();
-        this._selectedProject.IsSelected = true;
+            this._selectedProject = this.RecentProjects.First(f => f.Path == appState.ActiveProject.Path );
+        }
+        
         GlobalHub.subscribe<NewProjectCreatedMessage>(OnReceiveNewProjectCreatedMessage);
         this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, OnSelectedProjectChanged);
     }
@@ -50,7 +60,7 @@ public class ProjectMenuViewModel : ViewModelBase {
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) {
         this._explorerViewModel.LoadProject(obj.ProjectPath);
         if (!this.RecentProjects.Contains(i => i.Path == obj.ProjectPath)) {
-            var projSelection = new ProjectSelection(obj.ProjectPath);
+            var projSelection = new ProjectSelection(obj.Package, obj.ProjectPath);
             this.RecentProjects.Add(projSelection);
             this.SelectedProject = projSelection;
         }
@@ -70,7 +80,9 @@ public class ProjectMenuViewModel : ViewModelBase {
     private void OpenProject(string projectPath) {
         this._explorerViewModel.LoadProject(projectPath);
         if (!this.RecentProjects.Contains(i => i.Path == this._explorerViewModel.Project!.Path)) {
-            var projSelection = new ProjectSelection(this._explorerViewModel.Project!.Path);
+            var pack = this._explorerViewModel.Project!.Package;
+            var path = this._explorerViewModel.Project!.Path;
+            var projSelection = new ProjectSelection(pack, path);
             this.RecentProjects.Add(projSelection);
             this.SelectedProject = projSelection;
         }

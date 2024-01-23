@@ -18,7 +18,6 @@ using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.ViewModels.Overlay;
-using Tefin.Views.Overlay;
 
 using static Tefin.Core.Interop.ProjectTypes;
 

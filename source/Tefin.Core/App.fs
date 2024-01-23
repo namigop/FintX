@@ -21,6 +21,18 @@ module App =
             let _ = pack.Init(Resolver.value)
             ()
 
+    let saveAppState (io: IOResolver) recentProjects activeProject =
+        let file = Path.Combine(Root.Path, AppState.FileName)
+
+        let state =
+            { ActiveProject = activeProject
+              RecentProjects = recentProjects }
+
+        state |> Instance.jsonSerialize |> io.File.WriteAllText file
+     
+   
+
+    let getAppConfig() = AppConfig.Default()
     let getPackagesPath () = Path.Combine(Root.Path, "packages")
 
     let getDefaultProjectsPath packageName =
@@ -29,6 +41,14 @@ module App =
     let getDefaultProjectPath package =
         Path.Combine(getDefaultProjectsPath package, Project.DefaultName)
 
+    let getAppState (io: IOResolver) =
+        let file = Path.Combine(Root.Path, AppState.FileName)
+        if (io.File.Exists file) then
+            file |> io.File.ReadAllText |> Instance.jsonDeserialize<AppState>
+        else
+            let path = getDefaultProjectPath defaultPackage            
+            { RecentProjects = Array.empty
+              ActiveProject = AppProject.Create path defaultPackage  }
     let loadPackage (io: IOResolver) (packagePath: string) =
         let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))
         let projects = dirs |> Array.map (loadProject io)

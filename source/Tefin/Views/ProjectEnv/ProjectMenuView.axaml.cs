@@ -1,10 +1,6 @@
 #region
 
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Data;
-
-using Tefin.Views.Controls;
 
 #endregion
 

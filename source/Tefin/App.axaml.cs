@@ -22,10 +22,14 @@ public class App : Application {
     }
 
     public override void OnFrameworkInitializationCompleted() {
-        if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow {
-                DataContext = new MainWindowViewModel()
+        if (this.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+            var vm = new MainWindowViewModel();
+            desktop.MainWindow = new MainWindow { DataContext = vm };
+            desktop.MainWindow.Closing += (sender, arg) => {
+                var shutdown = new ShutdownFeature(vm);
+                shutdown.Run();
             };
+        }
 
         base.OnFrameworkInitializationCompleted();
     }

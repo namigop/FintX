@@ -57,7 +57,7 @@ public class AddNewProjectOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.Io.Dir.CreateDirectory(projectPath);
 
         Core.Project.createSaveState(this.Io, this._package, projectPath);
-        GlobalHub.publish(new NewProjectCreatedMessage(projectPath));
+        GlobalHub.publish(new NewProjectCreatedMessage(this._package, projectPath));
         this.Close();
     }
 

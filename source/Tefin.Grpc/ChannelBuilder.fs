@@ -45,9 +45,9 @@ type CallConfig =
             else
                 None
 
-        { Url = cfg.Url
+        { Url = cfg.Url.Trim()
           IsUsingSSL = cfg.IsUsingSSL
-          JWT = cfg.Jwt
+          JWT = cfg.Jwt.Trim()
           X509Cert = cert
           Io = io }
 

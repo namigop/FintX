@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
+using Tefin.Utils;
 using Tefin.ViewModels.Footer;
 using Tefin.ViewModels.MainMenu;
 using Tefin.ViewModels.Misc;
@@ -23,7 +24,8 @@ public class MainWindowViewModel : ViewModelBase {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
         this.MainMenu = new();
-        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer);
+        var appState = Core.App.getAppState(this.Io);
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, appState);
     }
 
     public FooterViewModel Footer { get; } = new();
@@ -33,9 +35,7 @@ public class MainWindowViewModel : ViewModelBase {
     public AppTypes.Root? Root { get; private set; }
     public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
 
-    public ICommand SponsorCommand {
-        get;
-    }
+    public ICommand SponsorCommand { get; }
 
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
@@ -44,8 +44,13 @@ public class MainWindowViewModel : ViewModelBase {
 
     public void Init() {
         this.Root = new StartupFeature().Load(this.Io);
-        var defaultPackage = this.Root.Packages.First(t => t.Name == Core.App.defaultPackage);
-        this.MainMenu.ClientMenuItem.Init(defaultPackage, ProjectTypes.Project.DefaultName);
+        var packageName = this.ProjectMenuViewModel.SelectedProject.Package;
+        var projPath = this.ProjectMenuViewModel.SelectedProject.Path;
+
+        var project = Core.Project.loadProject(this.Io, projPath);
+        
+        //var package = this.Root.Packages.First(t => t.Name == packageName);
+        this.MainMenu.ClientMenuItem.Init(project);
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
 
         var hasClients = this.MainMenu.ClientMenuItem.Project.Clients.Any();

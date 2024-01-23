@@ -50,7 +50,8 @@
             </StackPanel>
             
             <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
-                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18"  Width="18" VerticalAlignment="Center" />
+                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18"  Width="18" VerticalAlignment="Center"
+                                      ToolTip.Tip="{Binding SubTitle}"/>
                 <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center"
                            HorizontalAlignment="Center" Margin="10 0 0 0" />
             </StackPanel>

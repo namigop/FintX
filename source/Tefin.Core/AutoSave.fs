@@ -154,7 +154,9 @@ module AutoSave =
     let run =
         let timer = new System.Timers.Timer()
         timer.AutoReset <- true
-        timer.Interval <- 5000 //5 sec
+        timer.Interval <-
+            App.getAppConfig().AutoSaveFrequency * 1000
+            |> System.Convert.ToDouble
 
         let io = Resolver.value
         let w = writer

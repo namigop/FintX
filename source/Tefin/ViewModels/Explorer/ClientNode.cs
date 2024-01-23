@@ -4,8 +4,6 @@ using System.Windows.Input;
 
 using Avalonia.Threading;
 
-using Newtonsoft.Json.Linq;
-
 using ReactiveUI;
 
 using Tefin.Core;
@@ -14,9 +12,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
-using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
-using Tefin.ViewModels.Tabs;
 
 using static Tefin.Core.Interop.MessageProject;
 
