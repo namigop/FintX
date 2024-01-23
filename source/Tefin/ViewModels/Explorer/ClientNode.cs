@@ -140,7 +140,7 @@ public class ClientNode : NodeBase {
 
         try {
             this._compileInProgress = true;
-            var protoFiles = Array.Empty<string>(); //TODO
+            var protoFiles = Array.Empty<string>();
             var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
             var csFiles = this.Client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
