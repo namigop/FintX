@@ -17,6 +17,8 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.ViewModels.Overlay;
+using Tefin.Views.Overlay;
 
 using static Tefin.Core.Interop.ProjectTypes;
 
@@ -110,16 +112,22 @@ public class ExplorerViewModel : ViewModelBase {
             this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
             return;
         }
-        
+
+        //Close all existing tabs
+        GlobalHub.publish(new CloseAllTabsMessage());
+
         this.Project = Core.Project.loadProject(this.Io, path);
         this.Items.Clear();
         foreach (var client in this.Project.Clients) {
             this.AddClientNode(client);
         }
 
-        //Close all tabs
-        GlobalHub.publish(new CloseAllTabsMessage());
-
+        //if there are no clients, show the add dialog
+        if (!this.Project.Clients.Any()) {
+            var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
+            GlobalHub.publish(new OpenOverlayMessage(overlay));
+        }
+        
         //monitor file changes in the new project path
         var fsMonitor = new MonitorChangesFeature(this.Io);
         fsMonitor.Run(this.Project);

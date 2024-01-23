@@ -55,18 +55,21 @@
                             <ListBox Background="Transparent" ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}"  VerticalAlignment="Center"></controls:IconControl>
-                                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
-                                        </StackPanel>
+                                        <Grid ColumnDefinitions="Auto, *, Auto">
+                                            <controls:IconControl Grid.Column="0" Icon="{StaticResource Icon.FolderWithFile}"  VerticalAlignment="Center"></controls:IconControl>
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
+                                            <controls:IconControl Grid.Column="2"
+                                                                  IsVisible="{Binding IsSelected}"
+                                                                  Icon="{StaticResource Icon.Check}"  VerticalAlignment="Center"></controls:IconControl>
+                                        </Grid>
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                                 <ListBox.Styles>
                                     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="Green" />
+                                        <Setter Property="Background" Value="Transparent" />
                                     </Style>
-                                    <Style Selector="ListBoxItem">
-                                        <Setter Property="Background" Value="LightGray" />
+                                    <Style Selector="ListBoxItem:pointerover">
+                                        <Setter Property="Background" Value="DimGray" />
                                     </Style>
                                 </ListBox.Styles>
                             </ListBox>
