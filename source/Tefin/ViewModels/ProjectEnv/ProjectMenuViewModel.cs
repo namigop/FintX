@@ -36,6 +36,7 @@ public class ProjectMenuViewModel : ViewModelBase {
             }
 
             this._selectedProject = this.RecentProjects.First(f => f.Path == appState.ActiveProject.Path );
+            this._selectedProject.IsSelected = true;
         }
         
         GlobalHub.subscribe<NewProjectCreatedMessage>(OnReceiveNewProjectCreatedMessage);
