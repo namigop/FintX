@@ -1,7 +1,12 @@
 # FintX
-Cross-platform native gRPC test bench
+FintX is a native, cross-platform, gRPC test bench.  It not only works on Windows, MacOS and Linux but any data files created are portable to all platforms
 
 <img src="https://github.com/namigop/FintX/blob/main/docs/ServerStreaming.png" style="width: 80%; height: 80%" />
+
+## Installation
+1. Windows : `winget install FintX`
+2. MacOS   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide)
+3. Linux   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide) 
 
 ## Quickstart
 1. Add a client
@@ -24,7 +29,7 @@ Cross-platform native gRPC test bench
    <img src="https://github.com/namigop/FintX/blob/main/docs/RequestResponse.png" style="width: 70%; height: 70%">
 
 
-### Employment Opportunities
+### [Hire me]
 Hi there! author of FintX here. I am currently looking for a new position. 
 
 I have held several roles over the years, either as an individual contributor or in a leadership position.  I've been a developer, tech lead, software architect and engineering manager/head. I have led cross-site teams and delivered multi-million budget projects. Apart from C#/F#/.NET (15+ years and counting), I have passing familiarity with Java, Golang, python. If you have a need for someone with a work profile like mine, please drop me an email at erik.araojo@wcfstorm.com
