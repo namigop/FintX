@@ -8,6 +8,9 @@ FintX is a native, cross-platform, gRPC test bench.  It not only works on Window
 2. MacOS   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide)
 3. Linux   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide) 
 
+## List of Features
+Please see the [feature list](https://github.com/namigop/FintX/wiki/List-of-Features)
+
 ## Quickstart
 1. Add a client
     - Select a proto file or enter the http address of the gRPC reflection service
