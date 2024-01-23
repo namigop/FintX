@@ -119,7 +119,13 @@ public class ClientNode : NodeBase {
 
         this.IsExpanded = true;
 
-        DispatcherTimer.RunOnce(this.TryLoadPreviousSession, TimeSpan.FromMilliseconds(100));
+        var loadSessionFeature =
+            new LoadSessionFeature(
+                this.Client.Path,
+                this.Items.Cast<MethodNode>(), 
+                this.Io, 
+                loaded => this._sessionLoaded = loaded);
+        DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
         this.RaisePropertyChanged(nameof(this.IsLoaded));
     }
 
@@ -141,7 +147,8 @@ public class ClientNode : NodeBase {
         try {
             this._compileInProgress = true;
             var protoFiles = Array.Empty<string>();
-            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
+            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
+                this.Io);
             var csFiles = this.Client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
@@ -172,45 +179,6 @@ public class ClientNode : NodeBase {
         GlobalHub.publish(new OpenOverlayMessage(vm));
     }
 
-    private void TryLoadPreviousSession() {
-        void LoadOne(string json, string reqFile) {
-            var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
-            var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
-            var tab = TabFactory.From(item, this.Io, reqFile);
-            if (tab != null)
-                GlobalHub.publish(new OpenTabMessage(tab));
-        }
-
-        AutoSave.getAutoSavedFiles(this.Io, this.Client.Path)
-            .Select(reqFile => {
-                var json = this.Io.File.ReadAllText(reqFile);
-                if (string.IsNullOrWhiteSpace(json))
-                    return null;
-                return new Action(() => LoadOne(json, reqFile));
-            })
-            .Where(a => a != null)
-            .ToArray()
-            .Then(actions => {
-                if (actions.Any()) {
-                    var pos = 0;
-                    DispatcherTimer.Run(
-                        () => {
-                            if (pos < actions.Length) {
-                                actions[pos].Invoke();
-                                pos += 1;
-                                return true;
-                            }
-
-                            this._sessionLoaded = true;
-                            return false;
-                        },
-                        TimeSpan.FromMilliseconds(100));
-                }
-                else {
-                    this._sessionLoaded = true;
-                }
-            });
-    }
 
     private void Update(ProjectTypes.ClientGroup cg) {
         this.Client = cg;
