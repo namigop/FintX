@@ -32,8 +32,79 @@
     <system:String x:Key="Icon.Folder">Icon.Folder</system:String>
     <system:String x:Key="Icon.ChevronDown">Icon.ChevronDown</system:String>
     <system:String x:Key="Icon.Check">Icon.Check</system:String>
+    <system:String x:Key="Icon.Class">Icon.Class</system:String>
+    <system:String x:Key="Icon.EditType">Icon.EditType</system:String>
+    <system:String x:Key="Icon.SystemType">Icon.SystemType</system:String>
+    <system:String x:Key="Icon.TabClose">Icon.TabClose</system:String>
+    <system:String x:Key="Icon.CircledArrow">Icon.CircledArrow</system:String>
 
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.CircledArrow}">
+            <Viewbox Stretch="Uniform"
+                     IsVisible="{Binding !IsDiscoveringUsingProto}"
+                     ToolTip.Tip="Click to explore the reflection service">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Path
+                            Data="M7.5,14.5c-3.866,0,-7,-3.134,-7,-7S3.634,0.5,7.5,0.5s7,3.134,7,7S11.366,14.5,7.5,14.5z"
+                            Fill="Transparent" Stroke="#00AFFF"
+                            StrokeThickness="1" />
+                        <Path Data="M7.754,3.611L11.643,7.5l-3.889,3.889M3.025,7.5h8.264"
+                              Stroke="#00AFFF" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.TabClose}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="24" Height="24">
+                    <Path Fill="#228BCB"
+                          Data="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M17,8.4L13.4,12L17,15.6L15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4Z" />
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.SystemType}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Polygon Points="5.368,14.78 0.4,11.622 0.4,7.118 5.368,10.276" Fill="#0A6DBD" />
+                        <Polygon Points="5.575,14.67 15.388,8.624 15.388,4.127 5.575,10.174" Fill="#0A6DBD" />
+                        <Polygon Points="5.42,10.045 15.336,4.101 10.32,1.669 0.658,7.047" Fill="Transparent" />
+                        <Path Data="M15.491,4.09L10.44,1.6L0.503,7.098v4.679l4.951,3.091l10.037,-6.266V4.09z"
+                              Stroke="#92C6FF" StrokeThickness="1" />
+                        <Path Data="M15.483,4.101l-10.012,6V14.9M5.421,14.851M5.421,10.101l-4.938,-3M15.433,4.101"
+                              Stroke="#92C6FF" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        
+        <DataTemplate x:Key="{StaticResource Icon.EditType}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Path
+                            Data="M2.36,11.568L13.356,0.6c0.572,-0.572,2.616,1.472,2.044,2.044L4.398,13.606C4.102,13.902,1,15,1,15S2.063,11.864,2.36,11.568zM11.808,2.16l1.987,1.964M2.431,11.538l2.042,2.042"
+                            Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Class}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Path Data="M10.6,6.5H5.1M7.5,6.5v7h3" Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Path Data="M15.3,12.189l-3.165,3.11l-1.872,-1.839l3.165,-3.11L15.3,12.189z" Fill="#0A6DBD"
+                              Stroke="#92C6FF" StrokeThickness="1" />
+                        <Polygon Points="15.3,5.242 12.059,8.387 10.264,6.513 13.428,3.403" Fill="#A23E97"
+                                 Stroke="#E2AAD7" StrokeThickness="1" />
+                        <Polygon Points="8.381,3.203 3.232,8.262 0.731,5.805 5.88,0.746" Fill="#BA9B04"
+                                 Stroke="#FBD28A" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.Check}">
             <Viewbox  Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
