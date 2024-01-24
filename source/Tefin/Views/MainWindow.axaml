@@ -49,7 +49,7 @@
                 <ContentControl Content="{Binding ProjectMenuViewModel}"  />
             </StackPanel>
             
-            <StackPanel Orientation="Horizontal" Margin="10 0 0 0">
+            <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
                 <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18"  Width="18" VerticalAlignment="Center"
                                       ToolTip.Tip="{Binding SubTitle}"/>
                 <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center"
