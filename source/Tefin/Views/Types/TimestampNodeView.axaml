@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:TimestampNode"
              x:Class="Tefin.Views.Types.TimestampNodeView">
@@ -26,17 +27,7 @@
         <!--     </Flyout> -->
         <!-- </FlyoutBase.AttachedFlyout> -->
         <Border>
-            <Viewbox Stretch="Uniform">
-                <Canvas Width="16" Height="16">
-                    <Canvas>
-                        <Ellipse Canvas.Left="0" Canvas.Top="0" Width="16" Height="16" Fill="Transparent"
-                                 Stroke="#228BCB" StrokeThickness="1" />
-                        <Path
-                            Data="M7.973,0.523C5.732,1.549,3.765,5.221,3.765,8.026c0,2.772,1.85,6.441,4.121,7.433M8.034,15.46c2.271,-0.992,4.121,-4.661,4.121,-7.433c0,-2.805,-1.917,-6.478,-4.158,-7.503M0.9,10.5h14.2M0.9,5.5h14.2M8,0.5v15"
-                            Stroke="#228BCB" StrokeThickness="1" />
-                    </Canvas>
-                </Canvas>
-            </Viewbox>
+             <controls:IconControl Icon="{StaticResource Icon.TimeStampType}" Width="16" Height="16" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="Title" />

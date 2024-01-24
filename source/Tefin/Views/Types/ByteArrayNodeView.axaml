@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
 
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:ByteArrayNode"
@@ -12,16 +13,7 @@
     </UserControl.Styles>
     <StackPanel Orientation="Horizontal" x:Name="MainBorder">
         <Border>
-            <Viewbox Stretch="Uniform">
-                <Canvas Width="16" Height="16">
-                    <Canvas>
-                        <Path
-                            Data="M2.36,11.568L13.356,0.6c0.572,-0.572,2.616,1.472,2.044,2.044L4.398,13.606C4.102,13.902,1,15,1,15S2.063,11.864,2.36,11.568zM11.808,2.16l1.987,1.964M2.431,11.538l2.042,2.042"
-                            Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="1" />
-                    </Canvas>
-                </Canvas>
-            </Viewbox>
-
+           <controls:IconControl Icon="{StaticResource Icon.ByteArrayType}" Width="16" Height="16" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Classes="Title" Margin="6 0 0 0" />
