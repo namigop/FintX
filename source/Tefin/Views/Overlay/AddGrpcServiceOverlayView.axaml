@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:overlay="clr-namespace:Tefin.ViewModels.Overlay"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="overlay:AddGrpcServiceOverlayViewModel"
              x:Class="Tefin.Views.Overlay.AddGrpcServiceOverlayView">
@@ -21,20 +22,7 @@
                             ToolTip.Tip="Discover services">
 
                         <Grid>
-                            <Viewbox Width="18" Height="18" Stretch="Uniform"
-                                     IsVisible="{Binding !IsDiscoveringUsingProto}"
-                                     ToolTip.Tip="Click to explore the reflection service">
-                                <Canvas Width="16" Height="16">
-                                    <Canvas>
-                                        <Path
-                                            Data="M7.5,14.5c-3.866,0,-7,-3.134,-7,-7S3.634,0.5,7.5,0.5s7,3.134,7,7S11.366,14.5,7.5,14.5z"
-                                            Fill="Transparent" Stroke="#00AFFF"
-                                            StrokeThickness="1" />
-                                        <Path Data="M7.754,3.611L11.643,7.5l-3.889,3.889M3.025,7.5h8.264"
-                                              Stroke="#00AFFF" StrokeThickness="1" />
-                                    </Canvas>
-                                </Canvas>
-                            </Viewbox>
+                            <controls:IconControl Icon="{StaticResource Icon.CircledArrow}" Width="20" Height="20" />
 
                             <Viewbox Stretch="Uniform" IsVisible="{Binding IsDiscoveringUsingProto}"
                                      ToolTip.Tip="Click to select a proto file">
