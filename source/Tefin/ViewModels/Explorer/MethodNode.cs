@@ -16,7 +16,7 @@ using Tefin.ViewModels.Tabs.Grpc;
 
 namespace Tefin.ViewModels.Explorer;
 
-public class MethodNode : NodeBase {
+public sealed class MethodNode : NodeBase {
 
     public MethodNode(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         this.MethodInfo = methodInfo;

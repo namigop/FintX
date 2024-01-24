@@ -9,7 +9,7 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Types;
 
-public class MethodInfoNode : NodeBase {
+public sealed class MethodInfoNode : NodeBase {
 
     public MethodInfoNode(MethodInfo mi) {
         this.IsExpanded = true;

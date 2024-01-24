@@ -18,7 +18,7 @@ public class LoadSessionFeature(
     Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string reqFile) {
         var dir = Path.GetDirectoryName(reqFile);
-        return dir.EndsWith(Core.Project.autoSaveFolderName);
+        return dir != null && dir.EndsWith(Project.autoSaveFolderName);
     }
 
     private void LoadOne(string json, string reqFile) {
@@ -26,7 +26,7 @@ public class LoadSessionFeature(
         var item = nodes.FirstOrDefault(i => i.MethodInfo.Name == methodName);
         if (item != null) {
             IExplorerItem? node = item;
-            var isAutoSave = IsAutoSaveFile(reqFile);
+            var isAutoSave = this.IsAutoSaveFile(reqFile);
             if (!isAutoSave) {
                 //if its not an auto-save file, open it as an existing file request
                 var fileNode = item.Items.FirstOrDefault(c => ((FileReqNode)c).FullPath == reqFile);
@@ -66,15 +66,15 @@ public class LoadSessionFeature(
 
     public void Run() {
         var projectPath = Path.GetDirectoryName(clientPath);
-        var state = Core.Project.getSaveState(io, projectPath);
+        var state = Project.getSaveState(io, projectPath);
         var openFiles = state.ClientState.SelectMany(c => c.OpenFiles).OrderBy(c => c).ToArray();
         
         openFiles
-            .Select(CreateAction)
+            .Select(this.CreateAction)
             .ToArray()
             .Then(actions => {
                 if (actions.Length != 0) {
-                    ExecuteActions(actions);
+                    this.ExecuteActions(actions);
                 }
                 else {
                     onLoaded(true);

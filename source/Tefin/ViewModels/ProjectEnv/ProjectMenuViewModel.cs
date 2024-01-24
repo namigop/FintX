@@ -18,8 +18,8 @@ public class ProjectMenuViewModel : ViewModelBase {
 
     public ProjectMenuViewModel(ExplorerViewModel explorerViewModel, AppTypes.AppState? appState) {
         this._explorerViewModel = explorerViewModel;
-        this.NewProjectCommand = CreateCommand(OnNewProject);
-        this.OpenProjectCommand = CreateCommand(OnOpenProject);
+        this.NewProjectCommand = this.CreateCommand(this.OnNewProject);
+        this.OpenProjectCommand = this.CreateCommand(this.OnOpenProject);
         this.RecentProjects = new ObservableCollection<ProjectSelection>();
 
         //read from app state file
@@ -39,8 +39,8 @@ public class ProjectMenuViewModel : ViewModelBase {
             this._selectedProject.IsSelected = true;
         }
         
-        GlobalHub.subscribe<NewProjectCreatedMessage>(OnReceiveNewProjectCreatedMessage);
-        this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, OnSelectedProjectChanged);
+        GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage);
+        this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, this.OnSelectedProjectChanged);
     }
 
     private void OnSelectedProjectChanged(ViewModelBase obj) {
@@ -54,7 +54,7 @@ public class ProjectMenuViewModel : ViewModelBase {
     public ProjectSelection SelectedProject {
         get => this._selectedProject;
         set {
-            this.RaiseAndSetIfChanged(ref _selectedProject, value);
+            this.RaiseAndSetIfChanged(ref this._selectedProject, value);
         }
     }
 

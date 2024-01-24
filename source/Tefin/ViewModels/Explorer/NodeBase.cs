@@ -14,6 +14,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     private bool _isSelected;
     private string _subTitle = "";
     private string _title = "";
+    private IExplorerItem? _parent;
 
     public bool CanOpen {
         get;
@@ -35,11 +36,12 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
-    public ObservableCollection<IExplorerItem> Items {
-        get;
-    } = new();
+    public ObservableCollection<IExplorerItem> Items { get; } = new();
 
-    public IExplorerItem Parent { get; set; }
+    public IExplorerItem? Parent {
+        get => this._parent;
+        set => this._parent = value;
+    }
 
     public string SubTitle {
         get => this._subTitle;
@@ -64,8 +66,8 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         }
     }
 
-    public IExplorerItem FindSelected() {
-        IExplorerItem Find(ObservableCollection<IExplorerItem> items) {
+    public IExplorerItem? FindSelected() {
+        IExplorerItem? Find(ObservableCollection<IExplorerItem> items) {
             foreach (var item in items) {
                 if (item.IsSelected)
                     return item;

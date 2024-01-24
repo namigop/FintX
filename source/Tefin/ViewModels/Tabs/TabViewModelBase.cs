@@ -14,16 +14,17 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
-    private readonly IDisposable _disposable;
     private string _subTitle;
     private string _title;
 
     protected TabViewModelBase(IExplorerItem item) {
+        this._title = "";
+        this.Id = "";
         this.ExplorerItem = item;
         this._subTitle = item.SubTitle;
-        this._disposable = item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title);
+        item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title)
+            .Then(this.MarkForCleanup);
         this.CloseCommand = this.CreateCommand(this.OnClose);
-
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 

@@ -77,28 +77,28 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public virtual async Task ImportRequest() {
-        var fileExtensions = new[] {
-            $"*{Ext.requestFileExt}"
-        };
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
             this.ImportRequestFile(files[0]);
         }
     }
 
-    public virtual async Task ImportRequestFile(string file) {
+    public virtual void ImportRequestFile(string file) {
         var import = new ImportFeature(this.Io, file, this.MethodInfo);
         var (export, _) = import.Run();
         if (export.IsOk) {
             var methodParams = export.ResultValue;
             if (methodParams == null)
                 Debugger.Break();
-            this._methodParameterInstances = methodParams;
+            this._methodParameterInstances = methodParams ?? Array.Empty<object>();
             this.Init();
         }
         else {
             this.Io.Log.Error(export.ErrorValue);
         }
+
+       
     }
 
     public void Init() {

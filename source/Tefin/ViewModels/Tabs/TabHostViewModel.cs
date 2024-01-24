@@ -39,7 +39,9 @@ public class TabHostViewModel : ViewModelBase {
     private async Task OnReceiveFileChangeMessage(FileChangeMessage msg) {
         if (msg.ChangeType == WatcherChangeTypes.Deleted) {
             var existingTab = this.Items.FirstOrDefault(t => t is PersistedTabViewModel && t.Id == msg.FullPath);
-            await this.OnReceiveTabCloseMessage(new CloseTabMessage(existingTab));
+            if (existingTab != null) {
+                await this.OnReceiveTabCloseMessage(new CloseTabMessage(existingTab));
+            }
         }
 
         if (msg.ChangeType == WatcherChangeTypes.Renamed) {

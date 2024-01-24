@@ -8,7 +8,7 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class MethodTabViewModel : PersistedTabViewModel {
+public sealed class MethodTabViewModel : PersistedTabViewModel {
     private readonly string? _requestFile;
 
     public MethodTabViewModel(MethodNode item, string requestFile = "") : base(item) {

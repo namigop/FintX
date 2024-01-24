@@ -7,11 +7,11 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class FileReqTabViewModel : PersistedTabViewModel {
+public sealed class FileReqTabViewModel : PersistedTabViewModel {
 
     public FileReqTabViewModel(FileReqNode item) : base(item) {
         this.ClientMethod = item.CreateViewModel()!;
-        this.Client = ((MethodNode)item.Parent).Client;
+        this.Client = ((MethodNode)item.Parent!).Client;
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
     }
 

@@ -12,7 +12,7 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
-    private string _importFile;
+    private string _importFile = "";
 
     public GrpcClientMethodHostViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi) {
         var type = GrpcMethod.getMethodType(mi);
@@ -46,14 +46,16 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public void Init() {
         this.CallType.Init();
-        if (!string.IsNullOrEmpty(this._importFile)) {
-            if (this.Io.File.Exists(this._importFile)) {
-                this.CallType.ImportRequest(this._importFile);
-            }
-            else {
-                var content = this.GetRequestContent();
-                this.Io.File.WriteAllText(this._importFile, content);
-            }
+        if (string.IsNullOrEmpty(this._importFile)) {
+            return;
+        }
+
+        if (this.Io.File.Exists(this._importFile)) {
+            this.CallType.ImportRequest(this._importFile);
+        }
+        else {
+            var content = this.GetRequestContent();
+            this.Io.File.WriteAllText(this._importFile, content);
         }
     }
 }

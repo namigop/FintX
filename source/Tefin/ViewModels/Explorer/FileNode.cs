@@ -10,12 +10,12 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels.Explorer;
 
 public class FileNode : NodeBase {
-    private string _tempTitle;
+    private string _tempTitle = "";
 
     public FileNode(string fullPath) {
         this.CanOpen = true;
         this.FullPath = fullPath;
-        this.Title = Path.GetFileName(fullPath);
+        base.Title = Path.GetFileName(fullPath);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
@@ -45,7 +45,7 @@ public class FileNode : NodeBase {
 
         if (this.TempTitle != this.Title) {
             this.Title = this.TempTitle;
-            var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path, this.Title));
+            var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path!, this.Title));
             if (!this.Io.File.Exists(newFile)) {
                 //will trigger a file watcher event that will sync the explorer tree
                 this.Io.File.Move(this.FullPath, newFile);

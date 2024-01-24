@@ -20,8 +20,8 @@ public class MovableBorder : Border {
         var viz = this.Parent as Visual;
         var currentPosition = e.GetPosition(viz);
 
-        var withinX = currentPosition.X > 1 && currentPosition.X < viz.Bounds.Width;
-        var withinY = currentPosition.Y > 0 && currentPosition.Y < viz.Bounds.Height;
+        var withinX = currentPosition.X > 1 && currentPosition.X < viz!.Bounds.Width;
+        var withinY = currentPosition.Y > 0 && currentPosition.Y < viz!.Bounds.Height;
         if (!withinX || !withinY) {
             return;
         }

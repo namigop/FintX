@@ -10,6 +10,6 @@ public class ProjectSelection(string package, string path) : ViewModelBase {
 
     public bool IsSelected {
         get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSelected, value);
+        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 }

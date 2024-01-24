@@ -71,7 +71,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public override void ImportRequest(string requestFile) {
-        _ = this.ReqViewModel.ImportRequestFile(requestFile);
+        this.ReqViewModel.ImportRequestFile(requestFile);
     }
 
     public override void Init() {

@@ -103,8 +103,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
     }
 
-    public override async Task ImportRequestFile(string file) {
-        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
+    public override void ImportRequestFile(string file) {
+        GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
     }
 
     public void SetupClientStream(ClientStreamingCallResponse response) {

@@ -34,7 +34,7 @@ public static class GrpcUiUtils {
         }
     }
 
-    public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, string file,
+    public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, string file,
         IOResolver io) {
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);

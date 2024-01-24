@@ -15,6 +15,6 @@ public class FileReqNode : FileNode {
     }
 
     public ClientMethodViewModelBase? CreateViewModel() {
-        return ((MethodNode)this.Parent).CreateViewModel();
+        return ((MethodNode)this.Parent!).CreateViewModel();
     }
 }

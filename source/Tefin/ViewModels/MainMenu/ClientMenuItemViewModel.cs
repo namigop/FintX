@@ -38,7 +38,7 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
     public override ISubMenusViewModel? SubMenus { get; }
     public override string ToolTip { get; } = "View clients";
 
-    public void Init(ProjectTypes.Project proj) {
+    public void Init(Project proj) {
         //Note: A project is just a folder that contains "client" folders. We
         // open 1 project folder at a time
         // var proj = projects.FirstOrDefault(p => p.Name == projName);

@@ -81,8 +81,8 @@ public abstract class StandardResponseViewModel : ViewModelBase {
     }
 
     public class GrpcStandardResponse {
-        public Metadata Headers { get; set; }
+        public Metadata Headers { get; set; } = new();
         public Status Status { get; set; }
-        public Metadata Trailers { get; set; }
+        public Metadata Trailers { get; set; } = new();
     }
 }
