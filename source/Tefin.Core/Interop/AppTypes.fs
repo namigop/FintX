@@ -1,22 +1,33 @@
 namespace Tefin.Core.Interop
 
-open System
 open System.Collections.ObjectModel
-open System.Globalization
-open System.IO
-open System.Reflection
 open System.Threading.Tasks
 
 open Tefin.Core
 
 type IPackage =
     abstract Name: string
-    abstract Init: unit -> Task
+    abstract Init: io: Tefin.Core.IOResolver -> Task
     abstract GetConfig: unit -> ReadOnlyDictionary<string, string>
 
 [<AutoOpen>]
 module AppTypes =
-    type AppConfig = { Todo: string }
+    type AppConfig =
+        { AutoSaveFrequency: int }
+
+        static member Default() = { AutoSaveFrequency = 5 }
+        static member FileName = "app.config"
+
+    type AppProject =
+        { Path: string
+          Package: string }
+        static member Create path pack = {Path = path; Package = pack }
+
+    type AppState =
+        { RecentProjects: AppProject array
+          ActiveProject: AppProject }
+
+        static member FileName = "app.saveState"
 
     type Package =
         { Name: string

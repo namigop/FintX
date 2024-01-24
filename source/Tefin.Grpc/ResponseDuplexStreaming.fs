@@ -85,7 +85,7 @@ module DuplexStreamingResponse =
     let private wrapResponse =
         let cache = Dictionary<Type, DuplexStreamingCallInfo>()
 
-        fun (methodInfo: MethodInfo) (resp: obj)  (err: ErrorResponse option) ->
+        fun (methodInfo: MethodInfo) (resp: obj) (err: ErrorResponse option) ->
 
             let args = methodInfo.ReturnType.GetGenericArguments()
             let requestItemType = args[0]
@@ -105,10 +105,11 @@ module DuplexStreamingResponse =
 
                     let requestStreamPropInfo = duplexStreamType.GetProperty("RequestStream") //IDuplexStreamWriter<TRequest>
                     let requestStream = requestStreamPropInfo.GetValue(resp)
+
                     let requestStreamType =
-                         if isError then
-                             typeof<Exception>
-                         else
+                        if isError then
+                            typeof<Exception>
+                        else
                             requestStream.GetType()
 
                     let responseStreamType =
@@ -149,12 +150,13 @@ module DuplexStreamingResponse =
 
             let requestStream =
                 if isError then
-                    box Unchecked.defaultof<Exception> 
+                    box Unchecked.defaultof<Exception>
                 else
                     callInfo.RequestStreamPropInfo.GetValue(resp)
+
             let responseStream =
                 if isError then
-                    box Unchecked.defaultof<Exception> 
+                    box Unchecked.defaultof<Exception>
                 else
                     callInfo.ResponseStreamPropInfo.GetValue(resp)
 
@@ -195,7 +197,8 @@ module DuplexStreamingResponse =
             try
                 let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
                 return { resp with Headers = Some meta }
-            with exc ->  return { resp with Headers = Some (Metadata()) }
+            with exc ->
+                return { resp with Headers = Some(Metadata()) }
         }
 
     let completeWrite (resp: DuplexStreamingCallResponse) =
@@ -203,7 +206,8 @@ module DuplexStreamingResponse =
             try
                 do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
                 return { resp with WriteCompleted = true }
-            with exc -> return { resp with WriteCompleted = true }
+            with exc ->
+                return { resp with WriteCompleted = true }
         }
 
     let toStandardCallResponse (resp: DuplexStreamingCallResponse) =
@@ -211,9 +215,9 @@ module DuplexStreamingResponse =
           Trailers = resp.Trailers
           Status = resp.Status }
 
-    let write (resp: DuplexStreamingCallResponse) (reqItem: obj) = task  {
-      do!  (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task)
-    }
+    let write (resp: DuplexStreamingCallResponse) (reqItem: obj) =
+        task { do! (resp.CallInfo.WriteAsyncMethodInfo.Invoke(resp.RequestStream, [| reqItem |]) :?> Task) }
+
     let create (methodInfo: MethodInfo) (ctx: Context) : ResponseDuplexStreaming =
 
         if ctx.Success then
@@ -227,7 +231,9 @@ module DuplexStreamingResponse =
             Okay t
         else
             let err = ctx.GetError()
-            let w = wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some) 
+
+            let w =
+                wrapResponse methodInfo (Res.getValue ctx.Response) (new ErrorResponse(Error = err.Message) |> Some)
 
             let t: ErrorDuplexStreamingResponse =
                 { MethodInfo = methodInfo

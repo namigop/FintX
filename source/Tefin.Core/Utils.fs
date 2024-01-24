@@ -8,7 +8,6 @@ open System.Reflection
 open System.Runtime.InteropServices
 open System.IO
 open System.Text
-open Newtonsoft.Json
 open Newtonsoft.Json.Linq
 
 let appName = "FintX"
@@ -148,11 +147,11 @@ let openBrowser (url: string) =
         let psi = new ProcessStartInfo(FileName = url, UseShellExecute = true)
         Process.Start(psi)
 
-let getAvailableFileName (path: string) (fileStart: string) (fileExt:string)=
+let getAvailableFileName (path: string) (fileStart: string) (fileExt: string) =
     let existingFileNames =
         Directory.GetFiles(path, "*" + fileExt)
         |> Array.map (fun c -> Path.GetFileName c)
-    
+
     let max = 1000000
 
     seq { for i in 0..max -> i }
@@ -160,19 +159,20 @@ let getAvailableFileName (path: string) (fileStart: string) (fileExt:string)=
         //Sample name : MethodName (1).frxq
         let targetName =
             if counter = 0 then
-                $"{fileStart}{fileExt}"           
+                $"{fileStart}{fileExt}"
             else
                 $"{fileStart}({counter}){fileExt}"
+
         targetName)
     |> Seq.filter (fun name ->
         let existingFile = existingFileNames |> Array.contains name
         not existingFile)
     |> Seq.head
-    
-let jSelectToken (json:string) (jPath:string) =
+
+let jSelectToken (json: string) (jPath: string) =
     let jObj = JObject.Parse json
     (jObj.SelectToken jPath)
-    
-let jSelectTokens (json:string) (jPath:string) =
+
+let jSelectTokens (json: string) (jPath: string) =
     let jObj = JObject.Parse json
     (jObj.SelectTokens jPath)

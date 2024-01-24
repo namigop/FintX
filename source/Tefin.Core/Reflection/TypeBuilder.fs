@@ -18,31 +18,33 @@ module TypeBuilder =
 
     let register handler = handlers.Insert(0, handler) //side-effect
 
-    let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth:int) =
-        let result = 
-            [for h in handlers -> h]
-            |> Seq.fold (fun state handleFunc ->
-                let struct (handled:bool, _)  = state
-                if handled then
-                    state
-                else
-                    let ret  = handleFunc type2 createInstance parentInstance depth
-                    ret )
-                (struct (false, Unchecked.defaultof<obj>))
-                
-        result
-    //     
-    // let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
-    //     let mutable handled = false
-    //     let mutable instance = Unchecked.defaultof<obj>
-    //
-    //     for handleFunc in handlers do
-    //         if (not handled) then
-    //             let struct (h, i) = handleFunc type2 createInstance parentInstance depth
-    //             handled <- h
-    //             instance <- i
+    let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+        let result =
+            [ for h in handlers -> h ]
+            |> Seq.fold
+                (fun state handleFunc ->
+                    let struct (handled: bool, _) = state
 
-    //    struct (handled, instance)
+                    if handled then
+                        state
+                    else
+                        let ret = handleFunc type2 createInstance parentInstance depth
+                        ret)
+                (struct (false, Unchecked.defaultof<obj>))
+
+        result
+//
+// let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
+//     let mutable handled = false
+//     let mutable instance = Unchecked.defaultof<obj>
+//
+//     for handleFunc in handlers do
+//         if (not handled) then
+//             let struct (h, i) = handleFunc type2 createInstance parentInstance depth
+//             handled <- h
+//             instance <- i
+
+//    struct (handled, instance)
 
 module SystemType =
 
@@ -86,21 +88,22 @@ module SystemType =
         temp.Add(typeof<Nullable<TimeSpan>>, ((fun () -> TimeSpan.FromSeconds 1), "timespan?"))
         temp.Add(typeof<Nullable<char>>, ((fun () -> 'c'), "char?"))
         temp
-    let getDisplayName (thisType:Type) =
-         let ok, (_,display) =  info.TryGetValue(thisType)
-         if ok then display else "not a system type"
 
-    let isSystemType (thisType:Type) =
-        let ok, _ =  info.TryGetValue(thisType)
+    let getDisplayName (thisType: Type) =
+        let ok, (_, display) = info.TryGetValue(thisType)
+        if ok then display else "not a system type"
+
+    let isSystemType (thisType: Type) =
+        let ok, _ = info.TryGetValue(thisType)
         ok
 
-    let getDefault  (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth=
+    let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
         if thisType.IsEnum then
             let v = Enum.GetValues(thisType).GetValue(0)
             struct (true, v)
         elif info.ContainsKey(thisType) then
-            let gen, _ =  info[thisType]
-            struct (true, gen())
+            let gen, _ = info[thisType]
+            struct (true, gen ())
         else
             struct (false, TypeHelper.getDefault thisType)
 
@@ -109,7 +112,9 @@ module ArrayType =
         if thisType.IsArray then
             let elementType = thisType.GetElementType()
             let instance = Array.CreateInstance(elementType, 1)
-            let struct (ok, element) = TypeBuilder.getDefault elementType createInstance None depth
+
+            let struct (ok, element) =
+                TypeBuilder.getDefault elementType createInstance None depth
 
             if ok then
                 instance.SetValue(element, 0)
@@ -127,7 +132,9 @@ module GenericListType =
                 if not (instance = null) then
                     match TypeHelper.getListItemType thisType with
                     | Some elementType ->
-                        let struct (ok, elementInstance) = TypeBuilder.getDefault elementType true None depth
+                        let struct (ok, elementInstance) =
+                            TypeBuilder.getDefault elementType true None depth
+
                         if ok then
                             let addMethod = thisType.GetMethod("Add", [| elementType |])
                             addMethod.Invoke(instance, [| elementInstance |]) |> ignore
@@ -148,15 +155,18 @@ module ClassType =
             () //ignore indexed parameters like List[0]
         else
             let mutable objV = Unchecked.defaultof<obj>
+
             try
                 let struct (_, newValue) = TypeBuilder.getDefault prop.PropertyType true None depth
                 objV <- newValue
                 prop.SetValue(instance, newValue)
             with exc ->
-                let msg = $"Unable to assign to {instance.GetType().Name}.{prop.Name} ({prop.PropertyType.Name}) = {objV}{Environment.NewLine}"
-                System.Diagnostics.Debug.WriteLine (msg + exc.ToString())
+                let msg =
+                    $"Unable to assign to {instance.GetType().Name}.{prop.Name} ({prop.PropertyType.Name}) = {objV}{Environment.NewLine}"
 
-    let private fillReadonlyProps (prop: PropertyInfo) (instance: obj) (isIndexParams: bool) (indexParams: ParameterInfo array) depth=
+                System.Diagnostics.Debug.WriteLine(msg + exc.ToString())
+
+    let private fillReadonlyProps (prop: PropertyInfo) (instance: obj) (isIndexParams: bool) (indexParams: ParameterInfo array) depth =
         if
             (isIndexParams
              && (indexParams[0].ParameterType = typeof<int>
@@ -205,7 +215,7 @@ module ClassType =
 
             instance
 
-    let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option)  depth =
+    let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
         if thisType.IsClass && not thisType.IsAbstract then
             if createInstance then
                 let constructor = thisType.GetConstructor(Type.EmptyTypes)

@@ -10,6 +10,32 @@ public class MovableBorder : Border {
     private Point _positionInBlock;
     private TranslateTransform _transform = null!;
 
+    protected override void OnPointerMoved(PointerEventArgs e) {
+        if (!this._isPressed)
+            return;
+
+        if (this.Parent == null)
+            return;
+
+        var viz = this.Parent as Visual;
+        var currentPosition = e.GetPosition(viz);
+
+        var withinX = currentPosition.X > 1 && currentPosition.X < viz!.Bounds.Width;
+        var withinY = currentPosition.Y > 0 && currentPosition.Y < viz!.Bounds.Height;
+        if (!withinX || !withinY) {
+            return;
+        }
+
+        var offsetX = currentPosition.X - this._positionInBlock.X;
+        var offsetY = currentPosition.Y - this._positionInBlock.Y;
+
+        //Console.WriteLine($"{currentPosition.X} , {currentPosition.Y}");
+        this._transform = new TranslateTransform(offsetX, offsetY);
+        this.RenderTransform = this._transform;
+
+        base.OnPointerMoved(e);
+    }
+
     protected override void OnPointerPressed(PointerPressedEventArgs e) {
         this._isPressed = true;
         this._positionInBlock = e.GetPosition(this.Parent as Visual);
@@ -24,33 +50,5 @@ public class MovableBorder : Border {
         this._isPressed = false;
 
         base.OnPointerReleased(e);
-    }
-
-
-    protected override void OnPointerMoved(PointerEventArgs e) {
-        if (!this._isPressed)
-            return;
-
-        if (this.Parent == null)
-            return;
-
-        var viz = this.Parent as Visual;
-        var currentPosition = e.GetPosition(viz);
-
-        var withinX = currentPosition.X > 1 && currentPosition.X < viz.Bounds.Width;
-        var withinY = currentPosition.Y > 0 && currentPosition.Y < viz.Bounds.Height;
-        if (!withinX || !withinY) {
-            return;
-        }
-
-
-        var offsetX = currentPosition.X - this._positionInBlock.X;
-        var offsetY = currentPosition.Y - this._positionInBlock.Y;
-
-        //Console.WriteLine($"{currentPosition.X} , {currentPosition.Y}");
-        this._transform = new TranslateTransform(offsetX, offsetY);
-        this.RenderTransform = this._transform;
-
-        base.OnPointerMoved(e);
     }
 }

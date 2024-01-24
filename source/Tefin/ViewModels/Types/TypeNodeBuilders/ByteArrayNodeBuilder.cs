@@ -1,6 +1,7 @@
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class ByteArrayNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return type.IsArray && type == typeof(byte[]);
     }

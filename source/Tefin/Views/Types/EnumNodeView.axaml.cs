@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class EnumNodeView : UserControl {
+
     public EnumNodeView() {
         this.InitializeComponent();
     }

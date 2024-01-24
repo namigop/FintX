@@ -9,6 +9,7 @@ using Google.Protobuf.Collections;
 namespace Tefin.ViewModels.Types;
 
 public class DictionaryNode : ListNode {
+
     //private int listItemsCount;
     private readonly object _internalList;
 
@@ -59,6 +60,7 @@ public class DictionaryNode : ListNode {
     }
 
     public class ListOfPairs<K, V> : List<Pair<K, V>> where K : notnull {
+
         public void FromDictionary(Dictionary<K, V> source) {
             this.Clear();
             foreach (var i in source) {

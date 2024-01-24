@@ -29,14 +29,27 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         this.SubscribeTo(vm => ((StandardResponseViewModel)vm).IsShowingResponseTreeEditor, this.OnIsShowingResponseTreeEditor);
     }
 
-    public IResponseEditorViewModel ResponseEditor {
-        get => this._responseEditor;
-        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
-    }
     public bool IsShowingResponseTreeEditor {
         get => this._isShowingResponseTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
     }
+
+    public IResponseEditorViewModel ResponseEditor {
+        get => this._responseEditor;
+        set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
+    }
+
+    public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
+        var response = await completeRead();
+        responseType = response?.GetType() ?? responseType;
+        await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response!));
+    }
+
+    public void Init() {
+        this.ResponseEditor.Init();
+    }
+
+    public abstract void Show(bool ok, object response, Context context);
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
         try {
@@ -52,6 +65,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
             Console.WriteLine(e);
         }
     }
+
     private void ShowAsJson() {
         var (ok, resp) = this._treeRespEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
@@ -66,22 +80,9 @@ public abstract class StandardResponseViewModel : ViewModelBase {
             this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
     }
 
-
-    public void Init() {
-        this.ResponseEditor.Init();
-    }
-
-    public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
-        var response = await completeRead();
-        responseType = response?.GetType() ?? responseType;
-        await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response!));
-    }
-
-    public abstract void Show(bool ok, object response, Context context);
-
     public class GrpcStandardResponse {
-        public required Metadata Headers { get; set; }
-        public required Status Status { get; set; }
-        public required Metadata Trailers { get; set; }
+        public Metadata Headers { get; set; } = new();
+        public Status Status { get; set; }
+        public Metadata Trailers { get; set; } = new();
     }
 }

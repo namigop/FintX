@@ -1,5 +1,6 @@
 #region
 
+using System.Net.Security;
 using System.Reactive;
 
 using Tefin.Core.Interop;
@@ -16,6 +17,7 @@ namespace Tefin.ViewModels.MainMenu;
 //sub menus of the menu item
 
 public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel {
+
     public ClientMenuItemViewModel(MainMenuViewModel main) : base(main) {
         this.Explorer = new ExplorerViewModel();
         this.SubMenus = new ClientSubMenuViewModel(this.Explorer);
@@ -25,25 +27,24 @@ public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
         get;
     }
 
+    public override string Name { get; } = "Clients";
+
     public Project Project {
         get => this.Explorer.Project!;
         private set => this.Explorer.Project = value;
     }
-    public override string ToolTip { get; } = "View clients";
-    public override string Name { get; } = "Clients";
 
     public override string ShortName { get; } = "clients";
     public override ISubMenusViewModel? SubMenus { get; }
+    public override string ToolTip { get; } = "View clients";
 
-
-
-    public void Init(AppTypes.Package package, string projName) {
+    public void Init(Project proj) {
         //Note: A project is just a folder that contains "client" folders. We
         // open 1 project folder at a time
-        var proj = package.Projects.FirstOrDefault(p => p.Name == projName);
-        if (proj == null) {
-            proj = package.Projects.First(p => p.Name == Project.DefaultName);
-        }
+        // var proj = projects.FirstOrDefault(p => p.Name == projName);
+        // if (proj == null) {
+        //     proj = projects.First(p => p.Name == Project.DefaultName);
+        // }
 
         this.Project = proj;
         foreach (var client in proj.Clients) {

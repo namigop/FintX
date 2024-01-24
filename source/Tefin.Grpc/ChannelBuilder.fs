@@ -31,23 +31,23 @@ type CallConfig =
         let cert =
             if cfg.IsUsingSSL then
                 if (cfg.IsCertFromFile) then
-                    Some(
-                        Cert.FromFile
-                            { File = "TODO file"
-                              Password = "TODO pw" }
-                    )
+                    Cert.FromFile
+                        { File = "TODO file"
+                          Password = "TODO pw" }
+                    |> Some
+
                 else
-                    Some(
-                        Cert.FromStore
-                            { Thumbprint = cfg.CertThumbprint
-                              Location = cfg.CertStoreLocation }
-                    )
+                    Cert.FromStore
+                        { Thumbprint = cfg.CertThumbprint
+                          Location = cfg.CertStoreLocation }
+                    |> Some
+
             else
                 None
 
-        { Url = cfg.Url
+        { Url = cfg.Url.Trim()
           IsUsingSSL = cfg.IsUsingSSL
-          JWT = cfg.Jwt
+          JWT = cfg.Jwt.Trim()
           X509Cert = cert
           Io = io }
 
@@ -138,7 +138,15 @@ module ChannelBuilder =
         let defaultMethodConfig =
             let m = MethodConfig()
             m.Names.Add(MethodName.Default)
-            m.RetryPolicy <- RetryPolicy(MaxAttempts = 5, InitialBackoff = TimeSpan.FromSeconds 1, MaxBackoff = TimeSpan.FromSeconds 5, BackoffMultiplier = 1.5)
+
+            m.RetryPolicy <-
+                RetryPolicy(
+                    MaxAttempts = 5,
+                    InitialBackoff = TimeSpan.FromSeconds 1,
+                    MaxBackoff = TimeSpan.FromSeconds 5,
+                    BackoffMultiplier = 1.5
+                )
+
             m.RetryPolicy.RetryableStatusCodes.Add(StatusCode.Unavailable)
             m
 

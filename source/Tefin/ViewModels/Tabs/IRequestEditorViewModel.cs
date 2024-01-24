@@ -8,15 +8,14 @@ using System.Threading;
 namespace Tefin.ViewModels.Tabs;
 
 public interface IRequestEditorViewModel {
+    public CancellationTokenSource? CtsReq { get; }
     public MethodInfo MethodInfo { get; }
 
-    public CancellationTokenSource? CtsReq { get; }
+    void EndRequest();
 
     public (bool, object?[]) GetParameters();
 
     public void Show(object?[] parameters);
 
     void StartRequest();
-
-    void EndRequest();
 }

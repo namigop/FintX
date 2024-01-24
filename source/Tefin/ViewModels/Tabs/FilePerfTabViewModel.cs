@@ -7,8 +7,8 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public class FilePerfTabViewModel(FilePerfNode item) : TabViewModelBase(item) {
-
     public override string Icon { get; } = "";
+
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);
@@ -17,7 +17,6 @@ public class FilePerfTabViewModel(FilePerfNode item) : TabViewModelBase(item) {
     protected override string GetTabId() {
         return ((FileNode)this.ExplorerItem).FullPath;
     }
-
 
     protected override Task OnClose() {
         return base.OnClose();

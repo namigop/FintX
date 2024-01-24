@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class ListNodeEditView : UserControl {
+
     public ListNodeEditView() {
         this.InitializeComponent();
         //his.NumericUpDown.Text

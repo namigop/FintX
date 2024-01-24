@@ -7,6 +7,7 @@ using Grpc.Core;
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class MetadataEntryNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return type == typeof(Metadata.Entry);
     }

@@ -6,16 +6,20 @@ using Tefin.Messages;
 namespace Tefin.Features;
 
 public class MonitorChangesFeature(IOResolver io) {
-    private static FileSystemWatcher watcher;
+    private static FileSystemWatcher? _watcher;
+
     public void Run(ProjectTypes.Project project) {
-        watcher?.Dispose();
-        watcher = new FileSystemWatcher(project.Path);
-        watcher.IncludeSubdirectories = true;
-        watcher.EnableRaisingEvents = true;
-        watcher.Error += this.OnError;
-        watcher.Renamed += this.OnRenamed;
-        watcher.Deleted += this.OnDeleted;
-        watcher.Created += this.OnCreated;
+        
+        //Whenever Run is called we dispose of the old one -essentially
+        //just monitoring one folder at a time.
+        _watcher?.Dispose();
+        _watcher = new FileSystemWatcher(project.Path);
+        _watcher.IncludeSubdirectories = true;
+        _watcher.EnableRaisingEvents = true;
+        _watcher.Error += this.OnError;
+        _watcher.Renamed += this.OnRenamed;
+        _watcher.Deleted += this.OnDeleted;
+        _watcher.Created += this.OnCreated;
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e) {
@@ -30,13 +34,13 @@ public class MonitorChangesFeature(IOResolver io) {
         GlobalHub.publish(msg);
     }
 
+    private void OnError(object sender, ErrorEventArgs e) {
+        io.Log.Warn(e.GetException().ToString());
+    }
+
     private void OnRenamed(object sender, RenamedEventArgs e) {
         io.Log.Info($"File renamed from \"{e.OldName}\" to \"{e.Name}\"");
         var msg = new FileChangeMessage(e.FullPath, e.OldFullPath, e.ChangeType);
         GlobalHub.publish(msg);
-    }
-
-    private void OnError(object sender, ErrorEventArgs e) {
-        io.Log.Warn(e.GetException().ToString());
     }
 }

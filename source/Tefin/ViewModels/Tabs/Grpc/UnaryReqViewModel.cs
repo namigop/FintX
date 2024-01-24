@@ -32,11 +32,6 @@ public class UnaryReqViewModel : ViewModelBase {
         this._requestEditor = this._treeEditor;
     }
 
-    public IRequestEditorViewModel RequestEditor {
-        get => this._requestEditor;
-        private set => this.RaiseAndSetIfChanged(ref this._requestEditor, value);
-    }
-
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
@@ -44,15 +39,71 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public MethodInfo MethodInfo { get; }
 
+    public IRequestEditorViewModel RequestEditor {
+        get => this._requestEditor;
+        private set => this.RaiseAndSetIfChanged(ref this._requestEditor, value);
+    }
+
+    public virtual async Task ExportRequest() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
+            }
+            else {
+                this.Io.Log.Error(exportReqJson.ErrorValue);
+            }
+        }
+    }
 
     public (bool, object?[]) GetMethodParameters() {
         return this.RequestEditor.GetParameters();
     }
 
+    public virtual string GetRequestContent() {
+        var (ok, mParams) = this.GetMethodParameters();
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                return exportReqJson.ResultValue;
+            }
+        }
+
+        return "";
+    }
+
+    public virtual async Task ImportRequest() {
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
+        if (ok) {
+            this.ImportRequestFile(files[0]);
+        }
+    }
+
+    public virtual void ImportRequestFile(string file) {
+        var import = new ImportFeature(this.Io, file, this.MethodInfo);
+        var (export, _) = import.Run();
+        if (export.IsOk) {
+            var methodParams = export.ResultValue;
+            if (methodParams == null)
+                Debugger.Break();
+            this._methodParameterInstances = methodParams ?? Array.Empty<object>();
+            this.Init();
+        }
+        else {
+            this.Io.Log.Error(export.ErrorValue);
+        }
+
+       
+    }
+
     public void Init() {
         this._requestEditor.Show(this._methodParameterInstances);
     }
-
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         var vm = (UnaryReqViewModel)obj;
@@ -76,60 +127,5 @@ public class UnaryReqViewModel : ViewModelBase {
         this.RequestEditor = this._treeEditor;
         if (ok)
             this.RequestEditor.Show(parameters);
-    }
-
-    public virtual async Task ImportRequest() {
-        var fileExtensions = new[] {
-            $"*{Ext.requestFileExt}"
-        };
-        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
-        if (ok) {
-            this.ImportRequestFile(files[0]);
-        }
-    }
-
-    public virtual async Task ImportRequestFile(string file) {
-        var import = new ImportFeature(this.Io, file, this.MethodInfo);
-        var (export, _) = import.Run();
-        if (export.IsOk) {
-            var methodParams = export.ResultValue;
-            if (methodParams == null)
-                Debugger.Break();
-            this._methodParameterInstances = methodParams;
-            this.Init();
-        }
-        else {
-            this.Io.Log.Error(export.ErrorValue);
-        }
-
-    }
-
-    public virtual string GetRequestContent() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                return exportReqJson.ResultValue;
-            }
-        }
-
-        return "";
-    }
-
-
-    public virtual async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
-            }
-            else {
-                this.Io.Log.Error(exportReqJson.ErrorValue);
-            }
-        }
     }
 }

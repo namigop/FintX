@@ -35,8 +35,18 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).CanRead, _ => this.RaisePropertyChanged(nameof(this.CanStart)));
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
+
+    public bool CanStart {
+        get => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
+    }
+
+    public bool CanStop {
+        get => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
@@ -47,64 +57,30 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             this.RespViewModel.IsShowingServerStreamTree = value;
         }
     }
-    public bool CanStop {
-        get => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
+
     public DuplexStreamingReqViewModel ReqViewModel { get; }
     public DuplexStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-    public ICommand StopCommand { get; }
+
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
-    public bool CanStart {
-        get => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
-    }
-
-    private void OnCanWriteChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
-    private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
-        }
-    }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
+    public ICommand StopCommand { get; }
 
     public override string GetRequestContent() {
         return this.ReqViewModel.GetRequestContent();
     }
+
     public override void ImportRequest(string requestFile) {
-        _ = this.ReqViewModel.ImportRequestFile(requestFile);
-    }
-    private void OnIsBusyChanged(ViewModelBase obj) {
-        this.IsBusy = obj.IsBusy;
+        this.ReqViewModel.ImportRequestFile(requestFile);
     }
 
     public override void Init() {
         this.ReqViewModel.Init();
     }
 
-    private void OnCallResponseChanged(ViewModelBase obj) {
-        var reqVm = (DuplexStreamingReqViewModel)obj;
-        var resp = reqVm.CallResponse;
-        if (resp == null)
-            return;
-
-        if (resp.WriteCompleted) {
-            this.EndStreaming(resp);
-        }
-    }
     private void EndStreaming(DuplexStreamingCallResponse resp) {
         async Task<object> CompleteRead() {
             var feature = new EndStreamingFeature();
@@ -122,6 +98,33 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         }
 
         _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+    }
+
+    private void OnCallResponseChanged(ViewModelBase obj) {
+        var reqVm = (DuplexStreamingReqViewModel)obj;
+        var resp = reqVm.CallResponse;
+        if (resp == null)
+            return;
+
+        if (resp.WriteCompleted) {
+            this.EndStreaming(resp);
+        }
+    }
+
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+    }
+
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
+
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
+
+    private void OnIsBusyChanged(ViewModelBase obj) {
+        this.IsBusy = obj.IsBusy;
     }
 
     private async Task OnStart() {
@@ -149,6 +152,14 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         }
         finally {
             this.IsBusy = false;
+        }
+    }
+
+    private void OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+            this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
+            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
         }
     }
 }

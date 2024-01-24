@@ -1,6 +1,7 @@
 namespace Tefin.ViewModels.Types.TypeNodeBuilders;
 
 public class ArrayNodeBuilder : ITypeNodeBuilder {
+
     public bool CanHandle(Type type) {
         return type.IsArray;
     }

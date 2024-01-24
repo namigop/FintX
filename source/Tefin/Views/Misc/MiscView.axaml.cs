@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Misc;
 
 public partial class MiscView : UserControl {
+
     public MiscView() {
         this.InitializeComponent();
     }

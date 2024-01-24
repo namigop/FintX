@@ -34,6 +34,15 @@ public class ListNode : TypeBaseNode {
         get => this.IsNull ? "null" : $"Count = {this.ListItemsCount}";
     }
 
+    public override bool IsEditing {
+        get => this._isEditing;
+        set {
+            this._isEditing = value;
+            if (!this._isEditing)
+                this.ListItemsCount = this.TargetListItemsCount;
+        }
+    }
+
     public bool IsNullOrEmpty {
         get => this.IsNull || this.ListItemsCount == 0;
     }
@@ -45,15 +54,6 @@ public class ListNode : TypeBaseNode {
             this.RaisePropertyChanged(nameof(this.IsNullOrEmpty));
             if (this._listItemsCount > 0)
                 this.IsNull = false;
-        }
-    }
-
-    public override bool IsEditing {
-        get => this._isEditing;
-        set {
-            this._isEditing = value;
-            if (!this._isEditing)
-                this.ListItemsCount = this.TargetListItemsCount;
         }
     }
 

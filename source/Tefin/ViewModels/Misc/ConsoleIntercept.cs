@@ -28,6 +28,11 @@ public class ConsoleIntercept : TextWriter {
         }
     }
 
+    public void Clear() {
+        this._sb.Clear();
+        this.Sync();
+    }
+
     public override void Write(StringBuilder? value) {
         this._sb.Append(value);
         this.Sync();
@@ -79,10 +84,5 @@ public class ConsoleIntercept : TextWriter {
         var target = this._txtEditor!.Document.Lines.Count - 1;
         //var vertOffset = (this._txtEditor.TextArea.TextView.DefaultLineHeight) * target;
         this._txtEditor.ScrollTo(target, 0);
-    }
-
-    public void Clear() {
-        this._sb.Clear();
-        this.Sync();
     }
 }

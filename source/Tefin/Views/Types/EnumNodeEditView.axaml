@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:EnumNode"
              x:Class="Tefin.Views.Types.EnumNodeEditView">
@@ -20,20 +21,7 @@
     <!-- </UserControl.ContextFlyout> -->
     <StackPanel Orientation="Horizontal" x:Name="panel">
         <Border>
-            <Viewbox Stretch="Uniform">
-                <Canvas Width="16" Height="16">
-                    <Canvas>
-                        <Polygon Points="5.368,14.78 0.4,11.622 0.4,7.118 5.368,10.276" Fill="#0A6DBD" />
-                        <Polygon Points="5.575,14.67 15.388,8.624 15.388,4.127 5.575,10.174" Fill="#0A6DBD" />
-                        <Polygon Points="5.42,10.045 15.336,4.101 10.32,1.669 0.658,7.047" Fill="Transparent" />
-                        <Path Data="M15.491,4.09L10.44,1.6L0.503,7.098v4.679l4.951,3.091l10.037,-6.266V4.09z"
-                              Stroke="#92C6FF" StrokeThickness="1" />
-                        <Path Data="M15.483,4.101l-10.012,6V14.9M5.421,14.851M5.421,10.101l-4.938,-3M15.433,4.101"
-                              Stroke="#92C6FF" StrokeThickness="1" />
-                    </Canvas>
-                </Canvas>
-            </Viewbox>
-
+           <controls:IconControl Icon="{StaticResource Icon.EditType}" Height="16" Width="16"/>
         </Border>
 
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="Title" />

@@ -10,6 +10,7 @@ namespace Tefin.ViewModels.Types;
 
 public class MetadataNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent)
     : ListNode(name, type, propInfo, instance, parent) {
+
     public override string FormattedTypeName {
         get => $"{{{nameof(Metadata)}}}";
     }

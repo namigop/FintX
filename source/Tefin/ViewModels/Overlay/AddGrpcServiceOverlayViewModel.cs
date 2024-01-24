@@ -39,6 +39,12 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = "";
     }
 
+    [IsHttp]
+    public string Address {
+        get => this._address;
+        set => this.RaiseAndSetIfChanged(ref this._address, value);
+    }
+
     public ICommand CancelCommand { get; }
 
     [Required(ErrorMessage = "Enter a unique name")]
@@ -59,23 +65,16 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     public ICommand OkayCommand { get; }
 
-    [IsHttp]
-    public string ReflectionUrl {
-        get => this._protoFilesOrUrl;
-        set => this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
-    }
-
-
-    [IsHttp]
-    public string Address {
-        get => this._address;
-        set => this.RaiseAndSetIfChanged(ref this._address, value);
-    }
-
     [IsProtoFile]
     public string ProtoFile {
         get => this._protoFile;
         set => this.RaiseAndSetIfChanged(ref this._protoFile, value);
+    }
+
+    [IsHttp]
+    public string ReflectionUrl {
+        get => this._protoFilesOrUrl;
+        set => this.RaiseAndSetIfChanged(ref this._protoFilesOrUrl, value);
     }
 
     [Required(ErrorMessage = "Service is required")]
@@ -98,15 +97,11 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             discoParams = new DiscoverParameters(Array.Empty<string>(), new Uri(this.ReflectionUrl));
         }
         else {
-            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] {
-                "*.proto"
-            });
+            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] { "*.proto" });
             if (ok) {
                 this.ProtoFile = files[0];
                 // PopulateServiceNamesFromProto();
-                discoParams = new DiscoverParameters(new[] {
-                    this.ProtoFile
-                }, null);
+                discoParams = new DiscoverParameters(new[] { this.ProtoFile }, null);
             }
         }
 
@@ -146,25 +141,24 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             return;
         }
 
-
         this.Close();
 
         var protoFiles = this.IsDiscoveringUsingProto
-            ? new[] {
-                this.ProtoFile
-            }
+            ? new[] { this.ProtoFile }
             : Array.Empty<string>();
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (ok2, _) = await disco.Discover(this.Io);
         if (ok2) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
+                this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
                 var address = this.IsDiscoveringUsingProto ? this.Address : this.ReflectionUrl;
 
                 address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
-                var msg = new ShowClientMessage(output, address, this.ClientName, this.SelectedDiscoveredService, this.Description, csFiles);
+                var msg = new ShowClientMessage(output, address, this.ClientName, this.SelectedDiscoveredService,
+                    this.Description, csFiles);
                 GlobalHub.publish(msg);
             }
         }

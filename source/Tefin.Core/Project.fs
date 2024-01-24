@@ -12,16 +12,17 @@ type AddClientRequest =
       Desc: string }
 
 module Project =
-    
+
     let autoSaveFolderName = "_autoSave"
     let getMethodsPath (clientPath: string) = Path.Combine(clientPath, "methods")
-    let getMethodPath (clientPath: string) (methodName:string) =
-        getMethodsPath clientPath
-        |> fun m -> Path.Combine(m, methodName)
-    let getAutoSavePath (clientPath: string) (methodName:string) =
+
+    let getMethodPath (clientPath: string) (methodName: string) =
+        getMethodsPath clientPath |> fun m -> Path.Combine(m, methodName)
+
+    let getAutoSavePath (clientPath: string) (methodName: string) =
         getMethodPath clientPath methodName
         |> fun m -> Path.Combine(m, autoSaveFolderName)
-        
+
     let loadMethods (io: IOResolver) (clientPath: string) =
         let methodPath = getMethodsPath clientPath
         io.Dir.CreateDirectory methodPath
@@ -33,9 +34,8 @@ module Project =
 
             let requestFiles =
                 io.Dir.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
-                |> Array.filter (fun fp ->  not <| fp.Contains(autoSaveFolderName)) //ignore auto-saved files
+                |> Array.filter (fun fp -> not <| fp.Contains(autoSaveFolderName)) //ignore auto-saved files
 
-            
             { RequestFiles = requestFiles
               Name = methodName
               Path = m })
@@ -56,20 +56,35 @@ module Project =
 
     let loadProject (io: IOResolver) (projectPath: string) =
         let clientPaths =
-            let files =
-                Directory.GetFiles(projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
-
+            let files = io.Dir.GetFiles(projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
             files |> Array.map (fun file -> Path.GetDirectoryName file)
 
+        let projSaveState =
+            Path.Combine (projectPath, ProjectSaveState.FileName)
+            |> io.File.ReadAllText
+            |> Instance.jsonDeserialize<ProjectSaveState>
+        
         let projectName = Path.GetFileName projectPath
         let clients = clientPaths |> Array.map (fun path -> loadClient io path)
         let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
         { Name = projectName
+          Package =  projSaveState.Package
           Clients = clients
           ConfigFile = config
           Path = projectPath }
-
+        
+    let createSaveState (io:IOResolver) package (projectPath:string) =
+        let state = { Package = package ; ClientState = Array.empty}
+        let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+        let content = Instance.jsonSerialize state
+        io.File.WriteAllText file content
+        
+    let getSaveState (io:IOResolver) (projectPath:string) =
+        let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+        let saveState = Instance.jsonDeserialize<ProjectSaveState>(io.File.ReadAllText file)
+        saveState
+        
     let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
         task {
             let oldClientPath = Path.GetDirectoryName clientConfigFile
@@ -82,10 +97,8 @@ module Project =
                 let nameChanged = not (oldName = currentName)
 
                 if nameChanged then
-                    let newClientPath =
-                        Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
-
-                    Directory.Move(oldClientPath, newClientPath)
+                    let newClientPath = Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
+                    io.Dir.Move oldClientPath newClientPath
 
                     let newConfigFile = Path.Combine(newClientPath, fileName)
                     newConfigFile, newClientPath

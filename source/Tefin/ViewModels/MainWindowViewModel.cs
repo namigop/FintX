@@ -6,10 +6,12 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
+using Tefin.Utils;
 using Tefin.ViewModels.Footer;
 using Tefin.ViewModels.MainMenu;
 using Tefin.ViewModels.Misc;
 using Tefin.ViewModels.Overlay;
+using Tefin.ViewModels.ProjectEnv;
 using Tefin.ViewModels.Tabs;
 
 #endregion
@@ -17,33 +19,38 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase {
+
     public MainWindowViewModel() {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
+        this.MainMenu = new();
+        var appState = Core.App.getAppState(this.Io);
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, appState);
     }
+
     public FooterViewModel Footer { get; } = new();
-    public MainMenuViewModel MainMenu { get; } = new();
+    public MainMenuViewModel MainMenu { get; }  
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
     public AppTypes.Root? Root { get; private set; }
+    public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
+
+    public ICommand SponsorCommand { get; }
+
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
     public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
-
-    public ICommand SponsorCommand {
-        get;
-    }
-
-    public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
-
-    private void OnSponsor() {
-        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
-    }
+    public ProjectMenuViewModel ProjectMenuViewModel { get; }
 
     public void Init() {
         this.Root = new StartupFeature().Load(this.Io);
-        var defaultPackage = this.Root.Packages.First(t => t.Name == Core.App.defaultPackage);
-        this.MainMenu.ClientMenuItem.Init(defaultPackage, ProjectTypes.Project.DefaultName);
+        var packageName = this.ProjectMenuViewModel.SelectedProject.Package;
+        var projPath = this.ProjectMenuViewModel.SelectedProject.Path;
+
+        var project = Project.loadProject(this.Io, projPath);
+        
+        //var package = this.Root.Packages.First(t => t.Name == packageName);
+        this.MainMenu.ClientMenuItem.Init(project);
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
 
         var hasClients = this.MainMenu.ClientMenuItem.Project.Clients.Any();
@@ -55,6 +62,10 @@ public class MainWindowViewModel : ViewModelBase {
         }
 
         this.StartAutoSave();
+    }
+
+    private void OnSponsor() {
+        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
     }
 
     private void StartAutoSave() {

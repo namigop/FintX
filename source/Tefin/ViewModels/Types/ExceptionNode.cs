@@ -8,6 +8,7 @@ namespace Tefin.ViewModels.Types;
 
 public class ExceptionNode : TypeBaseNode {
     private string _message;
+
     public ExceptionNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         this._message = "";
         if (instance is Exception exc) {

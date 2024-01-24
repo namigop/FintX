@@ -7,6 +7,7 @@ using Tefin.Grpc.Execution;
 namespace Tefin.Features;
 
 public class WriteDuplexStreamFeature {
+
     public async Task<DuplexStreamingCallResponse> CompleteWrite(DuplexStreamingCallResponse response) {
         response = await DuplexStreamingResponse.completeWrite(response);
         response = await DuplexStreamingResponse.getResponseHeader(response);

@@ -14,15 +14,16 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     private bool _isSelected;
     private string _subTitle = "";
     private string _title = "";
-
-    public virtual bool IsEditing {
-        get => this._isEditing;
-        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
-    }
+    private IExplorerItem? _parent;
 
     public bool CanOpen {
         get;
         protected set;
+    }
+
+    public virtual bool IsEditing {
+        get => this._isEditing;
+        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
     }
 
     public bool IsExpanded {
@@ -35,11 +36,12 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
-    public IExplorerItem Parent { get; set; }
+    public ObservableCollection<IExplorerItem> Items { get; } = new();
 
-    public ObservableCollection<IExplorerItem> Items {
-        get;
-    } = new();
+    public IExplorerItem? Parent {
+        get => this._parent;
+        set => this._parent = value;
+    }
 
     public string SubTitle {
         get => this._subTitle;
@@ -51,8 +53,21 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
 
-    public IExplorerItem FindSelected() {
-        IExplorerItem Find(ObservableCollection<IExplorerItem> items) {
+    public void AddItem(IExplorerItem child) {
+        this.Items.Add(child);
+        child.Parent = this;
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        foreach (var explorerItem in this.Items) {
+            var n = (NodeBase)explorerItem;
+            n.Dispose();
+        }
+    }
+
+    public IExplorerItem? FindSelected() {
+        IExplorerItem? Find(ObservableCollection<IExplorerItem> items) {
             foreach (var item in items) {
                 if (item.IsSelected)
                     return item;
@@ -68,19 +83,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             return this;
 
         return Find(this.Items);
-    }
-
-    public void AddItem(IExplorerItem child) {
-        this.Items.Add(child);
-        child.Parent = this;
-    }
-
-    public override void Dispose() {
-        base.Dispose();
-        foreach (var explorerItem in this.Items) {
-            var n = (NodeBase)explorerItem;
-            n.Dispose();
-        }
     }
 
     public abstract void Init();

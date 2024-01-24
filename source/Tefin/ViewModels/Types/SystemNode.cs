@@ -10,6 +10,7 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.ViewModels.Types;
 
 public class SystemNode : TypeBaseNode {
+
     public SystemNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
         //Debug.WriteLine($"{name} = {type.Name}");
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
@@ -85,6 +86,7 @@ public class SystemNode : TypeBaseNode {
 
     public ITypeEditor Editor { get; }
     public override string FormattedTypeName { get; }
+
     public override string FormattedValue {
         get => this.Editor.FormattedValue;
     }

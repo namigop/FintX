@@ -4,8 +4,6 @@ using System.Windows.Input;
 
 using Avalonia.Threading;
 
-using Newtonsoft.Json.Linq;
-
 using ReactiveUI;
 
 using Tefin.Core;
@@ -14,11 +12,9 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
-using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
-using Tefin.ViewModels.Tabs;
 
-using static Tefin.Core.Interop.Messages;
+using static Tefin.Core.Interop.MessageProject;
 
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 
@@ -33,6 +29,7 @@ public class ClientNode : NodeBase {
     private string _desc = "";
     private bool _sessionLoaded;
     private string _url = "";
+
     public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
@@ -52,6 +49,11 @@ public class ClientNode : NodeBase {
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
 
+    public ProjectTypes.ClientGroup Client {
+        get;
+        private set;
+    }
+
     public string ClientConfigFile { get; private set; }
 
     public string ClientName {
@@ -68,9 +70,15 @@ public class ClientNode : NodeBase {
 
     public ICommand CompileClientTypeCommand { get; }
 
+    public ICommand DeleteCommand { get; }
+
     public string Desc {
         get => this._desc;
         set => this.RaiseAndSetIfChanged(ref this._desc, value);
+    }
+
+    public bool IsLoaded {
+        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
     }
 
     //public ReadOnlyDictionary<string, string> Config { get; }
@@ -83,22 +91,15 @@ public class ClientNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
-    public ICommand DeleteCommand { get; }
-
-    public ProjectTypes.ClientGroup Client {
-        get;
-        private set;
-    }
-
-    public bool IsLoaded {
-        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
+    public void Clear() {
+        this.Items.Clear();
     }
 
     public override void Init() {
         if (this.ClientType == null)
             return;
 
-        //if (this.Items.FirstOrDefault() is EmptyNode) 
+        //if (this.Items.FirstOrDefault() is EmptyNode)
         foreach (var i in this.Items)
             GlobalHub.publish(new RemoveTreeItemMessage(i));
 
@@ -114,65 +115,18 @@ public class ClientNode : NodeBase {
 
         this.IsExpanded = true;
 
-        DispatcherTimer.RunOnce(this.TryLoadPreviousSession, TimeSpan.FromMilliseconds(100));
-        this.RaisePropertyChanged(nameof(this.IsLoaded));
-
-    }
-    private void TryLoadPreviousSession() {
-        void LoadOne(string json, string reqFile) {
-            var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
-            var item = this.Items.Cast<MethodNode>().FirstOrDefault(i => i.MethodInfo.Name == methodName);
-            var tab = TabFactory.From(item, this.Io, reqFile);
-            if (tab != null)
-                GlobalHub.publish(new OpenTabMessage(tab));
-        }
-
-
-        AutoSave.getAutoSavedFiles(this.Io, this.Client.Path)
-            .Select(reqFile => {
-                var json = this.Io.File.ReadAllText(reqFile);
-                if (string.IsNullOrWhiteSpace(json))
-                    return null;
-                return new Action(() => LoadOne(json, reqFile));
-            })
-            .Where(a => a != null)
-            .ToArray()
-            .Then(actions => {
-                if (actions.Any()) {
-                    var pos = 0;
-                    DispatcherTimer.Run(
-                        () => {
-                            if (pos < actions.Length) {
-                                actions[pos].Invoke();
-                                pos += 1;
-                                return true;
-                            }
-
-                            this._sessionLoaded = true;
-                            return false;
-                        },
-                        TimeSpan.FromMilliseconds(100));
-                }
-                else {
-                    this._sessionLoaded = true;
-                }
-            });
-    }
-
-    private void OnDelete() {
-        var feature = new DeleteClientFeature(this.Client, this.Io);
-        feature.Delete();
-
-        foreach (var m in this.Items) {
-            GlobalHub.publish(new RemoveTreeItemMessage(m));
-        }
-
-        this.Items.Clear();
-        GlobalHub.publish(new ClientDeletedMessage(this.Client));
-    }
-
-    public void Clear() {
-        this.Items.Clear();
+        var loadSessionFeature =
+            new LoadSessionFeature(
+                this.Client.Path,
+                this.Items.Cast<MethodNode>(), 
+                this.Io,
+                loaded => {
+                    this._sessionLoaded = loaded;
+                    this.RaisePropertyChanged(nameof(this.IsLoaded));
+                });
+        
+        DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
+       
     }
 
     private void OnClientNameChanged() {
@@ -192,8 +146,9 @@ public class ClientNode : NodeBase {
 
         try {
             this._compileInProgress = true;
-            var protoFiles = Array.Empty<string>(); //TODO
-            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url, this.Io);
+            var protoFiles = Array.Empty<string>();
+            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
+                this.Io);
             var csFiles = this.Client.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
@@ -207,10 +162,23 @@ public class ClientNode : NodeBase {
         }
     }
 
+    private void OnDelete() {
+        var feature = new DeleteClientFeature(this.Client, this.Io);
+        feature.Delete();
+
+        foreach (var m in this.Items) {
+            GlobalHub.publish(new RemoveTreeItemMessage(m));
+        }
+
+        this.Items.Clear();
+        GlobalHub.publish(new ClientDeletedMessage(this.Client));
+    }
+
     private void OnOpenClientConfig() {
         var vm = new GrpcClientConfigViewModel(this.ClientConfigFile, this.OnClientNameChanged);
         GlobalHub.publish(new OpenOverlayMessage(vm));
     }
+
 
     private void Update(ProjectTypes.ClientGroup cg) {
         this.Client = cg;

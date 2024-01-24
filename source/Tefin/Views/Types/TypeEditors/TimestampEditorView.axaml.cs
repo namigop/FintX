@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class TimestampEditorView : UserControl {
+
     public TimestampEditorView() {
         this.InitializeComponent();
     }

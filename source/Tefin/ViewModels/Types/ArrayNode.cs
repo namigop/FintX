@@ -9,6 +9,7 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class ArrayNode : ListNode {
+
     //private int listItemsCount;
     private readonly object _internalList;
 

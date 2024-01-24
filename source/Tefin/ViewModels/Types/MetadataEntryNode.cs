@@ -8,7 +8,7 @@ using Tefin.ViewModels.Types.TypeNodeBuilders;
 
 namespace Tefin.ViewModels.Types;
 
-public class MetadataEntryNode : TypeBaseNode {
+public sealed class MetadataEntryNode : TypeBaseNode {
     private readonly Metadata.Entry _entry;
     private readonly object _index;
     private readonly Metadata _metadata;

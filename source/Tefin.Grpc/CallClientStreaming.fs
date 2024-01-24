@@ -1,18 +1,18 @@
 namespace Tefin.Grpc.Execution
 
-open System
 open System.Reflection
 open System.Threading.Tasks
-open Grpc.Core
 open Tefin.Core
 open Tefin.Core.Execution
 open Tefin.Core.Interop
+
 module CallClientStreaming =
-     
+
     let callError = CallError()
+
     let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
         task {
-            let start (ctx: Context) = 
+            let start (ctx: Context) =
                 Task.FromResult { ctx with Io = Some io }
 
             let invoke (ctx: Context) =
@@ -22,13 +22,21 @@ module CallClientStreaming =
                     try
                         callError.Clear()
                         let! resp = MethodInvoker.invoke methodInfo mParams callConfig callError.Receive
-                        
+
                         if callError.Failed then
-                            return { ctx with Response = Res.ok resp.Value; Error = callError.Exception }
+                            return
+                                { ctx with
+                                    Response = Res.ok resp.Value
+                                    Error = callError.Exception }
                         else
-                            return { ctx with Response = Res.ok resp.Value }
+                            return
+                                { ctx with
+                                    Response = Res.ok resp.Value }
                     with exc ->
-                        return { ctx with Response = Res.failed exc; Error = exc }
+                        return
+                            { ctx with
+                                Response = Res.failed exc
+                                Error = exc }
                 }
 
             let stop (ctx: Context) = Task.FromResult ctx

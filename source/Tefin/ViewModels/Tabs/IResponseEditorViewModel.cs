@@ -13,9 +13,9 @@ public interface IResponseEditorViewModel {
 
     public Task Complete(Type responseType, Func<Task<object>> completeRead);
 
-    public void Init();
-
     public (bool, object?) GetResponse();
+
+    public void Init();
 
     void Show(object? resp, Type? responseType);
 }

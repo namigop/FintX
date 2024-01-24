@@ -14,6 +14,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
+
     public TreeResponseEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
@@ -26,15 +27,15 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
             }
         };
     }
+
     public ObservableCollection<IExplorerItem> Items { get; } = new();
+    public MethodInfo MethodInfo { get; }
     public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
 
     public Type? ResponseType {
         get;
         private set;
     }
-
-    public MethodInfo MethodInfo { get; }
 
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         this.Items.Clear();
@@ -50,11 +51,6 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         }
     }
 
-
-    public void Init() {
-        this.Items.Clear();
-    }
-
     public (bool, object?) GetResponse() {
         if (this.ResponseType == null)
             return (false, null);
@@ -65,6 +61,10 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         }
 
         return (false, null);
+    }
+
+    public void Init() {
+        this.Items.Clear();
     }
 
     public void Show(object? resp, Type? responseType) {

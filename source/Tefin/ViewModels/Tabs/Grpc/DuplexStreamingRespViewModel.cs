@@ -19,8 +19,10 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
     private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
+
     //private CancellationTokenSource? _cs;
     private bool _isShowingServerStreamTree;
+
     private IListEditorViewModel _serverStreamEditor;
 
     public DuplexStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
@@ -37,16 +39,16 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
     }
 
-
+    public bool CanRead {
+        get => this._canRead;
+        private set => this.RaiseAndSetIfChanged(ref this._canRead, value);
+    }
 
     public bool IsShowingServerStreamTree {
         get => this._isShowingServerStreamTree;
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
-    public bool CanRead {
-        get => this._canRead;
-        private set => this.RaiseAndSetIfChanged(ref this._canRead, value);
-    }
+
     public IListEditorViewModel ServerStreamEditor {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
@@ -77,6 +79,17 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var stream = Activator.CreateInstance(this._listType);
         this.ServerStreamEditor.Show(stream!);
     }
+
+    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
+        var vm = (DuplexStreamingRespViewModel)obj;
+        if (vm._isShowingServerStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
     private void ShowAsJson() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
@@ -89,14 +102,5 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         this.ServerStreamEditor = this._serverStreamTreeEditor;
         if (ok)
             this.ServerStreamEditor.Show(list);
-    }
-    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
-        var vm = (DuplexStreamingRespViewModel)obj;
-        if (vm._isShowingServerStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
     }
 }

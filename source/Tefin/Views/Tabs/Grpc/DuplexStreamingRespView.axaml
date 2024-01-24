@@ -19,23 +19,23 @@
             <GridSplitter CornerRadius="4" Grid.Row="1" Height="8"
                           Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
             <Grid Grid.Row="2" RowDefinitions="Auto, *">
-                <Border Grid.Row="0" BorderThickness="2 0 2 2"
-                        BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}"
-                        CornerRadius="0 0 8 8">
-                    <StackPanel Orientation="Horizontal" Margin="6">
-                        <!-- -->
-                        <!-- <Button Command="{Binding EndReadCommand}" -->
-                        <!--         IsEnabled="{Binding CanRead}" -->
-                        <!--         Classes="MenuButton" ToolTip.Tip="Stop reading the response stream"> -->
-                        <!--     <TextBlock Text="End read" /> -->
-                        <!-- </Button> -->
-                        <!-- <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" /> -->
-                        <!-- <ToggleSwitch IsChecked="{Binding IsShowingServerStreamTree}" -->
-                        <!--               OnContent="Tree" OffContent="Json" -->
-                        <!--               Margin="0 0 0 0" /> -->
-                    </StackPanel>
-                </Border>
-                <ContentControl Content="{Binding ServerStreamEditor}" Grid.Row="1" />
+                <!-- <Border Grid.Row="0" BorderThickness="2 0 2 2" -->
+                <!--         BorderBrush="{StaticResource Bym.Color.DefaultWindowBackground}" -->
+                <!--         CornerRadius="0 0 8 8"> -->
+                <!--     <StackPanel Orientation="Horizontal" Margin="6"> -->
+                <!--          -->
+                <!--         <Button Command="{Binding EndReadCommand}" -->
+                <!--                 IsEnabled="{Binding CanRead}" -->
+                <!--                 Classes="MenuButton" ToolTip.Tip="Stop reading the response stream"> -->
+                <!--             <TextBlock Text="End read" /> -->
+                <!--         </Button> -->
+                <!--         <Separator Background="DimGray" Height="30" Width="1" CornerRadius="2" /> -->
+                <!--         <ToggleSwitch IsChecked="{Binding IsShowingServerStreamTree}" -->
+                <!--                       OnContent="Tree" OffContent="Json" -->
+                <!--                       Margin="0 0 0 0" /> -->
+                <!--     </StackPanel> -->
+                <!-- </Border> -->
+                <ContentControl Content="{Binding ServerStreamEditor}" Grid.Row="1" Margin="0 6 0 0 "/>
                 <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                             Opacity="0.25" Margin="10" Grid.Row="1">
                     <TextBlock Text="response stream" FontSize="20"

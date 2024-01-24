@@ -17,10 +17,9 @@ public class MainMenuViewModel : ViewModelBase {
         this.SelectedMenu = new SelectedMenuViewModel();
     }
 
-    public InfoMenuItemViewModel InfoMenuItem { get; }
     public ClientMenuItemViewModel ClientMenuItem { get; }
     public ConfigMenuItemViewModel ConfigMenuItem { get; }
-    public ServerMenuItemViewModel ServerMenuItem { get; }
+    public InfoMenuItemViewModel InfoMenuItem { get; }
     public SelectedMenuViewModel SelectedMenu { get; }
 
     public IMenuItemViewModel? SelectedMenuItem {
@@ -36,4 +35,6 @@ public class MainMenuViewModel : ViewModelBase {
             }
         }
     }
+
+    public ServerMenuItemViewModel ServerMenuItem { get; }
 }

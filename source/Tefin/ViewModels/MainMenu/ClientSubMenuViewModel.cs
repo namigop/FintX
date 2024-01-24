@@ -17,13 +17,17 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
     public ClientSubMenuViewModel(ExplorerViewModel explorerViewModel) {
         this._explorerViewModel = explorerViewModel;
         this.AddClientCommand = this.CreateCommand(this.OnAddClient);
+       
     }
 
     public ICommand AddClientCommand { get; }
+    
 
     private void OnAddClient() {
         AddGrpcServiceOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);
         OpenOverlayMessage msg = new(overlayVm);
         GlobalHub.publish(msg);
     }
+
+   
 }

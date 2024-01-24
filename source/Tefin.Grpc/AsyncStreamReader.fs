@@ -20,10 +20,10 @@ type AsyncStreamReader<'T>(stream: IAsyncStreamReader<'T>, onMoveNext: IAsyncStr
         member this.Current = this.Current
 
 module TimedAsyncStreamReader =
-    let create<'T> (io: IOResolver) (stream: IAsyncStreamReader<'T>) (clientName:string) (method:string) =
+    let create<'T> (io: IOResolver) (stream: IAsyncStreamReader<'T>) (clientName: string) (method: string) =
         let onSuccess retValue (ts: TimeSpan) =
             io.Log.Info $"Call to MoveNext = {retValue}. Elapsed {ts.TotalMilliseconds} msec"
-            io.MethodCall.Publish(clientName, method, ts.TotalMilliseconds);
+            io.MethodCall.Publish(clientName, method, ts.TotalMilliseconds)
 
         let onError (exc: Exception) (ts: TimeSpan) =
             io.Log.Error $"Call to MoveNext failed. Elapsed {ts.TotalMilliseconds} msec"

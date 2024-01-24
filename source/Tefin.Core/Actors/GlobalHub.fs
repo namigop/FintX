@@ -16,6 +16,6 @@ module GlobalHub =
     let register2 (actor) = hub.Register(actor)
 
     let subscribe (handler: Action<'r>) = hub.Subscribe(handler)
-    let subscribeTask (handler: Func<'a, Task>) =  hub.SubscribeTask(handler)
+    let subscribeTask (handler: Func<'a, Task>) = hub.SubscribeTask(handler)
 
     let getActor reqType = hub.GetActor reqType

@@ -14,28 +14,29 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
-    private readonly IDisposable _disposable;
     private string _subTitle;
     private string _title;
 
     protected TabViewModelBase(IExplorerItem item) {
+        this._title = "";
+        this.Id = "";
         this.ExplorerItem = item;
         this._subTitle = item.SubTitle;
-        this._disposable = item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title);
+        item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title)
+            .Then(this.MarkForCleanup);
         this.CloseCommand = this.CreateCommand(this.OnClose);
-
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
     }
 
-    public abstract void Init();
+    public virtual bool CanAutoSave { get; } = false;
 
-    public abstract string Icon { get; }
+    public ICommand CloseCommand { get; }
+
+    public IExplorerItem ExplorerItem { get; }
 
     public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
 
-    public virtual bool CanAutoSave { get; } = false;
-    public ICommand CloseCommand { get; }
-    public IExplorerItem ExplorerItem { get; }
+    public abstract string Icon { get; }
 
     public string Id {
         get;
@@ -51,6 +52,8 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
     }
+
+    public abstract void Init();
 
     protected virtual string GetTabId() {
         return $"{this.Title}-{this.ExplorerItem.GetType().FullName}";

@@ -31,8 +31,13 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged);
     }
 
+    public bool CanStop {
+        get => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
+    }
+
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set {
@@ -42,38 +47,17 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             this.RespViewModel.IsShowingServerStreamTree = value;
         }
     }
+
     public ServerStreamingReqViewModel ReqViewModel { get; set; }
     public ServerStreamingRespViewModel RespViewModel { get; }
     public ICommand StartCommand { get; }
-    public ICommand StopCommand { get; }
-    public bool CanStop {
-        get => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
 
     public string StatusText {
         get => this._statusText;
         private set => this.RaiseAndSetIfChanged(ref this._statusText, value);
     }
 
-    private void OnCanReadChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
-
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
-
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
-
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
-
-    public override void ImportRequest(string requestFile) {
-        _ = this.ReqViewModel.ImportRequestFile(requestFile);
-    }
+    public ICommand StopCommand { get; }
 
     public override void Dispose() {
         base.Dispose();
@@ -81,16 +65,29 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
+    public override string GetRequestContent() {
+        return this.ReqViewModel.GetRequestContent();
+    }
+
+    public override void ImportRequest(string requestFile) {
+        this.ReqViewModel.ImportRequestFile(requestFile);
+    }
+
     public override void Init() {
         this.ReqViewModel.Init();
     }
-    private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
-        }
+
+    private void OnCanReadChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
     }
 
+    private async Task OnExportRequest() {
+        await this.ReqViewModel.ExportRequest();
+    }
 
+    private async Task OnImportRequest() {
+        await this.ReqViewModel.ImportRequest();
+    }
 
     private async Task OnStart() {
         this.IsBusy = true;
@@ -134,6 +131,12 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             this.IsBusy = false;
             this.ReqViewModel.RequestEditor.EndRequest();
             //this.RaisePropertyChanged(nameof(this.CanStop));
+        }
+    }
+
+    private void OnStop() {
+        if (this.CanStop) {
+            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
         }
     }
 }

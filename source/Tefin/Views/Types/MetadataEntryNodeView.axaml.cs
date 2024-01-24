@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class MetadataEntryNodeView : UserControl {
+
     public MetadataEntryNodeView() {
         this.InitializeComponent();
     }

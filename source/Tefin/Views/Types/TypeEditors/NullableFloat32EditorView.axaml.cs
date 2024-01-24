@@ -7,6 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class NullableFloat32EditorView : UserControl {
+
     public NullableFloat32EditorView() {
         this.InitializeComponent();
     }

@@ -1,25 +1,20 @@
 namespace Tefin.Core
 
-open System.Collections.Generic
-open System
 open System.IO
-open System.IO.Compression
-open System.Threading
 open System.Threading.Tasks
 
 type ITextWriter =
-    abstract WriteAsync : text:string -> Task
-    abstract WriteLineAsync : text:string -> Task
-    abstract WriteLineAsync : unit -> Task
-    abstract DisposeAsync : unit -> Task
-    //abstract Init : writer:StreamWriter -> unit
+    abstract WriteAsync: text: string -> Task
+    abstract WriteLineAsync: text: string -> Task
+    abstract WriteLineAsync: unit -> Task
+    abstract DisposeAsync: unit -> Task
+//abstract Init : writer:StreamWriter -> unit
 
 module Writer =
-     let writerIO (writer:StreamWriter )=
+    let writerIO (writer: StreamWriter) =
         //let mutable writer:StreamWriter = Unchecked.defaultof<StreamWriter>
         { new ITextWriter with
             member x.WriteAsync text = task { do! writer.WriteAsync text }
             member x.WriteLineAsync text = task { do! writer.WriteLineAsync text }
-            member x.WriteLineAsync () = task { do! writer.WriteLineAsync() }
-            member x.DisposeAsync () = task {do! writer.DisposeAsync()}
-        }
+            member x.WriteLineAsync() = task { do! writer.WriteLineAsync() }
+            member x.DisposeAsync() = task { do! writer.DisposeAsync() } }

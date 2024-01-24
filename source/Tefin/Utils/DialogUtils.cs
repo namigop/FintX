@@ -10,12 +10,33 @@ using Avalonia.Platform.Storage;
 namespace Tefin.Utils;
 
 public static class DialogUtils {
+
     public static Window GetMainWindow() {
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
             return desktop.MainWindow!;
         }
 
         throw new NotSupportedException();
+    }
+
+    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+        var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
+            Title = dialogTitle,
+            AllowMultiple = allowMultipleSelection,
+            FileTypeFilter = new[] {
+                new FilePickerFileType(fileTitle) {
+                    Patterns = filterExtensions
+                }
+            }
+        });
+
+        if (files.Count >= 1) {
+            var filePaths = files.Where(t => t.Path.IsFile).Select(t => t.Path.LocalPath).ToArray();
+            return (true, filePaths);
+        }
+
+        return (false, Array.Empty<string>());
     }
 
     public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle, string extension) {
@@ -42,23 +63,13 @@ public static class DialogUtils {
         }
     }
 
-    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
+    public static async Task<string> SelectFolder() {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
-        var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
-            Title = dialogTitle,
-            AllowMultiple = allowMultipleSelection,
-            FileTypeFilter = new[] {
-                new FilePickerFileType(fileTitle) {
-                    Patterns = filterExtensions
-                }
-            }
+        var folders = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() {
+            Title = "Select a project folder",
+            AllowMultiple = false,
         });
 
-        if (files.Count >= 1) {
-            var filePaths = files.Where(t => t.Path.IsFile).Select(t => t.Path.LocalPath).ToArray();
-            return (true, filePaths);
-        }
-
-        return (false, Array.Empty<string>());
+        return folders.Any() ? folders.First().Path.LocalPath : "";
     }
 }

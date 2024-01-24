@@ -9,19 +9,19 @@
              x:Class="Tefin.Views.Tabs.Grpc.ClientStreamingView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
-            <Grid Grid.Row="0" Grid.Column="0">
-                <StackPanel Orientation="Horizontal" Margin="0 6 0 0" />
-
-            </Grid>
-
-            <Grid Grid.Row="0" Grid.Column="2">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <!-- <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" /> -->
-                </StackPanel>
-            </Grid>
-
-            <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="2" Margin="0 6 0 0"
-                    Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
+            <!-- <Grid Grid.Row="0" Grid.Column="0"> -->
+            <!--     <StackPanel Orientation="Horizontal" Margin="0 6 0 0" /> -->
+            <!-- -->
+            <!-- </Grid> -->
+            <!-- -->
+            <!-- <Grid Grid.Row="0" Grid.Column="2"> -->
+            <!--     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"> -->
+            <!--         ~1~ <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" /> @1@ -->
+            <!--     </StackPanel> -->
+            <!-- </Grid> -->
+            <!-- -->
+            <!-- <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="2" Margin="0 6 0 0" -->
+            <!--         Background="{StaticResource Bym.Color.DefaultWindowBackground}" /> -->
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
