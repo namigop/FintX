@@ -119,10 +119,14 @@ public class ClientNode : NodeBase {
             new LoadSessionFeature(
                 this.Client.Path,
                 this.Items.Cast<MethodNode>(), 
-                this.Io, 
-                loaded => this._sessionLoaded = loaded);
+                this.Io,
+                loaded => {
+                    this._sessionLoaded = loaded;
+                    this.RaisePropertyChanged(nameof(this.IsLoaded));
+                });
+        
         DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
-        this.RaisePropertyChanged(nameof(this.IsLoaded));
+       
     }
 
     private void OnClientNameChanged() {

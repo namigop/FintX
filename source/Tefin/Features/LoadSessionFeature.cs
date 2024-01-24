@@ -11,11 +11,7 @@ using Tefin.ViewModels.Tabs;
 
 namespace Tefin.Features;
 
-public class LoadSessionFeature(
-    string clientPath,
-    IEnumerable<MethodNode> nodes,
-    IOResolver io,
-    Action<bool> onLoaded) {
+public class LoadSessionFeature(string clientPath, IEnumerable<MethodNode> nodes, IOResolver io, Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string reqFile) {
         var dir = Path.GetDirectoryName(reqFile);
         return dir != null && dir.EndsWith(Project.autoSaveFolderName);
@@ -67,7 +63,10 @@ public class LoadSessionFeature(
     public void Run() {
         var projectPath = Path.GetDirectoryName(clientPath);
         var state = Project.getSaveState(io, projectPath);
-        var openFiles = state.ClientState.SelectMany(c => c.OpenFiles).OrderBy(c => c).ToArray();
+        var openFiles = state.ClientState.SelectMany(c => c.OpenFiles)
+            .Where(io.File.Exists)
+            .OrderBy(c => c)
+            .ToArray();
         
         openFiles
             .Select(this.CreateAction)
