@@ -17,7 +17,7 @@ type SerParam =
           RequestParams = r
           RequestStream = None }
 
-    static member WithStream (r: SerParam) (list) = { r with RequestStream = list }
+    static member WithStream (r: SerParam) list = { r with RequestStream = list }
 
 module DynamicTypes =
     let private emitUnaryRequestClass methodInfo =
@@ -59,11 +59,11 @@ module DynamicTypes =
     let toJsonRequest (p: SerParam) =
         let props = CoreMethod.paramsToPropInfos p.Method p.RequestParams
 
-        emitRequestClassForMethod (p.Method)
+        emitRequestClassForMethod p.Method
         |> Res.map (Instance.toJson props)
         |> Res.getValue
 
     let fromJsonRequest (method: MethodInfo) (json: string) =
-        emitRequestClassForMethod (method)
+        emitRequestClassForMethod method
         |> Res.map (Instance.fromJson json)
         |> Res.getValue

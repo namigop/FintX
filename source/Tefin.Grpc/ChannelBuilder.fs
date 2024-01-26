@@ -30,7 +30,7 @@ type CallConfig =
     static member From (cfg: ClientConfig) (io: IOResolver) =
         let cert =
             if cfg.IsUsingSSL then
-                if (cfg.IsCertFromFile) then
+                if cfg.IsCertFromFile then
                     Cert.FromFile
                         { File = "TODO file"
                           Password = "TODO pw" }
@@ -85,7 +85,7 @@ module ChannelBuilder =
                 None
 
         let channelCredentials =
-            if (cfg.Url.StartsWith("https://")) then
+            if cfg.Url.StartsWith("https://") then
                 ChannelCredentials.SecureSsl
             else
                 ChannelCredentials.Insecure

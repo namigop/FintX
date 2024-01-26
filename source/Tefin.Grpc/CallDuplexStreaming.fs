@@ -22,7 +22,7 @@ module CallDuplexStreaming =
 
                     try
                         callError.Clear()
-                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig (callError.Receive)
+                        let! resp = MethodInvoker.invoke methodInfo mParams callConfig callError.Receive
 
                         if callError.Failed then
                             return

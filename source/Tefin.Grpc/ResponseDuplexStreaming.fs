@@ -171,6 +171,9 @@ module DuplexStreamingResponse =
 
     let completeCall (resp: DuplexStreamingCallResponse) =
         task {
+            let d = resp.CallResult :?> IDisposable
+            d.Dispose()
+            
             let status =
                 try
                     resp.CallInfo.GetStatus(resp.CallResult)
@@ -183,8 +186,7 @@ module DuplexStreamingResponse =
                 with exc ->
                     Metadata()
 
-            let d = resp.CallResult :?> IDisposable
-            d.Dispose()
+          
 
             return
                 { resp with

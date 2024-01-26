@@ -10,7 +10,7 @@ open Tefin.Core.Reflection
 
 module GrpcTypeBuilder =
     let private buildMeta (createInstance: bool) =
-        if (createInstance) then
+        if createInstance then
             let meta = new Metadata()
 
             meta.Add("client", $"{Utils.appName} {Utils.appVersionSimple}({RuntimeInformation.FrameworkDescription})/@{Environment.MachineName}")
@@ -19,26 +19,26 @@ module GrpcTypeBuilder =
             struct (false, Unchecked.defaultof<obj>)
 
     let private buildMetaEntry (createInstance: bool) =
-        if (createInstance) then
+        if createInstance then
             let meta = Metadata.Entry("key", "value")
             struct (true, box meta)
         else
             struct (false, Unchecked.defaultof<obj>)
 
     let private buildWriteOptions (createInstance: bool) =
-        if (createInstance) then
+        if createInstance then
             struct (true, box WriteOptions.Default)
         else
             struct (false, Unchecked.defaultof<obj>)
 
     let private buildCallOptions (createInstance: bool) =
-        if (createInstance) then
+        if createInstance then
             struct (true, CallOptions() |> box)
         else
             struct (false, Unchecked.defaultof<obj>)
 
     let private buildTimestamp (createInstance: bool) =
-        if (createInstance) then
+        if createInstance then
             let now = DateTime.Now.AddDays(1).ToUniversalTime()
             let t = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(now)
             struct (true, box t)
@@ -63,9 +63,9 @@ module GrpcTypeBuilder =
             struct (true, DateTime.UtcNow.AddDays(1) |> box)
         elif (thisType = typeof<ByteString>) then
             struct (true, ByteString.CopyFrom("", System.Text.Encoding.UTF8) |> box)
-        elif (thisType.FullName.StartsWith("Google.Protobuf.Collections.MapField`2")) then
+        elif thisType.FullName.StartsWith("Google.Protobuf.Collections.MapField`2") then
             DictionaryType.getDefault thisType createInstance parentInstanceOpt depth
-        elif (thisType.FullName.StartsWith("Google.Protobuf.Collections.RepeatedField`1")) then
+        elif thisType.FullName.StartsWith("Google.Protobuf.Collections.RepeatedField`1") then
             buildRepeatedField thisType parentInstanceOpt depth
         elif (thisType = typeof<Metadata>) then
             buildMeta createInstance

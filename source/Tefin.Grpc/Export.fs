@@ -8,7 +8,7 @@ open Tefin.Grpc.Dynamic
 module Export =
 
     let private requestToExportType (methodInfo: MethodInfo) (reqStreamOpt: obj option) =
-        let requestTypRet = DynamicTypes.emitRequestClassForMethod (methodInfo)
+        let requestTypRet = DynamicTypes.emitRequestClassForMethod methodInfo
 
         match reqStreamOpt with
         | Some r ->
@@ -72,7 +72,7 @@ module Export =
 
         let ret =
             let exp = requestToExportType p.Method p.RequestStream
-            let (isStreaming, _) = Res.getValue exp
+            let isStreaming, _ = Res.getValue exp
 
             exp
             |> Res.map (fun (_, exportType) ->
@@ -81,7 +81,7 @@ module Export =
                 info)
             |> Res.bind validate
             |> Res.map (fun info ->
-                let requestTyp = DynamicTypes.emitRequestClassForMethod (p.Method) |> Res.getValue
+                let requestTyp = DynamicTypes.emitRequestClassForMethod p.Method |> Res.getValue
                 let objArray = DynamicTypes.toMethodParams p.Method requestTyp info.Request
 
                 if not isStreaming then
@@ -99,7 +99,7 @@ module Export =
         ret
 
     let requestToJson (p: SerParam) =
-        let reqType = Res.getValue (DynamicTypes.emitRequestClassForMethod (p.Method))
+        let reqType = Res.getValue (DynamicTypes.emitRequestClassForMethod p.Method)
 
         let reqInstance =
             let temp = Activator.CreateInstance reqType
@@ -110,7 +110,7 @@ module Export =
 
             temp
 
-        let (isStreaming, exportType) =
+        let isStreaming, exportType =
             Res.getValue (requestToExportType p.Method p.RequestStream)
 
         let exportInstanceRet = createExportInstance p.Method p.RequestStream reqInstance

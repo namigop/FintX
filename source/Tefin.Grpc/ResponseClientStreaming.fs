@@ -163,7 +163,7 @@ module ClientStreamingResponse =
             let responsePi = wrapperType.GetProperty("Response")
 
             let response =
-                if (isError) then
+                if isError then
                     let exc = resp.Response :?> Exception
                     new ErrorResponse(Error = exc.Message) |> box
                 else
@@ -205,6 +205,9 @@ module ClientStreamingResponse =
 
     let completeCall (resp: ClientStreamingCallResponse) =
         task {
+            let d = resp.CallResult :?> IDisposable
+            d.Dispose()
+
             let status =
                 try
                     resp.CallInfo.GetStatus(resp.CallResult)
@@ -216,10 +219,7 @@ module ClientStreamingResponse =
                     resp.CallInfo.GetTrailers(resp.CallResult)
                 with exc ->
                     Metadata()
-
-            let d = resp.CallResult :?> IDisposable
-            d.Dispose()
-
+          
             return
                 { resp with
                     Trailers = Some trailers

@@ -103,13 +103,13 @@ module MethodInvoker =
 
             //if the return type is a Task
             if (TypeHelper.isOfType typeof<Task> methodInfo.ReturnType) then
-                if (methodInfo.ReturnType.IsGenericType) then
+                if methodInfo.ReturnType.IsGenericType then
                     return! invokeTaskWithResult methodInfo client mParams
                 else
                     return! invokeTask methodInfo client mParams
 
             else if isAwaitable methodInfo then
-                if (methodInfo.ReturnType.IsGenericType) then
+                if methodInfo.ReturnType.IsGenericType then
                     return! (invokeAwaitableWithResult methodInfo client mParams)
                 else
                     return! invokeAwaitable methodInfo client mParams

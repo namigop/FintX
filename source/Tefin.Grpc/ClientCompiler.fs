@@ -33,7 +33,7 @@ module ClientCompiler =
 
             let output = ClientCompiler.compile io cIn
 
-            if (output.Success) then
+            if output.Success then
                 output
             else
                 let err = String.Join(Environment.NewLine, output.CompilationErrors)

@@ -184,7 +184,7 @@ module GrpcReflectionClient =
             let address = getAddress address2
 
             let! services =
-                createReflectionClient (address)
+                createReflectionClient address
                 |> map (fun c -> c.ServerReflectionInfo())
                 |> Task.FromResult
                 |> mapTask (fun stream ->

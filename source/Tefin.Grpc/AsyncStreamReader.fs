@@ -31,7 +31,7 @@ module TimedAsyncStreamReader =
 
         let onMoveNext (reader: IAsyncStreamReader<'T>) (token: CancellationToken) =
             task {
-                let! (ok, ts) = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
+                let! ok, ts = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
                 return ok
             }
 

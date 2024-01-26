@@ -8,11 +8,11 @@ module GrpcMethod =
     let getMethodType (mi: MethodInfo) =
         let returnType = mi.ReturnType
 
-        if (returnType.Name.StartsWith("AsyncDuplexStreaming")) then
+        if returnType.Name.StartsWith("AsyncDuplexStreaming") then
             MethodType.Duplex
-        else if (returnType.Name.StartsWith("AsyncClientStreaming")) then
+        else if returnType.Name.StartsWith("AsyncClientStreaming") then
             MethodType.ClientStreaming
-        else if (returnType.Name.StartsWith("AsyncServerStreaming")) then
+        else if returnType.Name.StartsWith("AsyncServerStreaming") then
             MethodType.ServerStreaming
         else
             MethodType.Unary

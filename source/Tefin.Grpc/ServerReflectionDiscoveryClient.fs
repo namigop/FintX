@@ -28,7 +28,7 @@ module ServerReflectionDiscoveryClient =
 
 
     let private validate (discoParams: ServerDiscoverParameters) =
-        if (String.IsNullOrWhiteSpace(discoParams.Address)) then
+        if String.IsNullOrWhiteSpace(discoParams.Address) then
             Ret.Error(failwith "Empty reflection service address!")
         else
             let address = discoParams.Address
