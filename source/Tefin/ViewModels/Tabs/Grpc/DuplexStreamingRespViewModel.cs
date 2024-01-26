@@ -36,7 +36,8 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
 
-        this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
+        this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree,
+            this.OnIsShowingServerStreamTreeChanged);
     }
 
     public bool CanRead {
@@ -54,18 +55,26 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
 
+    public Task? ResponseCompletedTask { get; private set; }
+
     public async Task SetupDuplexStreamNode(object response) {
         var resp = (DuplexStreamingCallResponse)response;
         var readDuplexStream = new ReadDuplexStreamFeature();
+        var tcs = new TaskCompletionSource();
 
+        this.ResponseCompletedTask = tcs.Task;
         try {
             this.IsBusy = true;
             this.CanRead = true;
+
             await foreach (var d in readDuplexStream.ReadResponseStream(resp, CancellationToken.None)) {
                 this.ServerStreamEditor.AddItem(d);
             }
+
+            tcs.SetResult();
         }
         catch (Exception exc) {
+            tcs.SetException(exc);
             this.Io.Log.Error(exc);
         }
         finally {
@@ -93,14 +102,16 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     private void ShowAsJson() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
-        if (ok)
+        if (ok) {
             this.ServerStreamEditor.Show(list);
+        }
     }
 
     private void ShowAsTree() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamTreeEditor;
-        if (ok)
+        if (ok) {
             this.ServerStreamEditor.Show(list);
+        }
     }
 }
