@@ -6,45 +6,46 @@ open System.Threading.Tasks
 open Tefin.Core
 
 type IPackage =
-    abstract Name: string
-    abstract Init: io: Tefin.Core.IOResolver -> Task
-    abstract GetConfig: unit -> ReadOnlyDictionary<string, string>
+  abstract Name: string
+  abstract Init: io: Tefin.Core.IOResolver -> Task
+  abstract GetConfig: unit -> ReadOnlyDictionary<string, string>
 
 [<AutoOpen>]
 module AppTypes =
-    type AppConfig =
-        { AutoSaveFrequency: int }
+  type AppConfig =
+    { AutoSaveFrequency: int }
 
-        static member Default() = { AutoSaveFrequency = 5 }
-        static member FileName = "app.config"
+    static member Default() = { AutoSaveFrequency = 5 }
+    static member FileName = "app.config"
 
-    type AppProject =
-        { Path: string
-          Package: string }
-        static member Create path pack = {Path = path; Package = pack }
+  type AppProject =
+    { Path: string
+      Package: string }
 
-    type AppState =
-        { RecentProjects: AppProject array
-          ActiveProject: AppProject }
+    static member Create path pack = { Path = path; Package = pack }
 
-        static member FileName = "app.saveState"
+  type AppState =
+    { RecentProjects: AppProject array
+      ActiveProject: AppProject }
 
-    type Package =
-        { Name: string
-          Path: string
-          Projects: Project array }
+    static member FileName = "app.saveState"
 
-        static member Empty() =
-            { Projects = Array.empty
-              Name = ""
-              Path = "" }
+  type Package =
+    { Name: string
+      Path: string
+      Projects: Project array }
 
-    type Root =
-        { Packages: Package array
-          AppConfigFile: string }
+    static member Empty() =
+      { Projects = Array.empty
+        Name = ""
+        Path = "" }
 
-        static member Path = Utils.getAppDataPath ()
+  type Root =
+    { Packages: Package array
+      AppConfigFile: string }
 
-        static member Empty() =
-            { Packages = Array.empty
-              AppConfigFile = "" }
+    static member Path = Utils.getAppDataPath ()
+
+    static member Empty() =
+      { Packages = Array.empty
+        AppConfigFile = "" }

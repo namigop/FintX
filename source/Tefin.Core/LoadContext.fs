@@ -4,6 +4,6 @@ open System.Runtime.Loader
 open System.Reflection
 
 type LoadContext() =
-    inherit AssemblyLoadContext()
+  inherit AssemblyLoadContext()
 
-    override x.Load(assemblyName: AssemblyName) : Assembly = Unchecked.defaultof<Assembly>
+  override x.Load(assemblyName: AssemblyName) : Assembly = Unchecked.defaultof<Assembly>
