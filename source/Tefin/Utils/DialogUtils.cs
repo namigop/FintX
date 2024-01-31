@@ -38,6 +38,25 @@ public static class DialogUtils {
 
         return (false, Array.Empty<string>());
     }
+    public static async Task<string> SelectFile(string dialogTitle, string fileName,  string fileTitle, string extension) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+
+        // Start async operation to open the dialog.
+        var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+            Title = dialogTitle,
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName,
+            FileTypeChoices = new[] {
+                new FilePickerFileType(fileTitle) {
+                    Patterns = new[] {
+                        extension
+                    }
+                }
+            }
+        });
+
+        return file?.Path.LocalPath ?? string.Empty;
+    }
 
     public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle, string extension) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());

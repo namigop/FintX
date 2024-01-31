@@ -12,6 +12,7 @@ type IOResolver =
   //abstract Register<'a> : (unit -> 'a) -> unit
   //abstract Resolve<'a> : unit -> 'a
   abstract File: IFileIO
+  abstract Zip : IZipIO
   abstract Dir: IDirIO
   abstract Log: ILog
   abstract MethodCall: IMethodCallIO
@@ -60,6 +61,8 @@ module Resolver =
     { new IOResolver with
         //member x.Register<'a> builder =  register<'a> builder
         //member x.Resolve<'a>() = resolve<'a>()
+        
+        member x.Zip = Zip.zipIO
         member x.File = File.fileIO
         member x.Dir = Dir.dirIO
         member x.Log = logger

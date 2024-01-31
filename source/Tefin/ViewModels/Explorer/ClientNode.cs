@@ -12,6 +12,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.MessageProject;
@@ -46,7 +47,26 @@ public class ClientNode : NodeBase {
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
+        this.ImportCommand = this.CreateCommand(this.OnImport);
+        this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
+    }
+
+    public ICommand ExportCommand { get;  }
+
+    public ICommand ImportCommand { get;  }
+
+    private async Task OnExport() {
+        var fileName = "Export.zip";
+        var fileTitle = "FintX Import/Export";
+        
+        var zipFile = await DialogUtils.SelectFile("Export request", fileName, fileTitle, $"*{Ext.zipExt}");
+
+        Share.createClientShare(this.Io, zipFile, this.ClientPath);
+    }
+
+    private void OnImport() {
+        throw new NotImplementedException();
     }
 
     public ProjectTypes.ClientGroup Client {

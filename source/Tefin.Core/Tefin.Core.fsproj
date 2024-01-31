@@ -24,6 +24,7 @@
         <Compile Include="Interop\IMethodCallIO.fs"/>
         <Compile Include="Interop\IDirIO.fs"/>
         <Compile Include="Interop\IFileIO.fs"/>
+        <Compile Include="Interop\IZipIO.fs" />
         <Compile Include="Interop\MessageBase.fs"/>
         <Compile Include="Interop\Resolver.fs"/>
 
@@ -53,6 +54,7 @@
         <Compile Include="CoreMethod.fs"/>
         <Compile Include="App.fs"/>
         <Compile Include="AutoSave.fs"/>
+        <Compile Include="Share.fs" />
 
     </ItemGroup>
 
