@@ -17,12 +17,6 @@ public class StartupFeature {
         // foreach (Environment.SpecialFolder sf in Enum.GetValues(typeof(Environment.SpecialFolder))) {
         //     Console.WriteLine($"{sf} : {Environment.GetFolderPath(sf)}");
         // }
-
-        var projpath = "/home/erik/Documents/FintX/packages/grpc/projects/_default";
-        var zip = "/home/erik/Documents/yo.zip";
-        var files = Directory.GetFiles(projpath, "*", SearchOption.AllDirectories);
-        Share.createFileShare(Resolver.value, zip, files, projpath);
-        
         
         
         Startup.init();
