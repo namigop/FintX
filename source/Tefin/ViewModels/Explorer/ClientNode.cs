@@ -47,28 +47,12 @@ public class ClientNode : NodeBase {
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
-        this.ImportCommand = this.CreateCommand(this.OnImport);
+        //this.ImportCommand = this.CreateCommand(this.OnImport);
         this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
 
-    public ICommand ExportCommand { get;  }
-
-    public ICommand ImportCommand { get;  }
-
-    private async Task OnExport() {
-        var fileName = "Export.zip";
-        var fileTitle = "FintX Import/Export";
-        
-        var zipFile = await DialogUtils.SelectFile("Export request", fileName, fileTitle, $"*{Ext.zipExt}");
-
-        Share.createClientShare(this.Io, zipFile, this.ClientPath);
-    }
-
-    private void OnImport() {
-        throw new NotImplementedException();
-    }
-
+    public ICommand ExportCommand { get; } 
     public ProjectTypes.ClientGroup Client {
         get;
         private set;
@@ -97,9 +81,7 @@ public class ClientNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._desc, value);
     }
 
-    public bool IsLoaded {
-        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
-    }
+    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
 
     //public ReadOnlyDictionary<string, string> Config { get; }
     public ICommand OpenClientConfigCommand { get; }
@@ -111,17 +93,32 @@ public class ClientNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
-    public void Clear() {
-        this.Items.Clear();
+    private async Task OnExport() {
+        var fileName = "Export.zip";
+        var fileTitle = "FintX (*.zip)";
+
+        var zipFile = await DialogUtils.SelectFile("Export request", fileName, fileTitle, $"*{Ext.zipExt}");
+        var result = Share.createClientShare(this.Io, zipFile, this.Client);
+        if (result.IsOk) {
+            Io.Log.Info($"Export created: {zipFile}");
+        }
+        else {
+            Io.Log.Error(result.ErrorValue);
+        }
     }
 
+    
+    public void Clear() => this.Items.Clear();
+
     public override void Init() {
-        if (this.ClientType == null)
+        if (this.ClientType == null) {
             return;
+        }
 
         //if (this.Items.FirstOrDefault() is EmptyNode)
-        foreach (var i in this.Items)
+        foreach (var i in this.Items) {
             GlobalHub.publish(new RemoveTreeItemMessage(i));
+        }
 
         this.Items.Clear();
 
@@ -138,15 +135,14 @@ public class ClientNode : NodeBase {
         var loadSessionFeature =
             new LoadSessionFeature(
                 this.Client.Path,
-                this.Items.Cast<MethodNode>(), 
+                this.Items.Cast<MethodNode>(),
                 this.Io,
                 loaded => {
                     this._sessionLoaded = loaded;
                     this.RaisePropertyChanged(nameof(this.IsLoaded));
                 });
-        
+
         DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
-       
     }
 
     private void OnClientNameChanged() {
@@ -161,8 +157,9 @@ public class ClientNode : NodeBase {
     }
 
     private async Task OnCompileClientType() {
-        if (this._compileInProgress)
+        if (this._compileInProgress) {
             return;
+        }
 
         try {
             this._compileInProgress = true;

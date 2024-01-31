@@ -21,13 +21,18 @@ module Zip =
            zipArchive.Entries
            |> Seq.iter (fun entry ->
               let target = Path.Combine(targetDir, entry.FullName) |> Path.GetFullPath
+              let dir = Path.GetDirectoryName target
+              ignore(Directory.CreateDirectory dir)
               if (File.Exists target) then
-                let dir = Path.GetDirectoryName target
+
                 let fileStart = Path.GetFileNameWithoutExtension target
                 let ext = Path.GetExtension target
-                let newTarget = Utils.getAvailableFileName dir fileStart ext
+                let newTarget = 
+                  Utils.getAvailableFileName dir fileStart ext
+                  |> fun n -> Path.Combine(dir, n)
                 entry.ExtractToFile newTarget
               else
+                
                 entry.ExtractToFile target
              )
            (*

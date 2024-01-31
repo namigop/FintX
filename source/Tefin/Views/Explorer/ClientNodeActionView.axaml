@@ -83,11 +83,6 @@
                 </Button.Resources>
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Import" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding ImportCommand}">
-                            <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Rename}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
                         <MenuItem Header="Export" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding ExportCommand}">
                             <MenuItem.Icon>
                                 <controls:IconControl Icon="{StaticResource Icon.Rename}" />

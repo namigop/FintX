@@ -11,6 +11,9 @@
         <Button Command="{Binding AddClientCommand}" Classes="MenuButton">
             <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
         </Button>
+        <Button Command="{Binding ImportCommand}" Classes="MenuButton">
+            <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
+        </Button>
         
     </StackPanel>
 </UserControl>

@@ -85,7 +85,7 @@ public class ByteArrayNode : TypeBaseNode {
         });
         if (ok) {
             this.File = files[0];
-            var bytes = System.IO.File.ReadAllBytes(this._file);
+            var bytes = await System.IO.File.ReadAllBytesAsync(this._file);
             this.Base64 = Convert.ToBase64String(bytes);
         }
     }
