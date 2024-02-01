@@ -66,23 +66,40 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         }
     }
 
-    public IExplorerItem? FindSelected() {
+    public IExplorerItem? FindSingle(Func<IExplorerItem, bool> predicate) {
         IExplorerItem? Find(ObservableCollection<IExplorerItem> items) {
             foreach (var item in items) {
-                if (item.IsSelected)
+                if (predicate(item))
                     return item;
-                var selected = Find(item.Items);
-                if (selected != null)
-                    return selected;
+                var found = Find(item.Items);
+                if (found != null)
+                    return found;
             }
 
             return null;
         }
 
-        if (this.IsSelected)
+        if (predicate(this))
             return this;
 
         return Find(this.Items);
+    }
+    public List<IExplorerItem> FindMany(Func<IExplorerItem, bool> predicate) {
+        List<IExplorerItem> Find(ObservableCollection<IExplorerItem> items, List<IExplorerItem> foundItems) {
+            foreach (var item in items) {
+                if (predicate(item))
+                    foundItems.Add(item);
+                Find(item.Items, foundItems);
+            }
+
+            return foundItems;
+        }
+
+        return Find(this.Items, new());
+    }
+
+    public IExplorerItem? FindSelected() {
+        return this.FindSingle(i => i.IsSelected);
     }
 
     public abstract void Init();

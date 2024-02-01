@@ -47,6 +47,7 @@ public class ExplorerViewModel : ViewModelBase {
         };
 
         this.ExplorerTree = temp;
+        this.ExplorerTree.RowSelection.SingleSelect = false;
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
         GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
         GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
@@ -290,8 +291,16 @@ public class ExplorerViewModel : ViewModelBase {
                 
         }
 
+        var selected = this.GetClientNodes()
+            .Select(c => c.FindSelected())
+            .FirstOrDefault();
+        var nodeType = selected?.GetType();
         foreach (var item in e.SelectedItems.Where(i => i != null)) {
-            item!.IsSelected = true;
+            if (nodeType == null)
+                item!.IsSelected = true;
+            else {
+              
+            }
         }
     }
 
