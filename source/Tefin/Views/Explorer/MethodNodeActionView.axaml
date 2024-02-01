@@ -27,6 +27,25 @@
                     ToolTip.Tip="Create a new request">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.FileReqNew}" />
             </Button>
+            <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
+                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
+                <Button.Resources>
+                    <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </Button.Resources>
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Export" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding ExportCommand}">
+                            <MenuItem.Icon>
+                                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <!-- <MenuItem Header="-"/> -->
+                        <!-- <MenuItem Header="Close"/>         -->
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
 
         </StackPanel>
     </Grid>

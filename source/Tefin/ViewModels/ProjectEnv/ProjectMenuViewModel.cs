@@ -44,11 +44,13 @@ public class ProjectMenuViewModel : ViewModelBase {
     }
 
     private void OnSelectedProjectChanged(ViewModelBase obj) {
-        var vm = (ProjectMenuViewModel)obj;
-        foreach (var i in vm.RecentProjects)
-            i.IsSelected = i == vm.SelectedProject;
+        this.Exec(() => {
+            var vm = (ProjectMenuViewModel)obj;
+            foreach (var i in vm.RecentProjects)
+                i.IsSelected = i == vm.SelectedProject;
 
-        vm.OpenProject(vm.SelectedProject.Path);
+            vm.OpenProject(vm.SelectedProject.Path);
+        });
     }
 
     public ProjectSelection SelectedProject {
@@ -65,12 +67,14 @@ public class ProjectMenuViewModel : ViewModelBase {
     }
 
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) {
-        this._explorerViewModel.LoadProject(obj.ProjectPath);
-        if (!this.RecentProjects.Contains(i => i.Path == obj.ProjectPath)) {
-            var projSelection = new ProjectSelection(obj.Package, obj.ProjectPath);
-            this.RecentProjects.Add(projSelection);
-            this.SelectedProject = projSelection;
-        }
+        this.Exec(() => {
+            this._explorerViewModel.LoadProject(obj.ProjectPath);
+            if (!this.RecentProjects.Contains(i => i.Path == obj.ProjectPath)) {
+                var projSelection = new ProjectSelection(obj.Package, obj.ProjectPath);
+                this.RecentProjects.Add(projSelection);
+                this.SelectedProject = projSelection;
+            }
+        });
     }
 
     public ObservableCollection<ProjectSelection> RecentProjects { get; set; }

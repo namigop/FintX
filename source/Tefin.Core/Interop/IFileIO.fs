@@ -20,10 +20,13 @@ type IFileIO =
   abstract CreateText: file: string -> StreamWriter
   abstract ReadAllText: file: string -> string
   abstract ReadAllLines: file: string -> string array
+  abstract GetLastWriteTime: file: string -> System.DateTime
+    
 
 module File =
   let fileIO =
     { new IFileIO with
+        member x.GetLastWriteTime file = File.GetLastWriteTime file
         member x.WriteAllTextAsync (file: string) (contents: string) = File.WriteAllTextAsync(file, contents)
         member x.WriteAllText (file: string) (contents: string) = File.WriteAllText(file, contents)
         member x.Copy(source: string, target: string) = File.Copy(source, target)

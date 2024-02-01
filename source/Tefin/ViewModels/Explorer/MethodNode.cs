@@ -25,12 +25,18 @@ public sealed class MethodNode : NodeBase {
         this.Title = methodInfo.Name;
         this.OpenMethodCommand = this.CreateCommand(this.OnOpenMethod);
         this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
+        this.ExportCommand = this.CreateCommand(this.OnExport);
+    }
+
+    private void OnExport() {
+        throw new NotImplementedException();
     }
 
     public ProjectTypes.ClientGroup Client { get; set; }
     public MethodInfo MethodInfo { get; }
     public ICommand NewRequestCommand { get; }
     public ICommand OpenMethodCommand { get; }
+    public ICommand ExportCommand { get; }
 
     public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);

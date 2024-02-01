@@ -58,4 +58,21 @@ public class ViewModelBase : ReactiveObject, IDisposable {
     protected void MarkForCleanup(IDisposable d) {
         this._disposables.Add(d);
     }
+
+    protected void Exec(Action a) {
+        try {
+            a();
+        }
+        catch (Exception e) {
+            this.Io.Log.Error(e);
+        }
+    }
+    protected async Task Exec(Func<Task> a) {
+        try {
+            await a();
+        }
+        catch (Exception e) {
+            this.Io.Log.Error(e);
+        }
+    }
 }

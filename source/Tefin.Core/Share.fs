@@ -13,7 +13,6 @@ module Share =
       CreatedAt: DateTime
       Type: string
       ClientName: string }
-
     static member ClientShare = "ClientShare"
     static member FileShare = "FileShare"
     static member FolderShare = "FolderShare"
@@ -42,11 +41,9 @@ module Share =
 
       files
       |> Array.iter (fun file ->
-        let relativePath =
-          file.Replace(clientPath, "")
-          |> fun c ->
-            if c.StartsWith "/" then
-              c.TrimStart("/".ToCharArray())
+        let relativePath = file.Replace(clientPath, "") |> fun c ->
+            if c.StartsWith Path.DirectorySeparatorChar then
+              c.TrimStart(Path.DirectorySeparatorChar)
             else
               c
 
@@ -124,7 +121,7 @@ module Share =
             let newTarget =
               Utils.getAvailableFileName dir fileStart ext |> fun n -> Path.Combine(dir, n)
 
-            ignore (io.Dir.CreateDirectory dir)
+            (io.Dir.CreateDirectory dir)
             updated <- true
             entry.ExtractToFile(newTarget)
         else
@@ -133,7 +130,7 @@ module Share =
     | None ->
       //extract away
       let clientPath = Path.Combine(project.Path, clientName)
-      ignore (io.Dir.CreateDirectory clientPath)
+      (io.Dir.CreateDirectory clientPath)
       io.Zip.ExtractToDirectory zip clientPath false
       updated <- true
 

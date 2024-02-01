@@ -6,7 +6,6 @@
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:ClientNode"
-
              x:Class="Tefin.Views.Explorer.ClientNodeActionView">
     <UserControl.Styles>
         <StyleInclude Source="/Views/Types/TypeItemStyles.axaml" />
@@ -46,11 +45,14 @@
                  
             </Button>
             <Button Classes="ClearButtonStyle" Command="{Binding OpenClientConfigCommand}"
+                    IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="open client config">
                 <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
             </Button>
-            <Button Classes="ClearButtonStyle" x:Name="btnDelete" ToolTip.Tip="delete this client">
-
+            <Button Classes="ClearButtonStyle" x:Name="btnDelete" 
+                    IsVisible="{Binding IsSelected}"
+                    ToolTip.Tip="delete this client">
+                
                 <Button.Flyout>
                     <Flyout>
                         <Grid RowDefinitions="*, Auto" Height="100">
@@ -67,14 +69,14 @@
                                     </Button>
                                 </StackPanel>
                             </Border>
-
                         </Grid>
-
                     </Flyout>
                 </Button.Flyout>
                 <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
             </Button>
-            <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
+            <Button Classes="ClearButtonStyle" 
+                    IsVisible="{Binding IsSelected}"
+                    ToolTip.Tip="More actions">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
                     <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
@@ -85,7 +87,7 @@
                     <MenuFlyout>
                         <MenuItem Header="Export" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding ExportCommand}">
                             <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Rename}" />
+                                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
                             </MenuItem.Icon>
                         </MenuItem>
                         <!-- <MenuItem Header="-"/> -->

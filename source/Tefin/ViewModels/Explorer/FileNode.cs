@@ -16,13 +16,20 @@ public class FileNode : NodeBase {
         this.CanOpen = true;
         this.FullPath = fullPath;
         base.Title = Path.GetFileName(fullPath);
-        this.TempTitle = this.Title;
+        this.TempTitle = base.Title;
+        this.UpdateSubTitle();
         
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
     }
 
+    public DateTime LastWriteTime => base.Io.File.GetLastWriteTime(this.FullPath);
+
+    private void UpdateSubTitle() {
+        var time = this.LastWriteTime.ToString("dddd, dd MMMM yyyy h:m tt");
+        this.SubTitle = $"Last updated: {time}";
+    }
     public ICommand DeleteCommand { get; }
     public string FullPath { get; private set; }
     public ICommand OpenCommand { get; }
@@ -68,6 +75,7 @@ public class FileNode : NodeBase {
         if (this.Io.File.Exists(newFilePath)) {
             this.FullPath = newFilePath;
             this.Title = Path.GetFileName(newFilePath);
+            this.UpdateSubTitle();
         }
         else {
             this.Io.Log.Warn($"Unable to update file path. {newFilePath} does not exist");
