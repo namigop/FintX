@@ -9,6 +9,8 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using ReactiveUI;
 
 using Tefin.Core;
@@ -78,18 +80,16 @@ public class ExplorerViewModel : ViewModelBase {
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public ClientNode AddClientNode(ClientGroup cg, Type? type = null) {
-        var cm = new ClientNode(cg, type);
-
+        var clientNode = new ClientNode(cg, type);
         Dispatcher.UIThread.Invoke(() => {
-            cm.Init();
-            this.Items.Add(cm);
+            clientNode.Init();
+            this.Items.Add(clientNode);
             //cm.IsSelected = true;
             this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
         }, DispatcherPriority.Input);
 
         GlobalHub.publish(new ExplorerUpdatedMessage());
-
-        return cm;
+        return clientNode;
     }
 
     public override void Dispose() {
@@ -296,18 +296,25 @@ public class ExplorerViewModel : ViewModelBase {
             }
         });
 
-    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) =>
-        this.Exec(() => {
-            foreach (var item in e.DeselectedItems.Where(i => i != null)) {
-                item!.IsSelected = false;
-                if (item is NodeBase n) {
-                    n.IsEditing = false;
-                }
-            }
+    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
+            item!.IsSelected = false;
+        }
 
-            this._nodeSelectionStrategy.Apply(e);
-        });
+        this._nodeSelectionStrategy.Apply(e);
+        var foo = this.GetClientNodes()
+            .SelectMany(c => c.FindMany(c => c.IsSelected))
+            .Where(c => c != null)
+            .ToArray();
+        if (foo.Length == 0)
+            this.SelectedItem = null;
+        else if (foo.Length == 1)
+            this.SelectedItem = foo[0];
+        else
+            this.SelectedItem = new MultiNode(foo);
+    }
 
+    public IExplorerItem? SelectedItem { get; set; }
     private class CopyPasteArg(IExplorerItem? container, string fileToCopy) {
         public IExplorerItem? Container { get; } = container;
         public string FileToCopy { get; } = fileToCopy;

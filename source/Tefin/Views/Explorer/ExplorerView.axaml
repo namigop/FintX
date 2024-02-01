@@ -23,16 +23,25 @@
         </TreeDataGrid.KeyBindings>
         <TreeDataGrid.Resources>
           <viewModels:NodeViewLocator x:Key="NodeViewLocator" />
+          <viewModels:NodeContextLocator x:Key="NodeContextLocator" />
           <viewModels:NodeActionViewLocator x:Key="NodeActionViewLocator" />
           <DataTemplate x:Key="CellTemplate" x:DataType="explorer:IExplorerItem">
             <ContentControl Content="{Binding}" Margin="4 0 0 0"
-                            ContentTemplate="{StaticResource NodeViewLocator}" />
+                            ContentTemplate="{StaticResource NodeViewLocator}" >
+              
+            </ContentControl>
           </DataTemplate>
           <DataTemplate x:Key="CellActionTemplate" x:DataType="explorer:IExplorerItem">
             <ContentControl Content="{Binding}" Margin="4 0 0 0"
                             ContentTemplate="{StaticResource NodeActionViewLocator}" />
           </DataTemplate>
         </TreeDataGrid.Resources>
+        <TreeDataGrid.ContextFlyout>
+            <Flyout>
+             <ContentControl Content="{Binding SelectedItem}"
+                             ContentTemplate="{StaticResource NodeContextLocator}"></ContentControl>
+            </Flyout>
+        </TreeDataGrid.ContextFlyout>
       </TreeDataGrid>
 
       <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" IsVisible="{Binding IsBusy}" >

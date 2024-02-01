@@ -95,7 +95,12 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             return foundItems;
         }
 
-        return Find(this.Items, new());
+        var found = Find(this.Items, new());
+        if (predicate(this)) {
+            found.Add(this);
+        }
+
+        return found;
     }
 
     public IExplorerItem? FindSelected() {
