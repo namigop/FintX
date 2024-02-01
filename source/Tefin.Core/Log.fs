@@ -16,14 +16,18 @@ type ILog =
   abstract Debug: string -> unit
 
 let private write (msg: string) = Console.WriteLine msg
+let private write2 (msg: string) =
+      #if DEBUG
+      Console.WriteLine msg
+      #endif
 
-let private log (l: LogType) msg =
+let private log (l: LogType) (msg:string) =
   match l with
   | LogType.Info -> write $"INFO: {msg}"
   | LogType.Warn -> write $"WARN: {msg}"
   | LogType.Error -> write $"ERROR: {msg}"
-  | LogType.Debug -> Diagnostics.Debug.WriteLine msg
-
+  | LogType.Debug -> write2 $"DEBUG: {msg}"
+ 
 let logInfo = log LogType.Info
 let logError = log LogType.Error
 let logExc (exc: Exception) = exc.ToString() |> logError

@@ -54,6 +54,12 @@ public class ProjectMenuViewModel : ViewModelBase {
     public ProjectSelection SelectedProject {
         get => this._selectedProject;
         set {
+            if (!Directory.Exists(value.Path)) {
+                this.Io.Log.Warn($"Project folder no longer exist. {value.Path}");
+                this.RecentProjects.Remove(value);
+                return;
+            }
+            
             this.RaiseAndSetIfChanged(ref this._selectedProject, value);
         }
     }

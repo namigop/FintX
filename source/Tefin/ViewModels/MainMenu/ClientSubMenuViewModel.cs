@@ -1,5 +1,7 @@
 #region
 
+using System.Reactive;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 using Tefin.Core;
@@ -28,8 +30,21 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
         var (ok, files) = await DialogUtils.OpenFile("Open zip file", fileTitle, fileExtensions);
         if (ok) {
             var zipFile = files[0];
-            var updated = Share.importInto(this.Io, this._explorerViewModel.Project, zipFile);
-            this._explorerViewModel.GetClientNodes().FirstOrDefault(f => f.Client. )
+            var project = this._explorerViewModel.Project;
+            var (clientName, updated) = Share.importInto(this.Io, project, zipFile);
+            var clientNode = this._explorerViewModel.GetClientNodes().FirstOrDefault(f => f.Client.Name == clientName);
+            if (updated) {
+                if (clientNode == null) {
+                    project = Core.Project.loadProject(this.Io, project?.Path);
+                    var cg = project.Clients.First(t => t.Name == clientName);
+                    clientNode = this._explorerViewModel.AddClientNode(cg);
+                }
+
+                if (!clientNode!.IsLoaded) {
+                    clientNode.CompileClientTypeCommand.Execute(Unit.Default);
+                }
+
+            }
         }
     }
 
