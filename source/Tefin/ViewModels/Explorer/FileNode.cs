@@ -16,6 +16,8 @@ public class FileNode : NodeBase {
         this.CanOpen = true;
         this.FullPath = fullPath;
         base.Title = Path.GetFileName(fullPath);
+        this.TempTitle = this.Title;
+        
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);

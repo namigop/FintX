@@ -73,7 +73,7 @@ public class ExplorerViewModel : ViewModelBase {
 
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
-    public void AddClientNode(ClientGroup cg, Type? type = null) {
+    public ClientNode AddClientNode(ClientGroup cg, Type? type = null) {
         var cm = new ClientNode(cg, type);
 
         Dispatcher.UIThread.Invoke(() => {
@@ -84,6 +84,8 @@ public class ExplorerViewModel : ViewModelBase {
         }, DispatcherPriority.Input);
 
         GlobalHub.publish(new ExplorerUpdatedMessage());
+
+        return cm;
     }
 
     public override void Dispose() {
@@ -282,6 +284,10 @@ public class ExplorerViewModel : ViewModelBase {
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
         foreach (var item in e.DeselectedItems.Where(i => i != null)) {
             item!.IsSelected = false;
+            if (item is NodeBase n) {
+                n.IsEditing = false;
+            }
+                
         }
 
         foreach (var item in e.SelectedItems.Where(i => i != null)) {
