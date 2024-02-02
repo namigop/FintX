@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls.Selection;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Selection;
 
 namespace Tefin.ViewModels.Explorer;
 
@@ -12,8 +13,16 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
             .Select(c => c.FindSelected())
             .FirstOrDefault(m => m != null);
 
+        List<IExplorerItem> selectedItems = new();
+        for (int i = 0; i < e.SelectedItems.Count; i++)
+            selectedItems.Add(e.SelectedItems[i]);
+        
+        List<IndexPath> selectedIndexes = new();
+        for (int i = 0; i < e.SelectedIndexes.Count; i++)
+            selectedIndexes.Add(e.SelectedIndexes[i]);
+        
         int index = -1;
-        foreach (var item in e.SelectedItems) {
+        foreach (var item in selectedItems) {
             index += 1;
 
             if (item == null)
@@ -35,7 +44,7 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
                 }
             }
 
-            var d = e.SelectedIndexes[index];
+            var d = selectedIndexes[index];
             explorerViewModel.ExplorerTree.RowSelection!.Deselect(d);
         }
 

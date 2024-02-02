@@ -40,12 +40,15 @@ public class MultiNode : NodeBase {
     }
 
     private void OnDelete() {
-        throw new NotImplementedException();
+        var files = this.Items
+            .Where(c => c is FileNode)
+            .Select(t => ((FileNode)t).FullPath);
+            
+        foreach (var file in files)
+            this.Io.File.Delete(file);
     }
 
-    public ICommand DeleteCommand {
-        get;
-    }
+    public ICommand DeleteCommand { get; }
 
     public override void Init(){}
 }

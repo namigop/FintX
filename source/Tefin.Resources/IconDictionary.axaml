@@ -653,12 +653,22 @@
         </DataTemplate>
 
         <DataTemplate x:Key="{StaticResource Icon.FileReqNew}">
-            <Viewbox>
-                <Canvas Width="24" Height="24">
-                    <Path Fill="LightSlateGray"
-                          Data="M23 18H20V15H18V18H15V20H18V23H20V20H23M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H13.81C13.45 21.38 13.2 20.7 13.08 20H6V4H13V9H18V13.08C18.33 13.03 18.67 13 19 13C19.34 13 19.67 13.03 20 13.08V8L14 2M8 12V14H16V12M8 16V18H13V16Z" />
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Polygon Points="11.6,0.5 3.5,0.5 3.5,15.5 15.5,15.5 15.5,4.4" Fill="Transparent" />
+                        <Path Data="M11.803,0H3v5.5h1V1h7v4h4v10h-5v1h6V4.189L11.803,0zM12,1.588L14.373,4H12V1.588z" Fill="LightSlateGray"/>
+                        <Path Data="M0,15.5h7M2,13.5h6M2,11.5h7M1,9.5h8M0,7.5h7" Stroke="LightSlateGray" StrokeThickness="1" />
+                    </Canvas>
                 </Canvas>
             </Viewbox>
+
+            <!-- <Viewbox> -->
+            <!--     <Canvas Width="24" Height="24"> -->
+            <!--         <Path Fill="LightSlateGray" -->
+            <!--               Data="M23 18H20V15H18V18H15V20H18V23H20V20H23M6 2C4.89 2 4 2.9 4 4V20C4 21.11 4.89 22 6 22H13.81C13.45 21.38 13.2 20.7 13.08 20H6V4H13V9H18V13.08C18.33 13.03 18.67 13 19 13C19.34 13 19.67 13.03 20 13.08V8L14 2M8 12V14H16V12M8 16V18H13V16Z" /> -->
+            <!--     </Canvas> -->
+            <!-- </Viewbox> -->
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.FileReq}">
             <Viewbox VerticalAlignment="Center">
@@ -681,12 +691,23 @@
             </Viewbox>
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.OpenNew}">
-            <Viewbox>
-                <Canvas Width="24" Height="24">
-                    <Path Fill="SlateGray"
-                          Data="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" />
+           
+            <Viewbox   Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="4.5" Width="15" Height="11" Fill="Transparent" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Line StartPoint="8.5, 4.5" EndPoint="16, 4.5" Stroke="#21B4C9" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="1.5" Width="8" Height="3" Fill="#BEE2E5" Stroke="#21B4C9" StrokeThickness="1"    />
+                    </Canvas>
                 </Canvas>
             </Viewbox>
+
+            <!-- <Viewbox> -->
+            <!--     <Canvas Width="24" Height="24"> -->
+            <!--         <Path Fill="SlateGray" -->
+            <!--               Data="M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z" /> -->
+            <!--     </Canvas> -->
+            <!-- </Viewbox> -->
         </DataTemplate>
 
         <DataTemplate x:Key="{StaticResource Icon.Write}">

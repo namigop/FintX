@@ -11,7 +11,7 @@
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
                 <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12"></Setter>
+                <Setter Property="FontSize" Value="12.5"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <!-- <Style Selector="Button"> -->
@@ -21,7 +21,6 @@
         </StackPanel.Styles>
         
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
-                IsVisible="{Binding IsSelected}"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
@@ -31,10 +30,7 @@
         </Button>
         <Separator  Classes="Horizontal" Width="200">
         </Separator>
-        <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete"
-                IsVisible="{Binding IsSelected}"
-                ToolTip.Tip="delete this client">
-
+        <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete" ToolTip.Tip="delete the selected files">
             <Button.Flyout>
                 <Flyout Placement="BottomEdgeAlignedLeft">
                     <Grid RowDefinitions="*, Auto" Height="100">

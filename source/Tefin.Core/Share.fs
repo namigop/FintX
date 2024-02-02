@@ -83,13 +83,26 @@ module Share =
       Type = shareType }
 
   
-  let createFileShare (io: IOResolver) (targetZip: string) (files: string array) (client: ClientGroup) =    
-    let info = createInfo client.Name ShareInfo.FileShare
-    createZip io targetZip files client.Path info
-
-  let createFolderShare (io: IOResolver) (targetZip: string) (methodName: string) (client: ClientGroup) =
-    
-    
+  let createFileShare (io: IOResolver) (targetZip: string) (files: string array) (client: ClientGroup) =
+    let methodsPath = Project.getMethodsPath client.Path
+    let filterOutMethodFiles (files:string array) = seq {
+      for file in files do
+          if not (file.StartsWith methodsPath) then
+            yield file
+    }
+     
+    (getClientFiles io client)
+    |> Res.map (fun allFiles ->
+        (filterOutMethodFiles allFiles)
+        |> Seq.append files
+        |> Seq.toArray
+      )
+    |> Res.map (fun targetFiles ->
+        let info = createInfo client.Name ShareInfo.FileShare
+        createZip io targetZip targetFiles client.Path info)
+    |> Res.getValue
+      
+  let createFolderShare (io: IOResolver) (targetZip: string) (methodName: string) (client: ClientGroup) =    
     let methodPath = Project.getMethodPath client.Path methodName
     let methodsPath = Project.getMethodsPath client.Path
     

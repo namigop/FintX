@@ -11,7 +11,7 @@
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
                 <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12"></Setter>
+                <Setter Property="FontSize" Value="12.5"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <!-- <Style Selector="Button"> -->
@@ -27,17 +27,15 @@
                 <TextBlock Text="Compile"></TextBlock>
             </StackPanel>
         </Button>
-        <!-- <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenClientConfigCommand}" -->
-        <!--         IsEnabled="{Binding IsSelected}" -->
-        <!--         ToolTip.Tip="open client config"> -->
-        <!--     <StackPanel Orientation="Horizontal"> -->
-        <!--         <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl> -->
-        <!--         <TextBlock Text="Config"></TextBlock> -->
-        <!--     </StackPanel> -->
-        <!-- -->
-        <!-- </Button> -->
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenClientConfigCommand}"
+                ToolTip.Tip="open client config">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
+                <TextBlock Text="Config"></TextBlock>
+            </StackPanel>
+        
+        </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
-                IsVisible="{Binding IsSelected}"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />

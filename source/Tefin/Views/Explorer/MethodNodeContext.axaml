@@ -3,8 +3,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:MethodNode"
              x:Class="Tefin.Views.Explorer.MethodNodeContext">
-    Method node context
+    <StackPanel>
+        <StackPanel.Styles>
+            <Style Selector="Button > StackPanel > TextBlock">
+                <Setter Property="Margin" Value="8 0 0 0 "></Setter>
+                <Setter Property="FontSize" Value="12.5"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            </Style>
+        </StackPanel.Styles>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodCommand}"
+                ToolTip.Tip="Open in new tab">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
+                <TextBlock Text="Open in a tab"></TextBlock>
+            </StackPanel>
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding NewRequestCommand}"
+                ToolTip.Tip="Create a new request">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.FileReqNew}" />
+                <TextBlock Text="New request"></TextBlock>
+            </StackPanel>
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
+                ToolTip.Tip="Export">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
+                <TextBlock Text="Export"></TextBlock>
+            </StackPanel>
+
+        </Button>
+
+
+    </StackPanel>
 </UserControl>

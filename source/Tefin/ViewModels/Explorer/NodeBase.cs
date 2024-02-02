@@ -70,7 +70,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         }
     }
 
-    public IExplorerItem? FindSingle(Func<IExplorerItem, bool> predicate) {
+    public IExplorerItem? FindChildNode(Func<IExplorerItem, bool> predicate) {
         IExplorerItem? Find(ObservableCollection<IExplorerItem> items) {
             foreach (var item in items) {
                 if (predicate(item))
@@ -88,7 +88,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
         return Find(this.Items);
     }
-    public List<IExplorerItem> FindMany(Func<IExplorerItem, bool> predicate) {
+    public List<IExplorerItem> FindChildNodes(Func<IExplorerItem, bool> predicate) {
         List<IExplorerItem> Find(ObservableCollection<IExplorerItem> items, List<IExplorerItem> foundItems) {
             foreach (var item in items) {
                 if (predicate(item))
@@ -108,11 +108,11 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public IExplorerItem? FindSelected() {
-        return this.FindSingle(i => i.IsSelected);
+        return this.FindChildNode(i => i.IsSelected);
     }
 
-    public T FindParentNode<T>() where T : IExplorerItem {
-        T Find(IExplorerItem item) {
+    public T? FindParentNode<T>() where T : IExplorerItem {
+        T? Find(IExplorerItem? item) {
             if (item == null)
                 return default;
             if (item is T found)

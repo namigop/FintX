@@ -11,7 +11,7 @@
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
                 <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12"></Setter>
+                <Setter Property="FontSize" Value="12.5"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <!-- <Style Selector="Button"> -->
@@ -20,7 +20,6 @@
                 
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout"
-                
                 Command="{Binding OpenCommand}" ToolTip.Tip="Open in a new tab">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />

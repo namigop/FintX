@@ -297,22 +297,24 @@ public class ExplorerViewModel : ViewModelBase {
         });
 
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
-        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
-            item!.IsSelected = false;
-        }
+        this.Exec(() => {
+            foreach (var item in e.DeselectedItems.Where(i => i != null)) {
+                item!.IsSelected = false;
+            }
 
-        this._nodeSelectionStrategy.Apply(e);
-        
-        var foo = this.GetClientNodes()
-            .SelectMany(c => c.FindMany(c => c.IsSelected))
-            .Where(c => c != null)
-            .ToArray();
-        if (foo.Length == 0)
-            this.SelectedItem = null;
-        else if (foo.Length == 1)
-            this.SelectedItem = foo[0];
-        else
-            this.SelectedItem = new MultiNode(foo);
+            this._nodeSelectionStrategy.Apply(e);
+
+            var foo = this.GetClientNodes()
+                .SelectMany(c => c.FindChildNodes(c => c.IsSelected))
+                .Where(c => c != null)
+                .ToArray();
+            if (foo.Length == 0)
+                this.SelectedItem = null;
+            else if (foo.Length == 1)
+                this.SelectedItem = foo[0];
+            else
+                this.SelectedItem = new MultiNode(foo);
+        });
     }
 
     public IExplorerItem? SelectedItem { get; set; }
