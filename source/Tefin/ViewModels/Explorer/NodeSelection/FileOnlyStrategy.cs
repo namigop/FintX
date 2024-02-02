@@ -11,11 +11,11 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
         var selected = explorerViewModel.GetClientNodes()
             .Select(c => c.FindSelected())
             .FirstOrDefault(m => m != null);
-        
+
         int index = -1;
         foreach (var item in e.SelectedItems) {
             index += 1;
-            
+
             if (item == null)
                 continue;
             if (selected == null) {
@@ -23,15 +23,21 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
                 selected = item;
                 continue;
             }
-            
+
             if (selected is FileNode && item is FileNode fn) {
-                fn.IsSelected = true;
-                selected = fn;
+                var p1 = selected.FindParentNode<ClientNode>();
+                var p2 = item.FindParentNode<ClientNode>();
+
+                if (p1 == p2) {
+                    fn.IsSelected = true;
+                    selected = fn;
+                    continue;
+                }
             }
-            else {
-                var d = e.SelectedIndexes[index];
-                explorerViewModel.ExplorerTree.RowSelection!.Deselect(d);
-            }
+
+            var d = e.SelectedIndexes[index];
+            explorerViewModel.ExplorerTree.RowSelection!.Deselect(d);
         }
+
     }
 }

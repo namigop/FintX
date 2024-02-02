@@ -111,5 +111,18 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         return this.FindSingle(i => i.IsSelected);
     }
 
+    public T FindParentNode<T>() where T : IExplorerItem {
+        T Find(IExplorerItem item) {
+            if (item == null)
+                return default;
+            if (item is T found)
+                return found;
+            return Find(item.Parent);
+        }
+
+        return Find(this);
+    }
+    
+
     public abstract void Init();
 }
