@@ -38,7 +38,7 @@
         </TreeDataGrid.Resources>
         <TreeDataGrid.ContextFlyout>
             <Flyout>
-             <ContentControl Content="{Binding SelectedItem}"
+             <ContentControl Content="{Binding SelectedItem}" Padding="0" MinWidth="200"
                              ContentTemplate="{StaticResource NodeContextLocator}"></ContentControl>
             </Flyout>
         </TreeDataGrid.ContextFlyout>

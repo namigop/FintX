@@ -30,6 +30,14 @@
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="4 5 4 6"></Setter>
   </Style>
+  
+  <Style Selector="Button.ClearButtonStyle.ContextFlyout">
+     <Setter Property="HorizontalAlignment" Value="Stretch" />
+  </Style>
+  <Style Selector="Button.ClearButtonStyle.ContextFlyout[IsEnabled=false]">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  
   <Style Selector="Button.ClearButtonStyle[IsEnabled=false]">
     <!--<Setter Property="Background" Value="Red" />-->
     <Setter Property="Opacity" Value="0.7" />

@@ -341,6 +341,10 @@
           <DependentUpon>AddNewProjectOverlayView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Explorer\FileReqNodeContext.axaml.cs">
+          <DependentUpon>FileReqNodeContext.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

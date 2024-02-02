@@ -69,6 +69,19 @@
 
     <!-- end of Border Classes-->
 
+    <!-- separator styles -->
+    <Style Selector="Separator.Vertical">
+        <Setter Property="Width" Value="1" />
+        <Setter Property="Height" Value="18" />
+        <Setter Property="Background" Value="#FF3A4252" />
+        <Setter Property="Margin" Value="2 0 2 0"></Setter>
+    </Style>
+    <Style Selector="Separator.Horizontal">
+        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Background" Value="#FF3A4252" />
+        <Setter Property="Margin" Value="0 10 0 10"></Setter>
+    </Style>
 
     <!-- start of default styles -->
 
@@ -78,8 +91,8 @@
     <Style Selector="Separator">
         <Setter Property="Width" Value="1" />
         <Setter Property="Height" Value="18" />
-        <!-- <Setter Property="Background" Value="#FF3A4252" /> -->
-        <Setter Property="Background" Value="LightSlateGray" />
+         <Setter Property="Background" Value="#FF3A4252" />
+        <!-- <Setter Property="Background" Value="LightSlateGray" /> -->
         <Setter Property="Margin" Value="2 0 2 0"></Setter>
     </Style>
     <Style Selector="GridSplitter">

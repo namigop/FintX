@@ -29,9 +29,7 @@ public class NodeContextLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new TextBlock {
-            Text = "Not Found: " + name
-        };
+        return new Border() { Height = 0 };
     }
 
     public bool Match(object? data) {

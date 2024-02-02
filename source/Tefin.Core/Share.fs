@@ -41,7 +41,8 @@ module Share =
 
       files
       |> Array.iter (fun file ->
-        let relativePath = file.Replace(clientPath, "") |> fun c ->
+        let projPath = Path.GetDirectoryName clientPath
+        let relativePath = file.Replace(projPath, "") |> fun c ->
             if c.StartsWith Path.DirectorySeparatorChar then
               c.TrimStart(Path.DirectorySeparatorChar)
             else
@@ -59,6 +60,21 @@ module Share =
     with exc ->
       Res.failed exc
 
+  let private getClientFiles (io:IOResolver) (client:ClientGroup)  =
+    let clientPath = client.Path
+    let clientConfig = Path.Combine(clientPath, ClientGroup.ConfigFilename)
+
+    if not (io.File.Exists clientConfig) then
+      Res.failedWith $"{clientPath} is not a valid client path"
+    else
+      let filesToZip =      
+        io.Dir.GetFiles(clientPath, "*.*", SearchOption.AllDirectories)
+        |> Array.filter (fun f -> not (Path.GetFileName(f) = ProjectSaveState.FileName))
+        |> Array.filter (fun f ->
+          let parentDir = f |> Path.GetDirectoryName |> Path.GetFileName
+          not (parentDir = Project.autoSaveFolderName))
+      Res.ok filesToZip
+      
   let createInfo clientName shareType =
     { Version = Utils.appVersionSimple
       Source = RuntimeInformation.RuntimeIdentifier
@@ -66,11 +82,31 @@ module Share =
       ClientName = clientName
       Type = shareType }
 
-  let createFileShare (io: IOResolver) (targetZip: string) (files: string array) (clientName: string) (clientPath: string) =
-    let info = createInfo clientName ShareInfo.FileShare
-    createZip io targetZip files clientPath info
+  
+  let createFileShare (io: IOResolver) (targetZip: string) (files: string array) (client: ClientGroup) =    
+    let info = createInfo client.Name ShareInfo.FileShare
+    createZip io targetZip files client.Path info
 
-  let createFolderShare (folders: string array) (proj: Project) = ()
+  let createFolderShare (io: IOResolver) (targetZip: string) (methodName: string) (client: ClientGroup) =
+    
+    
+    let methodPath = Project.getMethodPath client.Path methodName
+    let methodsPath = Project.getMethodsPath client.Path
+    
+    let filterForMethodFiles (files:string array) = seq {
+      for file in files do
+          if (file.StartsWith methodsPath) then
+            if (file.StartsWith methodPath) then
+              yield file
+          else
+            yield file
+    }
+    getClientFiles io client
+    |> Res.map (fun files -> (filterForMethodFiles files) |> Seq.toArray) 
+    |> Res.map (fun files ->
+         let info = createInfo client.Name ShareInfo.FileShare
+         createZip io targetZip files client.Path info)
+    |> Res.getValue
 
   let createClientShare (io: IOResolver) (targetZip: string) (client: ClientGroup) =
     let clientPath = client.Path
@@ -96,8 +132,7 @@ module Share =
 
     use zipArchive = io.Zip.OpenRead zip
 
-    let info =
-      zipArchive.Entries |> Seq.find (fun entry -> entry.Name = ShareInfo.FileName)
+    let info = zipArchive.Entries |> Seq.find (fun entry -> entry.Name = ShareInfo.FileName)
 
     use reader = new StreamReader(info.Open())
     let i = reader.ReadToEnd() |> Instance.jsonDeserialize<ShareInfo>
@@ -110,16 +145,14 @@ module Share =
       let clientPath = client.Path
 
       for entry: ZipArchiveEntry in zipArchive.Entries do
-        let target = Path.Combine(clientPath, entry.FullName) |> Path.GetFullPath
+        let target = Path.Combine(project.Path, entry.FullName) |> Path.GetFullPath
         let dir = Path.GetDirectoryName target
         let ext = Path.GetExtension target
 
         if (io.File.Exists target) then
           if (allowMultiple ext) then
             let fileStart = Path.GetFileNameWithoutExtension target
-
-            let newTarget =
-              Utils.getAvailableFileName dir fileStart ext |> fun n -> Path.Combine(dir, n)
+            let newTarget = Utils.getAvailableFileName dir fileStart ext |> fun n -> Path.Combine(dir, n)
 
             (io.Dir.CreateDirectory dir)
             updated <- true
@@ -128,10 +161,8 @@ module Share =
           updated <- true
           entry.ExtractToFile(target)
     | None ->
-      //extract away
-      let clientPath = Path.Combine(project.Path, clientName)
-      (io.Dir.CreateDirectory clientPath)
-      io.Zip.ExtractToDirectory zip clientPath false
+      //extract away      
+      io.Zip.ExtractToDirectory zip project.Path false
       updated <- true
 
     //return

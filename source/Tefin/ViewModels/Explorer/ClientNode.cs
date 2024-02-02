@@ -94,11 +94,9 @@ public class ClientNode : NodeBase {
     }
 
     private async Task OnExport() {
-        var fileName = "Export.zip";
-        var fileTitle = "FintX (*.zip)";
-
-        var zipFile = await DialogUtils.SelectFile("Export request", fileName, fileTitle, $"*{Ext.zipExt}");
-        var result = Share.createClientShare(this.Io, zipFile, this.Client);
+        var share = new SharingFeature();
+        var zipFile = await share.GetZipFile();
+        var result = share.ShareClient(this.Io, zipFile, this.Client);
         if (result.IsOk) {
             Io.Log.Info($"Export created: {zipFile}");
         }

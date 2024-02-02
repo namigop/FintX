@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:explorer1="clr-namespace:Tefin.Views.Explorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:FileReqNode"
 
@@ -23,29 +24,29 @@
                     ToolTip.Tip="Open in new tab">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
             </Button>
-            <Button Classes="ClearButtonStyle" x:Name="btnDelete" ToolTip.Tip="delete this client">
-
-                <Button.Flyout>
-                    <Flyout>
-                        <Grid RowDefinitions="*, Auto" Height="100">
-                            <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" />
-
-                            <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
-                                <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right">
-                                    <Button Click="DeleteButtonClick">
-                                        <TextBlock Text="Yes, delete it" />
-                                    </Button>
-                                    <Button Click="CancelButtonClick" Margin="6 6 6 6">
-                                        <TextBlock Text="Cancel" />
-                                    </Button>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                    </Flyout>
-                </Button.Flyout>
-                <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
-            </Button>
+            <!-- <Button Classes="ClearButtonStyle" x:Name="btnDelete" ToolTip.Tip="delete this client"> -->
+            <!-- -->
+            <!--     <Button.Flyout> -->
+            <!--         <Flyout> -->
+            <!--             <Grid RowDefinitions="*, Auto" Height="100"> -->
+            <!--                 <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center" -->
+            <!--                            HorizontalAlignment="Center" /> -->
+            <!-- -->
+            <!--                 <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0"> -->
+            <!--                     <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right"> -->
+            <!--                         <Button Click="DeleteButtonClick"> -->
+            <!--                             <TextBlock Text="Yes, delete it" /> -->
+            <!--                         </Button> -->
+            <!--                         <Button Click="CancelButtonClick" Margin="6 6 6 6"> -->
+            <!--                             <TextBlock Text="Cancel" /> -->
+            <!--                         </Button> -->
+            <!--                     </StackPanel> -->
+            <!--                 </Border> -->
+            <!--             </Grid> -->
+            <!--         </Flyout> -->
+            <!--     </Button.Flyout> -->
+            <!--     <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl> -->
+            <!-- </Button> -->
             <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
@@ -54,15 +55,9 @@
                     </DataTemplate>
                 </Button.Resources>
                 <Button.Flyout>
-                    <MenuFlyout>
-                        <MenuItem Header="Rename" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding RenameCommand}">
-                            <MenuItem.Icon>
-                                <controls:IconControl Icon="{StaticResource Icon.Rename}" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <!-- <MenuItem Header="-"/> -->
-                        <!-- <MenuItem Header="Close"/>         -->
-                    </MenuFlyout>
+                     <Flyout>
+                         <explorer1:FileReqNodeContext />
+                     </Flyout>
                 </Button.Flyout>
             </Button>
 

@@ -33,7 +33,11 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public bool IsSelected {
         get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
+        set {
+            this.RaiseAndSetIfChanged(ref this._isSelected, value);
+            if (!this._isSelected)
+                this.IsEditing = false; //cannot edit non-selected node
+        }
     }
 
     public ObservableCollection<IExplorerItem> Items { get; } = new();

@@ -50,13 +50,10 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
 
     public ICommand AddClientCommand { get; }
     public ICommand ImportCommand { get; }
-    
 
     private void OnAddClient() {
         AddGrpcServiceOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);
         OpenOverlayMessage msg = new(overlayVm);
         GlobalHub.publish(msg);
     }
-
-   
 }

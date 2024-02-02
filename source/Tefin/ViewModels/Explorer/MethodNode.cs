@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
@@ -28,8 +29,16 @@ public sealed class MethodNode : NodeBase {
         this.ExportCommand = this.CreateCommand(this.OnExport);
     }
 
-    private void OnExport() {
-        throw new NotImplementedException();
+    private async Task OnExport() {
+        var share = new SharingFeature();
+        var zipFile = await share.GetZipFile();
+        var result = share.ShareMethod(this.Io, zipFile, this.MethodInfo.Name, this.Client);
+        if (result.IsOk) {
+            Io.Log.Info($"Export created: {zipFile}");
+        }
+        else {
+            Io.Log.Error(result.ErrorValue);
+        }
     }
 
     public ProjectTypes.ClientGroup Client { get; set; }

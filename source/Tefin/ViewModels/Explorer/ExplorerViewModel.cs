@@ -302,6 +302,7 @@ public class ExplorerViewModel : ViewModelBase {
         }
 
         this._nodeSelectionStrategy.Apply(e);
+        
         var foo = this.GetClientNodes()
             .SelectMany(c => c.FindMany(c => c.IsSelected))
             .Where(c => c != null)

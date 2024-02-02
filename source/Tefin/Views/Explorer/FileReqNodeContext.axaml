@@ -5,8 +5,8 @@
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="explorer:ClientNode"
-             x:Class="Tefin.Views.Explorer.ClientNodeContext">
+             x:DataType="explorer:FileReqNode"
+             x:Class="Tefin.Views.Explorer.FileReqNodeContext">
     <StackPanel>
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
@@ -20,33 +20,29 @@
                 
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout"
-                IsVisible="{Binding !IsLoaded}"
-                Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
+                
+                Command="{Binding OpenCommand}" ToolTip.Tip="Open in a new tab">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Build}" />
-                <TextBlock Text="Compile"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
+                <TextBlock Text="Open in a tab"></TextBlock>
             </StackPanel>
         </Button>
-        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenClientConfigCommand}"
-                IsEnabled="{Binding IsSelected}"
-                ToolTip.Tip="open client config">
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding RenameCommand}"
+                ToolTip.Tip="Rename this file">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
-                <TextBlock Text="Config"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.Rename}"></controls:IconControl>
+                <TextBlock Text="Rename"></TextBlock>
             </StackPanel>
 
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
-                IsVisible="{Binding IsSelected}"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
                 <TextBlock Text="Export"></TextBlock>
             </StackPanel>
-
         </Button>
-        <Separator  Classes="Horizontal" Width="200">
-        </Separator>
+        <Separator  Classes="Horizontal" Width="200" />
         <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete"
                 IsVisible="{Binding IsSelected}"
                 ToolTip.Tip="delete this client">
