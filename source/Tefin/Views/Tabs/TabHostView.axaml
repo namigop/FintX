@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:utils="clr-namespace:Tefin.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="tabs:TabHostViewModel"
              x:Class="Tefin.Views.Tabs.TabHostView">
@@ -13,12 +14,12 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="Auto, *, Auto">
-                         <controls:IconControl Grid.Column="0" IsVisible="{Binding HasIcon}" 
-                                               Icon="{Binding Icon}" Width="12" Height="12" 
-                                               Margin="0 0 10 0" VerticalAlignment="Center"/>
-                           
+                        <controls:IconControl Grid.Column="0" IsVisible="{Binding HasIcon}"
+                                              Icon="{Binding Icon}" Width="12" Height="12"
+                                              Margin="0 0 10 0" VerticalAlignment="Center" />
+
                         <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center" />
-                       
+
                         <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="2"
                                 VerticalAlignment="Center"
                                 Padding="2"
@@ -54,8 +55,47 @@
                             </Button.Flyout>
                             <!-- <TextBlock Text="x" VerticalAlignment="Center" FontSize="12" /> -->
                             <controls:IconControl Icon="{StaticResource Icon.TabClose}"
-                                                  Width="16" Height="16"></controls:IconControl>
+                                                  Width="16" Height="16">
+                            </controls:IconControl>
                         </Button>
+                        <Grid.ContextFlyout>
+                            <Flyout>
+                                <StackPanel>
+                                    <StackPanel.Styles>
+                                        <Style Selector="Button > StackPanel > TextBlock">
+                                            <Setter Property="Margin" Value="8 0 0 0 "></Setter>
+                                            <Setter Property="FontSize" Value="12.6"></Setter>
+                                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                        </Style>
+                                       
+                                    </StackPanel.Styles>
+                                    <Button Classes="ClearButtonStyle ContextFlyout" 
+                                            utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                            Command="{Binding CloseCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Close this tab"></TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Classes="ClearButtonStyle ContextFlyout" 
+                                            utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                            Command="{Binding CloseAllOthersCommand}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Close other tabs"></TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                    <Separator Classes="Horizontal" Width="200" />
+                                    <Button Classes="ClearButtonStyle ContextFlyout" 
+                                            utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                            Command="{Binding CloseAllCommand}" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Close all tabs"></TextBlock>
+                                        </StackPanel>
+                                    </Button>
+                                     
+                                </StackPanel>
+                            </Flyout>
+                             
+                        </Grid.ContextFlyout>
                     </Grid>
                 </DataTemplate>
             </TabControl.ItemTemplate>

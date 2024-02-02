@@ -33,6 +33,7 @@
   
   <Style Selector="Button.ClearButtonStyle.ContextFlyout">
      <Setter Property="HorizontalAlignment" Value="Stretch" />
+     <Setter Property="Margin" Value="0 0 0 2"></Setter>
   </Style>
   <Style Selector="Button.ClearButtonStyle.ContextFlyout[IsEnabled=false]">
     <Setter Property="Opacity" Value="1" />

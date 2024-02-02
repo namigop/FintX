@@ -11,7 +11,7 @@ namespace Tefin.ViewModels.Explorer;
 public class MultiNode : NodeBase {
     private readonly ProjectTypes.ClientGroup _client;
     public MultiNode(IExplorerItem[] items) {
-        this._client = items[0].FindParentNode<ClientNode>().Client;
+        this._client = items[0].FindParentNode<ClientNode>()!.Client;
         this.Items.AddRange(items);
         this.DeleteCommand = this.CreateCommand(OnDelete);
         this.ExportCommand = this.CreateCommand(OnExport);
@@ -25,6 +25,9 @@ public class MultiNode : NodeBase {
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipFile = await share.GetZipFile();
+        if (string.IsNullOrEmpty(zipFile))
+            return;
+        
         var files = this.Items
             .Where(c => c is FileNode)
             .Select(t => ((FileNode)t).FullPath)

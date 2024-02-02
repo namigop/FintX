@@ -15,7 +15,7 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
 
         List<IExplorerItem> selectedItems = new();
         for (int i = 0; i < e.SelectedItems.Count; i++)
-            selectedItems.Add(e.SelectedItems[i]);
+            selectedItems.Add(e.SelectedItems[i]!);
         
         List<IndexPath> selectedIndexes = new();
         for (int i = 0; i < e.SelectedIndexes.Count; i++)

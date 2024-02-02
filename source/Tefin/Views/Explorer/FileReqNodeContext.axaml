@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:utils="clr-namespace:Tefin.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:FileReqNode"
              x:Class="Tefin.Views.Explorer.FileReqNodeContext">
@@ -11,7 +12,7 @@
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
                 <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12.5"></Setter>
+                <Setter Property="FontSize" Value="12.6"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
             <!-- <Style Selector="Button"> -->
@@ -20,6 +21,7 @@
                 
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
                 Command="{Binding OpenCommand}" ToolTip.Tip="Open in a new tab">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
@@ -27,6 +29,7 @@
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding RenameCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Rename this file">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.Rename}"></controls:IconControl>
@@ -35,6 +38,7 @@
 
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />

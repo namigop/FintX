@@ -8,12 +8,26 @@
              x:DataType="mainMenu:ClientSubMenuViewModel"
              x:Class="Tefin.Views.MainMenu.ClientSubMenuView">
     <StackPanel Orientation="Horizontal">
+        <StackPanel.Styles>
+            <Style Selector="Button > StackPanel > TextBlock">
+                <Setter Property="FontSize" Value="12"></Setter>
+                <Setter Property="Margin" Value="6 0 0 0"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Foreground" Value="LightSlateGray"></Setter>
+            </Style>
+        </StackPanel.Styles>
         <Button Command="{Binding AddClientCommand}" Classes="MenuButton" ToolTip.Tip="Create a new gRPC Client">
-            <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
+                <TextBlock Text="Add client"></TextBlock>
+            </StackPanel>
         </Button>
         <Separator></Separator>
         <Button Command="{Binding ImportCommand}" Classes="MenuButton" ToolTip.Tip="Import *.zip">
-            <controls:IconControl Icon="{StaticResource Icon.DataImport}" Height="18" Width="18"/>
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.DataImport}" Height="18" Width="18"/>
+                <TextBlock Text="Import"></TextBlock>
+            </StackPanel>
         </Button>
         
     </StackPanel>

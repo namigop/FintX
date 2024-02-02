@@ -96,6 +96,9 @@ public class ClientNode : NodeBase {
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipFile = await share.GetZipFile();
+        if (string.IsNullOrEmpty(zipFile))
+            return;
+        
         var result = share.ShareClient(this.Io, zipFile, this.Client);
         if (result.IsOk) {
             Io.Log.Info($"Export created: {zipFile}");

@@ -21,6 +21,14 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribeTask<CloseTabMessage>(this.OnReceiveTabCloseMessage);
         GlobalHub.subscribeTask<FileChangeMessage>(this.OnReceiveFileChangeMessage);
         GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage);
+        GlobalHub.subscribeTask<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage);
+    }
+
+    private async Task OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
+        var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
+        foreach (var tab in tabs)
+            if (tab != arg.Tab)
+                await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
     }
 
     public ObservableCollection<ITabViewModel> Items { get; } = new();

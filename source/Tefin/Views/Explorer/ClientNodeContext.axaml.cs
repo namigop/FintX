@@ -2,6 +2,7 @@ using System.Reactive;
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 
@@ -13,6 +14,7 @@ public partial class ClientNodeContext : UserControl {
     public ClientNodeContext() {
         InitializeComponent();
     }
+
     private void CancelButtonClick(object? sender, RoutedEventArgs e) {
         var fly = this.btnDelete.Flyout;
         fly?.Hide();

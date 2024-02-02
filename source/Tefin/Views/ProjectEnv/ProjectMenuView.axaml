@@ -4,12 +4,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:project="clr-namespace:Tefin.ViewModels.ProjectEnv"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:utils="clr-namespace:Tefin.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Name="foo"
              x:DataType="project:ProjectMenuViewModel"
              x:Class="Tefin.Views.ProjectEnv.ProjectMenuView">
 
-    <Button ToolTip.Tip="{Binding SelectedProject.Path }" Classes="ClearButtonStyle">
+    <Button ToolTip.Tip="{Binding SelectedProject.Path }" Classes="ClearButtonStyle"
+            x:Name="btn">
         <StackPanel Orientation="Horizontal">
 
             <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}" Width="18" Height="18" />
@@ -19,7 +21,9 @@
             
         </StackPanel>
         <Button.Flyout>
-            <Flyout Placement="BottomEdgeAlignedLeft" x:DataType="project:ProjectMenuViewModel" ShowMode="TransientWithDismissOnPointerMoveAway">
+            <Flyout Placement="BottomEdgeAlignedLeft" x:DataType="project:ProjectMenuViewModel"
+                   
+                    ShowMode="TransientWithDismissOnPointerMoveAway">
                 <Border>
                     <Border.Styles>
                         <Style Selector="controls|IconControl">
@@ -30,7 +34,10 @@
                     </Border.Styles>
                     <StackPanel Orientation="Vertical">
 
-                        <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding NewProjectCommand}" MinWidth="250">
+                        <Button Classes="ClearButtonStyle" VerticalAlignment="Center" 
+                                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                utils:CloseFlyoutBehavior.Flyout="{Binding ElementName=btn, Path=Flyout}"
+                                Command="{Binding NewProjectCommand}" MinWidth="250">
                             <StackPanel Orientation="Horizontal">
                                 <controls:IconControl Icon="{StaticResource Icon.PlusGray}"></controls:IconControl> 
                                 <TextBlock Text="New project" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>
@@ -39,7 +46,10 @@
 
 
                         <StackPanel Orientation="Horizontal" Margin = "0 6 0 0">
-                            <Button Classes="ClearButtonStyle" VerticalAlignment="Center" Command="{Binding OpenProjectCommand}" MinWidth="250">
+                            <Button Classes="ClearButtonStyle" VerticalAlignment="Center" 
+                                    utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                    utils:CloseFlyoutBehavior.Flyout="{Binding ElementName=btn, Path=Flyout}"
+                                    Command="{Binding OpenProjectCommand}" MinWidth="250">
                                 <StackPanel Orientation="Horizontal">
                                     <controls:IconControl Icon="{StaticResource Icon.Folder}"></controls:IconControl> 
                                     <TextBlock Text="Open project" VerticalAlignment="Center" Margin="6 0 0 0"></TextBlock>

@@ -25,14 +25,26 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title)
             .Then(this.MarkForCleanup);
         this.CloseCommand = this.CreateCommand(this.OnClose);
+        this.CloseAllCommand = this.CreateCommand(this.OnCloseAll);
+        this.CloseAllOthersCommand = this.CreateCommand(this.OnCloseAllOthers);
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
+    }
+
+    private void OnCloseAll() {
+        GlobalHub.publish(new CloseAllTabsMessage());
+    }
+
+    private void OnCloseAllOthers() {
+        GlobalHub.publish(new CloseAllOtherTabsMessage(this));
     }
 
     public virtual bool CanAutoSave { get; } = false;
 
     public ICommand CloseCommand { get; }
+    public ICommand CloseAllCommand { get; }
+    public ICommand CloseAllOthersCommand { get; }
 
-    public IExplorerItem ExplorerItem { get; }
+public IExplorerItem ExplorerItem { get; }
 
     public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
 
