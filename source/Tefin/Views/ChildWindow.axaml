@@ -32,6 +32,11 @@
                 </Button>
             </StackPanel>
         </StackPanel>
-        <ContentControl Grid.Row="1" Content="{Binding Content}" Margin="8" />
+        <ContentControl Grid.Row="1" Content="{Binding Content}" Margin="8 0 8 0" />
+        <Grid Height="32" Grid.Row="2" Background="#2D3035">
+            <TextBlock Text="{Binding FooterMessage}" Margin="8 0 0 0"
+                       FontSize="12"
+                       VerticalAlignment="Center"></TextBlock>
+        </Grid>
     </Grid>
 </Window>

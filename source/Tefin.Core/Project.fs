@@ -62,9 +62,11 @@ module Project =
       files |> Array.map (fun file -> Path.GetDirectoryName file)
 
     let projSaveState =
-      Path.Combine(projectPath, ProjectSaveState.FileName)
-      |> io.File.ReadAllText
-      |> Instance.jsonDeserialize<ProjectSaveState>
+      let content = Path.Combine(projectPath, ProjectSaveState.FileName) |> io.File.ReadAllText
+      if (System.String.IsNullOrEmpty content) then
+        ProjectSaveState.Empty("grpc")
+      else
+        Instance.jsonDeserialize<ProjectSaveState>(content)
 
     let projectName = Path.GetFileName projectPath
     let clients = clientPaths |> Array.map (fun path -> loadClient io path)
@@ -87,9 +89,12 @@ module Project =
 
   let getSaveState (io: IOResolver) (projectPath: string) =
     let file = Path.Combine(projectPath, ProjectSaveState.FileName)
-
     let saveState =
-      Instance.jsonDeserialize<ProjectSaveState> (io.File.ReadAllText file)
+      let content = io.File.ReadAllText file
+      if System.String.IsNullOrEmpty content then
+        ProjectSaveState.Empty("grpc")
+      else  
+        Instance.jsonDeserialize<ProjectSaveState>(content)
 
     saveState
 

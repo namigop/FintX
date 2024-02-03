@@ -68,29 +68,23 @@ public class TabHostViewModel : ViewModelBase {
     private async Task RemoveTab(ITabViewModel tab) =>
         await Dispatcher.UIThread.InvokeAsync(() => {
             if (this.Items.Count > 1) {
-                if (this.SelectedItem == tab) {
+                if (this.SelectedItem?.Id == tab.Id) {
                     this.SelectedItem = this.Items.Last();
                 }
             }
 
-            this.Items.Remove(tab);
+            var tab2 = this.Items.FirstOrDefault(t => t.Id == tab.Id);
+            if (tab2 != null)
+                this.Items.Remove(tab2);
         });
 
-    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) => await this.RemoveTab(obj.Tab);
+    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) {
+        await this.RemoveTab(obj.Tab);
+    }
 
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
         await this.RemoveTab(obj.Tab);
         obj.Tab.CloseCommand.Execute(Unit.Default);
-        // await Dispatcher.UIThread.InvokeAsync(() => {
-        //     if (this.Items.Count > 1) {
-        //         if (this.SelectedItem == obj.Tab) {
-        //             this.SelectedItem = this.Items.Last();
-        //         }
-        //     }
-        //
-        //     obj.Tab.CloseCommand.Execute(Unit.Default);
-        //     this.Items.Remove(obj.Tab);
-        // });
     }
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
@@ -103,5 +97,8 @@ public class TabHostViewModel : ViewModelBase {
             this.Items.Add(obj.Tab);
             this.SelectedItem = this.Items.Last();
         }
+        
+        //Close any open windows
+        GlobalHub.publish(new CloseChildWindowMessage(obj.Tab));
     }
 }

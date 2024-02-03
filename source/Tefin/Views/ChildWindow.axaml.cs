@@ -16,6 +16,6 @@ public partial class ChildWindow : Window {
 
     private void OnWindowClosed(object? sender, EventArgs e) {
         var vm = (sender as ChildWindow)!.DataContext as ChildWindowViewModel;
-        GlobalHub.publish(new CloseChildWindowMessage(vm.Content));
+        GlobalHub.publish(new ChildWindowClosedMessage(vm!.Content));
     }
 }

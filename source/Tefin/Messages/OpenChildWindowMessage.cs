@@ -9,3 +9,7 @@ public class OpenChildWindowMessage(ITabViewModel tab) : MessageBase {
 public class CloseChildWindowMessage(ITabViewModel tab) : MessageBase {
     public ITabViewModel Content { get; } = tab;
 }
+
+public class ChildWindowClosedMessage(ITabViewModel tab) : MessageBase {
+    public ITabViewModel Content { get; } = tab;
+}
