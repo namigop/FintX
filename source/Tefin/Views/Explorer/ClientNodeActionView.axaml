@@ -51,7 +51,7 @@
             <Button Classes="ClearButtonStyle" 
                     IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="More actions">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
                     <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
                         <TextBlock Text="{Binding}" />

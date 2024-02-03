@@ -16,7 +16,7 @@
 
             <controls:IconControl Icon="{StaticResource Icon.FolderWithFile}" Width="18" Height="18" />
             <TextBlock Text="{Binding SelectedProject.Name}" Margin="6 0 0 0"></TextBlock>
-            <controls:IconControl Icon="{StaticResource Icon.ChevronDown}" Width="16" Height="16" 
+            <controls:IconControl Icon="{StaticResource Icon.ChevronDown}"
                                   Margin="12 0 0 0"/>
             
         </StackPanel>

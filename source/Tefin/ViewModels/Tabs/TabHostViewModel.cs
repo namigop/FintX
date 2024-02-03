@@ -1,6 +1,7 @@
 #region
 
 using System.Collections.ObjectModel;
+using System.Reactive;
 
 using Avalonia.Threading;
 
@@ -22,6 +23,7 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribeTask<FileChangeMessage>(this.OnReceiveFileChangeMessage);
         GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage);
         GlobalHub.subscribeTask<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage);
+        GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage);
     }
 
     private async Task OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
@@ -60,16 +62,33 @@ public class TabHostViewModel : ViewModelBase {
         }
     }
 
-    private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
+    private async Task RemoveTab(ITabViewModel tab) {
         await Dispatcher.UIThread.InvokeAsync(() => {
             if (this.Items.Count > 1) {
-                if (this.SelectedItem == obj.Tab) {
+                if (this.SelectedItem == tab) {
                     this.SelectedItem = this.Items.Last();
                 }
             }
 
-            this.Items.Remove(obj.Tab);
+            this.Items.Remove(tab);
         });
+    }
+    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) {
+        await this.RemoveTab(obj.Tab);
+    }
+    private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
+        await this.RemoveTab(obj.Tab);
+        obj.Tab.CloseCommand.Execute(Unit.Default);
+        // await Dispatcher.UIThread.InvokeAsync(() => {
+        //     if (this.Items.Count > 1) {
+        //         if (this.SelectedItem == obj.Tab) {
+        //             this.SelectedItem = this.Items.Last();
+        //         }
+        //     }
+        //
+        //     obj.Tab.CloseCommand.Execute(Unit.Default);
+        //     this.Items.Remove(obj.Tab);
+        // });
     }
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {

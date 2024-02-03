@@ -55,16 +55,37 @@
     <system:String x:Key="Icon.DictionaryType">Icon.DictionaryType</system:String>
     <system:String x:Key="Icon.DataExport">Icon.DataExport</system:String>
     <system:String x:Key="Icon.DataImport">Icon.DataImport</system:String>
+    <system:String x:Key="Icon.Window">Icon.Window</system:String>
 
     <resources:IconTemplate x:Key="Icons">
-        <DataTemplate x:Key="{StaticResource Icon.DataImport}">
-           
+
+        <DataTemplate x:Key="{StaticResource Icon.Window}">
+
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
-                        <Polyline Points="4.5,11.017 4.5,15.5 14.5,15.5 14.5,3.5 4.5,3.5 4.5,8" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1"  />
-                        <Polygon Points="8.607,12.933 7.896,12.229 10.102,10 0.098,10 0.098,9 10.102,9 7.896,6.771 8.607,6.067 12.003,9.5" Fill="#1ED15D"  />
-                        <Rectangle Canvas.Left="4.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070" Stroke="LightSlateGray" StrokeThickness="1"  />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="4.5" Width="15" Height="10" Fill="Transparent"
+                                   Stroke="#D8D8D8" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="1.5" Width="15" Height="3" Fill="#0A6DBD"
+                                   Stroke="#92C6FF" StrokeThickness="1"  />
+                        <Path Data="M14,3.5h-1V2.5h1V3.5zM12,2.5h-1v1h1V2.5zM10,2.5H9v1h1V2.5z" Fill="LightSlateGray" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.DataImport}">
+
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Polyline Points="4.5,11.017 4.5,15.5 14.5,15.5 14.5,3.5 4.5,3.5 4.5,8" Fill="#4E4E4E"
+                                  Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Polygon
+                            Points="8.607,12.933 7.896,12.229 10.102,10 0.098,10 0.098,9 10.102,9 7.896,6.771 8.607,6.067 12.003,9.5"
+                            Fill="#1ED15D" />
+                        <Rectangle Canvas.Left="4.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070"
+                                   Stroke="LightSlateGray" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
@@ -74,9 +95,12 @@
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
-                        <Polyline Points="10.5,11.017 10.5,15.5 0.5,15.5 0.5,3.5 10.5,3.5 10.5,8" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
-                        <Path Data="M12.251,6.419L15.3,9.5l-3.049,3.081M15.149,9.5H5.098" Stroke="#F73737" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="0.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Polyline Points="10.5,11.017 10.5,15.5 0.5,15.5 0.5,3.5 10.5,3.5 10.5,8" Fill="#4E4E4E"
+                                  Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M12.251,6.419L15.3,9.5l-3.049,3.081M15.149,9.5H5.098" Stroke="#F73737"
+                              StrokeThickness="1" />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070"
+                                   Stroke="LightSlateGray" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
@@ -657,8 +681,10 @@
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
                         <Polygon Points="11.6,0.5 3.5,0.5 3.5,15.5 15.5,15.5 15.5,4.4" Fill="Transparent" />
-                        <Path Data="M11.803,0H3v5.5h1V1h7v4h4v10h-5v1h6V4.189L11.803,0zM12,1.588L14.373,4H12V1.588z" Fill="LightSlateGray"/>
-                        <Path Data="M0,15.5h7M2,13.5h6M2,11.5h7M1,9.5h8M0,7.5h7" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M11.803,0H3v5.5h1V1h7v4h4v10h-5v1h6V4.189L11.803,0zM12,1.588L14.373,4H12V1.588z"
+                              Fill="LightSlateGray" />
+                        <Path Data="M0,15.5h7M2,13.5h6M2,11.5h7M1,9.5h8M0,7.5h7" Stroke="LightSlateGray"
+                              StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>
@@ -691,13 +717,15 @@
             </Viewbox>
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.OpenNew}">
-           
-            <Viewbox   Stretch="Uniform">
+
+            <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
-                        <Rectangle Canvas.Left="0.5" Canvas.Top="4.5" Width="15" Height="11" Fill="Transparent" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="4.5" Width="15" Height="11" Fill="Transparent"
+                                   Stroke="LightSlateGray" StrokeThickness="1" />
                         <Line StartPoint="8.5, 4.5" EndPoint="16, 4.5" Stroke="#21B4C9" StrokeThickness="1" />
-                        <Rectangle Canvas.Left="0.5" Canvas.Top="1.5" Width="8" Height="3" Fill="#BEE2E5" Stroke="#21B4C9" StrokeThickness="1"    />
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="1.5" Width="8" Height="3" Fill="#BEE2E5"
+                                   Stroke="#21B4C9" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

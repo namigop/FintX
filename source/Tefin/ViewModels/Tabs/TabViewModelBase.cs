@@ -27,7 +27,16 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         this.CloseCommand = this.CreateCommand(this.OnClose);
         this.CloseAllCommand = this.CreateCommand(this.OnCloseAll);
         this.CloseAllOthersCommand = this.CreateCommand(this.OnCloseAllOthers);
+        this.OpenInWindowCommand = this.CreateCommand(this.OnOpenInWindow);
         GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
+    }
+
+    public ICommand OpenInWindowCommand { get; }
+
+    private void OnOpenInWindow() {
+        //close the tab but do not dispose it
+        GlobalHub.publish(new RemoveTabMessage(this));
+        GlobalHub.publish(new OpenChildWindowMessage(this));
     }
 
     private void OnCloseAll() {
@@ -73,7 +82,10 @@ public IExplorerItem ExplorerItem { get; }
 
     protected virtual Task OnClose() {
         GlobalHub.publish(new CloseTabMessage(this));
-        if (this.ExplorerItem is IDisposable d) d.Dispose();
+        // if (this.ExplorerItem is IDisposable d) {
+        //     d.Dispose();
+        // }
+
         this.Dispose();
 
         return Task.CompletedTask;

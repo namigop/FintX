@@ -22,7 +22,7 @@
 
             <Button Classes="ClearButtonStyle" Command="{Binding OpenCommand}"
                     ToolTip.Tip="Open in new tab">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
+                <controls:IconControl  Icon="{StaticResource Icon.OpenNew}" />
             </Button>
             <!-- <Button Classes="ClearButtonStyle" x:Name="btnDelete" ToolTip.Tip="delete this client"> -->
             <!-- -->
@@ -48,7 +48,7 @@
             <!--     <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl> -->
             <!-- </Button> -->
             <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.VerticalDots}" />
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
                     <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
                         <TextBlock Text="{Binding}" />

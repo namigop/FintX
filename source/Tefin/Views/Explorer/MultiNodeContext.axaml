@@ -25,7 +25,7 @@
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
+                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
                 <TextBlock Text="Export"></TextBlock>
             </StackPanel>
 

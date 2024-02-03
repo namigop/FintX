@@ -22,6 +22,15 @@ public class FileNode : NodeBase {
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
+        this.OpenMethodInWindowCommand = this.CreateCommand(this.OpenMethodInWindow);
+    }
+
+    public ICommand OpenMethodInWindowCommand { get; }
+
+    private void OpenMethodInWindow() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null)
+            GlobalHub.publish(new OpenChildWindowMessage(tab));
     }
 
     public DateTime LastWriteTime => base.Io.File.GetLastWriteTime(this.FullPath);

@@ -27,6 +27,13 @@ public sealed class MethodNode : NodeBase {
         this.OpenMethodCommand = this.CreateCommand(this.OnOpenMethod);
         this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
         this.ExportCommand = this.CreateCommand(this.OnExport);
+        this.OpenMethodInWindowCommand = this.CreateCommand(this.OnOpenMethodInWindow);
+    }
+
+    private void OnOpenMethodInWindow() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null)
+            GlobalHub.publish(new OpenChildWindowMessage(tab));
     }
 
     private async Task OnExport() {
@@ -49,6 +56,7 @@ public sealed class MethodNode : NodeBase {
     public ICommand NewRequestCommand { get; }
     public ICommand OpenMethodCommand { get; }
     public ICommand ExportCommand { get; }
+    public ICommand OpenMethodInWindowCommand { get; }
 
     public ClientMethodViewModelBase CreateViewModel() {
         return new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);

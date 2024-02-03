@@ -91,6 +91,14 @@
                                             <TextBlock Text="Close all tabs"></TextBlock>
                                         </StackPanel>
                                     </Button>
+                                    <Separator Classes="Horizontal" Width="200" />
+                                    <Button Classes="ClearButtonStyle ContextFlyout" 
+                                            utils:CloseFlyoutBehavior.CloseOnClick="True"
+                                            Command="{Binding OpenInWindowCommand}" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="Open in a window"></TextBlock>
+                                        </StackPanel>
+                                    </Button>
                                      
                                 </StackPanel>
                             </Flyout>

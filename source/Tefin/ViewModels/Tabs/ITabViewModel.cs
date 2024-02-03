@@ -13,7 +13,7 @@ public interface ITabViewModel {
     ICommand CloseCommand { get; }
     ICommand CloseAllOthersCommand { get; }
     ICommand CloseAllCommand { get; }
-
+    ICommand OpenInWindowCommand { get; }
     IExplorerItem ExplorerItem { get; }
     bool HasIcon { get; }
     string Icon { get; }

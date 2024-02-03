@@ -12,23 +12,32 @@
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
                 <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12.6"></Setter>
+                <Setter Property="FontSize" Value="13"></Setter>
                 <Setter Property="VerticalAlignment" Value="Center"></Setter>
             </Style>
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
-                ToolTip.Tip="Open in new tab">
+                ToolTip.Tip="Open in a tab">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
                 <TextBlock Text="Open in a tab"></TextBlock>
             </StackPanel>
         </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodInWindowCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Open in a new tab">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl  Icon="{StaticResource Icon.Window}" />
+                <TextBlock Text="Open in a window"></TextBlock>
+            </StackPanel>
+        </Button>
+        <Separator Classes="Horizontal" Width="200"></Separator>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding NewRequestCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Create a new request">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.FileReqNew}" />
+                <controls:IconControl  Icon="{StaticResource Icon.FileReqNew}" />
                 <TextBlock Text="New request"></TextBlock>
             </StackPanel>
         </Button>
@@ -36,7 +45,7 @@
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
+                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
                 <TextBlock Text="Export"></TextBlock>
             </StackPanel>
 

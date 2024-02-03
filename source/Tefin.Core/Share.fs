@@ -160,14 +160,14 @@ module Share =
       for entry: ZipArchiveEntry in zipArchive.Entries do
         let target = Path.Combine(project.Path, entry.FullName) |> Path.GetFullPath
         let dir = Path.GetDirectoryName target
+        io.Dir.CreateDirectory dir
         let ext = Path.GetExtension target
 
         if (io.File.Exists target) then
           if (allowMultiple ext) then
             let fileStart = Path.GetFileNameWithoutExtension target
             let newTarget = Utils.getAvailableFileName dir fileStart ext |> fun n -> Path.Combine(dir, n)
-
-            (io.Dir.CreateDirectory dir)
+            
             updated <- true
             entry.ExtractToFile(newTarget)
         else

@@ -19,7 +19,6 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase {
-
     public MainWindowViewModel() {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
@@ -29,7 +28,7 @@ public class MainWindowViewModel : ViewModelBase {
     }
 
     public FooterViewModel Footer { get; } = new();
-    public MainMenuViewModel MainMenu { get; }  
+    public MainMenuViewModel MainMenu { get; }
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
     public AppTypes.Root? Root { get; private set; }
@@ -39,6 +38,7 @@ public class MainWindowViewModel : ViewModelBase {
 
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
+    public HostWindowViewModel WindowHost { get; } = new();
     public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
     public ProjectMenuViewModel ProjectMenuViewModel { get; }
 
@@ -48,7 +48,7 @@ public class MainWindowViewModel : ViewModelBase {
         var projPath = this.ProjectMenuViewModel.SelectedProject.Path;
 
         var project = Project.loadProject(this.Io, projPath);
-        
+
         //var package = this.Root.Packages.First(t => t.Name == packageName);
         this.MainMenu.ClientMenuItem.Init(project);
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
@@ -86,7 +86,8 @@ public class MainWindowViewModel : ViewModelBase {
                 var uniqueMethods = methodsOfClient.DistinctBy(m => m.ClientMethod.MethodInfo.Name);
                 var methodParams = new List<AutoSave.MethodParam>();
                 foreach (var method in uniqueMethods) {
-                    var tabsForMethod = methodsOfClient.Where(m => m.ClientMethod.MethodInfo.Name == method.ClientMethod.MethodInfo.Name);
+                    var tabsForMethod = methodsOfClient.Where(m =>
+                        m.ClientMethod.MethodInfo.Name == method.ClientMethod.MethodInfo.Name);
                     var fileParams = new List<AutoSave.FileParam>();
                     foreach (var tab in tabsForMethod) {
                         var json = tab.GetRequestContent();

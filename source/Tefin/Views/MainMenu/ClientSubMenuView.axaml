@@ -18,14 +18,14 @@
         </StackPanel.Styles>
         <Button Command="{Binding AddClientCommand}" Classes="MenuButton" ToolTip.Tip="Create a new gRPC Client">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Plus}" Height="18" Width="18"/>
+                <controls:IconControl Icon="{StaticResource Icon.Plus}" />
                 <TextBlock Text="Add client"></TextBlock>
             </StackPanel>
         </Button>
         <Separator></Separator>
         <Button Command="{Binding ImportCommand}" Classes="MenuButton" ToolTip.Tip="Import *.zip">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.DataImport}" Height="18" Width="18"/>
+                <controls:IconControl Icon="{StaticResource Icon.DataImport}" />
                 <TextBlock Text="Import"></TextBlock>
             </StackPanel>
         </Button>

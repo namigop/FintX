@@ -64,11 +64,11 @@
                     </Button>
                     <Separator Background="DimGray" Height="1" Margin="6" />
                     <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file"
-                            IsEnabled="{Binding !CanStop}"
+                            IsEnabled="{Binding !IsBusy}"
                             HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.Export}" />
                     </Button>
-                    <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !CanStop}"
+                    <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !IsBusy}"
                             ToolTip.Tip="open a saved request (*.fxrq) file" HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.Import}" />
                     </Button>

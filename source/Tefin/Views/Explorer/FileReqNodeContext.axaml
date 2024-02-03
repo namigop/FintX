@@ -28,6 +28,16 @@
                 <TextBlock Text="Open in a tab"></TextBlock>
             </StackPanel>
         </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodInWindowCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Open in a new tab">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl  Icon="{StaticResource Icon.Window}" />
+                <TextBlock Text="Open in a window"></TextBlock>
+            </StackPanel>
+        </Button>
+        <Separator Classes="Horizontal" Width="200"></Separator>
+        
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding RenameCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Rename this file">
@@ -41,7 +51,7 @@
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.DataExport}" />
+                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
                 <TextBlock Text="Export"></TextBlock>
             </StackPanel>
         </Button>
