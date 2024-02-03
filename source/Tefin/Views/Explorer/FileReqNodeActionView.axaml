@@ -22,20 +22,17 @@
 
             <Button Classes="ClearButtonStyle" Command="{Binding OpenCommand}"
                     ToolTip.Tip="Open in new tab">
-                <controls:IconControl  Icon="{StaticResource Icon.OpenNew}" />
+                <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
             </Button>
-            
+
             <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
                 <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
-                    <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
-                        <TextBlock Text="{Binding}" />
-                    </DataTemplate>
                 </Button.Resources>
                 <Button.Flyout>
-                     <Flyout>
-                         <explorer1:FileReqNodeContext />
-                     </Flyout>
+                    <Flyout>
+                        <explorer1:FileReqNodeContext />
+                    </Flyout>
                 </Button.Flyout>
             </Button>
 

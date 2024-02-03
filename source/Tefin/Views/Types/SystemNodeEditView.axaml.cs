@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class SystemNodeEditView : UserControl {
-
-    public SystemNodeEditView() {
-        this.InitializeComponent();
-    }
+    public SystemNodeEditView() => this.InitializeComponent();
 }

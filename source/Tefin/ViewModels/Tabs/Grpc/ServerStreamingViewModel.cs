@@ -31,9 +31,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged);
     }
 
-    public bool CanStop {
-        get => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
+    public bool CanStop => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -65,29 +63,17 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.ReqViewModel.GetRequestContent();
 
-    public override void ImportRequest(string requestFile) {
-        this.ReqViewModel.ImportRequestFile(requestFile);
-    }
+    public override void ImportRequest(string requestFile) => this.ReqViewModel.ImportRequestFile(requestFile);
 
-    public override void Init() {
-        this.ReqViewModel.Init();
-    }
+    public override void Init() => this.ReqViewModel.Init();
 
-    private void OnCanReadChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
+    private void OnCanReadChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
 
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
+    private async Task OnExportRequest() => await this.ReqViewModel.ExportRequest();
 
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
+    private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
 
     private async Task OnStart() {
         this.IsBusy = true;

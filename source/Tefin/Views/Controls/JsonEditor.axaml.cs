@@ -19,7 +19,6 @@ using Tefin.Utils;
 namespace Tefin.Views.Controls;
 
 public partial class JsonEditor : UserControl {
-
     public static readonly StyledProperty<bool> IsReadOnlyProperty =
         AvaloniaProperty.Register<JsonEditor, bool>(
             "IsReadOnly",
@@ -30,7 +29,7 @@ public partial class JsonEditor : UserControl {
             OnCoerceIsReadOnly);
 
     public static readonly StyledProperty<string> TextProperty =
-            AvaloniaProperty.Register<JsonEditor, string>(
+        AvaloniaProperty.Register<JsonEditor, string>(
             "Text",
             "",
             false,
@@ -46,14 +45,10 @@ public partial class JsonEditor : UserControl {
 
     public JsonEditor() {
         this.InitializeComponent();
-        this.Editor.Document = new TextDocument {
-            Text = ""
-        };
+        this.Editor.Document = new TextDocument { Text = "" };
         this.Editor.TextChanged += this.OnTextChanged;
         this._folding = new CharFoldingStrategy('{', '}');
-        this._foldingTimer = new DispatcherTimer {
-            Interval = TimeSpan.FromSeconds(1)
-        };
+        this._foldingTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
         this._foldingTimer.Tick += this.FoldingTimer_Tick;
         this._foldingTimer.IsEnabled = false;
 
@@ -90,11 +85,13 @@ public partial class JsonEditor : UserControl {
     }
 
     private void FoldingTimer_Tick(object? sender, EventArgs e) {
-        if (this._foldingManager == null)
+        if (this._foldingManager == null) {
             this._foldingManager = FoldingManager.Install(this.Editor.TextArea);
+        }
 
-        if (this._foldingManager != null && this.Editor.Document.TextLength > 0)
+        if (this._foldingManager != null && this.Editor.Document.TextLength > 0) {
             this._folding.UpdateFoldings(this._foldingManager, this.Editor.Document);
+        }
     }
 
     private void JsonTextEditor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e) {
@@ -104,9 +101,7 @@ public partial class JsonEditor : UserControl {
         t.Editor.TextChanged -= this.OnTextChanged;
     }
 
-    private void OnTextChanged(object? sender, EventArgs e) {
-        this.Text = this.Editor.Text;
-    }
+    private void OnTextChanged(object? sender, EventArgs e) => this.Text = this.Editor.Text;
 
     private void SetupSyntaxHighlighting() {
         using var resource =

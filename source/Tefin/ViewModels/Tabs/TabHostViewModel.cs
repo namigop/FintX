@@ -26,13 +26,6 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage);
     }
 
-    private async Task OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
-        var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
-        foreach (var tab in tabs)
-            if (tab != arg.Tab)
-                await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
-    }
-
     public ObservableCollection<ITabViewModel> Items { get; } = new();
 
     public ITabViewModel? SelectedItem {
@@ -40,10 +33,20 @@ public class TabHostViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
     }
 
+    private async Task OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
+        var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
+        foreach (var tab in tabs) {
+            if (tab != arg.Tab) {
+                await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
+            }
+        }
+    }
+
     private async Task OnReceiveCloseAllTabsMessage(CloseAllTabsMessage arg) {
         var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
-        foreach (var tab in tabs)
+        foreach (var tab in tabs) {
             await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
+        }
     }
 
     private async Task OnReceiveFileChangeMessage(FileChangeMessage msg) {
@@ -62,7 +65,7 @@ public class TabHostViewModel : ViewModelBase {
         }
     }
 
-    private async Task RemoveTab(ITabViewModel tab) {
+    private async Task RemoveTab(ITabViewModel tab) =>
         await Dispatcher.UIThread.InvokeAsync(() => {
             if (this.Items.Count > 1) {
                 if (this.SelectedItem == tab) {
@@ -72,10 +75,9 @@ public class TabHostViewModel : ViewModelBase {
 
             this.Items.Remove(tab);
         });
-    }
-    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) {
-        await this.RemoveTab(obj.Tab);
-    }
+
+    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) => await this.RemoveTab(obj.Tab);
+
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
         await this.RemoveTab(obj.Tab);
         obj.Tab.CloseCommand.Execute(Unit.Default);

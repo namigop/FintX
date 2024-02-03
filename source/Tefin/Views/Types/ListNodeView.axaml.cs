@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class ListNodeView : UserControl {
-
-    public ListNodeView() {
-        this.InitializeComponent();
-    }
+    public ListNodeView() => this.InitializeComponent();
 }

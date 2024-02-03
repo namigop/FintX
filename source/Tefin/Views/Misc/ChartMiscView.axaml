@@ -21,7 +21,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="{Binding ClientName}" VerticalAlignment="Center" />
                                 <TextBlock Text="/" VerticalAlignment="Center" />
-                                <controls:IconControl Icon="{StaticResource Icon.Method}" Margin="2 0 0 0"/>
+                                <controls:IconControl Icon="{StaticResource Icon.Method}" Margin="2 0 0 0" />
                                 <TextBlock Text="{Binding Method}" Margin="2 0 0 0" VerticalAlignment="Center" />
                             </StackPanel>
                         </DataTemplate>

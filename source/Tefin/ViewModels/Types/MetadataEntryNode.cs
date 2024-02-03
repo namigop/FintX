@@ -13,7 +13,8 @@ public sealed class MetadataEntryNode : TypeBaseNode {
     private readonly object _index;
     private readonly Metadata _metadata;
 
-    public MetadataEntryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public MetadataEntryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
+        name, type, propInfo, instance, parent) {
         this._metadata = (Metadata)parent!.Value!;
         this._entry = (Metadata.Entry)instance!;
         this._index = this._metadata.IndexOf(this._entry);
@@ -21,9 +22,7 @@ public sealed class MetadataEntryNode : TypeBaseNode {
         this.Key = "";
     }
 
-    public override string FormattedValue {
-        get => this._entry.Value;
-    }
+    public override string FormattedValue => this._entry.Value;
 
     public string Key { get; set; }
     public int TargetListItemsCount { get; set; }
@@ -34,9 +33,11 @@ public sealed class MetadataEntryNode : TypeBaseNode {
         //Create child nodes Key and Value that when edited will change the Key and EntryValue properties of this
         //MetadataEntryNode.  This is different from how the other nodes work!
         TypeInfo? keyPropInfo = new(typeof(MetadataEntryNode).GetProperty("Key")!);
-        var keyNode = TypeNodeBuilder.Create("Key", typeof(string), keyPropInfo, new Dictionary<string, int>(), this.Key, this);
+        var keyNode = TypeNodeBuilder.Create("Key", typeof(string), keyPropInfo, new Dictionary<string, int>(),
+            this.Key, this);
         TypeInfo? entryValuePropInfo = new(typeof(MetadataEntryNode).GetProperty(nameof(this.FormattedValue))!);
-        var valueNode = TypeNodeBuilder.Create("Value", typeof(string), entryValuePropInfo, new Dictionary<string, int>(), this.FormattedValue, this);
+        var valueNode = TypeNodeBuilder.Create("Value", typeof(string), entryValuePropInfo,
+            new Dictionary<string, int>(), this.FormattedValue, this);
 
         this.Items.Add(keyNode);
         this.Items.Add(valueNode);

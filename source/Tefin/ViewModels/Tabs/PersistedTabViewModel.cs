@@ -4,11 +4,10 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public abstract class PersistedTabViewModel : TabViewModelBase {
-
     protected PersistedTabViewModel(IExplorerItem item) : base(item) {
     }
 
-    public override bool CanAutoSave { get => true; }
+    public override bool CanAutoSave => true;
     public abstract ProjectTypes.ClientGroup Client { get; }
 
     public abstract ClientMethodViewModelBase ClientMethod { get; }

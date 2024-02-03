@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:Tefin.Views.Controls"
-        xmlns:projectEnv="clr-namespace:Tefin.Views.ProjectEnv"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Tefin.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -46,16 +45,17 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Height="44" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
             <StackPanel VerticalAlignment="Center">
-                <ContentControl Content="{Binding ProjectMenuViewModel}"  />
+                <ContentControl Content="{Binding ProjectMenuViewModel}" />
             </StackPanel>
-            
+
             <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
-                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18"  Width="18" VerticalAlignment="Center"
-                                      ToolTip.Tip="{Binding SubTitle}"/>
+                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18"
+                                      VerticalAlignment="Center"
+                                      ToolTip.Tip="{Binding SubTitle}" />
                 <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" VerticalAlignment="Center"
                            HorizontalAlignment="Center" Margin="10 0 0 0" />
             </StackPanel>
-          
+
         </StackPanel>
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4"
                     VerticalAlignment="Center" HorizontalAlignment="{Binding SponsorAlignment}" Margin="10 0 10 0">

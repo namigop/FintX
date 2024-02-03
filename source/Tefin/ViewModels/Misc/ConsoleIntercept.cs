@@ -50,16 +50,18 @@ public class ConsoleIntercept : TextWriter {
     }
 
     public override void WriteLine(string? value) {
-        if (string.IsNullOrEmpty(value))
+        if (string.IsNullOrEmpty(value)) {
             return;
+        }
 
         this._sb.AppendLine(value);
         this.Sync();
     }
 
     private void Sync() {
-        if (this.TextEditor == null)
+        if (this.TextEditor == null) {
             return;
+        }
 
         Dispatcher.UIThread.Post(() => {
             lock (Console.Out) {

@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Explorer;
 
 public partial class FolderNodeView : UserControl {
-
-    public FolderNodeView() {
-        this.InitializeComponent();
-    }
+    public FolderNodeView() => this.InitializeComponent();
 }

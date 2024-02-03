@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Explorer.MethodNodeView">
     <StackPanel Orientation="Horizontal">
         <Border>
-          <controls:IconControl Icon="{StaticResource Icon.Method}" Width="16" Height="16" />
+            <controls:IconControl Icon="{StaticResource Icon.Method}" Width="16" Height="16" />
         </Border>
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" VerticalAlignment="Center" />
     </StackPanel>

@@ -1,21 +1,13 @@
-﻿using System.Windows.Input;
-
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 namespace Tefin.Utils;
 
 public class CloseFlyoutBehavior : AvaloniaObject {
-    static CloseFlyoutBehavior() {
-        CloseOnClickProperty.Changed.AddClassHandler<Interactive>(HandleCloseChanged);
-    }
-
     public static readonly AttachedProperty<bool> CloseOnClickProperty =
         AvaloniaProperty.RegisterAttached<CloseFlyoutBehavior, Interactive, bool>(
             "CloseOnClick", false, false, BindingMode.OneTime);
@@ -24,32 +16,33 @@ public class CloseFlyoutBehavior : AvaloniaObject {
         AvaloniaProperty.RegisterAttached<CloseFlyoutBehavior, Interactive, FlyoutBase?>(
             "Flyout");
 
+    static CloseFlyoutBehavior() => CloseOnClickProperty.Changed.AddClassHandler<Interactive>(HandleCloseChanged);
+
 
     private static void HandleCloseChanged(Interactive interactElem, AvaloniaPropertyChangedEventArgs args) {
-        
         static bool HasContextFlyout(Control c) {
             var prop = c.GetType().GetProperty("ContextFlyout");
             if (prop != null) {
                 var fly = prop.GetValue(c);
-                return (fly != null);
+                return fly != null;
             }
 
             return false;
         }
-        
+
         static bool HasFlyout(Control c) {
             var prop = c.GetType().GetProperty("Flyout");
             if (prop != null) {
                 var fly = prop.GetValue(c);
-                return (fly != null);
+                return fly != null;
             }
 
             return false;
         }
-        
+
         void Handler(object s, RoutedEventArgs e) {
             if (s is Interactive interactElem) {
-                bool close = interactElem.GetValue(CloseOnClickProperty);
+                var close = interactElem.GetValue(CloseOnClickProperty);
                 if (close) {
                     var flyout = interactElem.GetValue(FlyoutProperty);
                     if (interactElem is StyledElement elem) {
@@ -59,6 +52,7 @@ public class CloseFlyoutBehavior : AvaloniaObject {
                                 flyout = tg.ContextFlyout;
                             }
                         }
+
                         if (flyout == null) {
                             var tg = elem.FindParent<ContentControl>(HasFlyout);
                             if (tg != null) {
@@ -67,11 +61,9 @@ public class CloseFlyoutBehavior : AvaloniaObject {
                             }
                         }
                     }
-                    
+
                     flyout?.Hide();
                 }
-
-
             }
         }
 
@@ -83,19 +75,12 @@ public class CloseFlyoutBehavior : AvaloniaObject {
         }
     }
 
-    public static void SetCloseOnClick(AvaloniaObject element, bool close) {
+    public static void SetCloseOnClick(AvaloniaObject element, bool close) =>
         element.SetValue(CloseOnClickProperty, close);
-    }
 
-    public static bool GetCloseOnClick(AvaloniaObject element) {
-        return element.GetValue(CloseOnClickProperty);
-    }
+    public static bool GetCloseOnClick(AvaloniaObject element) => element.GetValue(CloseOnClickProperty);
 
-    public static void SetFlyout(AvaloniaObject element, bool close) {
-        element.SetValue(FlyoutProperty, close);
-    }
+    public static void SetFlyout(AvaloniaObject element, bool close) => element.SetValue(FlyoutProperty, close);
 
-    public static FlyoutBase? GetFlyout(AvaloniaObject element) {
-        return element.GetValue(FlyoutProperty);
-    }
+    public static FlyoutBase? GetFlyout(AvaloniaObject element) => element.GetValue(FlyoutProperty);
 }

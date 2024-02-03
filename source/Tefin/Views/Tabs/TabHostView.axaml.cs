@@ -14,10 +14,7 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.Views.Tabs;
 
 public partial class TabHostView : UserControl {
-
-    public TabHostView() {
-        this.InitializeComponent();
-    }
+    public TabHostView() => this.InitializeComponent();
 
     private void CancelButtonClick(object? sender, RoutedEventArgs e) {
         if (sender is StyledElement element) {

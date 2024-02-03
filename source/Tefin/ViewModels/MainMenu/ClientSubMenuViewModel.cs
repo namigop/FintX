@@ -1,7 +1,6 @@
 #region
 
 using System.Reactive;
-using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 using Tefin.Core;
@@ -25,6 +24,9 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
         this.ImportCommand = this.CreateCommand(this.OnImport);
     }
 
+    public ICommand AddClientCommand { get; }
+    public ICommand ImportCommand { get; }
+
     private async Task OnImport() {
         var fileExtensions = new[] { $"*{Ext.zipExt}" };
         var fileTitle = "FintX (*.zip)";
@@ -38,7 +40,7 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
                 if (clientNode == null) {
                     var loadProj = new LoadProjectFeature(this.Io, project!.Path);
                     project = loadProj.Run();
-                        
+
                     var cg = project.Clients.First(t => t.Name == clientName);
                     clientNode = this._explorerViewModel.AddClientNode(cg);
                 }
@@ -46,13 +48,9 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
                 if (!clientNode!.IsLoaded) {
                     clientNode.CompileClientTypeCommand.Execute(Unit.Default);
                 }
-
             }
         }
     }
-
-    public ICommand AddClientCommand { get; }
-    public ICommand ImportCommand { get; }
 
     private void OnAddClient() {
         AddGrpcServiceOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);

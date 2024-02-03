@@ -9,16 +9,15 @@ namespace Tefin.ViewModels.Types;
 public class ExceptionNode : TypeBaseNode {
     private string _message;
 
-    public ExceptionNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ExceptionNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
+        name, type, propInfo, instance, parent) {
         this._message = "";
         if (instance is Exception exc) {
             this.Message = exc.Message;
         }
     }
 
-    public override string FormattedValue {
-        get => this.Value == null ? "null" : this.Message;
-    }
+    public override string FormattedValue => this.Value == null ? "null" : this.Message;
 
     public string Message {
         get => this._message;

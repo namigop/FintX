@@ -21,7 +21,6 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -29,7 +28,8 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         this.MethodInfo = methodInfo;
         this.MethodTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
+                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate",
+                        "CellEditTemplate", //edittemplate
                         new GridLength(1, GridUnitType.Star)),
                     x => x.Items,
                     x => x.Items.Any(),
@@ -40,27 +40,26 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         this.Items.Add(new EmptyNode());
     }
 
+    public ObservableCollection<IExplorerItem> Items { get; } = new();
+
+    public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
+
     public CancellationTokenSource? CtsReq {
         get;
         private set;
     }
 
-    public ObservableCollection<IExplorerItem> Items { get; } = new();
-
     public MethodInfo MethodInfo {
         get;
     }
 
-    public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
-
-    public void EndRequest() {
-        this.CtsReq = null;
-    }
+    public void EndRequest() => this.CtsReq = null;
 
     //public List<object?> MethodParameterInstances { get; }
     public (bool, object?[]) GetParameters() {
-        if (this.Items.Count == 0 || this.Items[0].Items.Count == 0)
+        if (this.Items.Count == 0 || this.Items[0].Items.Count == 0) {
             return (false, Array.Empty<object?>());
+        }
 
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
@@ -85,9 +84,12 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         var counter = 0;
         foreach (var paramInfo in methodParams) {
-            var instance = hasValues ? parameters[counter] : TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0).Item2;
+            var instance = hasValues
+                ? parameters[counter]
+                : TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0).Item2;
             var typeInfo = new TypeInfo(paramInfo, instance);
-            var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo, new Dictionary<string, int>(), instance, null);
+            var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo,
+                new Dictionary<string, int>(), instance, null);
             paramNode.Init();
             methodNode.Items.Add(paramNode);
             counter += 1;

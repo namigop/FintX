@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class DoubleEditorView : UserControl {
-
-    public DoubleEditorView() {
-        this.InitializeComponent();
-    }
+    public DoubleEditorView() => this.InitializeComponent();
 }

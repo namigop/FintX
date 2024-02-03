@@ -11,7 +11,6 @@ using Tefin.Grpc.Execution;
 namespace Tefin.Features;
 
 public class CallUnaryFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
-
     public async Task<(bool, ResponseUnary)> Run() {
         var (success, resp) = await CallUnary.run(io, mi, mParams, cfg);
         return (success, resp);

@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class ResponseStreamNodeEditView : UserControl {
-
-    public ResponseStreamNodeEditView() {
-        this.InitializeComponent();
-    }
+    public ResponseStreamNodeEditView() => this.InitializeComponent();
 }

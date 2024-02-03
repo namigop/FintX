@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Tabs.Grpc.UnaryView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, 8, *" ColumnDefinitions="*, Auto, *">
-           
+
             <!-- <Grid Grid.Row="0" Grid.Column="2"> -->
             <!--     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"> -->
             <!--         ~1~ <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" /> @1@ -->
@@ -77,8 +77,8 @@
                     <!--               OnContent="" OffContent="" -->
                     <!--               Margin="0 0 0 0" /> -->
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
-                       <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}"></controls:IconControl>
-                        
+                        <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
+
                     </ToggleButton>
                 </StackPanel>
             </controls:MovableBorder>

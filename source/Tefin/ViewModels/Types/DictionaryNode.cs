@@ -9,7 +9,6 @@ using Google.Protobuf.Collections;
 namespace Tefin.ViewModels.Types;
 
 public class DictionaryNode : ListNode {
-
     //private int listItemsCount;
     private readonly object _internalList;
 
@@ -20,13 +19,15 @@ public class DictionaryNode : ListNode {
     private readonly ListTypeMethod _listMethods;
     //private readonly ListTypeMethod _listMethods;
 
-    public DictionaryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public DictionaryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
+        name, type, propInfo, instance, parent) {
         var listType = typeof(ListOfPairs<,>);
         var typeArgs = type.GetGenericArguments();
         var constructedListType = listType.MakeGenericType(typeArgs);
         this._listMethods = ListTypeMethod.GetMethods(constructedListType);
         this._itemType = typeof(Pair<,>).MakeGenericType(typeArgs);
-        this._internalList = ToListOfPairs(constructedListType, instance)!; // Activator.CreateInstance(constructedListType);
+        this._internalList =
+            ToListOfPairs(constructedListType, instance)!; // Activator.CreateInstance(constructedListType);
         this._internalListType = constructedListType;
 
         this.FormattedTypeName = $"{{dict<{typeArgs[0].Name},{typeArgs[1].Name}>}}";
@@ -36,31 +37,23 @@ public class DictionaryNode : ListNode {
     public override string FormattedTypeName { get; }
 
     public static object? ToListOfPairs(Type lpType, object? dict) {
-        if (dict == null)
+        if (dict == null) {
             return null;
+        }
 
         var lpInstance = Activator.CreateInstance(lpType);
         var fromDictionary = lpType.GetMethod("FromDictionary", BindingFlags.Public | BindingFlags.Instance);
-        fromDictionary!.Invoke(lpInstance, new[] {
-            dict
-        });
+        fromDictionary!.Invoke(lpInstance, new[] { dict });
         return lpInstance;
     }
 
-    protected override Type GetItemType() {
-        return this._itemType;
-    }
+    protected override Type GetItemType() => this._itemType;
 
-    protected override object GetListInstance() {
-        return this._internalList;
-    }
+    protected override object GetListInstance() => this._internalList;
 
-    protected override ListTypeMethod GetMethods() {
-        return this._listMethods;
-    }
+    protected override ListTypeMethod GetMethods() => this._listMethods;
 
     public class ListOfPairs<K, V> : List<Pair<K, V>> where K : notnull {
-
         public void FromDictionary(Dictionary<K, V> source) {
             this.Clear();
             foreach (var i in source) {
@@ -77,14 +70,18 @@ public class DictionaryNode : ListNode {
 
         public IDictionary<K, V> ToDictionary() {
             var d = new Dictionary<K, V>();
-            foreach (var k in this) d[k.Key] = k.Value;
+            foreach (var k in this) {
+                d[k.Key] = k.Value;
+            }
 
             return d;
         }
 
         public MapField<K, V> ToMapField() {
             var d = new MapField<K, V>();
-            foreach (var k in this) d[k.Key] = k.Value;
+            foreach (var k in this) {
+                d[k.Key] = k.Value;
+            }
 
             return d;
         }

@@ -9,10 +9,9 @@ public class NodeContextLocator : IDataTemplate {
     private static readonly Dictionary<Type, Type> Mapping = new();
 
     public Control Build(object? data) {
-        if (data == null)
-            return new TextBlock {
-                Text = "data cannot be null"
-            };
+        if (data == null) {
+            return new TextBlock { Text = "data cannot be null" };
+        }
 
         var sourceType = data.GetType();
         if (Mapping.TryGetValue(sourceType, out var value)) {
@@ -29,10 +28,8 @@ public class NodeContextLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new Border() { Height = 0 };
+        return new Border { Height = 0 };
     }
 
-    public bool Match(object? data) {
-        return data is NodeBase;
-    }
+    public bool Match(object? data) => data is NodeBase;
 }

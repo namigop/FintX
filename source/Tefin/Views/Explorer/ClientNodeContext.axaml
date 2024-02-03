@@ -11,14 +11,14 @@
     <StackPanel>
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
-                <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12.6"></Setter>
-                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Margin" Value="8 0 0 0 " />
+                <Setter Property="FontSize" Value="12.6" />
+                <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
             <!-- <Style Selector="Button"> -->
             <!--     <Setter Property="HorizontalAlignment" Value="Stretch"></Setter> -->
             <!-- </Style> -->
-                
+
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout"
                 IsVisible="{Binding !IsLoaded}"
@@ -26,29 +26,28 @@
                 Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
-                <TextBlock Text="Compile"></TextBlock>
+                <TextBlock Text="Compile" />
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenClientConfigCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="open client config">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
-                <TextBlock Text="Config"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.Config}" />
+                <TextBlock Text="Config" />
             </StackPanel>
-        
+
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
-                <TextBlock Text="Export"></TextBlock>
+                <TextBlock Text="Export" />
             </StackPanel>
 
         </Button>
-        <Separator  Classes="Horizontal" Width="200">
-        </Separator>
+        <Separator Classes="Horizontal" Width="200" />
         <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete"
                 IsVisible="{Binding IsSelected}"
                 ToolTip.Tip="delete this client">
@@ -73,8 +72,8 @@
                 </Flyout>
             </Button.Flyout>
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
-                <TextBlock Text="Delete"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.Delete}" />
+                <TextBlock Text="Delete" />
 
             </StackPanel>
         </Button>

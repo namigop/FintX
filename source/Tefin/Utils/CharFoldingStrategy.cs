@@ -8,7 +8,6 @@ using AvaloniaEdit.Folding;
 namespace Tefin.Utils;
 
 public class CharFoldingStrategy(char openingChar, char closingChar) {
-
     /// <summary>
     ///     Creates a new BraceFoldingStrategy.
     /// </summary>
@@ -56,7 +55,9 @@ public class CharFoldingStrategy(char openingChar, char closingChar) {
             else if (c == closingBrace && startOffsets.Count > 0) {
                 var startOffset = startOffsets.Pop();
                 // don't fold if opening and closing brace are on the same line
-                if (startOffset < lastNewLineOffset) newFoldings.Add(new NewFolding(startOffset, i + 1));
+                if (startOffset < lastNewLineOffset) {
+                    newFoldings.Add(new NewFolding(startOffset, i + 1));
+                }
             }
             else if (c == '\n' || c == '\r') {
                 lastNewLineOffset = i + 1;

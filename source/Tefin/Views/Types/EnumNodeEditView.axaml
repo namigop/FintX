@@ -21,7 +21,7 @@
     <!-- </UserControl.ContextFlyout> -->
     <StackPanel Orientation="Horizontal" x:Name="panel">
         <Border>
-           <controls:IconControl Icon="{StaticResource Icon.EditType}" Height="16" Width="16"/>
+            <controls:IconControl Icon="{StaticResource Icon.EditType}" Height="16" Width="16" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="Title" />

@@ -1,11 +1,7 @@
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace Tefin.Views.Explorer;
 
 public partial class MethodNodeContext : UserControl {
-    public MethodNodeContext() {
-        InitializeComponent();
-    }
+    public MethodNodeContext() => this.InitializeComponent();
 }

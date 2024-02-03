@@ -46,24 +46,29 @@ public class TypeInfo : ITypeInfo {
     }
 
     public object? GetValue(object parent) {
-        if (this._paramInfo != null)
+        if (this._paramInfo != null) {
             return this._paramInstance;
+        }
 
-        if (this.FieldInfo != null)
+        if (this.FieldInfo != null) {
             return this.FieldInfo.GetValue(parent)!;
+        }
 
         return this.PropertyInfo!.GetValue(parent);
     }
 
     public virtual void SetValue(object parentInstance, object? value) {
-        if (this._paramInfo != null)
+        if (this._paramInfo != null) {
             this._paramInstance = value;
+        }
         //throw new Exception("Unable to call SetValue(...) on a ParameterInfo");
 
-        if (this.FieldInfo != null && this.FieldInfo.IsPublic)
+        if (this.FieldInfo != null && this.FieldInfo.IsPublic) {
             this.FieldInfo.SetValue(parentInstance, value);
+        }
 
-        if (this.PropertyInfo != null && this.PropertyInfo.CanWrite)
+        if (this.PropertyInfo != null && this.PropertyInfo.CanWrite) {
             this.PropertyInfo.SetValue(parentInstance, value);
+        }
     }
 }

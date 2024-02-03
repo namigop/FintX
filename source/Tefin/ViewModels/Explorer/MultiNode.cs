@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 using AvaloniaEdit.Utils;
@@ -10,35 +9,38 @@ namespace Tefin.ViewModels.Explorer;
 
 public class MultiNode : NodeBase {
     private readonly ProjectTypes.ClientGroup _client;
+
     public MultiNode(IExplorerItem[] items) {
         this._client = items[0].FindParentNode<ClientNode>()!.Client;
         this.Items.AddRange(items);
-        this.DeleteCommand = this.CreateCommand(OnDelete);
-        this.ExportCommand = this.CreateCommand(OnExport);
+        this.DeleteCommand = this.CreateCommand(this.OnDelete);
+        this.ExportCommand = this.CreateCommand(this.OnExport);
     }
 
     public ICommand ExportCommand {
         get;
-        
     }
+
+    public ICommand DeleteCommand { get; }
 
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipFile = await share.GetZipFile();
-        if (string.IsNullOrEmpty(zipFile))
+        if (string.IsNullOrEmpty(zipFile)) {
             return;
-        
+        }
+
         var files = this.Items
             .Where(c => c is FileNode)
             .Select(t => ((FileNode)t).FullPath)
             .ToArray();
-            
+
         var result = share.ShareRequests(this.Io, zipFile, files, this._client);
         if (result.IsOk) {
-            Io.Log.Info($"Export created: {zipFile}");
+            this.Io.Log.Info($"Export created: {zipFile}");
         }
         else {
-            Io.Log.Error(result.ErrorValue);
+            this.Io.Log.Error(result.ErrorValue);
         }
     }
 
@@ -46,12 +48,11 @@ public class MultiNode : NodeBase {
         var files = this.Items
             .Where(c => c is FileNode)
             .Select(t => ((FileNode)t).FullPath);
-            
-        foreach (var file in files)
+
+        foreach (var file in files) {
             this.Io.File.Delete(file);
+        }
     }
 
-    public ICommand DeleteCommand { get; }
-
-    public override void Init(){}
+    public override void Init() { }
 }

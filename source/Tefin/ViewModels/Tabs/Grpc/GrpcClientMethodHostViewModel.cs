@@ -16,14 +16,19 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public GrpcClientMethodHostViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi) {
         var type = GrpcMethod.getMethodType(mi);
-        if (type == MethodType.Unary)
+        if (type == MethodType.Unary) {
             this.CallType = new UnaryViewModel(mi, cg);
-        else if (type == MethodType.ServerStreaming)
+        }
+        else if (type == MethodType.ServerStreaming) {
             this.CallType = new ServerStreamingViewModel(mi, cg);
-        else if (type == MethodType.ClientStreaming)
+        }
+        else if (type == MethodType.ClientStreaming) {
             this.CallType = new ClientStreamingViewModel(mi, cg);
-        else
+        }
+        else {
             this.CallType = new DuplexStreamingViewModel(mi, cg);
+        }
+
         this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
         ;
     }
@@ -36,13 +41,9 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
         this.CallType.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.CallType.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.CallType.GetRequestContent();
 
-    public override void ImportRequestFile(string requestFile) {
-        this._importFile = requestFile;
-    }
+    public override void ImportRequestFile(string requestFile) => this._importFile = requestFile;
 
     public void Init() {
         this.CallType.Init();

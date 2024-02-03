@@ -28,9 +28,7 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
     } = listType;
 
     public void AddItem(object instance) {
-        this._addMethod.Invoke(this._listInstance, new[] {
-            instance
-        });
+        this._addMethod.Invoke(this._listInstance, new[] { instance });
         var jsonInstance = Instance.indirectSerialize(this._listItemType, instance);
         var startIndex = this.Json.Length - 1;
         var endPos = this.Json.LastIndexOf(']', startIndex);
@@ -38,9 +36,7 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
         this.Json = this._json.Insert(endPos, $"{begin}{Environment.NewLine}{jsonInstance}{Environment.NewLine}");
     }
 
-    public void Clear() {
-        this.Json = "";
-    }
+    public void Clear() => this.Json = "";
 
     public (bool, object) GetList() {
         try {
@@ -54,8 +50,9 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
 
     public IEnumerable<object> GetListItems() {
         dynamic list = Instance.indirectDeserialize(this.ListType, this._json);
-        foreach (var i in list)
+        foreach (var i in list) {
             yield return i;
+        }
     }
 
     public void Show(object listInstance) {

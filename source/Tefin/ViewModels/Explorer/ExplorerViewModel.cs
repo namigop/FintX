@@ -9,8 +9,6 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 using ReactiveUI;
 
 using Tefin.Core;
@@ -31,9 +29,8 @@ using Type = System.Type;
 namespace Tefin.ViewModels.Explorer;
 
 public class ExplorerViewModel : ViewModelBase {
-    private CopyPasteArg? _copyPastePending;
-
     private readonly IExplorerNodeSelectionStrategy _nodeSelectionStrategy;
+    private CopyPasteArg? _copyPastePending;
     private ProjectTypes.Project? _project;
 
     public ExplorerViewModel() {
@@ -78,6 +75,8 @@ public class ExplorerViewModel : ViewModelBase {
     }
 
     private ObservableCollection<IExplorerItem> Items { get; } = new();
+
+    public IExplorerItem? SelectedItem { get; set; }
 
     public ClientNode AddClientNode(ClientGroup cg, Type? type = null) {
         var clientNode = new ClientNode(cg, type);
@@ -136,7 +135,6 @@ public class ExplorerViewModel : ViewModelBase {
             var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
             GlobalHub.publish(new OpenOverlayMessage(overlay));
         }
-
     }
 
     private void OnClientCompile(ClientCompileMessage message) => this.IsBusy = message.InProgress;
@@ -295,7 +293,7 @@ public class ExplorerViewModel : ViewModelBase {
             }
         });
 
-    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) =>
         this.Exec(() => {
             foreach (var item in e.DeselectedItems.Where(i => i != null)) {
                 item!.IsSelected = false;
@@ -304,19 +302,19 @@ public class ExplorerViewModel : ViewModelBase {
             this._nodeSelectionStrategy.Apply(e);
 
             var foo = this.GetClientNodes()
-                .SelectMany(c => c.FindChildNodes(c => c.IsSelected))
-                .Where(c => c != null)
+                .SelectMany(c => c.FindChildNodes(d => d.IsSelected))
                 .ToArray();
-            if (foo.Length == 0)
+            if (foo.Length == 0) {
                 this.SelectedItem = null;
-            else if (foo.Length == 1)
+            }
+            else if (foo.Length == 1) {
                 this.SelectedItem = foo[0];
-            else
+            }
+            else {
                 this.SelectedItem = new MultiNode(foo);
+            }
         });
-    }
 
-    public IExplorerItem? SelectedItem { get; set; }
     private class CopyPasteArg(IExplorerItem? container, string fileToCopy) {
         public IExplorerItem? Container { get; } = container;
         public string FileToCopy { get; } = fileToCopy;

@@ -6,30 +6,32 @@
         xmlns:controls="clr-namespace:Tefin.Views.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Tefin.Views.ChildWindow"
-        
+
         x:DataType="vm:ChildWindowViewModel"
         ExtendClientAreaToDecorationsHint="True"
         Icon="/Assets/fire.ico"
         Title="{Binding Content.Title}">
-    
-    <Grid RowDefinitions="Auto, * , Auto" >
-        <StackPanel Grid.Row="0"   Height="44" Orientation="Horizontal"
+
+    <Grid RowDefinitions="Auto, * , Auto">
+        <StackPanel Grid.Row="0" Height="44" Orientation="Horizontal"
                     HorizontalAlignment="Center" VerticalAlignment="Center">
-            
+
             <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
-                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18"  Width="18" VerticalAlignment="Center"
-                                      ToolTip.Tip="{Binding Content.SubTitle}"/>
-                <TextBlock Text="{Binding Content.Title}" ToolTip.Tip="{Binding Content.SubTitle}" VerticalAlignment="Center"
+                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18"
+                                      VerticalAlignment="Center"
+                                      ToolTip.Tip="{Binding Content.SubTitle}" />
+                <TextBlock Text="{Binding Content.Title}" ToolTip.Tip="{Binding Content.SubTitle}"
+                           VerticalAlignment="Center"
                            HorizontalAlignment="Center" Margin="10 0 0 0" />
-                <Separator Classes="Vertical" Margin="10 0 10 0"></Separator>
+                <Separator Classes="Vertical" Margin="10 0 10 0" />
                 <Button Classes="ClearButtonStyle" Command="{Binding DockCommand}">
                     <StackPanel Orientation="Horizontal">
-                        <controls:IconControl Icon="{StaticResource Icon.OpenNew}"></controls:IconControl>
-                        <TextBlock Text="Dock as a tab" Margin="6 0 0 0"></TextBlock>
+                        <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
+                        <TextBlock Text="Dock as a tab" Margin="6 0 0 0" />
                     </StackPanel>
                 </Button>
             </StackPanel>
         </StackPanel>
-        <ContentControl Grid.Row="1" Content="{Binding Content}" Margin="8"></ContentControl>
+        <ContentControl Grid.Row="1" Content="{Binding Content}" Margin="8" />
     </Grid>
 </Window>

@@ -15,11 +15,14 @@ public class ByteArrayNode : TypeBaseNode {
     private string _file = "";
     private bool _isFromFile;
 
-    public ByteArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ByteArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
+        name, type, propInfo, instance, parent) {
         this.IsFromFile = false;
         this.File = "";
         this.Base64 = "";
-        if (instance != null) this.Base64 = Convert.ToBase64String((byte[])instance);
+        if (instance != null) {
+            this.Base64 = Convert.ToBase64String((byte[])instance);
+        }
 
         this.OpenFileCommand = this.CreateCommand(this.OnOpenFile);
     }
@@ -29,8 +32,9 @@ public class ByteArrayNode : TypeBaseNode {
         set {
             var changed = this._base64 != value;
             this.RaiseAndSetIfChanged(ref this._base64, value);
-            if (changed)
+            if (changed) {
                 this.CreateFromBase64String();
+            }
         }
     }
 
@@ -41,8 +45,10 @@ public class ByteArrayNode : TypeBaseNode {
 
     public override string FormattedValue {
         get {
-            if (this.Value != null)
+            if (this.Value != null) {
                 return $"Length = {Core.Utils.printFileSize(((byte[])this.Value).Length)}";
+            }
+
             return "null";
         }
     }
@@ -71,18 +77,14 @@ public class ByteArrayNode : TypeBaseNode {
         }
     }
 
-    public void Reset() {
-        this.Init();
-    }
+    public void Reset() => this.Init();
 
     //public ICommand OpenFileCommand { get; }
     protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
 
     private async Task OnOpenFile() {
-        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] {
-            "*.*"
-        });
+        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] { "*.*" });
         if (ok) {
             this.File = files[0];
             var bytes = await System.IO.File.ReadAllBytesAsync(this._file);

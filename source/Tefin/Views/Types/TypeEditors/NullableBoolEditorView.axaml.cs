@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class NullableBoolEditorView : UserControl {
-
-    public NullableBoolEditorView() {
-        this.InitializeComponent();
-    }
+    public NullableBoolEditorView() => this.InitializeComponent();
 }

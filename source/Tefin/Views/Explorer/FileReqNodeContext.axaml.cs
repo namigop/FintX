@@ -1,18 +1,15 @@
 using System.Reactive;
 
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 
 using Tefin.ViewModels.Explorer;
 
 namespace Tefin.Views.Explorer;
 
 public partial class FileReqNodeContext : UserControl {
-    public FileReqNodeContext() {
-        InitializeComponent();
-    }
+    public FileReqNodeContext() => this.InitializeComponent();
+
     private void CancelButtonClick(object? sender, RoutedEventArgs e) {
         var fly = this.btnDelete.Flyout;
         fly?.Hide();

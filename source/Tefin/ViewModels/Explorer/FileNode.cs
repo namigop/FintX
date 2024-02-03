@@ -18,7 +18,7 @@ public class FileNode : NodeBase {
         base.Title = Path.GetFileName(fullPath);
         this.TempTitle = base.Title;
         this.UpdateSubTitle();
-        
+
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
@@ -27,18 +27,7 @@ public class FileNode : NodeBase {
 
     public ICommand OpenMethodInWindowCommand { get; }
 
-    private void OpenMethodInWindow() {
-        var tab = TabFactory.From(this, this.Io);
-        if (tab != null)
-            GlobalHub.publish(new OpenChildWindowMessage(tab));
-    }
-
-    public DateTime LastWriteTime => base.Io.File.GetLastWriteTime(this.FullPath);
-
-    private void UpdateSubTitle() {
-        var time = this.LastWriteTime.ToString("dddd, dd MMMM yyyy h:m tt");
-        this.SubTitle = $"Last updated: {time}";
-    }
+    public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
     public ICommand DeleteCommand { get; }
     public string FullPath { get; private set; }
     public ICommand OpenCommand { get; }
@@ -49,12 +38,24 @@ public class FileNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
     }
 
+    private void OpenMethodInWindow() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null) {
+            GlobalHub.publish(new OpenChildWindowMessage(tab));
+        }
+    }
+
+    private void UpdateSubTitle() {
+        var time = this.LastWriteTime.ToString("dddd, dd MMMM yyyy h:m tt");
+        this.SubTitle = $"Last updated: {time}";
+    }
+
     public void CancelEdit() {
         this.TempTitle = Path.GetFileName(this.FullPath);
         this.IsEditing = false;
     }
 
-    public void EndEdit() {
+    public void EndEdit() =>
         this.Exec(() => {
             this.TempTitle = Core.Utils.makeValidFileName(this.TempTitle.Trim());
             var origExt = Path.GetExtension(this.FullPath);
@@ -78,7 +79,6 @@ public class FileNode : NodeBase {
 
             this.IsEditing = false;
         });
-    }
 
     public override void Init() {
     }
@@ -94,20 +94,18 @@ public class FileNode : NodeBase {
         }
     }
 
-    private void OnDelete() {
+    private void OnDelete() =>
         // Delete from the file system *only*.  The OS event notification FileSystemWatcher
         // will get handled by ExplorerViewModel and the delete file will be removed
         // from the explorer tree
         this.Io.File.Delete(this.FullPath);
-    }
 
     private void OnOpen() {
         var tab = TabFactory.From(this, this.Io);
-        if (tab != null)
+        if (tab != null) {
             GlobalHub.publish(new OpenTabMessage(tab));
+        }
     }
 
-    private void OnRename() {
-        this.IsEditing = true;
-    }
+    private void OnRename() => this.IsEditing = true;
 }

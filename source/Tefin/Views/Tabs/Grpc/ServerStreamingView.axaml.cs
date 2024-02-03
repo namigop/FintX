@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Tabs.Grpc;
 
 public partial class ServerStreamingView : UserControl {
-
-    public ServerStreamingView() {
-        this.InitializeComponent();
-    }
+    public ServerStreamingView() => this.InitializeComponent();
 }

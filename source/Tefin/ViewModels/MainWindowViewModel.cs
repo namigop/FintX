@@ -6,7 +6,6 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
-using Tefin.Utils;
 using Tefin.ViewModels.Footer;
 using Tefin.ViewModels.MainMenu;
 using Tefin.ViewModels.Misc;
@@ -22,7 +21,7 @@ public class MainWindowViewModel : ViewModelBase {
     public MainWindowViewModel() {
         this.SponsorCommand = this.CreateCommand(this.OnSponsor);
         this.Root = default;
-        this.MainMenu = new();
+        this.MainMenu = new MainMenuViewModel();
         var appState = Core.App.getAppState(this.Io);
         this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, appState);
     }
@@ -65,9 +64,7 @@ public class MainWindowViewModel : ViewModelBase {
         this.StartAutoSave();
     }
 
-    private void OnSponsor() {
-        Core.Utils.openBrowser("https://github.com/sponsors/namigop");
-    }
+    private void OnSponsor() => Core.Utils.openBrowser("https://github.com/sponsors/namigop");
 
     private void StartAutoSave() {
         AutoSave.ClientParam[] Get() {

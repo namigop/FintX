@@ -28,7 +28,9 @@ public class ListTypeMethod {
 
     public static ListTypeMethod GetMethods(Type listType) {
         var i = Cache.FirstOrDefault(t => t.Type == listType);
-        if (i != null) return i;
+        if (i != null) {
+            return i;
+        }
 
         ListTypeMethod? m = new(listType);
         Cache.Add(m);
@@ -42,9 +44,7 @@ public class ListTypeMethod {
             this.AddRangeMethod = type.GetMethod("AddRange", BindingFlags.Public | BindingFlags.Instance);
             this.GetEnumeratorMethod = type.GetMethod("GetEnumerator", BindingFlags.Public | BindingFlags.Instance);
             var itemType = TypeHelper.getListItemType(type).Value;
-            this.AddMethod = type.GetMethod("Add", new[] {
-                itemType
-            });
+            this.AddMethod = type.GetMethod("Add", new[] { itemType });
             this.RemoveAtMethod = type.GetMethod("RemoveAt", BindingFlags.Public | BindingFlags.Instance);
         }
     }

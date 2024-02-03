@@ -4,7 +4,7 @@ using Avalonia.Controls.Selection;
 namespace Tefin.ViewModels.Explorer;
 
 /// <summary>
-/// Single selection for non-FileNodes.  MultipleSelection for FileNodes 
+///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
 /// </summary>
 /// <param name="explorerViewModel"></param>
 public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNodeSelectionStrategy {
@@ -14,19 +14,23 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
             .FirstOrDefault(m => m != null);
 
         List<IExplorerItem> selectedItems = new();
-        for (int i = 0; i < e.SelectedItems.Count; i++)
+        for (var i = 0; i < e.SelectedItems.Count; i++) {
             selectedItems.Add(e.SelectedItems[i]!);
-        
+        }
+
         List<IndexPath> selectedIndexes = new();
-        for (int i = 0; i < e.SelectedIndexes.Count; i++)
+        for (var i = 0; i < e.SelectedIndexes.Count; i++) {
             selectedIndexes.Add(e.SelectedIndexes[i]);
-        
-        int index = -1;
+        }
+
+        var index = -1;
         foreach (var item in selectedItems) {
             index += 1;
 
-            if (item == null)
+            if (item == null) {
                 continue;
+            }
+
             if (selected == null) {
                 item.IsSelected = true;
                 selected = item;
@@ -47,6 +51,5 @@ public class FileOnlyStrategy(ExplorerViewModel explorerViewModel) : IExplorerNo
             var d = selectedIndexes[index];
             explorerViewModel.ExplorerTree.RowSelection!.Deselect(d);
         }
-
     }
 }

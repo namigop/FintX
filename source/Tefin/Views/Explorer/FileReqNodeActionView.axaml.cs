@@ -1,21 +1,13 @@
 #region
 
-using System.Reactive;
-
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-
-using Tefin.ViewModels.Explorer;
 
 #endregion
 
 namespace Tefin.Views.Explorer;
 
 public partial class FileReqNodeActionView : UserControl {
-
-    public FileReqNodeActionView() {
-        this.InitializeComponent();
-    }
+    public FileReqNodeActionView() => this.InitializeComponent();
     //
     // private void CancelButtonClick(object? sender, RoutedEventArgs e) {
     //     var fly = this.btnDelete.Flyout;

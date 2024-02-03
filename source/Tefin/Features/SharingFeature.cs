@@ -7,18 +7,15 @@ using Tefin.Utils;
 namespace Tefin.Features;
 
 public class SharingFeature {
-  
-    public FSharpResult<string, Exception> ShareRequests(IOResolver io, string zipFile, string[] files, ProjectTypes.ClientGroup client) {
-        return Share.createFileShare(io, zipFile,files, client);
-    }
+    public FSharpResult<string, Exception> ShareRequests(IOResolver io, string zipFile, string[] files,
+        ProjectTypes.ClientGroup client) => Share.createFileShare(io, zipFile, files, client);
 
-    public FSharpResult<string, Exception> ShareMethod(IOResolver io, string zipFile, string methodName, ProjectTypes.ClientGroup client) {
-        return Share.createFolderShare(io, zipFile,methodName, client);
-    }
+    public FSharpResult<string, Exception> ShareMethod(IOResolver io, string zipFile, string methodName,
+        ProjectTypes.ClientGroup client) => Share.createFolderShare(io, zipFile, methodName, client);
 
-    public FSharpResult<string, Exception> ShareClient(IOResolver io, string zipFile, ProjectTypes.ClientGroup client) {
-        return Share.createClientShare(io, zipFile, client);
-    }
+    public FSharpResult<string, Exception>
+        ShareClient(IOResolver io, string zipFile, ProjectTypes.ClientGroup client) =>
+        Share.createClientShare(io, zipFile, client);
 
     public async Task<string> GetZipFile() {
         var fileName = "Export.zip";

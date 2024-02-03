@@ -45,9 +45,7 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         return (false, null);
     }
 
-    public void Init() {
-        this.Json = "";
-    }
+    public void Init() => this.Json = "";
 
     public void Show(object? resp, Type? responseType) {
         if (responseType != null) {

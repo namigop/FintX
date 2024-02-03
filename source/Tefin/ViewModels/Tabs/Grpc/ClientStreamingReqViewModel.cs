@@ -24,7 +24,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
 
-    public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
+    public ClientStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree,
+        List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
@@ -40,7 +41,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
-        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
+        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree,
+            this.OnIsShowingClientStreamTreeChanged);
     }
 
     public ClientStreamingCallResponse CallResponse {
@@ -99,13 +101,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         return "";
     }
 
-    public override async Task ImportRequest() {
-        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
-    }
+    public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(this.RequestEditor,
+        this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
 
-    public override void ImportRequestFile(string file) {
-        GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
-    }
+    public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
+        this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
 
     public void SetupClientStream(ClientStreamingCallResponse response) {
         this._callResponse = response;
@@ -118,12 +118,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
             var add = this._listType.GetMethod("Add");
-            add!.Invoke(stream, new[] {
-                reqInstance
-            });
+            add!.Invoke(stream, new[] { reqInstance });
         }
-        else
+        else {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
+        }
 
         this._clientStreamEditor.Show(stream!);
         this.CanWrite = true;
@@ -159,8 +158,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.IsBusy = true;
             var writer = new WriteClientStreamFeature();
 
-            foreach (var i in this.ClientStreamEditor.GetListItems())
+            foreach (var i in this.ClientStreamEditor.GetListItems()) {
                 await writer.Write(resp, i);
+            }
         }
         catch (Exception exc) {
             this.Io.Log.Error(exc);
@@ -173,14 +173,16 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private void ShowAsJson() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
-        if (ok)
+        if (ok) {
             this.ClientStreamEditor.Show(list);
+        }
     }
 
     private void ShowAsTree() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
-        if (ok)
+        if (ok) {
             this.ClientStreamEditor.Show(list);
+        }
     }
 }

@@ -3,7 +3,7 @@
 namespace Tefin.ViewModels.Explorer;
 
 /// <summary>
-/// Multiple selection allowed only for the types of nodes
+///     Multiple selection allowed only for the types of nodes
 /// </summary>
 /// <param name="explorerViewModel"></param>
 public class SameNodeTypeStrategy(ExplorerViewModel explorerViewModel) : IExplorerNodeSelectionStrategy {
@@ -12,11 +12,13 @@ public class SameNodeTypeStrategy(ExplorerViewModel explorerViewModel) : IExplor
             .Select(c => c.FindSelected())
             .FirstOrDefault(m => m != null);
         var nodeType = selected?.GetType();
-        int index = -1;
+        var index = -1;
         foreach (var item in e.SelectedItems) {
             index += 1;
-            if (item == null)
+            if (item == null) {
                 continue;
+            }
+
             if (nodeType == null) {
                 item!.IsSelected = true;
                 nodeType = item!.GetType();

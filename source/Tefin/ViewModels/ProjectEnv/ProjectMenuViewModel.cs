@@ -31,26 +31,16 @@ public class ProjectMenuViewModel : ViewModelBase {
         }
         else {
             foreach (var proj in appState.RecentProjects) {
-                var selection = new ProjectSelection(proj.Package, proj.Path);               
+                var selection = new ProjectSelection(proj.Package, proj.Path);
                 this.RecentProjects.Add(selection);
             }
 
-            this._selectedProject = this.RecentProjects.First(f => f.Path == appState.ActiveProject.Path );
+            this._selectedProject = this.RecentProjects.First(f => f.Path == appState.ActiveProject.Path);
             this._selectedProject.IsSelected = true;
         }
-        
+
         GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage);
         this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, this.OnSelectedProjectChanged);
-    }
-
-    private void OnSelectedProjectChanged(ViewModelBase obj) {
-        this.Exec(() => {
-            var vm = (ProjectMenuViewModel)obj;
-            foreach (var i in vm.RecentProjects)
-                i.IsSelected = i == vm.SelectedProject;
-
-            vm.OpenProject(vm.SelectedProject.Path);
-        });
     }
 
     public ProjectSelection SelectedProject {
@@ -61,12 +51,28 @@ public class ProjectMenuViewModel : ViewModelBase {
                 this.RecentProjects.Remove(value);
                 return;
             }
-            
+
             this.RaiseAndSetIfChanged(ref this._selectedProject, value);
         }
     }
 
-    private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) {
+    public ObservableCollection<ProjectSelection> RecentProjects { get; set; }
+
+    public ICommand OpenProjectCommand { get; set; }
+
+    public ICommand NewProjectCommand { get; set; }
+
+    private void OnSelectedProjectChanged(ViewModelBase obj) =>
+        this.Exec(() => {
+            var vm = (ProjectMenuViewModel)obj;
+            foreach (var i in vm.RecentProjects) {
+                i.IsSelected = i == vm.SelectedProject;
+            }
+
+            vm.OpenProject(vm.SelectedProject.Path);
+        });
+
+    private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) =>
         this.Exec(() => {
             this._explorerViewModel.LoadProject(obj.ProjectPath);
             if (!this.RecentProjects.Contains(i => i.Path == obj.ProjectPath)) {
@@ -75,13 +81,6 @@ public class ProjectMenuViewModel : ViewModelBase {
                 this.SelectedProject = projSelection;
             }
         });
-    }
-
-    public ObservableCollection<ProjectSelection> RecentProjects { get; set; }
-
-    public ICommand OpenProjectCommand { get; set; }
-
-    public ICommand NewProjectCommand { get; set; }
 
     private async Task OnOpenProject() {
         var projectPath = await DialogUtils.SelectFolder();

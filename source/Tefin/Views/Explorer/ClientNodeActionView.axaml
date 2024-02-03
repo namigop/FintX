@@ -19,8 +19,8 @@
                     HorizontalAlignment="Right">
             <StackPanel.Styles>
                 <Style Selector="controls|IconControl">
-                    <Setter Property="Width" Value="16"></Setter>
-                    <Setter Property="Height" Value="16"></Setter>
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Height" Value="16" />
                 </Style>
                 <Style Selector="Button.isNotLoaded">
                     <Style.Animations>
@@ -46,22 +46,19 @@
             <Button Classes="ClearButtonStyle" Command="{Binding OpenClientConfigCommand}"
                     IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="open client config">
-                <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
+                <controls:IconControl Icon="{StaticResource Icon.Config}" />
             </Button>
-            <Button Classes="ClearButtonStyle" 
+            <Button Classes="ClearButtonStyle"
                     IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="More actions">
                 <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
-                    <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
-                        <TextBlock Text="{Binding}" />
-                    </DataTemplate>
                 </Button.Resources>
                 <Button.Flyout>
                     <Flyout>
                         <explorer1:ClientNodeContext />
                     </Flyout>
-                   
+
                 </Button.Flyout>
             </Button>
         </StackPanel>

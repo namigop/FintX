@@ -11,11 +11,13 @@ public class MovableBorder : Border {
     private TranslateTransform _transform = null!;
 
     protected override void OnPointerMoved(PointerEventArgs e) {
-        if (!this._isPressed)
+        if (!this._isPressed) {
             return;
+        }
 
-        if (this.Parent == null)
+        if (this.Parent == null) {
             return;
+        }
 
         var viz = this.Parent as Visual;
         var currentPosition = e.GetPosition(viz);
@@ -40,8 +42,10 @@ public class MovableBorder : Border {
         this._isPressed = true;
         this._positionInBlock = e.GetPosition(this.Parent as Visual);
 
-        if (this._transform != null!)
-            this._positionInBlock = new Point(this._positionInBlock.X - this._transform.X, this._positionInBlock.Y - this._transform.Y);
+        if (this._transform != null!) {
+            this._positionInBlock = new Point(this._positionInBlock.X - this._transform.X,
+                this._positionInBlock.Y - this._transform.Y);
+        }
 
         base.OnPointerPressed(e);
     }

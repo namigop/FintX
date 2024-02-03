@@ -33,20 +33,6 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public ICommand OpenInWindowCommand { get; }
 
-    private void OnOpenInWindow() {
-        //close the tab but do not dispose it
-        GlobalHub.publish(new RemoveTabMessage(this));
-        GlobalHub.publish(new OpenChildWindowMessage(this));
-    }
-
-    private void OnCloseAll() {
-        GlobalHub.publish(new CloseAllTabsMessage());
-    }
-
-    private void OnCloseAllOthers() {
-        GlobalHub.publish(new CloseAllOtherTabsMessage(this));
-    }
-
     public virtual bool CanAutoSave { get; } = false;
 
     public ICommand CloseCommand { get; }
@@ -55,7 +41,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public IExplorerItem ExplorerItem { get; }
 
-    public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
+    public bool HasIcon => !string.IsNullOrEmpty(this.Icon);
 
     public abstract string Icon { get; }
 
@@ -76,9 +62,17 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
-    protected virtual string GetTabId() {
-        return $"{this.Title}-{this.ExplorerItem.GetType().FullName}";
+    private void OnOpenInWindow() {
+        //close the tab but do not dispose it
+        GlobalHub.publish(new RemoveTabMessage(this));
+        GlobalHub.publish(new OpenChildWindowMessage(this));
     }
+
+    private void OnCloseAll() => GlobalHub.publish(new CloseAllTabsMessage());
+
+    private void OnCloseAllOthers() => GlobalHub.publish(new CloseAllOtherTabsMessage(this));
+
+    protected virtual string GetTabId() => $"{this.Title}-{this.ExplorerItem.GetType().FullName}";
 
     protected virtual Task OnClose() {
         GlobalHub.publish(new CloseTabMessage(this));

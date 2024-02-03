@@ -8,7 +8,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public static class TabFactory {
-
     public static ITabViewModel? From(IExplorerItem item, IOResolver io, string requestFile = "") {
         switch (item) {
             case FilePerfNode p:
@@ -26,7 +25,7 @@ public static class TabFactory {
             default:
                 io.Log.Warn($"Unable to open unknown item type: {item.GetType().FullName}");
                 return default;
-                //throw new NotSupportedException($"Unknown explorer item type: {item.GetType().FullName}");
+            //throw new NotSupportedException($"Unknown explorer item type: {item.GetType().FullName}");
         }
     }
 }

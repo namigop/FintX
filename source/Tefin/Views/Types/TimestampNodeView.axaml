@@ -27,7 +27,7 @@
         <!--     </Flyout> -->
         <!-- </FlyoutBase.AttachedFlyout> -->
         <Border>
-             <controls:IconControl Icon="{StaticResource Icon.TimeStampType}" Width="16" Height="16" />
+            <controls:IconControl Icon="{StaticResource Icon.TimeStampType}" Width="16" Height="16" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="Title" />

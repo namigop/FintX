@@ -13,11 +13,9 @@ public class NodeActionViewLocator : IDataTemplate {
     private static readonly Dictionary<Type, Type> Mapping = new();
 
     public Control Build(object? data) {
-        if (data == null)
-            return new Border {
-                Width = 0,
-                Height = 0
-            };
+        if (data == null) {
+            return new Border { Width = 0, Height = 0 };
+        }
 
         var sourceType = data.GetType();
         if (Mapping.TryGetValue(sourceType, out var value)) {
@@ -34,13 +32,8 @@ public class NodeActionViewLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new Border {
-            Width = 0,
-            Height = 0
-        };
+        return new Border { Width = 0, Height = 0 };
     }
 
-    public bool Match(object? data) {
-        return data is NodeBase;
-    }
+    public bool Match(object? data) => data is NodeBase;
 }

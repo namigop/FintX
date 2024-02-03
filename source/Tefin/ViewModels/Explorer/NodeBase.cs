@@ -14,16 +14,15 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     private bool _isSelected;
     private string _subTitle = "";
     private string _title = "";
-    private IExplorerItem? _parent;
-
-    public bool CanOpen {
-        get;
-        protected set;
-    }
 
     public virtual bool IsEditing {
         get => this._isEditing;
         set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
+    }
+
+    public bool CanOpen {
+        get;
+        protected set;
     }
 
     public bool IsExpanded {
@@ -35,17 +34,15 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         get => this._isSelected;
         set {
             this.RaiseAndSetIfChanged(ref this._isSelected, value);
-            if (!this._isSelected)
+            if (!this._isSelected) {
                 this.IsEditing = false; //cannot edit non-selected node
+            }
         }
     }
 
     public ObservableCollection<IExplorerItem> Items { get; } = new();
 
-    public IExplorerItem? Parent {
-        get => this._parent;
-        set => this._parent = value;
-    }
+    public IExplorerItem? Parent { get; set; }
 
     public string SubTitle {
         get => this._subTitle;
@@ -55,6 +52,24 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     public virtual string Title {
         get => this._title;
         set => this.RaiseAndSetIfChanged(ref this._title, value);
+    }
+
+    public IExplorerItem? FindSelected() => this.FindChildNode(i => i.IsSelected);
+
+    public T? FindParentNode<T>() where T : IExplorerItem {
+        T? Find(IExplorerItem? item) {
+            if (item == null) {
+                return default;
+            }
+
+            if (item is T found) {
+                return found;
+            }
+
+            return Find(item.Parent);
+        }
+
+        return Find(this);
     }
 
     public void AddItem(IExplorerItem child) {
@@ -73,33 +88,40 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     public IExplorerItem? FindChildNode(Func<IExplorerItem, bool> predicate) {
         IExplorerItem? Find(ObservableCollection<IExplorerItem> items) {
             foreach (var item in items) {
-                if (predicate(item))
+                if (predicate(item)) {
                     return item;
+                }
+
                 var found = Find(item.Items);
-                if (found != null)
+                if (found != null) {
                     return found;
+                }
             }
 
             return null;
         }
 
-        if (predicate(this))
+        if (predicate(this)) {
             return this;
+        }
 
         return Find(this.Items);
     }
+
     public List<IExplorerItem> FindChildNodes(Func<IExplorerItem, bool> predicate) {
         List<IExplorerItem> Find(ObservableCollection<IExplorerItem> items, List<IExplorerItem> foundItems) {
             foreach (var item in items) {
-                if (predicate(item))
+                if (predicate(item)) {
                     foundItems.Add(item);
+                }
+
                 Find(item.Items, foundItems);
             }
 
             return foundItems;
         }
 
-        var found = Find(this.Items, new());
+        var found = Find(this.Items, new List<IExplorerItem>());
         if (predicate(this)) {
             found.Add(this);
         }
@@ -107,22 +129,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         return found;
     }
 
-    public IExplorerItem? FindSelected() {
-        return this.FindChildNode(i => i.IsSelected);
-    }
-
-    public T? FindParentNode<T>() where T : IExplorerItem {
-        T? Find(IExplorerItem? item) {
-            if (item == null)
-                return default;
-            if (item is T found)
-                return found;
-            return Find(item.Parent);
-        }
-
-        return Find(this);
-    }
-    
 
     public abstract void Init();
 }

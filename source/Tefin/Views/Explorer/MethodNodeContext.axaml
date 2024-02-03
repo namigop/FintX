@@ -11,9 +11,9 @@
     <StackPanel>
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
-                <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="13"></Setter>
-                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Margin" Value="8 0 0 0 " />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
         </StackPanel.Styles>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodCommand}"
@@ -21,24 +21,24 @@
                 ToolTip.Tip="Open in a tab">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
-                <TextBlock Text="Open in a tab"></TextBlock>
+                <TextBlock Text="Open in a tab" />
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodInWindowCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Open in a new tab">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl  Icon="{StaticResource Icon.Window}" />
-                <TextBlock Text="Open in a window"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.Window}" />
+                <TextBlock Text="Open in a window" />
             </StackPanel>
         </Button>
-        <Separator Classes="Horizontal" Width="200"></Separator>
+        <Separator Classes="Horizontal" Width="200" />
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding NewRequestCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Create a new request">
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl  Icon="{StaticResource Icon.FileReqNew}" />
-                <TextBlock Text="New request"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.FileReqNew}" />
+                <TextBlock Text="New request" />
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
@@ -46,7 +46,7 @@
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
-                <TextBlock Text="Export"></TextBlock>
+                <TextBlock Text="Export" />
             </StackPanel>
 
         </Button>

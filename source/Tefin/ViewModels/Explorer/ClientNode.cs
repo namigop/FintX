@@ -12,7 +12,6 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
-using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.MessageProject;
@@ -52,7 +51,8 @@ public class ClientNode : NodeBase {
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
     }
 
-    public ICommand ExportCommand { get; } 
+    public ICommand ExportCommand { get; }
+
     public ProjectTypes.ClientGroup Client {
         get;
         private set;
@@ -96,19 +96,20 @@ public class ClientNode : NodeBase {
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipFile = await share.GetZipFile();
-        if (string.IsNullOrEmpty(zipFile))
+        if (string.IsNullOrEmpty(zipFile)) {
             return;
-        
+        }
+
         var result = share.ShareClient(this.Io, zipFile, this.Client);
         if (result.IsOk) {
-            Io.Log.Info($"Export created: {zipFile}");
+            this.Io.Log.Info($"Export created: {zipFile}");
         }
         else {
-            Io.Log.Error(result.ErrorValue);
+            this.Io.Log.Error(result.ErrorValue);
         }
     }
 
-    
+
     public void Clear() => this.Items.Clear();
 
     public override void Init() {

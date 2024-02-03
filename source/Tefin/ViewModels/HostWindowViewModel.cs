@@ -2,17 +2,17 @@
 
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
-using Tefin.ViewModels.Tabs;
 using Tefin.Views;
 
 namespace Tefin.ViewModels;
 
 public class HostWindowViewModel : ViewModelBase {
-
     public HostWindowViewModel() {
-        GlobalHub.subscribeTask<OpenChildWindowMessage>(OnReceiveOpenChildWindowMessage);   
-        GlobalHub.subscribe<CloseChildWindowMessage>(OnReceiveCloseChildWindowMessage);
+        GlobalHub.subscribeTask<OpenChildWindowMessage>(this.OnReceiveOpenChildWindowMessage);
+        GlobalHub.subscribe<CloseChildWindowMessage>(this.OnReceiveCloseChildWindowMessage);
     }
+
+    public Dictionary<string, ChildWindowViewModel> Items { get; } = new();
 
     private void OnReceiveCloseChildWindowMessage(CloseChildWindowMessage obj) {
         if (this.Items.ContainsKey(obj.Content.Id)) {
@@ -20,8 +20,7 @@ public class HostWindowViewModel : ViewModelBase {
         }
     }
 
-    public Dictionary<string, ChildWindowViewModel> Items { get; } = new();
-    private async Task OnReceiveOpenChildWindowMessage(OpenChildWindowMessage obj) {
+    private async Task OnReceiveOpenChildWindowMessage(OpenChildWindowMessage obj) =>
         await Dispatcher.UIThread.InvokeAsync(() => {
             if (this.Items.ContainsKey(obj.Content.Id)) {
                 //bring to front
@@ -34,8 +33,5 @@ public class HostWindowViewModel : ViewModelBase {
                 childWindow.ShowInTaskbar = true;
                 childWindow.Show();
             }
-
-            
         });
-    }
 }

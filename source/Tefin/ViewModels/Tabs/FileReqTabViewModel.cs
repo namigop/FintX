@@ -8,7 +8,6 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public sealed class FileReqTabViewModel : PersistedTabViewModel {
-
     public FileReqTabViewModel(FileReqNode item) : base(item) {
         this.ClientMethod = item.CreateViewModel()!;
         this.Client = ((MethodNode)item.Parent!).Client;
@@ -18,20 +17,16 @@ public sealed class FileReqTabViewModel : PersistedTabViewModel {
     public override ProjectTypes.ClientGroup Client { get; }
     public override ClientMethodViewModelBase ClientMethod { get; }
 
-    public string FilePath {
-        get => ((FileNode)this.ExplorerItem).FullPath;
-    }
+    public string FilePath => ((FileNode)this.ExplorerItem).FullPath;
 
-    public override string Icon { get => "Icon.Grpc2"; }
+    public override string Icon => "Icon.Grpc2";
 
     public override void Dispose() {
         base.Dispose();
         this.ClientMethod.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.ClientMethod.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.ClientMethod.GetRequestContent();
 
     public override void Init() {
         this.Id = this.GetTabId();
@@ -45,11 +40,7 @@ public sealed class FileReqTabViewModel : PersistedTabViewModel {
         this.Id = newFullPath;
     }
 
-    protected override string GetTabId() {
-        return this.FilePath;
-    }
+    protected override string GetTabId() => this.FilePath;
 
-    private void OnIsBusyChanged(ViewModelBase obj) {
-        this.IsBusy = obj.IsBusy;
-    }
+    private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
 }

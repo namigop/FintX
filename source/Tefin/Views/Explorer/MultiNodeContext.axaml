@@ -8,30 +8,29 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:MultiNode"
              x:Class="Tefin.Views.Explorer.MultiNodeContext">
-     <StackPanel>
+    <StackPanel>
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">
-                <Setter Property="Margin" Value="8 0 0 0 "></Setter>
-                <Setter Property="FontSize" Value="12.6"></Setter>
-                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="Margin" Value="8 0 0 0 " />
+                <Setter Property="FontSize" Value="12.6" />
+                <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
             <!-- <Style Selector="Button"> -->
             <!--     <Setter Property="HorizontalAlignment" Value="Stretch"></Setter> -->
             <!-- </Style> -->
-                
+
         </StackPanel.Styles>
-        
+
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="Export">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
-                <TextBlock Text="Export"></TextBlock>
+                <TextBlock Text="Export" />
             </StackPanel>
 
         </Button>
-        <Separator  Classes="Horizontal" Width="200">
-        </Separator>
+        <Separator Classes="Horizontal" Width="200" />
         <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete" ToolTip.Tip="delete the selected files">
             <Button.Flyout>
                 <Flyout Placement="BottomEdgeAlignedLeft">
@@ -53,8 +52,8 @@
                 </Flyout>
             </Button.Flyout>
             <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
-                <TextBlock Text="Delete"></TextBlock>
+                <controls:IconControl Icon="{StaticResource Icon.Delete}" />
+                <TextBlock Text="Delete" />
 
             </StackPanel>
         </Button>

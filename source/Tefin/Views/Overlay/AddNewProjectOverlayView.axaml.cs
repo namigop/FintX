@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Overlay;
 
 public partial class AddNewProjectOverlayView : UserControl {
-
-    public AddNewProjectOverlayView() {
-        this.InitializeComponent();
-    }
+    public AddNewProjectOverlayView() => this.InitializeComponent();
 }

@@ -10,13 +10,13 @@ using Tefin.Grpc.Execution;
 namespace Tefin.Features;
 
 public class ReadServerStreamFeature {
-
     public async Task<ServerStreamingCallResponse> CompleteRead(ServerStreamingCallResponse resp) {
         resp = await ServerStreamingResponse.getResponseHeader(resp);
         return resp;
     }
 
-    public async IAsyncEnumerable<object> ReadResponseStream(ServerStreamingCallResponse resp, [EnumeratorCancellation] CancellationToken token) {
+    public async IAsyncEnumerable<object> ReadResponseStream(ServerStreamingCallResponse resp,
+        [EnumeratorCancellation] CancellationToken token) {
         while (!token.IsCancellationRequested && await resp.CallInfo.MoveNext(resp.CallResult, token)) {
             var i = resp.CallInfo.GetCurrent(resp.CallResult);
             yield return i;

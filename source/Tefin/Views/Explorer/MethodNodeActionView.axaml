@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:MethodNode"
              x:Class="Tefin.Views.Explorer.MethodNodeActionView">
-   
+
     <Grid>
 
         <!--client node button actions -->
@@ -26,11 +26,8 @@
                 <controls:IconControl Icon="{StaticResource Icon.FileReqNew}" />
             </Button>
             <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
-                <controls:IconControl   Icon="{StaticResource Icon.VerticalDots}" />
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
                 <Button.Resources>
-                    <DataTemplate x:Key="MenuHeader" x:CompileBindings="False">
-                        <TextBlock Text="{Binding}" />
-                    </DataTemplate>
                 </Button.Resources>
                 <Button.Flyout>
                     <Flyout>

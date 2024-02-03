@@ -26,14 +26,13 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.StopCommand = this.CreateCommand(this.OnStop);
         this._statusText = "";
         this._showTreeEditor = true;
-        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor,
+            this.OnShowTreeEditorChanged);
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
 
-    public bool CanStop {
-        get => this.ReqViewModel.RequestEditor.CtsReq != null;
-    }
+    public bool CanStop => this.ReqViewModel.RequestEditor.CtsReq != null;
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -68,25 +67,15 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.ReqViewModel.GetRequestContent();
 
-    public override void ImportRequest(string requestFile) {
-        this.ReqViewModel.ImportRequestFile(requestFile);
-    }
+    public override void ImportRequest(string requestFile) => this.ReqViewModel.ImportRequestFile(requestFile);
 
-    public override void Init() {
-        this.ReqViewModel.Init();
-    }
+    public override void Init() => this.ReqViewModel.Init();
 
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
+    private async Task OnExportRequest() => await this.ReqViewModel.ExportRequest();
 
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
+    private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         this.ReqViewModel = null!;
