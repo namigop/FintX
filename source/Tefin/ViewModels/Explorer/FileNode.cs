@@ -55,26 +55,29 @@ public class FileNode : NodeBase {
     }
 
     public void EndEdit() {
-        this.TempTitle = Core.Utils.makeValidFileName(this.TempTitle.Trim());
-        var origExt = Path.GetExtension(this.FullPath);
-        if (!this.TempTitle.EndsWith(origExt)) {
-            this.TempTitle = $"{this.TempTitle}{origExt}";
-        }
-
-        if (this.TempTitle != this.Title) {
-            this.Title = this.TempTitle;
-            var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path!, this.Title));
-            if (!this.Io.File.Exists(newFile)) {
-                //will trigger a file watcher event that will sync the explorer tree
-                this.Io.File.Move(this.FullPath, newFile);
+        this.Exec(() => {
+            this.TempTitle = Core.Utils.makeValidFileName(this.TempTitle.Trim());
+            var origExt = Path.GetExtension(this.FullPath);
+            if (!this.TempTitle.EndsWith(origExt)) {
+                this.TempTitle = $"{this.TempTitle}{origExt}";
             }
-            else {
-                this.Title = Path.GetFileName(this.FullPath);
-                this.Io.Log.Warn($"Unable to rename {Path.GetFileName(this.FullPath)}. Target file already exists");
-            }
-        }
 
-        this.IsEditing = false;
+            if (this.TempTitle != this.Title) {
+                this.Title = this.TempTitle;
+                var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path!, this.Title));
+                if (!this.Io.File.Exists(newFile)) {
+                    //will trigger a file watcher event that will sync the explorer tree
+                    this.Io.File.Move(this.FullPath, newFile);
+                    this.FullPath = newFile;
+                }
+                else {
+                    this.Title = Path.GetFileName(this.FullPath);
+                    this.Io.Log.Warn($"Unable to rename {Path.GetFileName(this.FullPath)}. Target file already exists");
+                }
+            }
+
+            this.IsEditing = false;
+        });
     }
 
     public override void Init() {

@@ -124,7 +124,8 @@ public class ExplorerViewModel : ViewModelBase {
         //Close all existing tabs
         GlobalHub.publish(new CloseAllTabsMessage());
 
-        this.Project = Core.Project.loadProject(this.Io, path);
+        var load = new LoadProjectFeature(this.Io, path);
+        this.Project = load.Run();
         this.Items.Clear();
         foreach (var client in this.Project.Clients) {
             this.AddClientNode(client);
@@ -136,9 +137,6 @@ public class ExplorerViewModel : ViewModelBase {
             GlobalHub.publish(new OpenOverlayMessage(overlay));
         }
 
-        //monitor file changes in the new project path
-        var fsMonitor = new MonitorChangesFeature(this.Io);
-        fsMonitor.Run(this.Project);
     }
 
     private void OnClientCompile(ClientCompileMessage message) => this.IsBusy = message.InProgress;
@@ -288,7 +286,8 @@ public class ExplorerViewModel : ViewModelBase {
                 await feature.Add();
 
                 //reload the project to take in the newly added client
-                var proj = Core.Project.loadProject(this.Io, this.Project.Path);
+                var loadProj = new LoadProjectFeature(this.Io, this.Project.Path);
+                var proj = loadProj.Run();
                 this.Project = proj;
 
                 var client = proj.Clients.First(t => t.Name == obj.ClientName);

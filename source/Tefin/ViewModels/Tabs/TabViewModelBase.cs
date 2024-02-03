@@ -53,7 +53,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     public ICommand CloseAllCommand { get; }
     public ICommand CloseAllOthersCommand { get; }
 
-public IExplorerItem ExplorerItem { get; }
+    public IExplorerItem ExplorerItem { get; }
 
     public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
 

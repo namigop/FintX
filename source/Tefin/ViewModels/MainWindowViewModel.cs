@@ -47,7 +47,8 @@ public class MainWindowViewModel : ViewModelBase {
         var packageName = this.ProjectMenuViewModel.SelectedProject.Package;
         var projPath = this.ProjectMenuViewModel.SelectedProject.Path;
 
-        var project = Project.loadProject(this.Io, projPath);
+        var load = new LoadProjectFeature(this.Io, projPath);
+        var project = load.Run();
 
         //var package = this.Root.Packages.First(t => t.Name == packageName);
         this.MainMenu.ClientMenuItem.Init(project);

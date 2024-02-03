@@ -6,6 +6,7 @@ using System.Windows.Input;
 
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
+using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
@@ -35,7 +36,9 @@ public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
             var clientNode = this._explorerViewModel.GetClientNodes().FirstOrDefault(f => f.Client.Name == clientName);
             if (updated) {
                 if (clientNode == null) {
-                    project = Core.Project.loadProject(this.Io, project?.Path);
+                    var loadProj = new LoadProjectFeature(this.Io, project!.Path);
+                    project = loadProj.Run();
+                        
                     var cg = project.Clients.First(t => t.Name == clientName);
                     clientNode = this._explorerViewModel.AddClientNode(cg);
                 }
