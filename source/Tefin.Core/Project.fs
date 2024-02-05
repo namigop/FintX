@@ -59,7 +59,7 @@ module Project =
     let config = Instance.jsonDeserialize<ClientConfig> (readAllText configFile)
 
     let codePath = Path.Combine(clientPath, "code")
-    let files = Directory.GetFiles(codePath, "*.*")
+    let files = getFiles(codePath, "*.*", SearchOption.TopDirectoryOnly)
 
     { ConfigFile = configFile
       Config = Some config
