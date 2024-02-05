@@ -18,7 +18,7 @@ public class LoadSessionFeature(
     Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string reqFile) {
         var dir = Path.GetDirectoryName(reqFile);
-        return dir != null && dir.EndsWith(Project.autoSaveFolderName);
+        return dir != null && dir.EndsWith(Project.AutoSaveFolderName);
     }
 
     private void LoadOne(string json, string reqFile) {

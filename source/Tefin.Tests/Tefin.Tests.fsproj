@@ -11,6 +11,7 @@
     <ItemGroup>
         <Compile Include="TestInputTypes.fs" />
         <Compile Include="ClassTypeTests.fs" />
+        <Compile Include="ProjectTests.fs" />
         <Compile Include="CollectionTypesTest.fs" />
         <Compile Include="GrpcMethodInfoTest.fs" />
         <Compile Include="TimeItTest.fs" />

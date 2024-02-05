@@ -128,7 +128,7 @@ module AutoSave =
   let getAutoSavedFiles (io: IOResolver) (clientPath: string) =
     Project.getMethodsPath clientPath
     |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
-    |> Array.filter (fun fp -> fp.Contains(Project.autoSaveFolderName))
+    |> Array.filter (fun fp -> fp.Contains(Project.AutoSaveFolderName))
     |> Array.sortBy id
 
   let private saveClient (io: IOResolver) (clientParam: ClientParam) (writer: Writer) =

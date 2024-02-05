@@ -13,7 +13,7 @@ type AddClientRequest =
 
 module Project =
 
-  let autoSaveFolderName = "_autoSave"
+  let AutoSaveFolderName = "_autoSave"
   let getMethodsPath (clientPath: string) = Path.Combine(clientPath, "methods")
 
   let getMethodPath (clientPath: string) (methodName: string) =
@@ -21,28 +21,42 @@ module Project =
 
   let getAutoSavePath (clientPath: string) (methodName: string) =
     getMethodPath clientPath methodName
-    |> fun m -> Path.Combine(m, autoSaveFolderName)
+    |> fun m -> Path.Combine(m, AutoSaveFolderName)
 
-  let loadMethods (io: IOResolver) (clientPath: string) =
+  let _loadMethods
+    (clientPath: string)
+    (createDirectory: string -> unit)
+    (getDirectories: string -> string array)
+    (getFiles: string * string * SearchOption -> string array)
+    =
     let methodPath = getMethodsPath clientPath
-    io.Dir.CreateDirectory methodPath
-    let methodDirs = io.Dir.GetDirectories methodPath //"*.*" SearchOption.TopDirectoryOnly)
+    createDirectory methodPath
+    let methodDirs = getDirectories methodPath //"*.*" SearchOption.TopDirectoryOnly)
 
     methodDirs
     |> Array.map (fun m ->
       let methodName = Path.GetFileName m
 
       let requestFiles =
-        io.Dir.GetFiles(m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
-        |> Array.filter (fun fp -> not <| fp.Contains(autoSaveFolderName)) //ignore auto-saved files
+        getFiles (m, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
+        |> Array.filter (fun fp -> not <| fp.Contains(AutoSaveFolderName)) //ignore auto-saved files
 
       { RequestFiles = requestFiles
         Name = methodName
         Path = m })
 
-  let loadClient (io: IOResolver) (clientPath: string) =
+  let loadMethods (io: IOResolver) (clientPath: string) =
+    _loadMethods clientPath io.Dir.CreateDirectory io.Dir.GetDirectories io.Dir.GetFiles
+
+  let _loadClient
+    (clientPath: string)
+    (readAllText: string -> string)
+    (createDirectory: string -> unit)
+    (getDirectories: string -> string array)
+    (getFiles: string * string * SearchOption -> string array)
+    =
     let configFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)
-    let config = Instance.jsonDeserialize<ClientConfig> (io.File.ReadAllText configFile)
+    let config = Instance.jsonDeserialize<ClientConfig> (readAllText configFile)
 
     let codePath = Path.Combine(clientPath, "code")
     let files = Directory.GetFiles(codePath, "*.*")
@@ -50,26 +64,39 @@ module Project =
     { ConfigFile = configFile
       Config = Some config
       CodeFiles = files
-      Methods = loadMethods io clientPath
+      Methods = _loadMethods clientPath createDirectory getDirectories getFiles
+
       Name = config.Name
       Path = clientPath }
 
-  let loadProject (io: IOResolver) (projectPath: string) =
-    let clientPaths =
-      let files =
-        io.Dir.GetFiles(projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
+  let loadClient (io: IOResolver) (clientPath: string) =
+    _loadClient clientPath io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.Dir.GetFiles
 
-      files |> Array.map (fun file -> Path.GetDirectoryName file)
+  let _loadProject
+    (projectPath: string)
+    (getFiles: string * string * SearchOption -> string array)
+    (readAllText: string -> string)
+    (createDirectory: string -> unit)
+    (getDirectories: string -> string array)
+    =
+    let clientPaths =
+      getFiles (projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
+      |> Array.map (fun file -> Path.GetDirectoryName file)
 
     let projSaveState =
-      let content = Path.Combine(projectPath, ProjectSaveState.FileName) |> io.File.ReadAllText
+      let content = Path.Combine(projectPath, ProjectSaveState.FileName) |> readAllText
+
       if (System.String.IsNullOrEmpty content) then
         ProjectSaveState.Empty("grpc")
       else
-        Instance.jsonDeserialize<ProjectSaveState>(content)
+        Instance.jsonDeserialize<ProjectSaveState> (content)
 
     let projectName = Path.GetFileName projectPath
-    let clients = clientPaths |> Array.map (fun path -> loadClient io path)
+
+    let clients =
+      clientPaths
+      |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
+
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
     { Name = projectName
@@ -77,6 +104,9 @@ module Project =
       Clients = clients
       ConfigFile = config
       Path = projectPath }
+
+  let loadProject (io: IOResolver) (projectPath: string) =
+    _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories
 
   let createSaveState (io: IOResolver) package (projectPath: string) =
     let state =
@@ -89,12 +119,14 @@ module Project =
 
   let getSaveState (io: IOResolver) (projectPath: string) =
     let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+
     let saveState =
       let content = io.File.ReadAllText file
+
       if System.String.IsNullOrEmpty content then
         ProjectSaveState.Empty("grpc")
-      else  
-        Instance.jsonDeserialize<ProjectSaveState>(content)
+      else
+        Instance.jsonDeserialize<ProjectSaveState> (content)
 
     saveState
 

@@ -9,14 +9,22 @@ open Tefin.Core.Interop
 open Tefin.Core.Log
 
 type IOResolver =
-  //abstract Register<'a> : (unit -> 'a) -> unit
-  //abstract Resolve<'a> : unit -> 'a
-  abstract File: IFileIO
-  abstract Zip : IZipIO
-  abstract Dir: IDirIO
-  abstract Log: ILog
-  abstract MethodCall: IMethodCallIO
-  abstract CreateWriter: StreamWriter -> ITextWriter
+  {
+    File : IFileIO
+    Zip : IZipIO
+    Dir : IDirIO
+    Log : ILog
+    MethodCall : IMethodCallIO
+    CreateWriter : StreamWriter -> ITextWriter
+  }
+  // //abstract Register<'a> : (unit -> 'a) -> unit
+  // //abstract Resolve<'a> : unit -> 'a
+  // abstract File: IFileIO
+  // abstract Zip : IZipIO
+  // abstract Dir: IDirIO
+  // abstract Log: ILog
+  // abstract MethodCall: IMethodCallIO
+  // abstract CreateWriter: StreamWriter -> ITextWriter
 
 module Resolver =
   let private c: Dictionary<System.Type, unit -> obj> =
@@ -57,14 +65,22 @@ module Resolver =
 
   let value =
     let logger = wrappedLogger
+    {
+      Zip =  Zip.zipIO
+      File = File.fileIO
+      Dir = Dir.dirIO
+      Log = logger
+      MethodCall = MethodCall.methodCallIo
+      CreateWriter =  Writer.writerIO
+    }
 
-    { new IOResolver with
-        //member x.Register<'a> builder =  register<'a> builder
-        //member x.Resolve<'a>() = resolve<'a>()
-        
-        member x.Zip = Zip.zipIO
-        member x.File = File.fileIO
-        member x.Dir = Dir.dirIO
-        member x.Log = logger
-        member x.MethodCall = MethodCall.methodCallIo
-        member x.CreateWriter w = Writer.writerIO w }
+    // { new IOResolver with
+    //     //member x.Register<'a> builder =  register<'a> builder
+    //     //member x.Resolve<'a>() = resolve<'a>()
+    //     
+    //     member x.Zip = Zip.zipIO
+    //     member x.File = File.fileIO
+    //     member x.Dir = Dir.dirIO
+    //     member x.Log = logger
+    //     member x.MethodCall = MethodCall.methodCallIo
+    //     member x.CreateWriter w = Writer.writerIO w }

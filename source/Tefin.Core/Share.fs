@@ -72,7 +72,7 @@ module Share =
         |> Array.filter (fun f -> not (Path.GetFileName(f) = ProjectSaveState.FileName))
         |> Array.filter (fun f ->
           let parentDir = f |> Path.GetDirectoryName |> Path.GetFileName
-          not (parentDir = Project.autoSaveFolderName))
+          not (parentDir = Project.AutoSaveFolderName))
       Res.ok filesToZip
       
   let createInfo clientName shareType =
@@ -133,7 +133,7 @@ module Share =
         |> Array.filter (fun f -> not (Path.GetFileName(f) = ProjectSaveState.FileName))
         |> Array.filter (fun f ->
           let parentDir = f |> Path.GetDirectoryName |> Path.GetFileName
-          not (parentDir = Project.autoSaveFolderName))
+          not (parentDir = Project.AutoSaveFolderName))
 
       let info = createInfo client.Name ShareInfo.ClientShare
       createZip io targetZip filesToZip clientPath info
