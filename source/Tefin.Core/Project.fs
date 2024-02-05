@@ -59,7 +59,7 @@ module Project =
     let config = Instance.jsonDeserialize<ClientConfig> (readAllText configFile)
 
     let codePath = Path.Combine(clientPath, "code")
-    let files = getFiles(codePath, "*.*", SearchOption.TopDirectoryOnly)
+    let files = getFiles (codePath, "*.*", SearchOption.TopDirectoryOnly)
 
     { ConfigFile = configFile
       Config = Some config
@@ -72,30 +72,53 @@ module Project =
   let loadClient (io: IOResolver) (clientPath: string) =
     _loadClient clientPath io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.Dir.GetFiles
 
-  let _loadProject
-    (projectPath: string)
-    (getFiles: string * string * SearchOption -> string array)
-    (readAllText: string -> string)
-    (createDirectory: string -> unit)
-    (getDirectories: string -> string array)
-    =
-    let clientPaths =
-      getFiles (projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
-      |> Array.map (fun file -> Path.GetDirectoryName file)
+  let _createSaveState package (projectPath: string) (writeAllText: string -> string -> unit) =
+    let state =
+      { Package = package
+        ClientState = Array.empty }
 
-    let projSaveState =
-      let content = Path.Combine(projectPath, ProjectSaveState.FileName) |> readAllText
+    let file = Path.Combine(projectPath, ProjectSaveState.FileName)
+    let content = Instance.jsonSerialize state
+    writeAllText file content
+  let createSaveState (io: IOResolver) package (projectPath: string) =
+    _createSaveState package projectPath io.File.WriteAllText
+
+  let _getSaveState (projectPath: string) (fileExists: string -> bool) (readAllText: string -> string) =   
+    let saveState =
+      let content =
+        Path.Combine(projectPath, ProjectSaveState.FileName)
+        |> fun f -> fileExists f, f
+        |> fun (exists, f) -> if exists then readAllText f else ""
 
       if (System.String.IsNullOrEmpty content) then
         ProjectSaveState.Empty("grpc")
       else
         Instance.jsonDeserialize<ProjectSaveState> (content)
 
+    saveState
+
+  let getSaveState (io: IOResolver) (projectPath: string) =
+    _getSaveState projectPath io.File.Exists io.File.ReadAllText
+
+  let _loadProject
+    (projectPath: string)
+    (getFiles: string * string * SearchOption -> string array)
+    (readAllText: string -> string)
+    (createDirectory: string -> unit)
+    (getDirectories: string -> string array)
+    (fileExists: string -> bool)
+    =
+    let clientPaths =
+      getFiles (projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
+      |> Array.map Path.GetDirectoryName
+
+    let projSaveState = _getSaveState projectPath fileExists readAllText    
     let projectName = Path.GetFileName projectPath
 
     let clients =
       clientPaths
-      |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
+      |> Array.map (fun path ->
+        _loadClient path readAllText createDirectory getDirectories getFiles)
 
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
@@ -106,29 +129,7 @@ module Project =
       Path = projectPath }
 
   let loadProject (io: IOResolver) (projectPath: string) =
-    _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories
-
-  let createSaveState (io: IOResolver) package (projectPath: string) =
-    let state =
-      { Package = package
-        ClientState = Array.empty }
-
-    let file = Path.Combine(projectPath, ProjectSaveState.FileName)
-    let content = Instance.jsonSerialize state
-    io.File.WriteAllText file content
-
-  let getSaveState (io: IOResolver) (projectPath: string) =
-    let file = Path.Combine(projectPath, ProjectSaveState.FileName)
-
-    let saveState =
-      let content = io.File.ReadAllText file
-
-      if System.String.IsNullOrEmpty content then
-        ProjectSaveState.Empty("grpc")
-      else
-        Instance.jsonDeserialize<ProjectSaveState> (content)
-
-    saveState
+    _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.File.Exists
 
   let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
     task {
@@ -159,19 +160,14 @@ module Project =
       GlobalHub.publish (MsgClientUpdated(clientGroup, filePath, oldClientPath))
     }
 
-  let deleteClient (cfg: ClientGroup) (io: IOResolver) =
-    io.Dir.Delete cfg.Path true //deletes everything
-    io.Log.Info $"Deleted {cfg.Name}"
+  let _deleteClient (client: ClientGroup) (dirDelete: string -> bool -> unit) (log: string -> unit) =
+    dirDelete client.Path true //deletes everything
+    log $"Deleted {client.Name}"
 
-  let addClient
-    (io: IOResolver)
-    (project: Project)
-    clientName
-    serviceName
-    protoOrUrl
-    description
-    (csFiles: string array)
-    =
+  let deleteClient (client: ClientGroup) (io: IOResolver) =
+    _deleteClient client io.Dir.Delete io.Log.Info
+
+  let addClient (io: IOResolver) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
     task {
       //1. Create the client folder
       let clientPath = Path.Combine(project.Path, clientName)

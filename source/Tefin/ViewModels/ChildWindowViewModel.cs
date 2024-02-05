@@ -11,11 +11,12 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels;
 
 public class ChildWindowViewModel : ViewModelBase {
-    private string _footerMessage;
+    private string _footerMessage = "";
 
     public ChildWindowViewModel(ITabViewModel content) {
         this.Content = content;
 
+        this.WindowClose = () => { };
         this.DockCommand = this.CreateCommand(this.OnDock);
         this.FooterMessage = !string.IsNullOrEmpty(content.SubTitle) ? content.SubTitle : "Ready...";
     }
