@@ -21,7 +21,7 @@ module App =
       let _ = pack.Init(Resolver.value)
       ()
 
-  let saveAppState (io: IOResolver) recentProjects activeProject =
+  let saveAppState (io: IOs) recentProjects activeProject =
     let file = Path.Combine(Root.Path, AppState.FileName)
 
     let state =
@@ -41,7 +41,7 @@ module App =
   let getDefaultProjectPath package =
     Path.Combine(getDefaultProjectsPath package, Project.DefaultName)
 
-  let getAppState (io: IOResolver) =
+  let getAppState (io: IOs) =
     let file = Path.Combine(Root.Path, AppState.FileName)
 
     if (io.File.Exists file) then
@@ -58,7 +58,7 @@ module App =
       { RecentProjects = Array.empty
         ActiveProject = AppProject.Create path defaultPackage }
 
-  let loadPackage (io: IOResolver) (packagePath: string) =
+  let loadPackage (io: IOs) (packagePath: string) =
     let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))
     let projects = dirs |> Array.map (loadProject io)
     let packageName = Path.GetFileName packagePath
@@ -67,25 +67,25 @@ module App =
       Projects = projects
       Path = packagePath }
 
-  let loadRoot (io: IOResolver) =
+  let loadRoot (io: IOs) =
     let packages =
       getPackagesPath () |> io.Dir.GetDirectories |> Array.map (loadPackage io)
 
     { Packages = packages
       AppConfigFile = Config.configFile }
 
-  let setupRoot (io: IOResolver) =
+  let setupRoot (io: IOs) =
     io.Dir.CreateDirectory(Root.Path)
     setupPackage ()
 
   let init (io) = setupRoot (io)
 
-  let getProject (io: IOResolver) packageName projName =
+  let getProject (io: IOs) packageName projName =
     let root = loadRoot io
 
     root.Packages
     |> Array.find (fun c -> c.Name = packageName)
     |> fun p -> p.Projects |> Array.find (fun c -> c.Name = projName)
 
-  let getDefaultProject (io: IOResolver) =
+  let getDefaultProject (io: IOs) =
     getProject io defaultPackage Project.DefaultName

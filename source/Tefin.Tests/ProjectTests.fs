@@ -239,6 +239,7 @@ let ``Can update client config`` () =
       Assert.Equal(serviceName, c.Client.Config.Value.ServiceName)
       Assert.Equal(description, c.Client.Config.Value.Description)
        ))
+    |> ignore
     
     do!
       Project._updateClientConfig

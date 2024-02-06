@@ -32,7 +32,7 @@ module Share =
                    - file2.fxrq
     *)
 
-  let private createZip (io: IOResolver) targetZip (files: string array) (clientPath: string) (info: ShareInfo) =
+  let private createZip (io: IOs) targetZip (files: string array) (clientPath: string) (info: ShareInfo) =
     try
       if io.File.Exists targetZip then
         io.File.Delete targetZip
@@ -60,7 +60,7 @@ module Share =
     with exc ->
       Res.failed exc
 
-  let private getClientFiles (io:IOResolver) (client:ClientGroup)  =
+  let private getClientFiles (io:IOs) (client:ClientGroup)  =
     let clientPath = client.Path
     let clientConfig = Path.Combine(clientPath, ClientGroup.ConfigFilename)
 
@@ -83,7 +83,7 @@ module Share =
       Type = shareType }
 
   
-  let createFileShare (io: IOResolver) (targetZip: string) (files: string array) (client: ClientGroup) =
+  let createFileShare (io: IOs) (targetZip: string) (files: string array) (client: ClientGroup) =
     let methodsPath = Project.getMethodsPath client.Path
     let filterOutMethodFiles (files:string array) = seq {
       for file in files do
@@ -102,7 +102,7 @@ module Share =
         createZip io targetZip targetFiles client.Path info)
     |> Res.getValue
       
-  let createFolderShare (io: IOResolver) (targetZip: string) (methodName: string) (client: ClientGroup) =    
+  let createFolderShare (io: IOs) (targetZip: string) (methodName: string) (client: ClientGroup) =    
     let methodPath = Project.getMethodPath client.Path methodName
     let methodsPath = Project.getMethodsPath client.Path
     
@@ -121,7 +121,7 @@ module Share =
          createZip io targetZip files client.Path info)
     |> Res.getValue
 
-  let createClientShare (io: IOResolver) (targetZip: string) (client: ClientGroup) =
+  let createClientShare (io: IOs) (targetZip: string) (client: ClientGroup) =
     let clientPath = client.Path
     let clientConfig = Path.Combine(clientPath, ClientGroup.ConfigFilename)
 
@@ -138,7 +138,7 @@ module Share =
       let info = createInfo client.Name ShareInfo.ClientShare
       createZip io targetZip filesToZip clientPath info
 
-  let importInto (io: IOResolver) (project: Project) (zip: string) =
+  let importInto (io: IOs) (project: Project) (zip: string) =
     let allowMultiple ext =
       let extensions = [| $"{Ext.requestFileExt}" |]
       extensions |> Array.tryFind (fun c -> c = ext) |> Option.isSome

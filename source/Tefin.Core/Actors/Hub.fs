@@ -74,11 +74,8 @@ module Hub =
           member x.Dispose() =
             let ok, subscribers = sub.TryGetValue(reqType)
             if ok then
-              let removed = subscribers.Remove actor
-              ()
-               
-            
-        
+              subscribers.Remove actor
+              |> ignore        
       }
     
     //object-expression that implements IHub

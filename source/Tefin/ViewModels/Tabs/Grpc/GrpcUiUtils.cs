@@ -11,7 +11,7 @@ using Tefin.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
-    public static async Task ExportRequest(object?[] mParams, object reqStream, MethodInfo methodInfo, IOResolver io) {
+    public static async Task ExportRequest(object?[] mParams, object reqStream, MethodInfo methodInfo, IOs io) {
         var feature = new ExportFeature(methodInfo, mParams, reqStream);
         var exportReqJson = feature.Export();
         if (exportReqJson.IsOk) {
@@ -25,7 +25,7 @@ public static class GrpcUiUtils {
     }
 
     public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
-        Type listType, MethodInfo methodInfo, IOResolver io) {
+        Type listType, MethodInfo methodInfo, IOs io) {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
@@ -35,7 +35,7 @@ public static class GrpcUiUtils {
 
     public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
         Type listType, MethodInfo methodInfo, string file,
-        IOResolver io) {
+        IOs io) {
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);
         var (importReq, importReqStream) = import.Run();

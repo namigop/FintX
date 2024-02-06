@@ -16,7 +16,7 @@ public class ViewModelBase : ReactiveObject, IDisposable {
     private readonly List<IDisposable> _disposables = new();
     private bool _isBusy;
 
-    public IOResolver Io { get; } = Resolver.value;
+    public IOs Io { get; } = Resolver.value;
 
     public bool IsBusy {
         get => this._isBusy;

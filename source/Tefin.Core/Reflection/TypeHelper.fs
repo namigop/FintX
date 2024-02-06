@@ -69,7 +69,7 @@ module TypeHelper =
     let assembly = context.LoadFromStream(ms)
     assembly.GetTypes()
 
-  let getTypes (io: IOResolver) (dll: string) =
+  let getTypes (io: IOs) (dll: string) =
     task {
       let! bytes = io.File.ReadAllBytesAsync(dll)
       return getTypesFromBytes bytes

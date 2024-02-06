@@ -14,7 +14,7 @@ public class AddClientFeature(
     string protoOrUrl,
     string description,
     string[] csFiles,
-    IOResolver io) {
+    IOs io) {
     public async Task Add() =>
         await Project.addClient(io, project, clientName, serviceName, protoOrUrl, description, csFiles);
 }

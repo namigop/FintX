@@ -40,7 +40,7 @@ module ServerReflectionDiscoveryClient =
         Ok discoParams
 
 
-  let generateSource (io: IOResolver) (discoParams: ServerDiscoverParameters) =
+  let generateSource (io: IOs) (discoParams: ServerDiscoverParameters) =
     task {
       let config = discoParams.Config
       let targetPath = Path.Combine(config["RootPath"], "temp")

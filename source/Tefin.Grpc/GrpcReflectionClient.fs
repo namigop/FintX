@@ -143,7 +143,7 @@ module GrpcReflectionClient =
     descriptor.Name.StartsWith("google/protobuf/")
     && descriptor.Package.Equals("google.protobuf")
 
-  let private getProtos (io: IOResolver) (path: string) (descriptors: IReadOnlyList<FileDescriptor>) =
+  let private getProtos (io: IOs) (path: string) (descriptors: IReadOnlyList<FileDescriptor>) =
     task {
       let protos = List<string>()
 
@@ -167,7 +167,7 @@ module GrpcReflectionClient =
     else
       address2
 
-  let createProtoFile (io: IOResolver) (address2: string) (service: string) (path: string) =
+  let createProtoFile (io: IOs) (address2: string) (service: string) (path: string) =
     task {
       let address = getAddress address2
 
@@ -179,7 +179,7 @@ module GrpcReflectionClient =
       return protos
     }
 
-  let getServices (io: IOResolver) (address2: string) =
+  let getServices (io: IOs) (address2: string) =
     task {
       let address = getAddress address2
 

@@ -15,7 +15,7 @@ type ProtoDiscoverParameters =
 
 module ProtoDiscoveryClient =
 
-  let private validateProtos (io: IOResolver) (protos: string array) =
+  let private validateProtos (io: IOs) (protos: string array) =
     let invalidEntries =
       protos
       |> Array.filter (fun location -> not (location.EndsWith("proto") && io.File.Exists(location)))
@@ -25,7 +25,7 @@ module ProtoDiscoveryClient =
     else
       Ret.Ok protos
 
-  let private generateSourceFiles (io: IOResolver) (discoParams: ProtoDiscoverParameters) (protos: string array) =
+  let private generateSourceFiles (io: IOs) (discoParams: ProtoDiscoverParameters) (protos: string array) =
     task {
       let! files =
         ProtocProcess.generateSourceFiles io discoParams.Config["RootPath"] discoParams.Config["ProtosPath"] protos
@@ -37,7 +37,7 @@ module ProtoDiscoveryClient =
         return Ok files
     }
 
-  let generateSource (io: IOResolver) (discoParams: ProtoDiscoverParameters) =
+  let generateSource (io: IOs) (discoParams: ProtoDiscoverParameters) =
     task {
       let msg = String.Join("\r\n", discoParams.ProtoFiles)
       io.Log.Info($"Discovering : {discoParams.CustomClientName} @ {msg}")

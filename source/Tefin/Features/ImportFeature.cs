@@ -12,7 +12,7 @@ using Tefin.Grpc.Dynamic;
 
 namespace Tefin.Features;
 
-public class ImportFeature(IOResolver io, string file, MethodInfo methodInfo, object? responseStream = null) {
+public class ImportFeature(IOs io, string file, MethodInfo methodInfo, object? responseStream = null) {
     public (FSharpResult<object[], Exception>, FSharpResult<object, Exception>) Run() {
         var respStream = responseStream == null ? Core.Utils.none<object>() : Core.Utils.some(responseStream);
         var import = Export.importReq(io, new SerParam(methodInfo, Array.Empty<object>(),

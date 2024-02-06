@@ -14,7 +14,7 @@ namespace Tefin.Features;
 public class LoadSessionFeature(
     string clientPath,
     IEnumerable<MethodNode> nodes,
-    IOResolver io,
+    IOs io,
     Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string reqFile) {
         var dir = Path.GetDirectoryName(reqFile);

@@ -24,7 +24,7 @@ type ClientStreamWriter<'T>(writer: IClientStreamWriter<'T>, actions: IClientStr
 
 //TODO: module PerfTrackingClientStreamWriter
 module TimedClientStreamWriter =
-  let private createAction<'T> (io: IOResolver) (clientName: string) (method: string) =
+  let private createAction<'T> (io: IOs) (clientName: string) (method: string) =
     let onSuccess (name: string) (ts: TimeSpan) =
       io.Log.Info $"Call to {name} done. Elapsed {ts.TotalMilliseconds} msec"
       io.MethodCall.Publish(clientName, method, ts.TotalMilliseconds)
@@ -55,6 +55,6 @@ module TimedClientStreamWriter =
         member x.OnCompleteAsync(writer) = task { do! (onComplete writer) }
         member x.WriteAsync writer msg = task { do! (onWrite writer msg) } }
 
-  let create<'T> (io: IOResolver) (writer: IClientStreamWriter<'T>) (clientName: string) (method: string) =
+  let create<'T> (io: IOs) (writer: IClientStreamWriter<'T>) (clientName: string) (method: string) =
     let actions = createAction io clientName method
     new ClientStreamWriter<'T>(writer, actions)

@@ -54,7 +54,7 @@ module ClientCompiler =
     referencedFiles
 
   let private createCompilation
-    (io: IOResolver)
+    (io: IOs)
     (sourceFiles: string array)
     (assemblyOrModuleName: string)
     (outputKind: OutputKind)
@@ -97,7 +97,7 @@ module ClientCompiler =
       TargetOutput = OutputKind.DynamicallyLinkedLibrary
       Input = None }
 
-  let compile (io: IOResolver) (input: CompileInput) =
+  let compile (io: IOs) (input: CompileInput) =
     use ms = new MemoryStream()
     let moduleName = Path.GetFileName input.ModuleFile
 

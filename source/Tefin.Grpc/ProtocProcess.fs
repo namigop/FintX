@@ -8,7 +8,7 @@ open Tefin.Core
 open Tefin.Core.Utils
 
 module ProtocProcess =
-  let private cleanupWorkingDirectory (io: IOResolver) (grpcRoot: string) (protosPath: string) =
+  let private cleanupWorkingDirectory (io: IOs) (grpcRoot: string) (protosPath: string) =
     //Clean up old proto files in the working directory
     let existingFiles =
       //io.DirIO.G
@@ -21,7 +21,7 @@ module ProtocProcess =
     for cs in io.Dir.GetFiles(protosPath, "*.cs", SearchOption.AllDirectories) do
       io.File.Delete(cs)
 
-  let private getProtocArgs (io: IOResolver) (grpcRoot: string) (csharpPlugin: string) (protoFiles: string array) =
+  let private getProtocArgs (io: IOs) (grpcRoot: string) (csharpPlugin: string) (protoFiles: string array) =
     let googlePath = Path.Combine(grpcRoot, "google", "protobuf")
     let sourceProtoPath = Path.GetDirectoryName(protoFiles[0])
 
@@ -36,7 +36,7 @@ module ProtocProcess =
       $"{args} {files}"
 
   let extractExecutablesAndGoogleProtos
-    (io: IOResolver)
+    (io: IOs)
     (grpcRootPath: string)
     (protocExe: string)
     (csharpPluginExe: string)
@@ -104,7 +104,7 @@ module ProtocProcess =
           do! io.File.WriteAllBytesAsync target bytes
     }
 
-  let generateSourceFiles (io: IOResolver) (grpcRoot: string) (protosPath: string) (protosFiles: string array) =
+  let generateSourceFiles (io: IOs) (grpcRoot: string) (protosPath: string) (protosFiles: string array) =
     task {
       //        protoc.exe
       //          --proto_path = protos ????

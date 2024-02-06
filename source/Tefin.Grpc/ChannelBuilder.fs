@@ -25,9 +25,9 @@ type CallConfig =
     IsUsingSSL: bool
     JWT: string
     X509Cert: Cert option //todo
-    Io: IOResolver }
+    Io: IOs }
 
-  static member From (cfg: ClientConfig) (io: IOResolver) =
+  static member From (cfg: ClientConfig) (io: IOs) =
     let cert =
       if cfg.IsUsingSSL then
         if cfg.IsCertFromFile then

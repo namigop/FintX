@@ -8,7 +8,7 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public static class TabFactory {
-    public static ITabViewModel? From(IExplorerItem item, IOResolver io, string requestFile = "") {
+    public static ITabViewModel? From(IExplorerItem item, IOs io, string requestFile = "") {
         switch (item) {
             case FilePerfNode p:
                 return new FilePerfTabViewModel(p);

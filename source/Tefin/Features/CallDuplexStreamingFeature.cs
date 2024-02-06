@@ -14,7 +14,7 @@ public class CallDuplexStreamingFeature(
     MethodInfo mi,
     object?[] mParams,
     ProjectTypes.ClientConfig cfg,
-    IOResolver io) {
+    IOs io) {
     public async Task<(bool, ResponseDuplexStreaming)> Run() {
         var (success, resp) = await CallDuplexStreaming.run(io, mi, mParams, cfg);
         return (success, resp);

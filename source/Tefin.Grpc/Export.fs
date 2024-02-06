@@ -48,7 +48,7 @@ module Export =
 
       exportInstance)
 
-  let importReq (io: IOResolver) (p: SerParam) (file: string) =
+  let importReq (io: IOs) (p: SerParam) (file: string) =
     let json = io.File.ReadAllText file
 
     let validate (info: ReqExport) =

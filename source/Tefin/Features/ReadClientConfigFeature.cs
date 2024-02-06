@@ -7,7 +7,7 @@ using Tefin.Core.Interop;
 
 namespace Tefin.Features;
 
-public class ReadClientConfigFeature(string clientConfigFile, IOResolver io) {
+public class ReadClientConfigFeature(string clientConfigFile, IOs io) {
     public ProjectTypes.ClientConfig Read() {
         var json = io.File.ReadAllText(clientConfigFile);
         return Instance.jsonDeserialize<ProjectTypes.ClientConfig>(json);

@@ -49,7 +49,7 @@ module GrpcPackage =
 
       member x.Name = packageName
 
-      member x.Init(io: IOResolver) =
+      member x.Init(io: IOs) =
         task {
           for d in allPaths do
             ignore (io.Dir.CreateDirectory d)

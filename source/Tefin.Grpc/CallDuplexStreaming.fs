@@ -10,7 +10,7 @@ module CallDuplexStreaming =
 
   let callError = CallError()
 
-  let runSteps (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
+  let runSteps (io: IOs) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
     task {
       let start (ctx: Context) =        
         Task.FromResult { ctx with Io = Some io }
@@ -50,7 +50,7 @@ module CallDuplexStreaming =
           execContext
     }
 
-  let run (io: IOResolver) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) =
+  let run (io: IOs) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) =
     task {
       let callConfig = CallConfig.From cfg io
       let! ctx = runSteps io methodInfo mParams callConfig

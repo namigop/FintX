@@ -7,7 +7,7 @@ open Grpc.Core.Interceptors
 open Tefin.Core
 open System
 
-type CallInterceptor(clientName: string, io: IOResolver, onErr: Exception -> unit) =
+type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
   inherit Interceptor()
 
   let onSuccess (name: string) retVal (ts: TimeSpan) =

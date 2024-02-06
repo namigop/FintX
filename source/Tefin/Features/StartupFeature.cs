@@ -24,7 +24,7 @@ public class StartupFeature {
         });
     }
 
-    public AppTypes.Root Load(IOResolver io) {
+    public AppTypes.Root Load(IOs io) {
         Core.App.init(io);
         var root = Core.App.loadRoot(io);
         var proj = root.Packages.First().Projects.First();

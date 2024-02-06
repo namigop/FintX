@@ -14,7 +14,7 @@ public class CallServerStreamingFeature(
     MethodInfo mi,
     object?[] mParams,
     ProjectTypes.ClientConfig cfg,
-    IOResolver io) {
+    IOs io) {
     public async Task<(bool, ResponseServerStreaming)> Run() {
         var (success, resp) = await CallServerStreaming.run(io, mi, mParams, cfg);
         return (success, resp);

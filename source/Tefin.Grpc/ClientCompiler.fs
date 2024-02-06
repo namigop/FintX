@@ -9,7 +9,7 @@ open Tefin.Core.Res
 
 module ClientCompiler =
 
-  let private getGrpcReferencedFiles (io: IOResolver) =
+  let private getGrpcReferencedFiles (io: IOs) =
     let exepath = AppContext.BaseDirectory // Path.GetDirectoryName(Environment.ProcessPath); //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
     let grpcFiles =
@@ -21,7 +21,7 @@ module ClientCompiler =
     else
       Ret.Error(failwith "Missing Grpc.* dll references")
 
-  let compile (io: IOResolver) (assemblyFile: string) (sourceFiles: string array) =
+  let compile (io: IOs) (assemblyFile: string) (sourceFiles: string array) =
     getGrpcReferencedFiles io
     |> map (fun grpcDlls ->
       let cIn: CompileInput =

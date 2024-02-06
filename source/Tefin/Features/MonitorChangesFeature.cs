@@ -5,7 +5,7 @@ using Tefin.Messages;
 
 namespace Tefin.Features;
 
-public class MonitorChangesFeature(IOResolver io) {
+public class MonitorChangesFeature(IOs io) {
     private static FileSystemWatcher? _watcher;
 
     public void Run(ProjectTypes.Project project) {

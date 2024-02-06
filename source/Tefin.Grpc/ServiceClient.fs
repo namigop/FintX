@@ -52,7 +52,7 @@ module ServiceClient =
       let lastParam = m.GetParameters() |> Array.last
       not (lastParam.ParameterType = typeof<CallOptions>))
 
-  let generateSourceFiles (io: IOResolver) (compileParams: CompileParameters) =
+  let generateSourceFiles (io: IOs) (compileParams: CompileParameters) =
     task {
       let grpcParams =
         { compileParams with
@@ -85,13 +85,13 @@ module ServiceClient =
 
     }
 
-  let getServices (io: IOResolver) (discoParams: DiscoverParameters) =
+  let getServices (io: IOs) (discoParams: DiscoverParameters) =
     task {
       let! services = GrpcReflectionClient.getServices io discoParams.ReflectionUri.AbsoluteUri
       return services
     }
 
-  let compile (io: IOResolver) (sourceFiles: string array) (compileParams: CompileParameters) =
+  let compile (io: IOs) (sourceFiles: string array) (compileParams: CompileParameters) =
     task {
       let grpcParams =
         { compileParams with
@@ -121,7 +121,7 @@ module ServiceClient =
         return compileOutput
     }
 
-  let discover (io: IOResolver) (discoParams: DiscoverParameters) =
+  let discover (io: IOs) (discoParams: DiscoverParameters) =
     task {
       if (discoParams.ProtoFiles.Length > 0) then
         let regex = @"service\s+(?<ServiceName>\w+)\s+"

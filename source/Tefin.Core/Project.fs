@@ -46,7 +46,7 @@ module Project =
         Name = methodName
         Path = m })
 
-  let loadMethods (io: IOResolver) (clientPath: string) =
+  let loadMethods (io: IOs) (clientPath: string) =
     _loadMethods clientPath io.Dir.CreateDirectory io.Dir.GetDirectories io.Dir.GetFiles
 
   let _loadClient
@@ -70,7 +70,7 @@ module Project =
       Name = config.Name
       Path = clientPath }
 
-  let loadClient (io: IOResolver) (clientPath: string) =
+  let loadClient (io: IOs) (clientPath: string) =
     _loadClient clientPath io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.Dir.GetFiles
 
   let _createSaveState package (projectPath: string) (writeAllText: string -> string -> unit) =
@@ -82,7 +82,7 @@ module Project =
     let content = Instance.jsonSerialize state
     writeAllText file content
 
-  let createSaveState (io: IOResolver) package (projectPath: string) =
+  let createSaveState (io: IOs) package (projectPath: string) =
     _createSaveState package projectPath io.File.WriteAllText
 
   let _getSaveState (projectPath: string) (fileExists: string -> bool) (readAllText: string -> string) =
@@ -99,7 +99,7 @@ module Project =
 
     saveState
 
-  let getSaveState (io: IOResolver) (projectPath: string) =
+  let getSaveState (io: IOs) (projectPath: string) =
     _getSaveState projectPath io.File.Exists io.File.ReadAllText
 
   let _loadProject
@@ -129,7 +129,7 @@ module Project =
       ConfigFile = config
       Path = projectPath }
 
-  let loadProject (io: IOResolver) (projectPath: string) =
+  let loadProject (io: IOs) (projectPath: string) =
     _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.File.Exists
 
   let _updateClientConfig
@@ -172,7 +172,7 @@ module Project =
       GlobalHub.publish (MsgClientUpdated(clientGroup, filePath, oldClientPath))
     }
 
-  let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
+  let updateClientConfig (io: IOs) (clientConfigFile: string) (clientConfig: ClientConfig) =
     task {
       do!
         _updateClientConfig
@@ -190,7 +190,7 @@ module Project =
     dirDelete client.Path true //deletes everything
     log $"Deleted {client.Name}"
 
-  let deleteClient (client: ClientGroup) (io: IOResolver) =
+  let deleteClient (client: ClientGroup) (io: IOs) =
     _deleteClient client io.Dir.Delete io.Log.Info
 
   let rec _addClient
@@ -232,7 +232,7 @@ module Project =
 
     }
 
-  let addClient (io: IOResolver) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
+  let addClient (io: IOs) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
     _addClient
       project
       clientName

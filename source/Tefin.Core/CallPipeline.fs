@@ -12,7 +12,7 @@ type Context =
     Elapsed: TimeSpan option
     Error: Exception
     Response: Ret<obj>
-    Io: IOResolver option
+    Io: IOs option
     Variable: Dictionary<string, obj> }
 
   member this.Success = (this.Error = null) && Res.isOk this.Response

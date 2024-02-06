@@ -7,14 +7,14 @@ using Tefin.Utils;
 namespace Tefin.Features;
 
 public class SharingFeature {
-    public FSharpResult<string, Exception> ShareRequests(IOResolver io, string zipFile, string[] files,
+    public FSharpResult<string, Exception> ShareRequests(IOs io, string zipFile, string[] files,
         ProjectTypes.ClientGroup client) => Share.createFileShare(io, zipFile, files, client);
 
-    public FSharpResult<string, Exception> ShareMethod(IOResolver io, string zipFile, string methodName,
+    public FSharpResult<string, Exception> ShareMethod(IOs io, string zipFile, string methodName,
         ProjectTypes.ClientGroup client) => Share.createFolderShare(io, zipFile, methodName, client);
 
     public FSharpResult<string, Exception>
-        ShareClient(IOResolver io, string zipFile, ProjectTypes.ClientGroup client) =>
+        ShareClient(IOs io, string zipFile, ProjectTypes.ClientGroup client) =>
         Share.createClientShare(io, zipFile, client);
 
     public async Task<string> GetZipFile() {

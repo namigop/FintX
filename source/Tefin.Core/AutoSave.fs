@@ -51,13 +51,13 @@ module AutoSave =
     member x.WithMethods m = { x with Methods = m }
 
   type Writer =
-    { Write: IOResolver -> string -> string -> unit
+    { Write: IOs -> string -> string -> unit
       Remove: string -> unit }
 
   let writer =
     let cache = Dictionary<string, string>()
 
-    let doWrite (io: IOResolver) (file: string) (json: string) =
+    let doWrite (io: IOs) (file: string) (json: string) =
       try
         let found, content = cache.TryGetValue file
 
@@ -78,7 +78,7 @@ module AutoSave =
 
 
   let rec private saveFile
-    (io: IOResolver)
+    (io: IOs)
     (methodName: string)
     (autoSavePath: string)
     (f: FileParam)
@@ -102,7 +102,7 @@ module AutoSave =
         Header = f.Header
         FullPath = Some fullPath }
 
-  let private syncAutoSavedFiles (io: IOResolver) autoSavedFiles autoSavePath =
+  let private syncAutoSavedFiles (io: IOs) autoSavedFiles autoSavePath =
     //Delete any existing files that were not auto-saved
     let existingFiles = io.Dir.GetFiles autoSavePath
 
@@ -111,7 +111,7 @@ module AutoSave =
         io.File.Delete e
         writer.Remove e
 
-  let private saveMethod (io: IOResolver) (clientPath: string) (method: MethodParam) (writer: Writer) =
+  let private saveMethod (io: IOs) (clientPath: string) (method: MethodParam) (writer: Writer) =
     let autoSavePath = Project.getAutoSavePath clientPath method.Name
     io.Dir.CreateDirectory autoSavePath
 
@@ -125,13 +125,13 @@ module AutoSave =
     { method with Files = autoSavedFiles }
 
 
-  let getAutoSavedFiles (io: IOResolver) (clientPath: string) =
+  let getAutoSavedFiles (io: IOs) (clientPath: string) =
     Project.getMethodsPath clientPath
     |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
     |> Array.filter (fun fp -> fp.Contains(Project.AutoSaveFolderName))
     |> Array.sortBy id
 
-  let private saveClient (io: IOResolver) (clientParam: ClientParam) (writer: Writer) =
+  let private saveClient (io: IOs) (clientParam: ClientParam) (writer: Writer) =
     if (Directory.Exists clientParam.Client.Path) then
       if (clientParam.Methods.Length = 0) then
         getAutoSavedFiles io clientParam.Client.Path |> Array.iter File.Delete
@@ -144,7 +144,7 @@ module AutoSave =
     else
       clientParam
 
-  let getAutoSaveLocation (io: IOResolver) (methodInfo: MethodInfo) (clientPath: string) =
+  let getAutoSaveLocation (io: IOs) (methodInfo: MethodInfo) (clientPath: string) =
     let methodName = methodInfo.Name
     let autoSavePath = Project.getAutoSavePath (clientPath) methodName
 
