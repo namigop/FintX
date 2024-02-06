@@ -1,5 +1,6 @@
 namespace Tefin.Core
 
+open System.Threading.Tasks
 open Tefin.Core.Infra.Actors
 open Tefin.Core.Interop
 open System.IO
@@ -80,10 +81,11 @@ module Project =
     let file = Path.Combine(projectPath, ProjectSaveState.FileName)
     let content = Instance.jsonSerialize state
     writeAllText file content
+
   let createSaveState (io: IOResolver) package (projectPath: string) =
     _createSaveState package projectPath io.File.WriteAllText
 
-  let _getSaveState (projectPath: string) (fileExists: string -> bool) (readAllText: string -> string) =   
+  let _getSaveState (projectPath: string) (fileExists: string -> bool) (readAllText: string -> string) =
     let saveState =
       let content =
         Path.Combine(projectPath, ProjectSaveState.FileName)
@@ -112,13 +114,12 @@ module Project =
       getFiles (projectPath, ClientGroup.ConfigFilename, SearchOption.AllDirectories)
       |> Array.map Path.GetDirectoryName
 
-    let projSaveState = _getSaveState projectPath fileExists readAllText    
+    let projSaveState = _getSaveState projectPath fileExists readAllText
     let projectName = Path.GetFileName projectPath
 
     let clients =
       clientPaths
-      |> Array.map (fun path ->
-        _loadClient path readAllText createDirectory getDirectories getFiles)
+      |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
 
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
@@ -131,22 +132,31 @@ module Project =
   let loadProject (io: IOResolver) (projectPath: string) =
     _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.File.Exists
 
-  let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
+  let _updateClientConfig
+    (clientConfigFile: string)
+    (clientConfig: ClientConfig)
+    (moveDirectory: string -> string -> unit)
+    (writeAllTextAsync: string -> string -> Task)
+    (readAllText: string -> string)
+    (createDirectory: string -> unit)
+    (getDirectories: string -> string array)
+    (getFiles: string * string * SearchOption -> string array)
+    =
     task {
       let oldClientPath = Path.GetDirectoryName clientConfigFile
 
       let file, filePath =
         let fileName = Path.GetFileName clientConfigFile
-        let oldName = Path.GetDirectoryName clientConfigFile |> Path.GetFileName
+        let oldDirName = Path.GetDirectoryName clientConfigFile |> Path.GetFileName
 
         let currentName = clientConfig.Name
-        let nameChanged = not (oldName = currentName)
+        let nameChanged = not (oldDirName = currentName)
 
         if nameChanged then
           let newClientPath =
             Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
 
-          io.Dir.Move oldClientPath newClientPath
+          moveDirectory oldClientPath newClientPath
 
           let newConfigFile = Path.Combine(newClientPath, fileName)
           newConfigFile, newClientPath
@@ -154,10 +164,26 @@ module Project =
           clientConfigFile, oldClientPath
 
       let json = Instance.jsonSerialize clientConfig
-      do! io.File.WriteAllTextAsync file json
+      do! writeAllTextAsync file json
 
-      let clientGroup = loadClient io filePath
+      let clientGroup =
+        _loadClient filePath readAllText createDirectory getDirectories getFiles
+
       GlobalHub.publish (MsgClientUpdated(clientGroup, filePath, oldClientPath))
+    }
+
+  let updateClientConfig (io: IOResolver) (clientConfigFile: string) (clientConfig: ClientConfig) =
+    task {
+      do!
+        _updateClientConfig
+          clientConfigFile
+          clientConfig
+          io.Dir.Move
+          io.File.WriteAllTextAsync
+          io.File.ReadAllText
+          io.Dir.CreateDirectory
+          io.Dir.GetDirectories
+          io.Dir.GetFiles
     }
 
   let _deleteClient (client: ClientGroup) (dirDelete: string -> bool -> unit) (log: string -> unit) =
@@ -167,11 +193,25 @@ module Project =
   let deleteClient (client: ClientGroup) (io: IOResolver) =
     _deleteClient client io.Dir.Delete io.Log.Info
 
-  let addClient (io: IOResolver) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
+  let rec _addClient
+    (project: Project)
+    clientName
+    serviceName
+    protoOrUrl
+    description
+    (csFiles: string array)
+    (createDirectory: string -> unit)
+    (fileCopy: string * string * bool -> unit)
+    (moveDirectory: string -> string -> unit)
+    (writeAllTextAsync: string -> string -> Task)
+    (readAllText: string -> string)
+    (getDirectories: string -> string array)
+    (getFiles: string * string * SearchOption -> string array)
+    =
     task {
       //1. Create the client folder
       let clientPath = Path.Combine(project.Path, clientName)
-      io.Dir.CreateDirectory clientPath
+      createDirectory clientPath
 
       let config =
         ClientConfig(Description = description, ServiceName = serviceName, Url = protoOrUrl, Name = clientName)
@@ -180,13 +220,30 @@ module Project =
 
       //2. Copy the C# files
       let codePath = Path.Combine(clientPath, "code")
-      io.Dir.CreateDirectory codePath
+      createDirectory codePath
 
       for source in csFiles do
         let name = Path.GetFileName source
         let target = Path.Combine(codePath, name)
-        io.File.Copy(source, target, true)
+        fileCopy (source, target, true)
 
       //3. Save the client config
-      do! updateClientConfig io clientConfigFile config
+      do! _updateClientConfig clientConfigFile config moveDirectory writeAllTextAsync readAllText createDirectory getDirectories getFiles
+
     }
+
+  let addClient (io: IOResolver) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
+    _addClient
+      project
+      clientName
+      serviceName
+      protoOrUrl
+      description
+      csFiles
+      io.Dir.CreateDirectory
+      io.File.Copy
+      io.Dir.Move
+      io.File.WriteAllTextAsync
+      io.File.ReadAllText
+      io.Dir.GetDirectories
+      io.Dir.GetFiles

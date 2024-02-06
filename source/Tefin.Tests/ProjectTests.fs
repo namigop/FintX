@@ -88,20 +88,16 @@ let buildProjectFolder projectName projFiles clientName clientConfigContent meth
              [| codeFolder
                 { Path = "methods"
                   Files = Array.empty
-                  Folders = methodFolders }
-                |] } |] }
+                  Folders = methodFolders } |] } |] }
+
 let projectFolder =
-  buildProjectFolder
-    testProjectName
-    [| projectSaveStateFile |]
-    testClientName
-    testClientConfigContent
-    [| methodFolder1; methodFolder2 |]
-     
+  buildProjectFolder testProjectName [| projectSaveStateFile |] testClientName testClientConfigContent [| methodFolder1; methodFolder2 |]
+
 let buildProjectsFolder projFolder =
-    { Path = "projects"
-      Files = Array.empty
-      Folders = [| projFolder |] }
+  { Path = "projects"
+    Files = Array.empty
+    Folders = [| projFolder |] }
+
 let projectsFolder =
   (* The folder structure
     projects
@@ -117,50 +113,184 @@ let projectsFolder =
                    - file2.fxrq
     *)
   buildProjectsFolder projectFolder
- 
+
+
 [<Fact>]
-let ``Can load project with no save state`` () =   
-  let stillValidProj =
-    buildProjectFolder
-      "proj1"
-      Array.empty
-      testClientName
-      testClientConfigContent
-      [| methodFolder1; methodFolder2 |]
+let ``Can add client`` () =
+  task {
+    let projPath = $"projects/{testProjectName}"
+
+    let clientConfig =
+      $"projects/{testProjectName}/{testClientName}/{ClientGroup.ConfigFilename}"
+
+    let clientPath = $"projects/{testProjectName}/{testClientName}"
+
+    let newClient = "fooBarTestClient"
+    let newCsFile = "/abc/def/Greeter.cs"
+    let io = ioMock projectsFolder
+
+    let proj =
+      Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+
+    let createDir (dir:string) =
+      //newly created folders will contain the new client name      
+      Assert.True (dir.Contains(newClient))
      
+    let fileCopy (source: string, target: string, overwrite: bool) =
+      //this will be called to copy the cs files
+      Assert.Equal(newCsFile, source)
+      
+      let target = target.Replace("\\", "/")
+      let expected = $"projects/{testProjectName}/{newClient}/code/{Path.GetFileName(source)}"
+      Assert.Equal(expected, target)     
+
+    let moveDir (fromPath: string) (toPath: string) =
+      let old = Path.GetFileName fromPath
+      let target = Path.GetFileName toPath
+      ()
+    // Assert.Equal(old, testClientName)
+    // Assert.Equal(clientName, target)
+
+    let writeAllTextAsync (file: string) (content: string) =
+      task {
+        let expected =
+          $"projects/{testProjectName}/{newClient}/{ClientGroup.ConfigFilename}"
+
+        Assert.Equal(expected, file.Replace("\\", "/"))
+        //Assert.Equal(updatedConfigContent, content)
+
+        do! System.Threading.Tasks.Task.Yield()
+      }
+      |> fun t -> t :> System.Threading.Tasks.Task
+
+
+    let updateFolder =
+      buildProjectFolder
+        testProjectName
+        [| projectSaveStateFile |]
+        newClient
+        testClientConfigContent
+        [| methodFolder1; methodFolder2 |]
+      |> fun proj -> buildProjectsFolder proj
+
+    let io2 = ioMock updateFolder
+
+    do!
+      Project._addClient
+        proj
+        newClient
+        "serviceName"
+        "protoUrl.proto"
+        "my desc"
+        [| newCsFile |]
+        createDir
+        fileCopy
+        moveDir
+        writeAllTextAsync
+        io2.ReadAllText
+        io2.GetDirectories
+        io2.GetFiles
+    }
+
+[<Fact>]
+let ``Can update client config`` () =
+  task {
+    let clientPath = $"projects/{testProjectName}/{testClientName}"
+    let clientConfig = $"{clientPath}/{ClientGroup.ConfigFilename}"
+    let description = $"my new desc"
+    let serviceName = $"svc"
+    let protoOrUrl = $"/foo/bar/mynew.proto"
+    let clientName = $"mynewclientName"
+
+    let updatedConfig =
+      ClientConfig(Description = description, ServiceName = serviceName, Url = protoOrUrl, Name = clientName)
+
+    let updatedConfigContent = Instance.jsonSerialize updatedConfig
+
+    let moveDir (fromPath: string) (toPath: string) =
+      let old = Path.GetFileName fromPath
+      let target = Path.GetFileName toPath
+      Assert.Equal(old, testClientName)
+      Assert.Equal(clientName, target)
+
+    let writeAllTextAsync (file: string) (content: string) =
+      task {
+        let expected =
+          $"projects/{testProjectName}/{clientName}/{ClientGroup.ConfigFilename}"
+
+        Assert.Equal(expected, file.Replace("\\", "/"))
+        Assert.Equal(updatedConfigContent, content)
+
+        do! System.Threading.Tasks.Task.Yield()
+      }
+      |> fun t -> t :> System.Threading.Tasks.Task
+
+    let updateFolder =
+      buildProjectFolder testProjectName [| projectSaveStateFile |] clientName updatedConfigContent [| methodFolder1; methodFolder2 |]
+      |> fun proj -> buildProjectsFolder proj
+
+    let io = ioMock updateFolder
+
+    do!
+      Project._updateClientConfig
+        clientConfig
+        updatedConfig
+        moveDir
+        writeAllTextAsync
+        io.ReadAllText
+        io.CreateDirectory
+        io.GetDirectories
+        io.GetFiles
+
+    ()
+  }
+
+[<Fact>]
+let ``Can load project with no save state`` () =
+  let stillValidProj =
+    buildProjectFolder "proj1" Array.empty testClientName testClientConfigContent [| methodFolder1; methodFolder2 |]
+
   let io = ioMock stillValidProj
   let projPath = $"projects/proj1"
-  let proj = Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+
+  let proj =
+    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   //if we have an instance of proj, then it loaded just fine
   Assert.Equal("proj1", proj.Name)
-  
+
   let stillValidProj2 =
     buildProjectFolder
       "proj2"
-      [| { Path = ProjectSaveState.FileName; Content = "" } |]
+      [| { Path = ProjectSaveState.FileName
+           Content = "" } |]
       testClientName
       testClientConfigContent
       [| methodFolder1; methodFolder2 |]
-      
+
   let io2 = ioMock stillValidProj2
   let projPath2 = $"projects/proj2"
-  let proj2 = Project._loadProject projPath2 io2.GetFiles io2.ReadAllText io2.CreateDirectory io2.GetDirectories io2.FileExists
+
+  let proj2 =
+    Project._loadProject projPath2 io2.GetFiles io2.ReadAllText io2.CreateDirectory io2.GetDirectories io2.FileExists
 
   //if we have an instance of proj, then it loaded just fine
   Assert.Equal("proj2", proj2.Name)
-  
- 
+
 
 [<Fact>]
 let ``Can load valid project`` () =
   let projPath = $"projects/{testProjectName}"
-  let clientConfig = $"projects/{testProjectName}/{testClientName}/{ClientGroup.ConfigFilename}"
+
+  let clientConfig =
+    $"projects/{testProjectName}/{testClientName}/{ClientGroup.ConfigFilename}"
+
   let clientPath = $"projects/{testProjectName}/{testClientName}"
 
   let io = ioMock projectsFolder
 
-  let proj = Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+  let proj =
+    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   Assert.Equal(testProjectName, proj.Name)
   Assert.Equal(1, proj.Clients.Length)

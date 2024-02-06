@@ -47,10 +47,14 @@ let ioMock (rootFolder:Folder) =
           let p = String.Join("/", pathParts)
           let fullPath = $"{p}/{f.Path}".Replace("\\", "/")
           { f with Path = fullPath })
+        |> fun files -> folder, files
       else
         folder.Folders
-        |> Array.collect (fun f -> getFilesRec f pattern option pathParts "")
+        |> Array.collect (fun f ->
+            let folder,files = getFilesRec f pattern option pathParts ""
+            files)
         |> Array.filter (fun f -> matchFilePattern f pattern)
+        |> fun files -> folder, files
     else
       folder.Files
       |> Array.filter (fun f -> matchFilePattern f pattern)
@@ -61,19 +65,29 @@ let ioMock (rootFolder:Folder) =
           f.Path.StartsWith targetPath)
       |> Array.append (
         folder.Folders
-        |> Array.collect (fun f -> getFilesRec f pattern option pathParts ($"{p}/{f.Path}"))
+        |> Array.collect (fun f ->
+          let folder, files = getFilesRec f pattern option pathParts ($"{p}/{f.Path}")
+          files)
       )
-
-  let getFiles (path: string, pattern: string, options: SearchOption) =
+      |> fun files -> folder, files
+      
+  let getFolder (path: string) (pattern: string) (options: SearchOption) =
     let path = path.Replace("\\", "/")
     let pathParts = path.Split("/")
     getFilesRec rootFolder pattern options pathParts rootFolder.Path
+    
+    
+  let getFiles (path: string, pattern: string, options: SearchOption) =    
+    let _, files = getFolder path pattern options
+    files
 
   let readAllText (file: string) =
     let file = file.Replace("\\", "/")
     let dir = Path.GetDirectoryName file
 
-    getFiles (dir, "*.*", SearchOption.AllDirectories)
+    let boo = getFiles (dir, "*.*", SearchOption.AllDirectories)
+    
+    boo
     |> Array.tryFind (fun f -> f.Path = file)
     |> fun m ->
         match m with
