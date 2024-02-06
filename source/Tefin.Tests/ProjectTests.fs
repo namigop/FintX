@@ -2,6 +2,7 @@
 
 open System
 open Tefin.Core
+open Tefin.Core.Infra.Actors
 open Tefin.Core.Interop
 open Xunit
 open IoMock
@@ -231,6 +232,14 @@ let ``Can update client config`` () =
 
     let io = ioMock updateFolder
 
+    GlobalHub.subscribe(Action<MsgClientUpdated>(fun c ->
+      Assert.Equal(clientName, c.Client.Name)
+      Assert.Equal(clientName, c.Client.Config.Value.Name)
+      Assert.Equal(protoOrUrl, c.Client.Config.Value.Url)
+      Assert.Equal(serviceName, c.Client.Config.Value.ServiceName)
+      Assert.Equal(description, c.Client.Config.Value.Description)
+       ))
+    
     do!
       Project._updateClientConfig
         clientConfig
@@ -242,7 +251,6 @@ let ``Can update client config`` () =
         io.GetDirectories
         io.GetFiles
 
-    ()
   }
 
 [<Fact>]
