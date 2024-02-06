@@ -18,11 +18,11 @@ module Hub =
   type IHub =
     abstract member Actor: IActor
     abstract member GetActor: Type -> IActor
-    abstract member Register: Type * IActor -> unit
+    abstract member Register: Type * IActor -> IDisposable
     abstract member Publish: MessageType<IMsg> -> unit
-    abstract member Subscribe: Action<'r> -> unit
+    abstract member Subscribe: Action<'r> -> IDisposable
 
-    abstract member SubscribeTask: Func<'r, Task> -> unit
+    abstract member SubscribeTask: Func<'r, Task> -> IDisposable
 
   type HubActor(actor) =
 
@@ -69,6 +69,18 @@ module Hub =
 
     let h2 = HubActor(hubActor)
 
+    let createDisposable (actor:IActor) (reqType:Type) ( sub:Dictionary<Type, ResizeArray<IActor>>)=
+      { new IDisposable with
+          member x.Dispose() =
+            let ok, subscribers = sub.TryGetValue(reqType)
+            if ok then
+              let removed = subscribers.Remove actor
+              ()
+               
+            
+        
+      }
+    
     //object-expression that implements IHub
     { new IHub with
         member x.Actor = h2
@@ -88,6 +100,8 @@ module Hub =
             sub.Add(reqType, ResizeArray([| childActor |]))
           else
             sub[reqType].Add childActor
+            
+          createDisposable childActor reqType sub
 
         member x.Publish(m) = hubActor.Post m
 

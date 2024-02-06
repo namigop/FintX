@@ -17,6 +17,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.ProjectTypes;
@@ -51,10 +52,10 @@ public class ExplorerViewModel : ViewModelBase {
         this.ExplorerTree = temp;
         this.ExplorerTree.RowSelection!.SingleSelect = false;
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
-        GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
-        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
-        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged);
-        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile);
+        GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile).Then(this.MarkForCleanup);
 
         this.CopyCommand = this.CreateCommand(this.OnCopy);
         this.PasteCommand = this.CreateCommand(this.OnPaste);

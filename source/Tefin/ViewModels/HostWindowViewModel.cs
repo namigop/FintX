@@ -2,6 +2,7 @@
 
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
 using Tefin.Views;
 
@@ -9,10 +10,14 @@ namespace Tefin.ViewModels;
 
 public class HostWindowViewModel : ViewModelBase {
     public HostWindowViewModel() {
-        GlobalHub.subscribeTask<OpenChildWindowMessage>(this.OnReceiveOpenChildWindowMessage);
-        GlobalHub.subscribe<CloseChildWindowMessage>(this.OnReceiveCloseChildWindowMessage);
-        GlobalHub.subscribe<FileChangeMessage>(this.OnReceiveFileChangeMessage);
-        GlobalHub.subscribe<ChildWindowClosedMessage>(this.OnReceiveChildWindowClosedMessage);
+        GlobalHub.subscribeTask<OpenChildWindowMessage>(this.OnReceiveOpenChildWindowMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribe<CloseChildWindowMessage>(this.OnReceiveCloseChildWindowMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribe<FileChangeMessage>(this.OnReceiveFileChangeMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ChildWindowClosedMessage>(this.OnReceiveChildWindowClosedMessage)
+            .Then(this.MarkForCleanup);
     }
 
     public Dictionary<string, ChildWindowViewModel> Items { get; } = new();

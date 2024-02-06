@@ -28,7 +28,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         this.CloseAllCommand = this.CreateCommand(this.OnCloseAll);
         this.CloseAllOthersCommand = this.CreateCommand(this.OnCloseAllOthers);
         this.OpenInWindowCommand = this.CreateCommand(this.OnOpenInWindow);
-        GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
+        GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved).Then(this.MarkForCleanup);
     }
 
     public ICommand OpenInWindowCommand { get; }

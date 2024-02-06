@@ -7,6 +7,7 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Utils;
 
 #endregion
 
@@ -19,7 +20,7 @@ public class FooterViewModel : ViewModelBase {
     public FooterViewModel() {
         this._background = Colors.info;
         this._message = "Ready...";
-        GlobalHub.subscribe<MessageFooter.MsgShowFooter>(this.OnShowFooter);
+        GlobalHub.subscribe<MessageFooter.MsgShowFooter>(this.OnShowFooter).Then(this.MarkForCleanup);
     }
 
     public string Background {

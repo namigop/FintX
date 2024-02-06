@@ -228,7 +228,7 @@ let ``Can update client config`` () =
 
     let updateFolder =
       buildProjectFolder testProjectName [| projectSaveStateFile |] clientName updatedConfigContent [| methodFolder1; methodFolder2 |]
-      |> fun proj -> buildProjectsFolder proj
+      |> buildProjectsFolder
 
     let io = ioMock updateFolder
 

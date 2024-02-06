@@ -12,6 +12,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.MessageProject;
@@ -48,7 +49,9 @@ public class ClientNode : NodeBase {
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
         this.ExportCommand = this.CreateCommand(this.OnExport);
-        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
+        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+
     }
 
     public ICommand ExportCommand { get; }

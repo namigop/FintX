@@ -9,6 +9,7 @@ using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
+using Tefin.Utils;
 
 #endregion
 
@@ -18,12 +19,18 @@ public class TabHostViewModel : ViewModelBase {
     private ITabViewModel? _selectedItem;
 
     public TabHostViewModel() {
-        GlobalHub.subscribe<OpenTabMessage>(this.OnReceiveTabOpenMessage);
-        GlobalHub.subscribeTask<CloseTabMessage>(this.OnReceiveTabCloseMessage);
-        GlobalHub.subscribeTask<FileChangeMessage>(this.OnReceiveFileChangeMessage);
-        GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage);
-        GlobalHub.subscribeTask<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage);
-        GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage);
+        GlobalHub.subscribe<OpenTabMessage>(this.OnReceiveTabOpenMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribeTask<CloseTabMessage>(this.OnReceiveTabCloseMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribeTask<FileChangeMessage>(this.OnReceiveFileChangeMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribeTask<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage)
+            .Then(this.MarkForCleanup);
+        GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage)
+            .Then(this.MarkForCleanup);
     }
 
     public ObservableCollection<ITabViewModel> Items { get; } = new();

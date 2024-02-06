@@ -15,6 +15,7 @@ using SkiaSharp;
 
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
+using Tefin.Utils;
 
 #endregion
 
@@ -29,7 +30,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
 
     public ChartMiscViewModel() {
         this.ClearSeriesCommand = this.CreateCommand(this.OnClearSeries);
-        GlobalHub.subscribe<MethodCallMessage>(this.OnReceiveMethodCall);
+        GlobalHub.subscribe<MethodCallMessage>(this.OnReceiveMethodCall).Then(this.MarkForCleanup);
     }
 
     public ICommand ClearSeriesCommand { get; }

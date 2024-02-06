@@ -39,7 +39,8 @@ public class ProjectMenuViewModel : ViewModelBase {
             this._selectedProject.IsSelected = true;
         }
 
-        GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage);
+        GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage)
+            .Then(this.MarkForCleanup);
         this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, this.OnSelectedProjectChanged);
     }
 
