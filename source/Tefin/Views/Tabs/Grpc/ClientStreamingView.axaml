@@ -84,6 +84,7 @@
                                 ToolTip.ShowDelay="0"
                                 CornerRadius="0 24 24 0"
                                 Margin="1 0 0 0"
+                                Background="{StaticResource Bym.Color.Red}"
                                 ToolTip.Tip="Finish writing to the request stream"
                                 IsEnabled="{Binding ReqViewModel.CanWrite}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />

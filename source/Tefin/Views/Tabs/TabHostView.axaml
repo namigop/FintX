@@ -9,7 +9,7 @@
              x:DataType="tabs:TabHostViewModel"
              x:Class="Tefin.Views.Tabs.TabHostView">
     <Border CornerRadius="10" BorderThickness="2" BorderBrush="#0e1014">
-
+    <Grid>
         <TabControl ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
@@ -107,5 +107,17 @@
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" 
+                    IsVisible="{Binding !Items.Count}"
+                    HorizontalAlignment="Center">
+            <controls:IconControl Width="64" Height="64" Icon="{StaticResource Icon.ArrowLeft}"></controls:IconControl>
+            <TextBlock Text="Double-click on one of the methods over there to open it"
+                       FontSize="24"
+                       Margin="10 0 0 0"
+                       VerticalAlignment="Center"
+                       ToolTip.Tip="If you don't see a method, you have to compile the client first"></TextBlock>    
+        </StackPanel>
+        
+    </Grid>
     </Border>
 </UserControl>
