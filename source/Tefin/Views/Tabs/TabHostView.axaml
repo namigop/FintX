@@ -115,7 +115,7 @@
                        FontSize="24"
                        Margin="10 0 0 0"
                        VerticalAlignment="Center"
-                       ToolTip.Tip="If you don't see a method, you have to compile the client first"></TextBlock>    
+                       ToolTip.Tip="If you don't see any methods, you have to compile the client first"></TextBlock>    
         </StackPanel>
         
     </Grid>
