@@ -23,7 +23,7 @@ public class ChildWindowViewModel : ViewModelBase {
 
     public string FooterMessage {
         get => this._footerMessage;
-        set => this.RaiseAndSetIfChanged(ref _footerMessage , value);
+        set => this.RaiseAndSetIfChanged(ref this._footerMessage, value);
     }
 
     public Action WindowClose { get; set; }
@@ -31,9 +31,8 @@ public class ChildWindowViewModel : ViewModelBase {
     public ITabViewModel Content { get; }
     public ICommand DockCommand { get; }
 
-    public void Close() {
-        Dispatcher.UIThread.Invoke(() => this.WindowClose?.Invoke());
-    }
+    public void Close() => Dispatcher.UIThread.Invoke(() => this.WindowClose?.Invoke());
+
     private void OnDock() {
         this.Close();
         GlobalHub.publish(new OpenTabMessage(this.Content));

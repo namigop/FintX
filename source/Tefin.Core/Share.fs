@@ -211,8 +211,7 @@ module Share =
 
     match clientOpt with
     | Some(client) ->
-      let clientPath = client.Path
-
+     
       for entry: ZipArchiveEntry in zipArchive.Entries do
         let target = Path.Combine(project.Path, entry.FullName) |> Path.GetFullPath
         let dir = Path.GetDirectoryName target
@@ -236,5 +235,9 @@ module Share =
       io.Zip.ExtractToDirectory zip project.Path false
       updated <- true
 
+    let infoFile = Path.Combine(project.Path, ShareInfo.FileName)
+    if (File.Exists infoFile) then
+      io.File.Delete infoFile
+   
     //return
     clientName, updated

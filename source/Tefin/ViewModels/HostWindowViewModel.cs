@@ -21,8 +21,8 @@ public class HostWindowViewModel : ViewModelBase {
     }
 
     public Dictionary<string, ChildWindowViewModel> Items { get; } = new();
-    
-    private void OnReceiveFileChangeMessage(FileChangeMessage msg) {
+
+    private void OnReceiveFileChangeMessage(FileChangeMessage msg) =>
         this.Exec(() => {
             var items = this.Items.Values.ToArray();
             if (msg.ChangeType == WatcherChangeTypes.Deleted) {
@@ -39,13 +39,13 @@ public class HostWindowViewModel : ViewModelBase {
                 }
             }
         });
-    }
 
     private void OnReceiveCloseChildWindowMessage(CloseChildWindowMessage obj) {
         if (this.Items.TryGetValue(obj.Content.Id, out var vm)) {
             vm.Close();
         }
     }
+
     private void OnReceiveChildWindowClosedMessage(ChildWindowClosedMessage obj) {
         if (this.Items.ContainsKey(obj.Content.Id)) {
             this.Items.Remove(obj.Content.Id);
@@ -67,7 +67,7 @@ public class HostWindowViewModel : ViewModelBase {
                 childWindow.Show();
             }
         });
-        
+
         //Close any open tabs without disposing it
         GlobalHub.publish(new RemoveTabMessage(obj.Content));
     }

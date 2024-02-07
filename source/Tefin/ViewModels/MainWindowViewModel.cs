@@ -71,8 +71,13 @@ public class MainWindowViewModel : ViewModelBase {
             var methodTabs = this.TabHost.Items
                 .Where(t => t.CanAutoSave)
                 .Cast<PersistedTabViewModel>()
-                .ToArray();
-
+                .ToList();
+            var openWindows = 
+                this.WindowHost.Items.Select(f => f.Value.Content)
+                    .Where(t => t.CanAutoSave)
+                    .Cast<PersistedTabViewModel>();
+            
+            methodTabs.AddRange(openWindows);   
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
             var loadedClients = this.MainMenu.ClientMenuItem.Explorer.GetClientNodes()
                 .Where(c => c.IsLoaded)

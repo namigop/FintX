@@ -7,18 +7,19 @@
              x:CompileBindings="True"
              x:DataType="mainMenu:SelectedMenuViewModel"
              x:Class="Tefin.Views.MainMenu.SelectedMenuView">
-    <Border Padding="8" Background="{StaticResource Bym.Color.DefaultControlBackground}" CornerRadius="10"
+    <Border Padding="0" Background="#0e1014"  CornerRadius="10"  
             BorderThickness="2" BorderBrush="Transparent">
         <Grid RowDefinitions="Auto, *">
             <!-- Header -->
-            <Grid ColumnDefinitions="*, Auto" Grid.Row="0">
+            <Grid ColumnDefinitions="*, Auto" Grid.Row="0" Margin="6,10,6,2">
                 <TextBlock Text="{Binding MenuItem.Name}" FontSize="18" VerticalAlignment="Center"
                            HorizontalAlignment="Left" Grid.Column="0" />
                 <ContentControl Content="{Binding MenuItem.SubMenus}" Grid.Column="1" />
             </Grid>
 
             <!-- main control body -->
-            <ContentControl Content="{Binding MenuItem}" Grid.Row="1" Margin="0 8 0 0" />
+            <ContentControl Content="{Binding MenuItem}" Grid.Row="1" Margin="0 8 0 0" 
+                            Background="{StaticResource Bym.Color.DefaultControlBackground}" />
 
         </Grid>
     </Border>

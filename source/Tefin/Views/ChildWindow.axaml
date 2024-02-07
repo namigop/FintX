@@ -17,9 +17,12 @@
                     HorizontalAlignment="Center" VerticalAlignment="Center">
 
             <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
-                <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18"
-                                      VerticalAlignment="Center"
-                                      ToolTip.Tip="{Binding Content.SubTitle}" />
+                <!-- <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18" -->
+                <!--                       VerticalAlignment="Center" -->
+                <!--                       ToolTip.Tip="{Binding Content.SubTitle}" /> -->
+                <controls:IconControl   IsVisible="{Binding Content.HasIcon}"
+                                      Icon="{Binding Content.Icon}"  
+                                      Margin="0 0 0 0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Content.Title}" ToolTip.Tip="{Binding Content.SubTitle}"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center" Margin="10 0 0 0" />
@@ -36,7 +39,7 @@
         <Grid Height="32" Grid.Row="2" Background="#2D3035">
             <TextBlock Text="{Binding FooterMessage}" Margin="8 0 0 0"
                        FontSize="12"
-                       VerticalAlignment="Center"></TextBlock>
+                       VerticalAlignment="Center" />
         </Grid>
     </Grid>
 </Window>

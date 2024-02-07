@@ -69,7 +69,6 @@ public class FileNode : NodeBase {
                 if (!this.Io.File.Exists(newFile)) {
                     //will trigger a file watcher event that will sync the explorer tree
                     this.Io.File.Move(this.FullPath, newFile);
-          
                 }
                 else {
                     this.Title = Path.GetFileName(this.FullPath);

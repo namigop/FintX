@@ -20,7 +20,7 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
 
     public override ProjectTypes.ClientGroup Client { get; }
     public override ClientMethodViewModelBase ClientMethod { get; }
-    public override string Icon { get; } = ""; //"Icon.Method";
+    public override string Icon { get; } = "Icon.Method";
 
     public override void Dispose() {
         base.Dispose();

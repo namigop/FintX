@@ -51,7 +51,6 @@ public class ClientNode : NodeBase {
         this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
-
     }
 
     public ICommand ExportCommand { get; }
@@ -98,7 +97,8 @@ public class ClientNode : NodeBase {
 
     private async Task OnExport() {
         var share = new SharingFeature();
-        var zipFile = await share.GetZipFile();
+        var zipName = $"{this.ClientName}_export.zip";
+        var zipFile = await share.GetZipFile(zipName);
         if (string.IsNullOrEmpty(zipFile)) {
             return;
         }

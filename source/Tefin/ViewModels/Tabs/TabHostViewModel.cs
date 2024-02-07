@@ -81,13 +81,12 @@ public class TabHostViewModel : ViewModelBase {
             }
 
             var tab2 = this.Items.FirstOrDefault(t => t.Id == tab.Id);
-            if (tab2 != null)
+            if (tab2 != null) {
                 this.Items.Remove(tab2);
+            }
         });
 
-    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) {
-        await this.RemoveTab(obj.Tab);
-    }
+    private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) => await this.RemoveTab(obj.Tab);
 
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
         await this.RemoveTab(obj.Tab);
@@ -104,7 +103,7 @@ public class TabHostViewModel : ViewModelBase {
             this.Items.Add(obj.Tab);
             this.SelectedItem = this.Items.Last();
         }
-        
+
         //Close any open windows
         GlobalHub.publish(new CloseChildWindowMessage(obj.Tab));
     }

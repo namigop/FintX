@@ -14,7 +14,7 @@
                        IsHitTestVisible="False"
                        VerticalAlignment="Bottom" HorizontalAlignment="Right"
                        Margin="10" />
-            <TextBlock Text="double-click a node to edit its value"  Opacity="0.25"
+            <TextBlock Text="double-click a node to edit its value" Opacity="0.25"
                        IsHitTestVisible="False"
                        VerticalAlignment="Bottom" HorizontalAlignment="Left"
                        Margin="10" />
