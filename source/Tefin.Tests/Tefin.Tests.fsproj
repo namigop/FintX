@@ -13,6 +13,7 @@
         <Compile Include="IoMock.fs" />
         <Compile Include="ClassTypeTests.fs" />
         <Compile Include="ProjectTests.fs" />
+        <Compile Include="ShareTests.fs" />
         <Compile Include="CollectionTypesTest.fs" />
         <Compile Include="GrpcMethodInfoTest.fs" />
         <Compile Include="TimeItTest.fs" />

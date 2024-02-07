@@ -2,6 +2,8 @@
 
 open System
 open System.IO
+open System.IO.Compression
+open Tefin.Core
 
 
 type File = { Path: string; Content: string }
@@ -19,6 +21,38 @@ type IoMock =
     GetDirectories: string -> string array
     FileExists: string -> bool }
 
+type IZipEntry2 =
+  inherit IZipEntry
+  abstract Path : string
+type IZipArchive2 =
+  inherit IZipArchive
+  abstract GetEntries : unit -> IZipEntry2 array
+  
+let sep = Path.DirectorySeparatorChar
+let zipMock =
+  let createEntry (path:string) =
+    {new IZipEntry2 with
+      member x.Open () = new MemoryStream()
+      member x.Path = path
+    }
+    
+  let createArchive (file:string) (mode:ZipArchiveMode) =
+    let items = ResizeArray<IZipEntry2>()
+    { new IZipArchive2 with
+        member x.CreateEntry (path) =
+          let item = createEntry path
+          items.Add item
+          item
+        member x.GetEntries() = items.ToArray()
+        member x.Dispose() = ()          
+    }
+    
+  let zipIO =
+    { new IZipIO with
+        member x.Open z m = createArchive z m
+        member x.OpenRead file = Unchecked.defaultof<ZipArchive>
+        member x.ExtractToDirectory zipFile targetDir overwrite = () }
+  zipIO
 let ioMock (rootFolder:Folder) =
   let matchFilePattern (file: File) (pattern: string) =
     if (pattern = "*.*") then
@@ -32,20 +66,20 @@ let ioMock (rootFolder:Folder) =
   let rec getDirRec (folder: Folder) (targetPath: string) (currentPath: string) =
     if currentPath = targetPath then
       folder.Folders
-      |> Array.map (fun folder -> {folder with Path = $"{currentPath}/{folder.Path}" })
+      |> Array.map (fun folder -> {folder with Path = $"{currentPath}{sep}{folder.Path}" })
     else
       folder.Folders
-      |> Array.collect (fun f -> getDirRec f targetPath $"{currentPath}/{f.Path}")
+      |> Array.collect (fun f -> getDirRec f targetPath $"{currentPath}{sep}{f.Path}")
 
   let rec getFilesRec (folder: Folder) pattern (option: SearchOption) (pathParts: string array) (p: string) =
-    let targetPath = String.Join("/", pathParts)
+    let targetPath = String.Join("{sep}", pathParts)
     if option = SearchOption.TopDirectoryOnly then
       if (pathParts[pathParts.Length - 1] = folder.Path) then
         folder.Files
         |> Array.filter (fun f -> matchFilePattern f pattern)
         |> Array.map (fun f ->
-          let p = String.Join("/", pathParts)
-          let fullPath = $"{p}/{f.Path}".Replace("\\", "/")
+          let p = String.Join("{sep}", pathParts)
+          let fullPath = $"{p}{sep}{f.Path}" 
           { f with Path = fullPath })
         |> fun files -> folder, files
       else
@@ -59,21 +93,21 @@ let ioMock (rootFolder:Folder) =
       folder.Files
       |> Array.filter (fun f -> matchFilePattern f pattern)
       |> Array.map (fun f ->
-        let fullPath = $"{p}/{f.Path}".Replace("\\", "/")
+        let fullPath = $"{p}{sep}{f.Path}" 
         { f with Path = fullPath })
       |> Array.filter (fun f ->
           f.Path.StartsWith targetPath)
       |> Array.append (
         folder.Folders
         |> Array.collect (fun f ->
-          let folder, files = getFilesRec f pattern option pathParts ($"{p}/{f.Path}")
+          let folder, files = getFilesRec f pattern option pathParts ($"{p}{sep}{f.Path}")
           files)
       )
       |> fun files -> folder, files
       
   let getFolder (path: string) (pattern: string) (options: SearchOption) =
-    let path = path.Replace("\\", "/")
-    let pathParts = path.Split("/")
+     
+    let pathParts = path.Split("{sep}")
     getFilesRec rootFolder pattern options pathParts rootFolder.Path
     
     
@@ -82,7 +116,7 @@ let ioMock (rootFolder:Folder) =
     files
 
   let readAllText (file: string) =
-    let file = file.Replace("\\", "/")
+    
     let dir = Path.GetDirectoryName file
 
     let boo = getFiles (dir, "*.*", SearchOption.AllDirectories)
@@ -97,11 +131,11 @@ let ioMock (rootFolder:Folder) =
   let createDirectory name = ()
 
   let getDirectories (targetPath: string) =
-    let targetPath = targetPath.Replace("\\", "/")
+    
     getDirRec rootFolder targetPath rootFolder.Path
     
   let fileExists (file:string) =
-    let file = file.Replace("\\", "/")
+     
     let dir = Path.GetDirectoryName file
 
     getFiles (dir, "*.*", SearchOption.AllDirectories)
