@@ -51,7 +51,6 @@ public class ClientNode : NodeBase {
         this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
-
     }
 
     public ICommand ExportCommand { get; }

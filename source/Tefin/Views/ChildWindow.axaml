@@ -36,7 +36,7 @@
         <Grid Height="32" Grid.Row="2" Background="#2D3035">
             <TextBlock Text="{Binding FooterMessage}" Margin="8 0 0 0"
                        FontSize="12"
-                       VerticalAlignment="Center"></TextBlock>
+                       VerticalAlignment="Center" />
         </Grid>
     </Grid>
 </Window>
