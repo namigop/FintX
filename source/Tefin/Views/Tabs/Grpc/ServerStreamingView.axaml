@@ -9,19 +9,7 @@
              x:Class="Tefin.Views.Tabs.Grpc.ServerStreamingView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
-            <!-- <Grid Grid.Row="0" Grid.Column="0"> -->
-            <!--     <StackPanel Orientation="Horizontal" Margin="0 6 0 0" /> -->
-            <!-- -->
-            <!-- </Grid> -->
-            <!-- -->
-            <!-- <Grid Grid.Row="0" Grid.Column="2"> -->
-            <!--     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"> -->
-            <!--         <TextBlock Text="{Binding StatusText}" Opacity="0.6" VerticalAlignment="Center" /> -->
-            <!--     </StackPanel> -->
-            <!-- </Grid> -->
-            <!-- -->
-            <!-- <Border Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="2" Margin="0 6 0 0" -->
-            <!--         Background="{StaticResource Bym.Color.DefaultWindowBackground}" /> -->
+            
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
@@ -34,7 +22,7 @@
             </Grid>
 
             <controls:MovableBorder Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Grid.Column="0"
-                                    Padding="4"
+                                    Padding="0,6,0,6"
                                     CornerRadius="10"
                                     VerticalAlignment="Center" HorizontalAlignment="Center"
                                     BorderThickness="2"
@@ -44,6 +32,9 @@
                     <StackPanel.Styles>
                         <Style Selector="Button">
                             <Setter Property="HorizontalAlignment" Value="Center" />
+                        </Style>
+                        <Style Selector="Separator">
+                            <Setter Property="Width" Value="30" />
                         </Style>
                     </StackPanel.Styles>
                     <Button Command="{Binding StartCommand}" Classes="MenuButton" Margin="0 0 0 0"
@@ -66,20 +57,18 @@
                             <controls:IconControl Width="28" Height="28" Icon="{StaticResource Icon.Cancel}" />
                         </StackPanel>
                     </Button>
+                    <!-- <Separator Background="DimGray" Height="1" Margin="6" /> -->
+                    <!-- <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file" -->
+                    <!--         IsEnabled="{Binding !CanStop}" -->
+                    <!--         HorizontalAlignment="Center"> -->
+                    <!--     <controls:IconControl Icon="{StaticResource Icon.Export}" /> -->
+                    <!-- </Button> -->
+                    <!-- <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !CanStop}" -->
+                    <!--         ToolTip.Tip="open a saved request (*.fxrq) file" HorizontalAlignment="Center"> -->
+                    <!--     <controls:IconControl Icon="{StaticResource Icon.Import}" /> -->
+                    <!-- </Button> -->
                     <Separator Background="DimGray" Height="1" Margin="6" />
-                    <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file"
-                            IsEnabled="{Binding !CanStop}"
-                            HorizontalAlignment="Center">
-                        <controls:IconControl Icon="{StaticResource Icon.Export}" />
-                    </Button>
-                    <Button Command="{Binding ImportRequestCommand}" Margin="0 6 0 0" IsEnabled="{Binding !CanStop}"
-                            ToolTip.Tip="open a saved request (*.fxrq) file" HorizontalAlignment="Center">
-                        <controls:IconControl Icon="{StaticResource Icon.Import}" />
-                    </Button>
-                    <Separator Background="DimGray" Height="1" Margin="8" />
-                    <!-- <ToggleSwitch IsChecked="{Binding IsShowingRequestTreeEditor}" HorizontalAlignment="Center" -->
-                    <!--               OnContent="" OffContent="" -->
-                    <!--               Margin="0 0 0 0" /> -->
+                    
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
                     </ToggleButton>

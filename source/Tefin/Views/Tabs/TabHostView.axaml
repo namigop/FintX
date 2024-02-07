@@ -15,8 +15,8 @@
                     <DataTemplate>
                         <Grid ColumnDefinitions="Auto, *, Auto">
                             <controls:IconControl Grid.Column="0" IsVisible="{Binding HasIcon}"
-                                                  Icon="{Binding Icon}" Width="12" Height="12"
-                                                  Margin="0 0 10 0" VerticalAlignment="Center" />
+                                                  Icon="{Binding Icon}"
+                                                  Margin="0 0 15 0" VerticalAlignment="Center" />
 
                             <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center" />
 
