@@ -26,9 +26,7 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
         }
     }
 
-    public override string FormattedValue {
-        get => this.TempValue == null ? "null" : $"{this.TempValue:O}";
-    }
+    public override string FormattedValue => this.TempValue == null ? "null" : $"{this.TempValue:O}";
 
     public bool IsUtc {
         get => this._isUtc;
@@ -45,7 +43,9 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
         }
 
         if (DateTime.TryParse(this.DateTimeText, out var dt)) {
-            if (this.IsUtc) dt = dt.ToUniversalTime();
+            if (this.IsUtc) {
+                dt = dt.ToUniversalTime();
+            }
 
             this.TempValue = dt;
             this.Node.Value = dt;
@@ -57,8 +57,9 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
     }
 
     public override void Reset() {
-        if (this.TempValue != null)
+        if (this.TempValue != null) {
             this.DateTimeText = $"{this.TempValue:O}";
+        }
         else {
             this.TempValue = (this.IsUtc ? DateTime.UtcNow : DateTime.Now).Then(d => d.AddDays(1));
             this.DateTimeText = $"{this.TempValue:O}";

@@ -32,9 +32,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
-    public bool CanStop {
-        get => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
-    }
+    public bool CanStop => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -66,17 +64,11 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.ReqViewModel.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.ReqViewModel.GetRequestContent();
 
-    public override void ImportRequest(string requestFile) {
-        this.ReqViewModel.ImportRequestFile(requestFile);
-    }
+    public override void ImportRequest(string requestFile) => this.ReqViewModel.ImportRequestFile(requestFile);
 
-    public override void Init() {
-        this.ReqViewModel.Init();
-    }
+    public override void Init() => this.ReqViewModel.Init();
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
         var builder = new CompositeResponseFeature();
@@ -94,7 +86,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
             //get the headers/trailers
             var feature = new EndStreamingFeature();
-            callResponse = await feature.EndClientStreaming(callResponse); //TODO: use same emitted structure as UnaryAsync
+            callResponse = await feature.EndClientStreaming(callResponse);
             var response = await this.EndClientStreamingCall(callResponse);
 
             return response;
@@ -112,17 +104,11 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         }
     }
 
-    private void OnCanWriteChanged(ViewModelBase obj) {
-        this.RaisePropertyChanged(nameof(this.CanStop));
-    }
+    private void OnCanWriteChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
 
-    private async Task OnExportRequest() {
-        await this.ReqViewModel.ExportRequest();
-    }
+    private async Task OnExportRequest() => await this.ReqViewModel.ExportRequest();
 
-    private async Task OnImportRequest() {
-        await this.ReqViewModel.ImportRequest();
-    }
+    private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
 
     private async Task OnStart() {
         this.IsBusy = true;
@@ -135,8 +121,9 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
-                if (ok)
+                if (ok) {
                     this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response); //
+                }
                 else {
                     this.EndStreaming((ClientStreamingCallResponse)response);
                 }

@@ -13,7 +13,7 @@
     </UserControl.Styles>
     <StackPanel Orientation="Horizontal" x:Name="MainBorder">
         <Border>
-           <controls:IconControl Icon="{StaticResource Icon.ByteArrayType}" Width="16" Height="16" />
+            <controls:IconControl Icon="{StaticResource Icon.ByteArrayType}" Width="16" Height="16" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Classes="Title" Margin="6 0 0 0" />

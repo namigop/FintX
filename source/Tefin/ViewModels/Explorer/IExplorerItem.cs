@@ -16,4 +16,6 @@ public interface IExplorerItem {
     string Title { get; set; }
 
     IExplorerItem? FindSelected();
+
+    T? FindParentNode<T>() where T : IExplorerItem;
 }

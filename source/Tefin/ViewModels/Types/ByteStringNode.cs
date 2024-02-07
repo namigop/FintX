@@ -18,7 +18,8 @@ public class ByteStringNode : TypeBaseNode {
     private string _file = "";
     private bool _isFromFile;
 
-    public ByteStringNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ByteStringNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
+        name, type, propInfo, instance, parent) {
         this._og = this.TypedValue?.ToBase64();
         this.OpenFileCommand = this.CreateCommand(this.OnOpenFile);
     }
@@ -56,9 +57,7 @@ public class ByteStringNode : TypeBaseNode {
 
     public ICommand OpenFileCommand { get; }
 
-    public ByteString? TypedValue {
-        get => this.Value as ByteString;
-    }
+    public ByteString? TypedValue => this.Value as ByteString;
 
     public void CreateFromBase64String() {
         try {
@@ -77,14 +76,10 @@ public class ByteStringNode : TypeBaseNode {
         }
     }
 
-    public void Reset() {
-        this.Init();
-    }
+    public void Reset() => this.Init();
 
     private async Task OnOpenFile() {
-        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] {
-            "*.*"
-        });
+        var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", new[] { "*.*" });
         if (ok) {
             this.File = files[0];
             var newByteString = await System.IO.File.OpenRead(this._file).Then(c => ByteString.FromStreamAsync(c));

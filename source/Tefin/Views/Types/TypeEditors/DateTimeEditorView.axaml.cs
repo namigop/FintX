@@ -10,10 +10,7 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class DateTimeEditorView : UserControl {
-
-    public DateTimeEditorView() {
-        this.InitializeComponent();
-    }
+    public DateTimeEditorView() => this.InitializeComponent();
 
     private void OnKeyDown(object? sender, KeyEventArgs e) {
         var vm = (DateTimeEditor)this.DataContext!;

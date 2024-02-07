@@ -25,16 +25,23 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         item.Subscribe(nameof(item.Title), sender => this.Title = sender.Title)
             .Then(this.MarkForCleanup);
         this.CloseCommand = this.CreateCommand(this.OnClose);
-        GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved);
+        this.CloseAllCommand = this.CreateCommand(this.OnCloseAll);
+        this.CloseAllOthersCommand = this.CreateCommand(this.OnCloseAllOthers);
+        this.OpenInWindowCommand = this.CreateCommand(this.OnOpenInWindow);
+        GlobalHub.subscribe<RemoveTreeItemMessage>(this.OnRemoveTreeItemRemoved).Then(this.MarkForCleanup);
     }
+
+    public ICommand OpenInWindowCommand { get; }
 
     public virtual bool CanAutoSave { get; } = false;
 
     public ICommand CloseCommand { get; }
+    public ICommand CloseAllCommand { get; }
+    public ICommand CloseAllOthersCommand { get; }
 
     public IExplorerItem ExplorerItem { get; }
 
-    public bool HasIcon { get => !string.IsNullOrEmpty(this.Icon); }
+    public bool HasIcon => !string.IsNullOrEmpty(this.Icon);
 
     public abstract string Icon { get; }
 
@@ -55,13 +62,24 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
-    protected virtual string GetTabId() {
-        return $"{this.Title}-{this.ExplorerItem.GetType().FullName}";
+    private void OnOpenInWindow() {
+        //close the tab but do not dispose it
+        GlobalHub.publish(new RemoveTabMessage(this));
+        GlobalHub.publish(new OpenChildWindowMessage(this));
     }
+
+    private void OnCloseAll() => GlobalHub.publish(new CloseAllTabsMessage());
+
+    private void OnCloseAllOthers() => GlobalHub.publish(new CloseAllOtherTabsMessage(this));
+
+    protected virtual string GetTabId() => $"{this.Title}-{this.ExplorerItem.GetType().FullName}";
 
     protected virtual Task OnClose() {
         GlobalHub.publish(new CloseTabMessage(this));
-        if (this.ExplorerItem is IDisposable d) d.Dispose();
+        // if (this.ExplorerItem is IDisposable d) {
+        //     d.Dispose();
+        // }
+
         this.Dispose();
 
         return Task.CompletedTask;

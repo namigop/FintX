@@ -9,14 +9,18 @@ using Avalonia.Data;
 namespace Tefin.Views.Controls;
 
 public partial class Number : UserControl {
-    public static readonly StyledProperty<decimal?> MaximumProperty = AvaloniaProperty.Register<Number, decimal?>(nameof(MaximumProperty));
+    public static readonly StyledProperty<decimal?> MaximumProperty =
+        AvaloniaProperty.Register<Number, decimal?>(nameof(MaximumProperty));
 
-    public static readonly StyledProperty<decimal?> MinimumProperty = AvaloniaProperty.Register<Number, decimal?>(nameof(MinimumProperty));
+    public static readonly StyledProperty<decimal?> MinimumProperty =
+        AvaloniaProperty.Register<Number, decimal?>(nameof(MinimumProperty));
 
-    public static readonly StyledProperty<string> TextProperty = AvaloniaProperty.Register<Number, string>(nameof(Text), "0", defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<string> TextProperty =
+        AvaloniaProperty.Register<Number, string>(nameof(Text), "0", defaultBindingMode: BindingMode.TwoWay);
 
     public static readonly StyledProperty<decimal?> ValueProperty =
-        AvaloniaProperty.Register<Number, decimal?>(nameof(Value), 0, defaultBindingMode: BindingMode.TwoWay, coerce: OnCoerceValue);
+        AvaloniaProperty.Register<Number, decimal?>(nameof(Value), 0, defaultBindingMode: BindingMode.TwoWay,
+            coerce: OnCoerceValue);
 
     public Number() {
         this.InitializeComponent();
@@ -60,12 +64,15 @@ public partial class Number : UserControl {
         }
         else {
             if (decimal.TryParse(s.Text, out var d)) {
-                if (this.Minimum.HasValue && d < this.Minimum.Value)
+                if (this.Minimum.HasValue && d < this.Minimum.Value) {
                     this.Value = this.Minimum.Value;
-                else if (this.Maximum.HasValue && d > this.Maximum.Value)
+                }
+                else if (this.Maximum.HasValue && d > this.Maximum.Value) {
                     this.Value = this.Maximum.Value;
-                else
+                }
+                else {
                     this.Value = d;
+                }
             }
         }
     }

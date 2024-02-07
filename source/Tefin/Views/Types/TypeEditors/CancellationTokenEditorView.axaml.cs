@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class CancellationTokenEditorView : UserControl {
-
-    public CancellationTokenEditorView() {
-        this.InitializeComponent();
-    }
+    public CancellationTokenEditorView() => this.InitializeComponent();
 }

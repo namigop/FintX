@@ -34,9 +34,8 @@ public partial class OutputMiscView : UserControl {
         }
     }
 
-    private void OnDetached(object? sender, VisualTreeAttachmentEventArgs e) {
+    private void OnDetached(object? sender, VisualTreeAttachmentEventArgs e) =>
         this.Editor.TextChanged -= this.OnTextChanged;
-    }
 
     private void OnTextChanged(object? sender, EventArgs e) {
         var editor = (TextEditor)sender!;

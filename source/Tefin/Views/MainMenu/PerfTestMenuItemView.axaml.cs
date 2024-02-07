@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.MainMenu;
 
 public partial class PerfTestMenuItemView : UserControl {
-
-    public PerfTestMenuItemView() {
-        this.InitializeComponent();
-    }
+    public PerfTestMenuItemView() => this.InitializeComponent();
 }

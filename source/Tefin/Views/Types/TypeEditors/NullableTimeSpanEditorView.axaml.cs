@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class NullableTimeSpanEditorView : UserControl {
-
-    public NullableTimeSpanEditorView() {
-        this.InitializeComponent();
-    }
+    public NullableTimeSpanEditorView() => this.InitializeComponent();
 }

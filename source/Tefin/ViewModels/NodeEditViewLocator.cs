@@ -14,9 +14,7 @@ public class NodeEditViewLocator : IDataTemplate {
 
     public Control Build(object? data) {
         if (data == null) {
-            return new TextBlock {
-                Text = "data cannot be null"
-            };
+            return new TextBlock { Text = "data cannot be null" };
         }
 
         var sourceType = data.GetType();
@@ -34,12 +32,8 @@ public class NodeEditViewLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new TextBlock {
-            Text = "Not Found: " + name
-        };
+        return new TextBlock { Text = "Not Found: " + name };
     }
 
-    public bool Match(object? data) {
-        return data is NodeBase;
-    }
+    public bool Match(object? data) => data is NodeBase;
 }

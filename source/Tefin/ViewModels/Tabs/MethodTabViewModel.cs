@@ -20,16 +20,14 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
 
     public override ProjectTypes.ClientGroup Client { get; }
     public override ClientMethodViewModelBase ClientMethod { get; }
-    public override string Icon { get; } = "";//"Icon.Method";
+    public override string Icon { get; } = ""; //"Icon.Method";
 
     public override void Dispose() {
         base.Dispose();
         this.ClientMethod.Dispose();
     }
 
-    public override string GetRequestContent() {
-        return this.ClientMethod.GetRequestContent();
-    }
+    public override string GetRequestContent() => this.ClientMethod.GetRequestContent();
 
     public override void Init() {
         if (!string.IsNullOrEmpty(this._requestFile)) {
@@ -53,7 +51,5 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
         return id;
     }
 
-    private void OnIsBusyChanged(ViewModelBase obj) {
-        this.IsBusy = obj.IsBusy;
-    }
+    private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
 }

@@ -10,7 +10,6 @@ using Avalonia.Platform.Storage;
 namespace Tefin.Utils;
 
 public static class DialogUtils {
-
     public static Window GetMainWindow() {
         if (Application.Current!.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
             return desktop.MainWindow!;
@@ -19,16 +18,13 @@ public static class DialogUtils {
         throw new NotSupportedException();
     }
 
-    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
+    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions,
+        bool allowMultipleSelection = false) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
         var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
             Title = dialogTitle,
             AllowMultiple = allowMultipleSelection,
-            FileTypeFilter = new[] {
-                new FilePickerFileType(fileTitle) {
-                    Patterns = filterExtensions
-                }
-            }
+            FileTypeFilter = new[] { new FilePickerFileType(fileTitle) { Patterns = filterExtensions } }
         });
 
         if (files.Count >= 1) {
@@ -39,7 +35,8 @@ public static class DialogUtils {
         return (false, Array.Empty<string>());
     }
 
-    public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle, string extension) {
+    public static async Task<string>
+        SelectFile(string dialogTitle, string fileName, string fileTitle, string extension) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
 
         // Start async operation to open the dialog.
@@ -47,13 +44,22 @@ public static class DialogUtils {
             Title = dialogTitle,
             ShowOverwritePrompt = true,
             SuggestedFileName = fileName,
-            FileTypeChoices = new[] {
-                new FilePickerFileType(fileTitle) {
-                    Patterns = new[] {
-                        extension
-                    }
-                }
-            }
+            FileTypeChoices = new[] { new FilePickerFileType(fileTitle) { Patterns = new[] { extension } } }
+        });
+
+        return file?.Path.LocalPath ?? string.Empty;
+    }
+
+    public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle,
+        string extension) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+
+        // Start async operation to open the dialog.
+        var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+            Title = dialogTitle,
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName,
+            FileTypeChoices = new[] { new FilePickerFileType(fileTitle) { Patterns = new[] { extension } } }
         });
 
         if (file is not null) {
@@ -65,9 +71,8 @@ public static class DialogUtils {
 
     public static async Task<string> SelectFolder() {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
-        var folders = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() {
-            Title = "Select a project folder",
-            AllowMultiple = false,
+        var folders = await topLevel!.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions {
+            Title = "Select a project folder", AllowMultiple = false
         });
 
         return folders.Any() ? folders.First().Path.LocalPath : "";

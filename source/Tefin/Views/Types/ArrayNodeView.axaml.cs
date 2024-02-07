@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types;
 
 public partial class ArrayNodeView : UserControl {
-
-    public ArrayNodeView() {
-        this.InitializeComponent();
-    }
+    public ArrayNodeView() => this.InitializeComponent();
 }

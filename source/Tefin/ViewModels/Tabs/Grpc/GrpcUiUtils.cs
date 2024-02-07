@@ -11,31 +11,31 @@ using Tefin.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
-
-    public static async Task ExportRequest(object?[] mParams, object reqStream, MethodInfo methodInfo, IOResolver io) {
+    public static async Task ExportRequest(object?[] mParams, object reqStream, MethodInfo methodInfo, IOs io) {
         var feature = new ExportFeature(methodInfo, mParams, reqStream);
         var exportReqJson = feature.Export();
         if (exportReqJson.IsOk) {
             var fileName = $"{methodInfo.Name}_req{Ext.requestFileExt}";
-            await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
+            await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request",
+                $"*{Ext.requestFileExt}");
         }
         else {
             io.Log.Error(exportReqJson.ErrorValue);
         }
     }
 
-    public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, IOResolver io) {
-        var fileExtensions = new[] {
-            $"*{Ext.requestFileExt}"
-        };
+    public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+        Type listType, MethodInfo methodInfo, IOs io) {
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
             ImportRequest(requestEditor, listEditor, listType, methodInfo, files[0], io);
         }
     }
 
-    public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor, Type listType, MethodInfo methodInfo, string file,
-        IOResolver io) {
+    public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+        Type listType, MethodInfo methodInfo, string file,
+        IOs io) {
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);
         var (importReq, importReqStream) = import.Run();

@@ -11,6 +11,9 @@ namespace Tefin.ViewModels.Tabs;
 public interface ITabViewModel {
     bool CanAutoSave { get; }
     ICommand CloseCommand { get; }
+    ICommand CloseAllOthersCommand { get; }
+    ICommand CloseAllCommand { get; }
+    ICommand OpenInWindowCommand { get; }
     IExplorerItem ExplorerItem { get; }
     bool HasIcon { get; }
     string Icon { get; }

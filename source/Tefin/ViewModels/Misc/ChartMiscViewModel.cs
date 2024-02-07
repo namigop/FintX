@@ -15,6 +15,7 @@ using SkiaSharp;
 
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
+using Tefin.Utils;
 
 #endregion
 
@@ -29,7 +30,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
 
     public ChartMiscViewModel() {
         this.ClearSeriesCommand = this.CreateCommand(this.OnClearSeries);
-        GlobalHub.subscribe<MethodCallMessage>(this.OnReceiveMethodCall);
+        GlobalHub.subscribe<MethodCallMessage>(this.OnReceiveMethodCall).Then(this.MarkForCleanup);
     }
 
     public ICommand ClearSeriesCommand { get; }
@@ -39,8 +40,9 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         set {
             this.RaiseAndSetIfChanged(ref this._selectedSeries, value);
             if (this._selectedSeries != null) {
-                foreach (var s in this.SeriesModels)
+                foreach (var s in this.SeriesModels) {
                     s.Series.IsVisible = this._selectedSeries == s;
+                }
             }
         }
     }
@@ -53,8 +55,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
 
     public Axis[] XAxes { get; } = {
         new() {
-            MinStep = 1,
-            TextSize = 0
+            MinStep = 1, TextSize = 0
             // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
             // {
             //     StrokeThickness = 2,
@@ -82,9 +83,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         lock (this) {
             var seriesModel = this.SeriesModels.FirstOrDefault(t => t.ClientName == clientName && t.Method == method);
             if (seriesModel == null) {
-                seriesModel = new SeriesModel(clientName, method, new ColumnSeries<double> {
-                    Name = method
-                });
+                seriesModel = new SeriesModel(clientName, method, new ColumnSeries<double> { Name = method });
                 this.SeriesModels.Add(seriesModel);
                 this.Series.Add(seriesModel.Series);
 
@@ -119,7 +118,6 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
     }
 
     public class SeriesModel {
-
         public SeriesModel(string clientName, string method, ColumnSeries<double> series) {
             this.ClientName = clientName;
             this.Method = method;
@@ -132,7 +130,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
             get;
         }
 
-        public string Id { get => $"{this.ClientName}/{this.Method}"; }
+        public string Id => $"{this.ClientName}/{this.Method}";
 
         public string Method {
             get;

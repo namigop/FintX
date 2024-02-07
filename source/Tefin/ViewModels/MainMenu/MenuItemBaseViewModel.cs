@@ -17,19 +17,18 @@ public abstract class MenuItemBaseViewModel : ViewModelBase, IMenuItemViewModel 
         this.SelectItemCommand = this.CreateCommand(this.OnSelectItem);
     }
 
+    public ICommand SelectItemCommand { get; }
+    public abstract string ToolTip { get; }
+
     public bool IsSelected {
         get => this._isSelected;
         set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
     public abstract string Name { get; }
-    public ICommand SelectItemCommand { get; }
     public abstract string ShortName { get; }
     public abstract ISubMenusViewModel? SubMenus { get; }
-    public abstract string ToolTip { get; }
 
-    protected virtual void OnSelectItem() {
-        this._main.SelectedMenuItem = this;
-        //throw new System.NotImplementedException();
-    }
+    protected virtual void OnSelectItem() => this._main.SelectedMenuItem = this;
+    //throw new System.NotImplementedException();
 }

@@ -24,14 +24,14 @@
                             <controls:IconControl Icon="{StaticResource Icon.FolderOpen}" />
                         </Button>
                     </Grid>
-                    
+
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Project Name" Classes="FormField" />
-                    <TextBox Text="{Binding ProjectName}" Watermark="Enter a pproject name"/>
+                    <TextBox Text="{Binding ProjectName}" Watermark="Enter a pproject name" />
                 </StackPanel>
-                
-                
+
+
             </StackPanel>
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 24 0 0">
                 <Button Command="{Binding OkayCommand}" MinWidth="70">

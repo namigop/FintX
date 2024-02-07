@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="{StaticResource Bym.Color.DefaultControlBackground}"
              x:DataType="tabs:FileReqTabViewModel"
              x:Class="Tefin.Views.Tabs.FileReqTabView">
     <Grid>

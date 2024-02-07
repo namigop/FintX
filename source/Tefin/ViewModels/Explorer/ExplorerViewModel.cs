@@ -17,6 +17,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.ProjectTypes;
@@ -29,10 +30,12 @@ using Type = System.Type;
 namespace Tefin.ViewModels.Explorer;
 
 public class ExplorerViewModel : ViewModelBase {
+    private readonly IExplorerNodeSelectionStrategy _nodeSelectionStrategy;
     private CopyPasteArg? _copyPastePending;
     private ProjectTypes.Project? _project;
 
     public ExplorerViewModel() {
+        this._nodeSelectionStrategy = new FileOnlyStrategy(this);
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new TemplateColumn<IExplorerItem>("", "CellTemplate",
@@ -47,11 +50,12 @@ public class ExplorerViewModel : ViewModelBase {
         };
 
         this.ExplorerTree = temp;
+        this.ExplorerTree.RowSelection!.SingleSelect = false;
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
-        GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient);
-        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted);
-        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged);
-        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile);
+        GlobalHub.subscribeTask<ShowClientMessage>(this.OnShowClient).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile).Then(this.MarkForCleanup);
 
         this.CopyCommand = this.CreateCommand(this.OnCopy);
         this.PasteCommand = this.CreateCommand(this.OnPaste);
@@ -73,39 +77,43 @@ public class ExplorerViewModel : ViewModelBase {
 
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
-    public void AddClientNode(ClientGroup cg, Type? type = null) {
-        var cm = new ClientNode(cg, type);
+    public IExplorerItem? SelectedItem { get; set; }
 
+    public ClientNode AddClientNode(ClientGroup cg, Type? type = null) {
+        var clientNode = new ClientNode(cg, type);
         Dispatcher.UIThread.Invoke(() => {
-            cm.Init();
-            this.Items.Add(cm);
+            clientNode.Init();
+            this.Items.Add(clientNode);
             //cm.IsSelected = true;
             this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
         }, DispatcherPriority.Input);
 
         GlobalHub.publish(new ExplorerUpdatedMessage());
+        return clientNode;
     }
 
     public override void Dispose() {
         base.Dispose();
         var treeDataGridRowSelectionModel = this.ExplorerTree.RowSelection;
-        if (treeDataGridRowSelectionModel != null)
+        if (treeDataGridRowSelectionModel != null) {
             treeDataGridRowSelectionModel.SelectionChanged -= this.RowSelectionChanged;
+        }
     }
 
-    public ClientNode[] GetClientNodes() {
-        return this.Items.Where(c => c is ClientNode).Cast<ClientNode>().ToArray();
-    }
+    public ClientNode[] GetClientNodes() => this.Items.Where(c => c is ClientNode).Cast<ClientNode>().ToArray();
 
     public void LoadProject(string path) {
-        if (string.IsNullOrWhiteSpace(path))
+        if (string.IsNullOrWhiteSpace(path)) {
             return;
+        }
 
-        if (!Directory.Exists(path))
+        if (!Directory.Exists(path)) {
             return;
+        }
 
-        if (path == this.Project?.Path)
+        if (path == this.Project?.Path) {
             return;
+        }
 
         var stateFile = Path.Combine(path, ProjectSaveState.FileName);
         if (!this.Io.File.Exists(stateFile)) {
@@ -116,7 +124,8 @@ public class ExplorerViewModel : ViewModelBase {
         //Close all existing tabs
         GlobalHub.publish(new CloseAllTabsMessage());
 
-        this.Project = Core.Project.loadProject(this.Io, path);
+        var load = new LoadProjectFeature(this.Io, path);
+        this.Project = load.Run();
         this.Items.Clear();
         foreach (var client in this.Project.Clients) {
             this.AddClientNode(client);
@@ -127,58 +136,58 @@ public class ExplorerViewModel : ViewModelBase {
             var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
             GlobalHub.publish(new OpenOverlayMessage(overlay));
         }
-
-        //monitor file changes in the new project path
-        var fsMonitor = new MonitorChangesFeature(this.Io);
-        fsMonitor.Run(this.Project);
     }
 
-    private void OnClientCompile(ClientCompileMessage message) {
-        this.IsBusy = message.InProgress;
-    }
+    private void OnClientCompile(ClientCompileMessage message) => this.IsBusy = message.InProgress;
 
     private void OnClientDeleted(ClientDeletedMessage obj) {
         var target = this.Items.FirstOrDefault(t => t is ClientNode cn && cn.ClientPath == obj.Client.Path);
-        if (target != null)
+        if (target != null) {
             this.Items.Remove(target);
-    }
-
-    private void OnCopy() {
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            if (selected is FileNode fn) {
-                this._copyPastePending = new CopyPasteArg(fn.Parent, fn.FullPath);
-            }
         }
     }
 
-    private void OnEdit() {
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            switch (selected) {
-                case FileNode fn:
-                    fn.IsEditing = true;
-                    break;
-
-                case ClientNode cn:
-                    cn.OpenClientConfigCommand.Execute(Unit.Default);
-                    break;
+    private void OnCopy() =>
+        this.Exec(() => {
+            foreach (var item in this.Items) {
+                var selected = item.FindSelected();
+                if (selected is FileNode fn) {
+                    this._copyPastePending = new CopyPasteArg(fn.Parent, fn.FullPath);
+                }
             }
-        }
-    }
+        });
+
+    private void OnEdit() =>
+        this.Exec(() => {
+            foreach (var item in this.Items) {
+                var selected = item.FindSelected();
+                switch (selected) {
+                    case FileNode fn:
+                        fn.IsEditing = true;
+                        break;
+
+                    case ClientNode cn:
+                        cn.OpenClientConfigCommand.Execute(Unit.Default);
+                        break;
+                }
+            }
+        });
 
     private void OnFileChanged(FileChangeMessage obj) {
         void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction,
             Func<IExplorerItem, bool> check) {
             lock (this) {
                 var item = items.FirstOrDefault();
-                if (item == null)
+                if (item == null) {
                     return;
+                }
 
-                if (check(item))
+                if (check(item)) {
                     doAction(item, msg);
-                else
+                }
+                else {
                     Traverse(item.Items.ToArray(), msg, doAction, check);
+                }
 
                 Traverse(items.Skip(1).ToArray(), msg, doAction, check);
             }
@@ -191,8 +200,9 @@ public class ExplorerViewModel : ViewModelBase {
         }
 
         void Rename(IExplorerItem item, FileChangeMessage msg) {
-            if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt)
+            if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt) {
                 return;
+            }
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
@@ -210,8 +220,9 @@ public class ExplorerViewModel : ViewModelBase {
         }
 
         void Create(IExplorerItem item, FileChangeMessage msg) {
-            if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt)
+            if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt) {
                 return;
+            }
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
@@ -239,58 +250,74 @@ public class ExplorerViewModel : ViewModelBase {
     }
 
     private void OnPaste() {
-        if (this._copyPastePending == null)
+        if (this._copyPastePending == null) {
             return;
+        }
 
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            if (selected != null && (selected == this._copyPastePending.Container ||
-                                     selected.Parent == this._copyPastePending.Container)) {
-                
-                var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
-                if (path != null) {
-                    var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
-                    var start = Path.GetFileNameWithoutExtension(this._copyPastePending.FileToCopy);
-                    var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
-                    fileCopy = Path.Combine(path, fileCopy);
-                    
-                    this.Io.File.Copy(this._copyPastePending.FileToCopy, fileCopy);
+        this.Exec(() => {
+            foreach (var item in this.Items) {
+                var selected = item.FindSelected();
+                if (selected != null && (selected == this._copyPastePending.Container ||
+                                         selected.Parent == this._copyPastePending.Container)) {
+                    var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
+                    if (path != null) {
+                        var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
+                        var start = Path.GetFileNameWithoutExtension(this._copyPastePending.FileToCopy);
+                        var fileCopy = Core.Utils.getAvailableFileName(path, start, ext);
+                        fileCopy = Path.Combine(path, fileCopy);
+
+                        this.Io.File.Copy(this._copyPastePending.FileToCopy, fileCopy);
+                    }
                 }
             }
-        }
+        });
     }
 
-    private async Task OnShowClient(ShowClientMessage obj) {
-        var compileOutput = obj.Output;
-        var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-        var type = ServiceClient.findClientType(types).Value;
-        if (type != null && this.Project != null) {
-            //Update the currently loaded project
-            var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!,
-                obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
-            await feature.Add();
+    private async Task OnShowClient(ShowClientMessage obj) =>
+        await this.Exec(async () => {
+            var compileOutput = obj.Output;
+            var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
+            var type = ServiceClient.findClientType(types).Value;
+            if (type != null && this.Project != null) {
+                //Update the currently loaded project
+                var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!,
+                    obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
+                await feature.Add();
 
-            //reload the project to take in the newly added client
-            var proj = Core.Project.loadProject(this.Io, this.Project.Path);
-            this.Project = proj;
+                //reload the project to take in the newly added client
+                var loadProj = new LoadProjectFeature(this.Io, this.Project.Path);
+                var proj = loadProj.Run();
+                this.Project = proj;
 
-            var client = proj.Clients.First(t => t.Name == obj.ClientName);
-            this.AddClientNode(client, type);
-        }
-    }
+                var client = proj.Clients.First(t => t.Name == obj.ClientName);
+                this.AddClientNode(client, type);
+            }
+        });
 
-    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
-        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
-            item!.IsSelected = false;
-        }
+    private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) =>
+        this.Exec(() => {
+            foreach (var item in e.DeselectedItems.Where(i => i != null)) {
+                item!.IsSelected = false;
+            }
 
-        foreach (var item in e.SelectedItems.Where(i => i != null)) {
-            item!.IsSelected = true;
-        }
-    }
+            this._nodeSelectionStrategy.Apply(e);
+
+            var foo = this.GetClientNodes()
+                .SelectMany(c => c.FindChildNodes(d => d.IsSelected))
+                .ToArray();
+            if (foo.Length == 0) {
+                this.SelectedItem = null;
+            }
+            else if (foo.Length == 1) {
+                this.SelectedItem = foo[0];
+            }
+            else {
+                this.SelectedItem = new MultiNode(foo);
+            }
+        });
 
     private class CopyPasteArg(IExplorerItem? container, string fileToCopy) {
-        public IExplorerItem? Container { get; init; } = container;
-        public string FileToCopy { get; init; } = fileToCopy;
+        public IExplorerItem? Container { get; } = container;
+        public string FileToCopy { get; } = fileToCopy;
     }
 }

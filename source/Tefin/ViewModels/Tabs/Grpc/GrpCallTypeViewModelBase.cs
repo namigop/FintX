@@ -4,6 +4,7 @@ using System.Reflection;
 
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Utils;
 
 using static Tefin.Core.Interop.MessageProject;
 
@@ -12,11 +13,10 @@ using static Tefin.Core.Interop.MessageProject;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public abstract class GrpCallTypeViewModelBase : ViewModelBase {
-
     protected GrpCallTypeViewModelBase(MethodInfo mi, ProjectTypes.ClientGroup cg) {
         this.MethodInfo = mi;
         this.Client = cg;
-        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
+        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
     }
 
     public ProjectTypes.ClientGroup Client { get; private set; }

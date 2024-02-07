@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class DecimalEditorView : UserControl {
-
-    public DecimalEditorView() {
-        this.InitializeComponent();
-    }
+    public DecimalEditorView() => this.InitializeComponent();
 }

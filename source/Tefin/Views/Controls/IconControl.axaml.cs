@@ -9,7 +9,8 @@ using Avalonia.Data;
 namespace Tefin.Views.Controls;
 
 public class IconControl : TemplatedControl {
-    public static readonly StyledProperty<string> IconProperty = AvaloniaProperty.Register<IconControl, string>(nameof(Icon), "", defaultBindingMode: BindingMode.TwoWay);
+    public static readonly StyledProperty<string> IconProperty =
+        AvaloniaProperty.Register<IconControl, string>(nameof(Icon), "", defaultBindingMode: BindingMode.TwoWay);
 
     public string Icon {
         get => this.GetValue(IconProperty);

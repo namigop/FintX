@@ -22,9 +22,7 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
         }
     }
 
-    public override string FormattedValue {
-        get => this.TempValue == null ? "null" : $"{this.TempValue:O}";
-    }
+    public override string FormattedValue => this.TempValue == null ? "null" : $"{this.TempValue:O}";
 
     public override void CommitEdit() {
         if (this.IsNull) {
@@ -42,7 +40,5 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
         }
     }
 
-    public override void Reset() {
-        this.DateTimeText = $"{this.TempValue:O}";
-    }
+    public override void Reset() => this.DateTimeText = $"{this.TempValue:O}";
 }

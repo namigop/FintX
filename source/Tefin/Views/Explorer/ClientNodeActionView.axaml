@@ -4,9 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:explorer1="clr-namespace:Tefin.Views.Explorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:ClientNode"
-
              x:Class="Tefin.Views.Explorer.ClientNodeActionView">
     <UserControl.Styles>
         <StyleInclude Source="/Views/Types/TypeItemStyles.axaml" />
@@ -19,11 +19,10 @@
                     HorizontalAlignment="Right">
             <StackPanel.Styles>
                 <Style Selector="controls|IconControl">
-                    <Setter Property="Width" Value="16"></Setter>
-                    <Setter Property="Height" Value="16"></Setter>
+                    <Setter Property="Width" Value="16" />
+                    <Setter Property="Height" Value="16" />
                 </Style>
                 <Style Selector="Button.isNotLoaded">
-                   
                     <Style.Animations>
                         <Animation Duration="0:0:1" IterationCount="5">
                             <KeyFrame Cue="0%">
@@ -43,36 +42,24 @@
                     IsVisible="{Binding !IsLoaded}"
                     Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
-                 
             </Button>
             <Button Classes="ClearButtonStyle" Command="{Binding OpenClientConfigCommand}"
+                    IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="open client config">
-                <controls:IconControl Icon="{StaticResource Icon.Config}"></controls:IconControl>
+                <controls:IconControl Icon="{StaticResource Icon.Config}" />
             </Button>
-            <Button Classes="ClearButtonStyle" x:Name="btnDelete" ToolTip.Tip="delete this client">
-
+            <Button Classes="ClearButtonStyle"
+                    IsVisible="{Binding IsSelected}"
+                    ToolTip.Tip="More actions">
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
+                <Button.Resources>
+                </Button.Resources>
                 <Button.Flyout>
                     <Flyout>
-                        <Grid RowDefinitions="*, Auto" Height="100">
-                            <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center"
-                                       HorizontalAlignment="Center" />
-
-                            <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
-                                <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right">
-                                    <Button Click="DeleteButtonClick">
-                                        <TextBlock Text="Yes, delete it" />
-                                    </Button>
-                                    <Button Click="CancelButtonClick" Margin="6 6 6 6">
-                                        <TextBlock Text="Cancel" />
-                                    </Button>
-                                </StackPanel>
-                            </Border>
-
-                        </Grid>
-
+                        <explorer1:ClientNodeContext />
                     </Flyout>
+
                 </Button.Flyout>
-                <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
             </Button>
         </StackPanel>
     </Grid>

@@ -15,27 +15,25 @@ namespace Tefin.ViewModels.Tabs;
 public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IRequestEditorViewModel {
     private string _json = "";
 
-    public CancellationTokenSource? CtsReq {
-        get;
-        private set;
-    }
-
     public string Json {
         get => this._json;
         set => this.RaiseAndSetIfChanged(ref this._json, value);
+    }
+
+    public CancellationTokenSource? CtsReq {
+        get;
+        private set;
     }
 
     public MethodInfo MethodInfo {
         get;
     } = methodInfo;
 
-    public void EndRequest() {
-        this.CtsReq = null;
-    }
+    public void EndRequest() => this.CtsReq = null;
 
     public (bool, object?[]) GetParameters() {
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
-        if (ret.IsOk & ret.ResultValue != null) {
+        if (ret.IsOk & (ret.ResultValue != null)) {
             var val = ret.ResultValue;
             var mParams = val!.GetType().GetProperties()
                 .Select(prop => prop.GetValue(val))
@@ -67,8 +65,9 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         }
 
         var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));
-        if (json.IsOk)
+        if (json.IsOk) {
             this.Json = json.ResultValue;
+        }
     }
 
     public void StartRequest() {

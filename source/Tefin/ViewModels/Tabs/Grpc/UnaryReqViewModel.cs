@@ -22,7 +22,8 @@ public class UnaryReqViewModel : ViewModelBase {
     //private readonly bool _generateFullTree;
     private bool _showTreeEditor;
 
-    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
+    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree,
+        List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
         this._showTreeEditor = true;
         this.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
@@ -51,7 +52,8 @@ public class UnaryReqViewModel : ViewModelBase {
             var exportReqJson = feature.Export();
             if (exportReqJson.IsOk) {
                 var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request", $"*{Ext.requestFileExt}");
+                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request",
+                    $"*{Ext.requestFileExt}");
             }
             else {
                 this.Io.Log.Error(exportReqJson.ErrorValue);
@@ -59,9 +61,7 @@ public class UnaryReqViewModel : ViewModelBase {
         }
     }
 
-    public (bool, object?[]) GetMethodParameters() {
-        return this.RequestEditor.GetParameters();
-    }
+    public (bool, object?[]) GetMethodParameters() => this.RequestEditor.GetParameters();
 
     public virtual string GetRequestContent() {
         var (ok, mParams) = this.GetMethodParameters();
@@ -89,21 +89,19 @@ public class UnaryReqViewModel : ViewModelBase {
         var (export, _) = import.Run();
         if (export.IsOk) {
             var methodParams = export.ResultValue;
-            if (methodParams == null)
+            if (methodParams == null) {
                 Debugger.Break();
+            }
+
             this._methodParameterInstances = methodParams ?? Array.Empty<object>();
             this.Init();
         }
         else {
             this.Io.Log.Error(export.ErrorValue);
         }
-
-       
     }
 
-    public void Init() {
-        this._requestEditor.Show(this._methodParameterInstances);
-    }
+    public void Init() => this._requestEditor.Show(this._methodParameterInstances);
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         var vm = (UnaryReqViewModel)obj;
@@ -118,14 +116,16 @@ public class UnaryReqViewModel : ViewModelBase {
     private void ShowAsJson() {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._jsonEditor;
-        if (ok)
+        if (ok) {
             this.RequestEditor.Show(parameters);
+        }
     }
 
     private void ShowAsTree() {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._treeEditor;
-        if (ok)
+        if (ok) {
             this.RequestEditor.Show(parameters);
+        }
     }
 }

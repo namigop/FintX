@@ -3,8 +3,6 @@
 using System.Diagnostics;
 using System.Reflection;
 
-using Microsoft.FSharp.Core;
-
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
@@ -17,7 +15,8 @@ namespace Tefin.ViewModels.Types;
 public class DefaultNode : TypeBaseNode {
     private bool _valueIsNull;
 
-    public DefaultNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public DefaultNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name,
+        type, propInfo, instance, parent) {
         this.FormattedTypeName = type.FullName!.StartsWith("Tefin") ? "" : $"{{{type.Name}}}";
         this.IsExpanded = true;
         this.SubscribeTo(x => ((DefaultNode)x).ValueIsNull, this.OnValueIsNullChangedl);
@@ -28,7 +27,9 @@ public class DefaultNode : TypeBaseNode {
 
     public override string FormattedValue {
         get {
-            if (this.IsNull) return "null";
+            if (this.IsNull) {
+                return "null";
+            }
 
             return "";
         }
@@ -39,9 +40,11 @@ public class DefaultNode : TypeBaseNode {
         set => this.RaiseAndSetIfChanged(ref this._valueIsNull, value);
     }
 
-    public static bool CanCreateChildNodes(Type parameterType, Dictionary<string, int> processedTypeNames, object? instance) {
-        if (instance == null)
+    public static bool CanCreateChildNodes(Type parameterType, Dictionary<string, int> processedTypeNames,
+        object? instance) {
+        if (instance == null) {
             return false;
+        }
 
         if (SystemType.isSystemType(parameterType)) {
             return false;
@@ -57,8 +60,9 @@ public class DefaultNode : TypeBaseNode {
     }
 
     public override void Init(Dictionary<string, int> processedTypeNames) {
-        if (this.Items.Count > 0)
+        if (this.Items.Count > 0) {
             return; //already initialized
+        }
 
         Debug.Assert(this.Items?.Count == 0, "2nd initialize?");
 
@@ -68,18 +72,21 @@ public class DefaultNode : TypeBaseNode {
             foreach (var propInfo in props) {
                 var propInstance = propInfo.GetValue(this.Value);
                 var type = propInstance?.GetType() ?? propInfo.PropertyType;
-                var node = TypeNodeBuilder.Create(propInfo.Name, type, new TypeInfo(propInfo), processedTypeNames, propInstance, this);
+                var node = TypeNodeBuilder.Create(propInfo.Name, type, new TypeInfo(propInfo), processedTypeNames,
+                    propInstance, this);
 
                 this.Items.Add(node);
                 node.Init();
             }
 
-            var fields = this.Type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.IsPublic).ToList();
-            foreach (var fieldInfo in fields)
+            var fields = this.Type.GetFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.IsPublic)
+                .ToList();
+            foreach (var fieldInfo in fields) {
                 try {
                     var fieldInstance = fieldInfo.GetValue(this.Value);
                     var type = fieldInstance?.GetType() ?? fieldInfo.FieldType;
-                    var node = TypeNodeBuilder.Create(fieldInfo.Name, type, new TypeInfo(fieldInfo), processedTypeNames, fieldInstance, this);
+                    var node = TypeNodeBuilder.Create(fieldInfo.Name, type, new TypeInfo(fieldInfo), processedTypeNames,
+                        fieldInstance, this);
                     node.Init();
                     this.Items.Add(node);
                 }
@@ -87,6 +94,7 @@ public class DefaultNode : TypeBaseNode {
                     this.Io.Log.Error(exc);
                     Debugger.Break();
                 }
+            }
         }
 
         this.IsNull = this.Value == null;

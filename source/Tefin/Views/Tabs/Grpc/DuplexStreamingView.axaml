@@ -84,6 +84,7 @@
                                 CornerRadius="0 24 24 0"
                                 Margin="1 0 0 0"
                                 ToolTip.Tip="Finish writing to the request stream"
+                                Background="{StaticResource Bym.Color.Red}"
                                 IsEnabled="{Binding ReqViewModel.CanWrite}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
                         </Button>
@@ -104,7 +105,7 @@
                     <!--               OnContent="" OffContent="" -->
                     <!--               Margin="0 0 0 0" /> -->
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
-                        <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}"></controls:IconControl>
+                        <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
                     </ToggleButton>
                 </StackPanel>
             </controls:MovableBorder>

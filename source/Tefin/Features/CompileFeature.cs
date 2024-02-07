@@ -16,8 +16,8 @@ public class CompileFeature(
     string description,
     string[] protoFiles,
     string reflectionUrl,
-    IOResolver io) {
-    private static Dictionary<string, CompileOutput> CompilationCache = new();
+    IOs io) {
+    private static readonly Dictionary<string, CompileOutput> CompilationCache = new();
 
     public async Task<(bool, CompileOutput)> CompileExisting(string[] csFiles) {
         try {

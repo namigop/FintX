@@ -14,12 +14,12 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
-
     public TreeResponseEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
+                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate",
+                        "CellEditTemplate", //edittemplate
                         new GridLength(1, GridUnitType.Star)),
                     x => x.Items, //
                     x => x.Items.Any(), //
@@ -29,8 +29,8 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
     }
 
     public ObservableCollection<IExplorerItem> Items { get; } = new();
-    public MethodInfo MethodInfo { get; }
     public HierarchicalTreeDataGridSource<IExplorerItem> ResponseTree { get; }
+    public MethodInfo MethodInfo { get; }
 
     public Type? ResponseType {
         get;
@@ -52,8 +52,9 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
     }
 
     public (bool, object?) GetResponse() {
-        if (this.ResponseType == null)
+        if (this.ResponseType == null) {
             return (false, null);
+        }
 
         if (this.Items.Any()) {
             var node = (TypeBaseNode)this.Items[0];
@@ -63,14 +64,13 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         return (false, null);
     }
 
-    public void Init() {
-        this.Items.Clear();
-    }
+    public void Init() => this.Items.Clear();
 
     public void Show(object? resp, Type? responseType) {
         this.Items.Clear();
-        if (responseType == null)
+        if (responseType == null) {
             return;
+        }
 
         try {
             this.ResponseType = responseType;

@@ -20,40 +20,37 @@ public class ListNode : TypeBaseNode {
     private int _listItemsCount;
     private int _targetListItemsCount;
 
-    public ListNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ListNode(string name, Type type, ITypeInfo? propInfo, object? instance, TypeBaseNode? parent) : base(name,
+        type, propInfo, instance, parent) {
         this.IsExpanded = true;
         this.SubscribeTo(x => ((ListNode)x).ListItemsCount, this.OnCountChanged);
         this._itemType = type.GetGenericArguments().FirstOrDefault()!;
     }
 
-    public override string FormattedTypeName {
-        get => $"{{{TypeHelper.getFormattedGenericName(this.Type)}}}";
-    }
+    public override string FormattedTypeName => $"{{{TypeHelper.getFormattedGenericName(this.Type)}}}";
 
-    public override string FormattedValue {
-        get => this.IsNull ? "null" : $"Count = {this.ListItemsCount}";
-    }
+    public override string FormattedValue => this.IsNull ? "null" : $"Count = {this.ListItemsCount}";
 
     public override bool IsEditing {
         get => this._isEditing;
         set {
             this._isEditing = value;
-            if (!this._isEditing)
+            if (!this._isEditing) {
                 this.ListItemsCount = this.TargetListItemsCount;
+            }
         }
     }
 
-    public bool IsNullOrEmpty {
-        get => this.IsNull || this.ListItemsCount == 0;
-    }
+    public bool IsNullOrEmpty => this.IsNull || this.ListItemsCount == 0;
 
     public int ListItemsCount {
         get => this._listItemsCount;
         set {
             this.RaiseAndSetIfChanged(ref this._listItemsCount, value);
             this.RaisePropertyChanged(nameof(this.IsNullOrEmpty));
-            if (this._listItemsCount > 0)
+            if (this._listItemsCount > 0) {
                 this.IsNull = false;
+            }
         }
     }
 
@@ -66,15 +63,11 @@ public class ListNode : TypeBaseNode {
         }
     }
 
-    protected virtual string ItemName {
-        get => "Item";
-    }
+    protected virtual string ItemName => "Item";
 
     public void AddItem(object itemInstance) {
         var listInstance = this.GetListInstance();
-        this.GetMethods().AddMethod!.Invoke(listInstance, new[] {
-            itemInstance
-        });
+        this.GetMethods().AddMethod!.Invoke(listInstance, new[] { itemInstance });
         var itemType = this.GetItemType();
         var count = GetListSize(listInstance!);
         var name = $"{this.ItemName}[{count}]";
@@ -120,12 +113,15 @@ public class ListNode : TypeBaseNode {
         var currentCount = -1;
 
         var countProp = value.GetType().GetProperty("Count");
-        if (countProp != null)
+        if (countProp != null) {
             currentCount = (int)countProp.GetValue(value)!;
+        }
+
         if (currentCount == -1) {
             countProp = value.GetType().GetProperty("Length");
-            if (countProp != null)
+            if (countProp != null) {
                 currentCount = (int)countProp.GetValue(value)!;
+            }
         }
 
         if (currentCount == -1) {
@@ -136,26 +132,20 @@ public class ListNode : TypeBaseNode {
         return currentCount;
     }
 
-    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType, Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode parent) {
-        var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this), processedTypeNames, current, parent);
+    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType,
+        Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode parent) {
+        var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this),
+            processedTypeNames, current, parent);
         return inner;
     }
 
-    protected virtual Type GetItemType() {
-        return this._itemType;
-    }
+    protected virtual Type GetItemType() => this._itemType;
 
-    protected virtual object? GetListInstance() {
-        return this.Value;
-    }
+    protected virtual object? GetListInstance() => this.Value;
 
-    protected virtual Type GetListType() {
-        return this.Type;
-    }
+    protected virtual Type GetListType() => this.Type;
 
-    protected virtual ListTypeMethod GetMethods() {
-        return ListTypeMethod.GetMethods(this.Type);
-    }
+    protected virtual ListTypeMethod GetMethods() => ListTypeMethod.GetMethods(this.Type);
 
     protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
@@ -169,9 +159,7 @@ public class ListNode : TypeBaseNode {
                 Dictionary<string, int>? processedTypeNames = new();
                 var (ok, instance) = TypeBuilder.getDefault(itemType, true, FSharpOption<object>.Some(listInstance), 0);
                 if (ok) {
-                    this.GetMethods().AddMethod!.Invoke(listInstance, new[] {
-                        instance
-                    });
+                    this.GetMethods().AddMethod!.Invoke(listInstance, new[] { instance });
                     var node = this.CreateListItemNode(name, itemType, processedTypeNames, counter, instance, this);
                     node.Init();
                     node.IsExpanded = false;
@@ -187,9 +175,7 @@ public class ListNode : TypeBaseNode {
             for (var i = 0; i < delta; i++) {
                 var last = this.Items.Count - 1;
                 this.Items.RemoveAt(last);
-                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, new object[] {
-                    last
-                });
+                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, new object[] { last });
             }
         }
 
@@ -197,17 +183,21 @@ public class ListNode : TypeBaseNode {
         var currentCount = t.Items.Count;
         var targetCount = t.ListItemsCount;
 
-        if (targetCount == currentCount)
+        if (targetCount == currentCount) {
             return;
+        }
 
         var listInstance = this.GetListInstance();
-        if (listInstance == null)
+        if (listInstance == null) {
             return;
+        }
 
-        if (targetCount > currentCount)
+        if (targetCount > currentCount) {
             AddNodes(targetCount, currentCount, listInstance, this.GetItemType());
+        }
 
-        if (targetCount < currentCount)
+        if (targetCount < currentCount) {
             RemoveNodes(targetCount, currentCount, listInstance);
+        }
     }
 }

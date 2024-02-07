@@ -35,7 +35,7 @@
                 <!--                       Margin="0 0 0 0" /> -->
                 <!--     </StackPanel> -->
                 <!-- </Border> -->
-                <ContentControl Content="{Binding ServerStreamEditor}" Grid.Row="1" Margin="0 6 0 0 "/>
+                <ContentControl Content="{Binding ServerStreamEditor}" Grid.Row="1" Margin="0 6 0 0 " />
                 <StackPanel Orientation="Vertical" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                             Opacity="0.25" Margin="10" Grid.Row="1">
                     <TextBlock Text="response stream" FontSize="20"

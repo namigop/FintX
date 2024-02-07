@@ -7,10 +7,7 @@ using Avalonia.Controls;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class NullableDateTimeEditorView : UserControl {
-
-    public NullableDateTimeEditorView() {
-        this.InitializeComponent();
-    }
+    public NullableDateTimeEditorView() => this.InitializeComponent();
 
     // private void OnKeyDown(object? sender, KeyEventArgs e) {
     //     var vm = (NullableDateTimeEditor)this.DataContext!;

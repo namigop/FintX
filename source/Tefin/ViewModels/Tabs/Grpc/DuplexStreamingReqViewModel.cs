@@ -26,7 +26,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
 
-    public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null)
+    public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree,
+        List<object?>? methodParameterInstances = null)
         : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
@@ -41,7 +42,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
-        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree, this.OnIsShowingClientStreamTreeChanged);
+        this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree,
+            this.OnIsShowingClientStreamTreeChanged);
     }
 
     public DuplexStreamingCallResponse? CallResponse {
@@ -96,9 +98,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         return "";
     }
 
-    public override async Task ImportRequest() {
-        await GrpcUiUtils.ImportRequest(this.RequestEditor, this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
-    }
+    public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(this.RequestEditor,
+        this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this._callResponse = response;
@@ -111,12 +112,11 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
         if (ok) {
             var add = this._listType.GetMethod("Add");
-            add!.Invoke(stream, new[] {
-                reqInstance
-            });
+            add!.Invoke(stream, new[] { reqInstance });
         }
-        else
+        else {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
+        }
 
         this._clientStreamEditor.Show(stream!);
         this.CanWrite = true;
@@ -126,8 +126,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         try {
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
-            if (this.CallResponse != null)
+            if (this.CallResponse != null) {
                 this.CallResponse = await writer.CompleteWrite(this.CallResponse);
+            }
         }
         finally {
             this.CanWrite = false;
@@ -157,8 +158,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
             var writer = new WriteDuplexStreamFeature();
             this.IsBusy = true;
 
-            foreach (var i in this.ClientStreamEditor.GetListItems())
+            foreach (var i in this.ClientStreamEditor.GetListItems()) {
                 await writer.Write(resp, i);
+            }
         }
         catch (Exception exc) {
             this.Io.Log.Error(exc);
@@ -171,14 +173,16 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private void ShowAsJson() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
-        if (ok)
+        if (ok) {
             this.ClientStreamEditor.Show(list);
+        }
     }
 
     private void ShowAsTree() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
-        if (ok)
+        if (ok) {
             this.ClientStreamEditor.Show(list);
+        }
     }
 }

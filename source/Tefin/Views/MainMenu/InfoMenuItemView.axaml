@@ -8,7 +8,7 @@
              x:DataType="mainMenu:InfoMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.InfoMenuItemView">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <controls:IconControl Icon="{StaticResource Icon.AppLarge}" HorizontalAlignment="Left"  Height="64" Width="64"  />
+        <controls:IconControl Icon="{StaticResource Icon.AppLarge}" HorizontalAlignment="Left" Height="64" Width="64" />
         <TextBlock Text="{Binding AppInfo}" FontSize="20" Margin="0 10 0 10" />
         <Button Padding="0" Command="{Binding OpenBrowserCommand}" Background="Transparent">
             <TextBlock Text="{Binding GitHubUrl}" Foreground="CornflowerBlue" VerticalAlignment="Stretch" />

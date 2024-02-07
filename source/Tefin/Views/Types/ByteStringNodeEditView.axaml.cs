@@ -10,10 +10,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.Views.Types;
 
 public partial class ByteStringNodeEditView : UserControl {
-
-    public ByteStringNodeEditView() {
-        this.InitializeComponent();
-    }
+    public ByteStringNodeEditView() => this.InitializeComponent();
 
     private void OnKeyDownBase64TextBox(object? sender, KeyEventArgs e) {
         var vm = (ByteStringNode)this.DataContext!;

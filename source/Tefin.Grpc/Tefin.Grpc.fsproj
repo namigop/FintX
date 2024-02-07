@@ -8,7 +8,7 @@
     <PropertyGroup>
         <Protobuf_ProjectSupported>true</Protobuf_ProjectSupported>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <Compile Include="GrpcPackage.fs"/>
         <Compile Include="ClientStreamWriter.fs"/>

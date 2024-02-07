@@ -4,13 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:explorer1="clr-namespace:Tefin.Views.Explorer"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:MethodNode"
-
              x:Class="Tefin.Views.Explorer.MethodNodeActionView">
-    <UserControl.Styles>
-        <StyleInclude Source="/Views/Types/TypeItemStyles.axaml" />
-    </UserControl.Styles>
+
     <Grid>
 
         <!--client node button actions -->
@@ -21,11 +19,30 @@
 
             <Button Classes="ClearButtonStyle" Command="{Binding OpenMethodCommand}"
                     ToolTip.Tip="Open in new tab">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.OpenNew}" />
+                <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
             </Button>
             <Button Classes="ClearButtonStyle" Command="{Binding NewRequestCommand}"
                     ToolTip.Tip="Create a new request">
-                <controls:IconControl Height="18" Width="18" Icon="{StaticResource Icon.FileReqNew}" />
+                <controls:IconControl Icon="{StaticResource Icon.FileReqNew}" />
+            </Button>
+            <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
+                <Button.Resources>
+                </Button.Resources>
+                <Button.Flyout>
+                    <Flyout>
+                        <explorer1:MethodNodeContext />
+                    </Flyout>
+                    <!-- <MenuFlyout> -->
+                    <!--     <MenuItem Header="Export" HeaderTemplate="{StaticResource MenuHeader}" Command="{Binding ExportCommand}"> -->
+                    <!--         <MenuItem.Icon> -->
+                    <!--             <controls:IconControl Icon="{StaticResource Icon.DataExport}" /> -->
+                    <!--         </MenuItem.Icon> -->
+                    <!--     </MenuItem> -->
+                    <!--     ~1~ <MenuItem Header="-"/> @1@ -->
+                    <!--     ~1~ <MenuItem Header="Close"/>         @1@ -->
+                    <!-- </MenuFlyout> -->
+                </Button.Flyout>
             </Button>
 
         </StackPanel>

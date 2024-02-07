@@ -22,9 +22,7 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
         }
     }
 
-    public override string FormattedValue {
-        get => $"{this.TempValue:O}";
-    }
+    public override string FormattedValue => $"{this.TempValue:O}";
 
     public override void CommitEdit() {
         if (DateTimeOffset.TryParse(this.DateTimeText, out var dt)) {
@@ -37,7 +35,5 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
         }
     }
 
-    public override void Reset() {
-        this.DateTimeText = $"{this.TempValue:O}";
-    }
+    public override void Reset() => this.DateTimeText = $"{this.TempValue:O}";
 }

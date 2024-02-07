@@ -13,8 +13,8 @@
     </UserControl.Styles>
     <Grid>
         <StackPanel Orientation="Horizontal">
-            <Border>                 
-              <controls:IconControl Icon="{StaticResource Icon.Grpc}" Height="32" Width="42" />               
+            <Border>
+                <controls:IconControl Icon="{StaticResource Icon.Grpc}" Height="32" Width="42" />
             </Border>
 
             <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="SubTitle" />

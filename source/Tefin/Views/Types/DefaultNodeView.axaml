@@ -12,7 +12,7 @@
     </UserControl.Styles>
     <StackPanel Orientation="Horizontal">
         <Border>
-           <controls:IconControl Icon="{StaticResource Icon.Class}" />
+            <controls:IconControl Icon="{StaticResource Icon.Class}" />
         </Border>
 
         <TextBlock Text="{Binding Title}" Classes="Title" Margin="6 0 0 0" />

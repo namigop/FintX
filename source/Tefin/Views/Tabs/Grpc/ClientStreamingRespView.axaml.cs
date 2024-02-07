@@ -7,9 +7,6 @@ using Avalonia.Controls;
 namespace Tefin.Views.Tabs.Grpc;
 
 public partial class ClientStreamingRespView : UserControl {
-
-    public ClientStreamingRespView() {
-        this.InitializeComponent();
-        //this.TreeDg.RowDragStarted
-    }
+    public ClientStreamingRespView() => this.InitializeComponent();
+    //this.TreeDg.RowDragStarted
 }

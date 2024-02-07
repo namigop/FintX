@@ -10,7 +10,6 @@ using Tefin.ViewModels.Tabs.Grpc;
 namespace Tefin.Views.Tabs.Grpc;
 
 public partial class GrpcClientMethodHostView : UserControl {
-
     public GrpcClientMethodHostView() {
         this.InitializeComponent();
         this.Loaded += this.OnLoaded;

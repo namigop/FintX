@@ -13,10 +13,9 @@ public class NodeViewLocator : IDataTemplate {
     private static readonly Dictionary<Type, Type> Mapping = new();
 
     public Control Build(object? data) {
-        if (data == null)
-            return new TextBlock {
-                Text = "data cannot be null"
-            };
+        if (data == null) {
+            return new TextBlock { Text = "data cannot be null" };
+        }
 
         var sourceType = data.GetType();
         if (Mapping.TryGetValue(sourceType, out var value)) {
@@ -33,12 +32,8 @@ public class NodeViewLocator : IDataTemplate {
             return (Control)Activator.CreateInstance(type)!;
         }
 
-        return new TextBlock {
-            Text = "Not Found: " + name
-        };
+        return new TextBlock { Text = "Not Found: " + name };
     }
 
-    public bool Match(object? data) {
-        return data is NodeBase;
-    }
+    public bool Match(object? data) => data is NodeBase;
 }

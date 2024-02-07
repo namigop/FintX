@@ -5,11 +5,10 @@ using Tefin.Messages;
 
 namespace Tefin.Features;
 
-public class MonitorChangesFeature(IOResolver io) {
+public class MonitorChangesFeature(IOs io) {
     private static FileSystemWatcher? _watcher;
 
     public void Run(ProjectTypes.Project project) {
-        
         //Whenever Run is called we dispose of the old one -essentially
         //just monitoring one folder at a time.
         _watcher?.Dispose();
@@ -34,9 +33,7 @@ public class MonitorChangesFeature(IOResolver io) {
         GlobalHub.publish(msg);
     }
 
-    private void OnError(object sender, ErrorEventArgs e) {
-        io.Log.Warn(e.GetException().ToString());
-    }
+    private void OnError(object sender, ErrorEventArgs e) => io.Log.Warn(e.GetException().ToString());
 
     private void OnRenamed(object sender, RenamedEventArgs e) {
         io.Log.Info($"File renamed from \"{e.OldName}\" to \"{e.Name}\"");

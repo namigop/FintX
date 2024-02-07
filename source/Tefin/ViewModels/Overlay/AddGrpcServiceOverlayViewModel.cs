@@ -85,9 +85,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; }
 
-    public void Close() {
-        GlobalHub.publish(new CloseOverlayMessage(this));
-    }
+    public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private async Task OnDiscover() {
         DiscoverParameters? discoParams = null;
@@ -105,8 +103,9 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             }
         }
 
-        if (discoParams == null)
+        if (discoParams == null) {
             return;
+        }
 
         var res = await ServiceClient.discover(this.Io, discoParams);
 
@@ -114,8 +113,9 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             var services = res.ResultValue;
             if (services.Any()) {
                 this.DiscoveredServices.Clear();
-                foreach (var s in services)
+                foreach (var s in services) {
                     this.DiscoveredServices.Add(s);
+                }
 
                 this.SelectedDiscoveredService = this.DiscoveredServices.FirstOrDefault();
             }

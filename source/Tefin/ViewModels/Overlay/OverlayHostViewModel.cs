@@ -4,6 +4,7 @@ using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
+using Tefin.Utils;
 
 #endregion
 
@@ -15,8 +16,8 @@ public class OverlayHostViewModel : ViewModelBase {
     private IOverlayViewModel? _content;
 
     public OverlayHostViewModel() {
-        GlobalHub.subscribe<OpenOverlayMessage>(this.OnOpenOverlay);
-        GlobalHub.subscribe<CloseOverlayMessage>(this.OnCloseOverlay);
+        GlobalHub.subscribe<OpenOverlayMessage>(this.OnOpenOverlay).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<CloseOverlayMessage>(this.OnCloseOverlay).Then(this.MarkForCleanup);
     }
 
     public bool CanShowOverlay {

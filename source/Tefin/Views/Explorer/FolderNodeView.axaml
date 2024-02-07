@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Explorer.FolderNodeView">
     <StackPanel Orientation="Horizontal">
         <Border>
-           <controls:IconControl Icon="{StaticResource Icon.Folder}"/>
+            <controls:IconControl Icon="{StaticResource Icon.Folder}" />
         </Border>
         <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
                    Background="Transparent"

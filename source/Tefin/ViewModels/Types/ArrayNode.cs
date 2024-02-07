@@ -9,7 +9,6 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class ArrayNode : ListNode {
-
     //private int listItemsCount;
     private readonly object _internalList;
 
@@ -17,7 +16,8 @@ public class ArrayNode : ListNode {
     private readonly Type _itemType;
     private readonly ListTypeMethod _listMethods;
 
-    public ArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name, type, propInfo, instance, parent) {
+    public ArrayNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name,
+        type, propInfo, instance, parent) {
         this.ListItemsCount = 0;
 
         var listType = typeof(List<>);
@@ -31,40 +31,29 @@ public class ArrayNode : ListNode {
 
         this._internalList = list;
         this._internalListType = this._internalList.GetType();
-        if (instance != null)
-            this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] {
-                instance
-            });
+        if (instance != null) {
+            this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] { instance });
+        }
+
         this.SubscribeTo(x => ((ArrayNode)x).ListItemsCount, this.OnCountChanged);
     }
 
-    public override string FormattedTypeName {
-        get => $"{{{this.Type.Name}}}";
-    }
+    public override string FormattedTypeName => $"{{{this.Type.Name}}}";
 
-    protected override Type GetItemType() {
-        return this._itemType;
-    }
+    protected override Type GetItemType() => this._itemType;
 
-    protected override object GetListInstance() {
-        return this._internalList;
-    }
+    protected override object GetListInstance() => this._internalList;
 
-    protected override Type GetListType() {
-        return this._internalListType;
-    }
+    protected override Type GetListType() => this._internalListType;
 
-    protected override ListTypeMethod GetMethods() {
-        return this._listMethods;
-    }
+    protected override ListTypeMethod GetMethods() => this._listMethods;
 
-    private void OnCountChanged(ViewModelBase obj) {
-        this.Value = this.ToArray(this._internalList);
-    }
+    private void OnCountChanged(ViewModelBase obj) => this.Value = this.ToArray(this._internalList);
 
     private object? ToArray(object? targetList) {
-        if (targetList == null)
+        if (targetList == null) {
             return null;
+        }
 
         var mi = targetList.GetType().GetMethod("ToArray", BindingFlags.Instance | BindingFlags.Public);
         var arrayInstance = mi!.Invoke(targetList, null);

@@ -25,7 +25,8 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         this._listInstance = Activator.CreateInstance(listType)!;
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
             Columns = {
-                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate", "CellEditTemplate", //edittemplate
+                new HierarchicalExpanderColumn<IExplorerItem>(new NodeTemplateColumn<IExplorerItem>("", "CellTemplate",
+                    "CellEditTemplate", //edittemplate
                     new GridLength(1, GridUnitType.Star)), x => x.Items, x => x.Items.Any(), x => x.IsExpanded)
             }
         };
@@ -33,34 +34,31 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         this._listItemType = TypeHelper.getListItemType(listType).Value;
     }
 
+    public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
+    public HierarchicalTreeDataGridSource<IExplorerItem> StreamTree { get; }
+
     public Type ListType {
         get;
     }
 
-    public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
-    public HierarchicalTreeDataGridSource<IExplorerItem> StreamTree { get; }
-
-    public void AddItem(object instance) {
+    public void AddItem(object instance) =>
         Dispatcher.UIThread.Post(() => {
             var streamNode = (ResponseStreamNode)this.StreamItems[0];
             streamNode.AddItem(instance);
-            if (streamNode.Items.Count == 1)
+            if (streamNode.Items.Count == 1) {
                 streamNode.IsExpanded = true;
+            }
         });
-    }
 
-    public void Clear() {
-        this.StreamItems.Clear();
-    }
+    public void Clear() => this.StreamItems.Clear();
 
-    public (bool, object) GetList() {
-        return (true, this._listInstance);
-    }
+    public (bool, object) GetList() => (true, this._listInstance);
 
     public IEnumerable<object> GetListItems() {
         dynamic list = this._listInstance;
-        foreach (var i in list)
+        foreach (var i in list) {
             yield return i;
+        }
     }
 
     public void Show(object listInstance) {

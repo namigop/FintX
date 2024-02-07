@@ -10,12 +10,8 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.Views.Types.TypeEditors;
 
 public partial class StringEditorView : UserControl {
-
-    public StringEditorView() {
-        this.InitializeComponent();
-        //this.DataContextChanged += this.OnDataContextChanged;
-    }
-
+    public StringEditorView() => this.InitializeComponent();
+    //this.DataContextChanged += this.OnDataContextChanged;
     // private void OnDataContextChanged(object? sender, EventArgs e) {
     //     var c = (StringEditorView)sender!;
     //     if (c.DataContext != null)

@@ -4,7 +4,8 @@
     <Setter Property="Opacity" Value="0.4" />
   </Style>
   <Style Selector="Button.MenuButton">
-    <Setter Property="BorderThickness" Value="2"/>
+    <Setter Property="BorderThickness" Value="0"/>
+    <Setter Property="Background" Value="Transparent"></Setter>
     <Setter Property="BorderBrush" Value="{StaticResource Bym.Color.DefaultWindowBackground}"/>
     <!-- <Setter Property="Background" Value="Transparent"/> -->
     <Setter Property="CornerRadius" Value="6"></Setter>
@@ -29,6 +30,15 @@
     <Setter Property="BorderThickness" Value="0" />
     <Setter Property="Padding" Value="4 5 4 6"></Setter>
   </Style>
+  
+  <Style Selector="Button.ClearButtonStyle.ContextFlyout">
+     <Setter Property="HorizontalAlignment" Value="Stretch" />
+     <Setter Property="Margin" Value="0 0 0 2"></Setter>
+  </Style>
+  <Style Selector="Button.ClearButtonStyle.ContextFlyout[IsEnabled=false]">
+    <Setter Property="Opacity" Value="1" />
+  </Style>
+  
   <Style Selector="Button.ClearButtonStyle[IsEnabled=false]">
     <!--<Setter Property="Background" Value="Red" />-->
     <Setter Property="Opacity" Value="0.7" />

@@ -7,8 +7,5 @@ using Avalonia.Controls;
 namespace Tefin.Views.MainMenu;
 
 public partial class InfoMenuItemView : UserControl {
-
-    public InfoMenuItemView() {
-        this.InitializeComponent();
-    }
+    public InfoMenuItemView() => this.InitializeComponent();
 }

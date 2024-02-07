@@ -22,11 +22,11 @@
                             ToolTip.Tip="Discover services">
 
                         <Grid>
-                            <controls:IconControl Icon="{StaticResource Icon.CircledArrow}" 
+                            <controls:IconControl Icon="{StaticResource Icon.CircledArrow}"
                                                   IsVisible="{Binding !IsDiscoveringUsingProto}"
                                                   ToolTip.Tip="Click to explore the reflection service"
                                                   Width="20" Height="20" />
-                            <controls:IconControl Icon="{StaticResource Icon.FolderOpen}" 
+                            <controls:IconControl Icon="{StaticResource Icon.FolderOpen}"
                                                   IsVisible="{Binding IsDiscoveringUsingProto}"
                                                   ToolTip.Tip="Click to explore the reflection service"
                                                   Width="20" Height="20" />

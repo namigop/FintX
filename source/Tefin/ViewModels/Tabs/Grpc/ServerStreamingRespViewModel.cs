@@ -36,7 +36,8 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
 
-        this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree, this.OnIsShowingServerStreamTreeChanged);
+        this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree,
+            this.OnIsShowingServerStreamTreeChanged);
     }
 
     public bool CanRead {
@@ -92,14 +93,16 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private void ShowAsJson() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
-        if (ok)
+        if (ok) {
             this.ServerStreamEditor.Show(list);
+        }
     }
 
     private void ShowAsTree() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamTreeEditor;
-        if (ok)
+        if (ok) {
             this.ServerStreamEditor.Show(list);
+        }
     }
 }

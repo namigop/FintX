@@ -10,8 +10,11 @@ using Tefin.Grpc.Execution;
 
 namespace Tefin.Features;
 
-public class CallServerStreamingFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
-
+public class CallServerStreamingFeature(
+    MethodInfo mi,
+    object?[] mParams,
+    ProjectTypes.ClientConfig cfg,
+    IOs io) {
     public async Task<(bool, ResponseServerStreaming)> Run() {
         var (success, resp) = await CallServerStreaming.run(io, mi, mParams, cfg);
         return (success, resp);

@@ -12,6 +12,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
+using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
 using static Tefin.Core.Interop.MessageProject;
@@ -46,8 +47,14 @@ public class ClientNode : NodeBase {
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
-        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated);
+        //this.ImportCommand = this.CreateCommand(this.OnImport);
+        this.ExportCommand = this.CreateCommand(this.OnExport);
+        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+
     }
+
+    public ICommand ExportCommand { get; }
 
     public ProjectTypes.ClientGroup Client {
         get;
@@ -77,9 +84,7 @@ public class ClientNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._desc, value);
     }
 
-    public bool IsLoaded {
-        get => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
-    }
+    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
 
     //public ReadOnlyDictionary<string, string> Config { get; }
     public ICommand OpenClientConfigCommand { get; }
@@ -91,17 +96,34 @@ public class ClientNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
-    public void Clear() {
-        this.Items.Clear();
+    private async Task OnExport() {
+        var share = new SharingFeature();
+        var zipFile = await share.GetZipFile();
+        if (string.IsNullOrEmpty(zipFile)) {
+            return;
+        }
+
+        var result = share.ShareClient(this.Io, zipFile, this.Client);
+        if (result.IsOk) {
+            this.Io.Log.Info($"Export created: {zipFile}");
+        }
+        else {
+            this.Io.Log.Error(result.ErrorValue);
+        }
     }
 
+
+    public void Clear() => this.Items.Clear();
+
     public override void Init() {
-        if (this.ClientType == null)
+        if (this.ClientType == null) {
             return;
+        }
 
         //if (this.Items.FirstOrDefault() is EmptyNode)
-        foreach (var i in this.Items)
+        foreach (var i in this.Items) {
             GlobalHub.publish(new RemoveTreeItemMessage(i));
+        }
 
         this.Items.Clear();
 
@@ -118,15 +140,14 @@ public class ClientNode : NodeBase {
         var loadSessionFeature =
             new LoadSessionFeature(
                 this.Client.Path,
-                this.Items.Cast<MethodNode>(), 
+                this.Items.Cast<MethodNode>(),
                 this.Io,
                 loaded => {
                     this._sessionLoaded = loaded;
                     this.RaisePropertyChanged(nameof(this.IsLoaded));
                 });
-        
+
         DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
-       
     }
 
     private void OnClientNameChanged() {
@@ -141,8 +162,9 @@ public class ClientNode : NodeBase {
     }
 
     private async Task OnCompileClientType() {
-        if (this._compileInProgress)
+        if (this._compileInProgress) {
             return;
+        }
 
         try {
             this._compileInProgress = true;

@@ -10,8 +10,11 @@ using Tefin.Grpc.Execution;
 
 namespace Tefin.Features;
 
-public class CallDuplexStreamingFeature(MethodInfo mi, object?[] mParams, ProjectTypes.ClientConfig cfg, IOResolver io) {
-
+public class CallDuplexStreamingFeature(
+    MethodInfo mi,
+    object?[] mParams,
+    ProjectTypes.ClientConfig cfg,
+    IOs io) {
     public async Task<(bool, ResponseDuplexStreaming)> Run() {
         var (success, resp) = await CallDuplexStreaming.run(io, mi, mParams, cfg);
         return (success, resp);

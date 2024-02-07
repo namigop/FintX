@@ -31,8 +31,9 @@ public static class TypeNodeBuilder {
         NodeBuilders.Add(new DefaultNodeBuilder()); //always the last one
     }
 
-    public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo, Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
-        foreach (var builder in NodeBuilders)
+    public static TypeBaseNode Create(string name, Type type, ITypeInfo propInfo,
+        Dictionary<string, int> processedTypeNames, object? instance, TypeBaseNode? parent) {
+        foreach (var builder in NodeBuilders) {
             if (builder.CanHandle(type)) {
                 try {
                     return builder.Handle(name, type, propInfo, processedTypeNames, instance, parent);
@@ -41,6 +42,7 @@ public static class TypeNodeBuilder {
                     Resolver.value.Log.Warn(exc.Message);
                 }
             }
+        }
 
         throw new NotSupportedException($"Unable to build a node for {type.FullName}");
     }

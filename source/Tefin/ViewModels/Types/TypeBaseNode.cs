@@ -31,9 +31,7 @@ public abstract class TypeBaseNode : NodeBase {
     public bool CanSetAsNull { get; }
     public virtual string FormattedTypeName { get; }
 
-    public virtual string FormattedValue {
-        get => this._value?.ToString() ?? "null";
-    }
+    public virtual string FormattedValue => this._value?.ToString() ?? "null";
 
     public bool IsNull {
         get => this._isNull;
@@ -58,16 +56,15 @@ public abstract class TypeBaseNode : NodeBase {
 
     public abstract void Init(Dictionary<string, int> processedTypeNames);
 
-    public override void Init() {
-        this.Init(new Dictionary<string, int>());
-    }
+    public override void Init() => this.Init(new Dictionary<string, int>());
 
     protected List<PropertyInfo> GetProperties() {
         var t = this.Type;
         var props = t.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead || p.CanWrite)
 
             //ignore all classes under the System.Reflection namespace
-            .Where(p => p.PropertyType.Namespace == null || p.PropertyType.Namespace != null && !p.PropertyType.Namespace.StartsWith("System.Reflection"))
+            .Where(p => p.PropertyType.Namespace == null || (p.PropertyType.Namespace != null &&
+                                                             !p.PropertyType.Namespace.StartsWith("System.Reflection")))
             .Where(p => p.PropertyType != typeof(IDictionary<string, object>)).OrderBy(p => p.Name).ToList();
         return props;
     }
@@ -75,12 +72,15 @@ public abstract class TypeBaseNode : NodeBase {
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
         try {
             var parentInstance = (this.Parent as TypeBaseNode)?.Value;
-            if (parentInstance != null)
+            if (parentInstance != null) {
                 this._typeInfo?.SetValue(parentInstance, newValue);
+            }
         }
         catch (TargetInvocationException exc) {
-            if (exc.InnerException != null)
+            if (exc.InnerException != null) {
                 throw exc.InnerException;
+            }
+
             throw;
         }
     }
