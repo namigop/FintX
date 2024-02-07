@@ -57,6 +57,7 @@ module AutoSave =
   let writer =
     let cache = Dictionary<string, string>()
 
+    //write the changes to disk only if is different from the cached value
     let doWrite (io: IOs) (file: string) (json: string) =
       try
         let found, content = cache.TryGetValue file
