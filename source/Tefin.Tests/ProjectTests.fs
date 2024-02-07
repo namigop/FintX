@@ -16,6 +16,7 @@ let testFile1Request = "file1.fxrq"
 let testFile1Content = "{}"
 
 let sep = Path.DirectorySeparatorChar
+
 let testProjSaveStateContent =
   @$"{{
     ""Package"": ""grpc"",
@@ -23,11 +24,12 @@ let testProjSaveStateContent =
         {{
             ""Name"": ""{testClientName}"",
             ""OpenFiles"": [
-                ""projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}file1.fxrq""
+                ""projects/{testProjectName}/{testClientName}/methods/{testMethodName1}/file1.fxrq""
             ]
         }}
     ]
 }}"
+  |> fun c -> if Utils.isWindows () then c.Replace("/", "\\\\") else c
 
 let testClientConfigContent =
   @$"{{
@@ -134,16 +136,18 @@ let ``Can add client`` () =
     let proj =
       Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
-    let createDir (dir:string) =
-      //newly created folders will contain the new client name      
-      Assert.True (dir.Contains(newClient))
-     
+    let createDir (dir: string) =
+      //newly created folders will contain the new client name
+      Assert.True(dir.Contains(newClient))
+
     let fileCopy (source: string, target: string, overwrite: bool) =
       //this will be called to copy the cs files
       Assert.Equal(newCsFile, source)
-      
-      let expected = $"projects{sep}{testProjectName}{sep}{newClient}{sep}code{sep}{Path.GetFileName(source)}"
-      Assert.Equal(expected, target)     
+
+      let expected =
+        $"projects{sep}{testProjectName}{sep}{newClient}{sep}code{sep}{Path.GetFileName(source)}"
+
+      Assert.Equal(expected, target)
 
     let moveDir (fromPath: string) (toPath: string) =
       let old = Path.GetFileName fromPath
@@ -166,12 +170,7 @@ let ``Can add client`` () =
 
 
     let updateFolder =
-      buildProjectFolder
-        testProjectName
-        [| projectSaveStateFile |]
-        newClient
-        testClientConfigContent
-        [| methodFolder1; methodFolder2 |]
+      buildProjectFolder testProjectName [| projectSaveStateFile |] newClient testClientConfigContent [| methodFolder1; methodFolder2 |]
       |> fun proj -> buildProjectsFolder proj
 
     let io2 = ioMock updateFolder
@@ -191,7 +190,7 @@ let ``Can add client`` () =
         io2.ReadAllText
         io2.GetDirectories
         io2.GetFiles
-    }
+  }
 
 [<Fact>]
 let ``Can update client config`` () =
@@ -232,15 +231,16 @@ let ``Can update client config`` () =
 
     let io = ioMock updateFolder
 
-    GlobalHub.subscribe(Action<MsgClientUpdated>(fun c ->
-      Assert.Equal(clientName, c.Client.Name)
-      Assert.Equal(clientName, c.Client.Config.Value.Name)
-      Assert.Equal(protoOrUrl, c.Client.Config.Value.Url)
-      Assert.Equal(serviceName, c.Client.Config.Value.ServiceName)
-      Assert.Equal(description, c.Client.Config.Value.Description)
-       ))
+    GlobalHub.subscribe (
+      Action<MsgClientUpdated>(fun c ->
+        Assert.Equal(clientName, c.Client.Name)
+        Assert.Equal(clientName, c.Client.Config.Value.Name)
+        Assert.Equal(protoOrUrl, c.Client.Config.Value.Url)
+        Assert.Equal(serviceName, c.Client.Config.Value.ServiceName)
+        Assert.Equal(description, c.Client.Config.Value.Description))
+    )
     |> ignore
-    
+
     do!
       Project._updateClientConfig
         clientConfig

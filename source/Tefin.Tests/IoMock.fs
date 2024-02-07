@@ -58,7 +58,7 @@ let ioMock (rootFolder:Folder) =
     if (pattern = "*.*") then
       true     
     elif (pattern.StartsWith("*.")) then
-      let ext = Path.GetExtension file.Path
+      let ext = pattern.Substring(1)
       file.Path.EndsWith(ext)
     else
       file.Path = pattern

@@ -7,7 +7,7 @@ open Tefin.Core.Interop
 open Xunit
 open IoMock
 open System.IO
-
+let sep = Path.DirectorySeparatorChar
 let testProjectName = "myProject"
 let testClientName = "myClient"
 let testMethodName1 = "myMethod1"
@@ -15,7 +15,7 @@ let testMethodName2 = "myMethod2"
 let testFile1Request = "file1.fxrq"
 let testFile1Content = "{}"
 
-let testProjSaveStateContent =
+let testProjSaveStateContent =  
   @$"{{
     ""Package"": ""grpc"",
     ""ClientState"": [
@@ -27,6 +27,12 @@ let testProjSaveStateContent =
         }}
     ]
 }}"
+  |> fun c ->
+    if Utils.isWindows() then
+      c.Replace("/", "\\\\")
+    else
+      c
+  
 
 let testClientConfigContent =
   @$"{{
@@ -115,21 +121,19 @@ let projectsFolder =
     *)
   buildProjectsFolder projectFolder
 
-  
+
 
 [<Fact>]
-let ``Can create zip for client`` () =
-  let sep = Path.DirectorySeparatorChar
+let ``Can create zip for method`` () = 
   let projPath = $"projects{sep}{testProjectName}"
-  let reqFile = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}{testFile1Request}"
-  let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
   let zipFile = $"{sep}abc{sep}def{sep}hij.zip"
   let io = ioMock projectsFolder
-
+  let methodName = testMethodName2
+  let methodPath = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{methodName}"
   let proj =
     Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
-  let filesToZip = [|reqFile|]
+
   let client = proj.Clients[0]
   
   let fileDelete file =
@@ -143,20 +147,119 @@ let ``Can create zip for client`` () =
     archive <- z :?> IZipArchive2
     z
   
-  let allFiles =
-    io.GetFiles($"projects{sep}{testProjectName}{sep}{testClientName}", "*.*", SearchOption.AllDirectories)
-    |> Array.sortDescending
+  let zip = Share._createFolderShare zipFile methodName client fileExists io.GetFiles fileDelete io.ReadAllText zipOpen
+  Assert.True( Res.isOk zip)
+  Assert.Equal(zipFile, Res.getValue zip)
+ 
+  let entries = archive.GetEntries() 
+  let isPartOfZip (file:string) =
+    entries
+    |> Array.tryFind (fun e ->
+      if not (e.Path = Share.ShareInfo.FileName) then
+        Assert.True(e.Path.StartsWith($"{testClientName}")) //zipping starts from client folder
+      
+      Path.GetFileName e.Path = Path.GetFileName file)
+    |> Option.isSome
+     
+  let filesToZip = io.GetFiles(methodPath, "*.*", SearchOption.AllDirectories)
+  let csFiles = io.GetFiles(projPath, "*.cs", SearchOption.AllDirectories)
+  let clientConfig = io.GetFiles(projPath, "config.json", SearchOption.AllDirectories)
+  let expected = csFiles |> Array.append filesToZip |> Array.append clientConfig
+  for e in expected do
+    Assert.True(isPartOfZip e, $"File {e} is missing from the zip")
+    
+  //Should contain share.info at the root
+  Assert.True(isPartOfZip Share.ShareInfo.FileName)
+
+  
+
+[<Fact>]
+let ``Can create zip for client`` () = 
+  let projPath = $"projects{sep}{testProjectName}"
+  let zipFile = $"{sep}abc{sep}def{sep}hij.zip"
+  let io = ioMock projectsFolder
+
+  let proj =
+    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+
+
+  let client = proj.Clients[0]
+  
+  let fileDelete file =
+    ()
+  let fileExists file =
+    true
+    
+  let mutable archive = Unchecked.defaultof<IZipArchive2>
+  let zipOpen file mode =
+    let z = zipMock.Open file mode
+    archive <- z :?> IZipArchive2
+    z
+  
+  let zip = Share._createClientShare zipFile client fileExists io.GetFiles fileDelete io.ReadAllText zipOpen
+  Assert.True( Res.isOk zip)
+  Assert.Equal(zipFile, Res.getValue zip)
+ 
+  let entries = archive.GetEntries() 
+  let isPartOfZip (file:string) =
+    entries
+    |> Array.tryFind (fun e ->
+      if not (e.Path = Share.ShareInfo.FileName) then
+        Assert.True(e.Path.StartsWith($"{testClientName}")) //zipping starts from client folder
+      
+      Path.GetFileName e.Path = Path.GetFileName file)
+    |> Option.isSome
+     
+  let expected =
+    io.GetFiles(projPath, "*.*", SearchOption.AllDirectories)
+    //note: Project save state is not part of the zip file
+    |> Array.filter (fun p -> not <| p.EndsWith($"{ProjectSaveState.FileName}"))
+    
+  for e in expected do
+    Assert.True(isPartOfZip e, $"File missing from zip: {e}")
+   
+  //Should contain share.info at the root
+  Assert.True(isPartOfZip Share.ShareInfo.FileName, $"{Share.ShareInfo.FileName} missing from zip")
+
+[<Fact>]
+let ``Can create zip for selected files`` () =
+ 
+  let projPath = $"projects{sep}{testProjectName}"
+  let reqFile1 = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}{testFile1Request}"
+  let reqFile2 = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName2}{sep}{testFile2Request}"
+  let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
+  let zipFile = $"{sep}abc{sep}def{sep}hij.zip"
+  let io = ioMock projectsFolder
+
+  let proj =
+    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+
+  let filesToZip = [|reqFile1; reqFile2|]
+  let client = proj.Clients[0]
+  
+  let fileDelete file =
+    ()
+  let fileExists file =
+    true
+    
+  let mutable archive = Unchecked.defaultof<IZipArchive2>
+  let zipOpen file mode =
+    let z = zipMock.Open file mode
+    archive <- z :?> IZipArchive2
+    z
   
   let zip = Share._createFileShare zipFile filesToZip client fileExists io.GetFiles fileDelete io.ReadAllText zipOpen
   Assert.True( Res.isOk zip)
   Assert.Equal(zipFile, Res.getValue zip)
   
   let entries = archive.GetEntries()
-  let zipEntries = entries |> Array.sortByDescending (fun e -> e.Path)
-  
+ 
   let isPartOfZip (file:string) =
     entries
     |> Array.tryFind (fun e ->
+      if not (e.Path = Share.ShareInfo.FileName) then
+        Assert.True(e.Path.StartsWith($"{testClientName}")) //zipping starts from client folder
+        
       Path.GetFileName e.Path = Path.GetFileName file)
     |> Option.isSome
     
@@ -164,8 +267,11 @@ let ``Can create zip for client`` () =
   let clientConfig = io.GetFiles(projPath, "config.json", SearchOption.AllDirectories)
   let expected = csFiles |> Array.append filesToZip |> Array.append clientConfig
   for e in expected do
-    Assert.True(isPartOfZip e)
+    Assert.True(isPartOfZip e, $"File {e} is missing from the zip")
     
-  Assert.Equal(allFiles.Length, zipEntries.Length)
+  //Should contain share.info at the root
+  Assert.True(isPartOfZip Share.ShareInfo.FileName)
+    
+ 
    
      
