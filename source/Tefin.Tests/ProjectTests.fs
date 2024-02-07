@@ -15,6 +15,7 @@ let testMethodName2 = "myMethod2"
 let testFile1Request = "file1.fxrq"
 let testFile1Content = "{}"
 
+let sep = Path.DirectorySeparatorChar
 let testProjSaveStateContent =
   @$"{{
     ""Package"": ""grpc"",
@@ -22,7 +23,7 @@ let testProjSaveStateContent =
         {{
             ""Name"": ""{testClientName}"",
             ""OpenFiles"": [
-                ""projects/{testProjectName}/{testClientName}/methods/{testMethodName1}/file1.fxrq""
+                ""projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}file1.fxrq""
             ]
         }}
     ]
@@ -119,15 +120,15 @@ let projectsFolder =
 [<Fact>]
 let ``Can add client`` () =
   task {
-    let projPath = $"projects/{testProjectName}"
+    let projPath = $"projects{sep}{testProjectName}"
 
     let clientConfig =
-      $"projects/{testProjectName}/{testClientName}/{ClientGroup.ConfigFilename}"
+      $"projects{sep}{testProjectName}{sep}{testClientName}{sep}{ClientGroup.ConfigFilename}"
 
-    let clientPath = $"projects/{testProjectName}/{testClientName}"
+    let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
 
     let newClient = "fooBarTestClient"
-    let newCsFile = "/abc/def/Greeter.cs"
+    let newCsFile = $"{sep}abc{sep}def{sep}Greeter.cs"
     let io = ioMock projectsFolder
 
     let proj =
@@ -141,8 +142,7 @@ let ``Can add client`` () =
       //this will be called to copy the cs files
       Assert.Equal(newCsFile, source)
       
-      let target = target.Replace("\\", "/")
-      let expected = $"projects/{testProjectName}/{newClient}/code/{Path.GetFileName(source)}"
+      let expected = $"projects{sep}{testProjectName}{sep}{newClient}{sep}code{sep}{Path.GetFileName(source)}"
       Assert.Equal(expected, target)     
 
     let moveDir (fromPath: string) (toPath: string) =
@@ -155,9 +155,9 @@ let ``Can add client`` () =
     let writeAllTextAsync (file: string) (content: string) =
       task {
         let expected =
-          $"projects/{testProjectName}/{newClient}/{ClientGroup.ConfigFilename}"
+          $"projects{sep}{testProjectName}{sep}{newClient}{sep}{ClientGroup.ConfigFilename}"
 
-        Assert.Equal(expected, file.Replace("\\", "/"))
+        Assert.Equal(expected, file)
         //Assert.Equal(updatedConfigContent, content)
 
         do! System.Threading.Tasks.Task.Yield()
@@ -196,11 +196,11 @@ let ``Can add client`` () =
 [<Fact>]
 let ``Can update client config`` () =
   task {
-    let clientPath = $"projects/{testProjectName}/{testClientName}"
-    let clientConfig = $"{clientPath}/{ClientGroup.ConfigFilename}"
+    let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
+    let clientConfig = $"{clientPath}{sep}{ClientGroup.ConfigFilename}"
     let description = $"my new desc"
     let serviceName = $"svc"
-    let protoOrUrl = $"/foo/bar/mynew.proto"
+    let protoOrUrl = $"{sep}foo{sep}bar{sep}mynew.proto"
     let clientName = $"mynewclientName"
 
     let updatedConfig =
@@ -217,9 +217,9 @@ let ``Can update client config`` () =
     let writeAllTextAsync (file: string) (content: string) =
       task {
         let expected =
-          $"projects/{testProjectName}/{clientName}/{ClientGroup.ConfigFilename}"
+          $"projects{sep}{testProjectName}{sep}{clientName}{sep}{ClientGroup.ConfigFilename}"
 
-        Assert.Equal(expected, file.Replace("\\", "/"))
+        Assert.Equal(expected, file)
         Assert.Equal(updatedConfigContent, content)
 
         do! System.Threading.Tasks.Task.Yield()
@@ -260,7 +260,7 @@ let ``Can load project with no save state`` () =
     buildProjectFolder "proj1" Array.empty testClientName testClientConfigContent [| methodFolder1; methodFolder2 |]
 
   let io = ioMock stillValidProj
-  let projPath = $"projects/proj1"
+  let projPath = $"projects{sep}proj1"
 
   let proj =
     Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
@@ -278,7 +278,7 @@ let ``Can load project with no save state`` () =
       [| methodFolder1; methodFolder2 |]
 
   let io2 = ioMock stillValidProj2
-  let projPath2 = $"projects/proj2"
+  let projPath2 = $"projects{sep}proj2"
 
   let proj2 =
     Project._loadProject projPath2 io2.GetFiles io2.ReadAllText io2.CreateDirectory io2.GetDirectories io2.FileExists
@@ -289,12 +289,12 @@ let ``Can load project with no save state`` () =
 
 [<Fact>]
 let ``Can load valid project`` () =
-  let projPath = $"projects/{testProjectName}"
+  let projPath = $"projects{sep}{testProjectName}"
 
   let clientConfig =
-    $"projects/{testProjectName}/{testClientName}/{ClientGroup.ConfigFilename}"
+    $"projects{sep}{testProjectName}{sep}{testClientName}{sep}{ClientGroup.ConfigFilename}"
 
-  let clientPath = $"projects/{testProjectName}/{testClientName}"
+  let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
 
   let io = ioMock projectsFolder
 
@@ -309,8 +309,8 @@ let ``Can load valid project`` () =
   Assert.Equal(2, client.Methods.Length)
   Assert.True(Option.isSome client.Config)
   Assert.Equal(2, client.CodeFiles.Length)
-  Assert.Equal(clientConfig, client.ConfigFile.Replace("\\", "/"))
-  Assert.Equal(clientPath, client.Path.Replace("\\", "/"))
+  Assert.Equal(clientConfig, client.ConfigFile)
+  Assert.Equal(clientPath, client.Path)
 
   let method1 = client.Methods[0]
   let method2 = client.Methods[1]
@@ -318,17 +318,17 @@ let ``Can load valid project`` () =
   Assert.Equal(testMethodName1, method1.Name)
   Assert.Equal(testMethodName2, method2.Name)
   Assert.Equal(1, method1.RequestFiles.Length)
-  let req1 = method1.RequestFiles[0].Replace("\\", "/")
+  let req1 = method1.RequestFiles[0]
 
   let req1File =
-    $"projects/{testProjectName}/{testClientName}/methods/{testMethodName1}/{testFile1Request}"
+    $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}{testFile1Request}"
 
   Assert.Equal(req1File, req1)
 
   Assert.Equal(1, method2.RequestFiles.Length)
-  let req2 = method2.RequestFiles[0].Replace("\\", "/")
+  let req2 = method2.RequestFiles[0]
 
   let req2File =
-    $"projects/{testProjectName}/{testClientName}/methods/{testMethodName2}/{testFile2Request}"
+    $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName2}{sep}{testFile2Request}"
 
   Assert.Equal(req2File, req2)

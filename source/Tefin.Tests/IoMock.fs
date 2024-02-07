@@ -72,13 +72,13 @@ let ioMock (rootFolder:Folder) =
       |> Array.collect (fun f -> getDirRec f targetPath $"{currentPath}{sep}{f.Path}")
 
   let rec getFilesRec (folder: Folder) pattern (option: SearchOption) (pathParts: string array) (p: string) =
-    let targetPath = String.Join("{sep}", pathParts)
+    let targetPath = String.Join($"{sep}", pathParts)
     if option = SearchOption.TopDirectoryOnly then
       if (pathParts[pathParts.Length - 1] = folder.Path) then
         folder.Files
         |> Array.filter (fun f -> matchFilePattern f pattern)
         |> Array.map (fun f ->
-          let p = String.Join("{sep}", pathParts)
+          let p = String.Join($"{sep}", pathParts)
           let fullPath = $"{p}{sep}{f.Path}" 
           { f with Path = fullPath })
         |> fun files -> folder, files
@@ -107,7 +107,7 @@ let ioMock (rootFolder:Folder) =
       
   let getFolder (path: string) (pattern: string) (options: SearchOption) =
      
-    let pathParts = path.Split("{sep}")
+    let pathParts = path.Split($"{sep}")
     getFilesRec rootFolder pattern options pathParts rootFolder.Path
     
     

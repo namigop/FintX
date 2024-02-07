@@ -123,7 +123,7 @@ let ``Can create zip for client`` () =
   let projPath = $"projects{sep}{testProjectName}"
   let reqFile = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{testMethodName1}{sep}{testFile1Request}"
   let clientPath = $"projects{sep}{testProjectName}{sep}{testClientName}"
-  let zipFile = "{sep}abc{sep}def{sep}hij.zip"
+  let zipFile = $"{sep}abc{sep}def{sep}hij.zip"
   let io = ioMock projectsFolder
 
   let proj =
@@ -148,15 +148,24 @@ let ``Can create zip for client`` () =
     |> Array.sortDescending
   
   let zip = Share._createFileShare zipFile filesToZip client fileExists io.GetFiles fileDelete io.ReadAllText zipOpen
+  Assert.True( Res.isOk zip)
+  Assert.Equal(zipFile, Res.getValue zip)
+  
   let entries = archive.GetEntries()
   let zipEntries = entries |> Array.sortByDescending (fun e -> e.Path)
   
+  let isPartOfZip (file:string) =
+    entries
+    |> Array.tryFind (fun e ->
+      Path.GetFileName e.Path = Path.GetFileName file)
+    |> Option.isSome
+    
+  let csFiles = io.GetFiles(projPath, "*.cs", SearchOption.AllDirectories)
+  let clientConfig = io.GetFiles(projPath, "config.json", SearchOption.AllDirectories)
+  let expected = csFiles |> Array.append filesToZip |> Array.append clientConfig
+  for e in expected do
+    Assert.True(isPartOfZip e)
+    
   Assert.Equal(allFiles.Length, zipEntries.Length)
-  let total = allFiles.Length - 1
-  let mutable counter = 0
-  for i in [0..total] do
-    Assert.Equal(allFiles[i], zipEntries[i].Path)
-  
-  //Assert.Equal(zip)
-  
+   
      
