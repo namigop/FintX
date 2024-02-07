@@ -17,11 +17,9 @@ public class SharingFeature {
         ShareClient(IOs io, string zipFile, ProjectTypes.ClientGroup client) =>
         Share.createClientShare(io, zipFile, client);
 
-    public async Task<string> GetZipFile() {
-        var fileName = "Export.zip";
+    public async Task<string> GetZipFile(string suggestedName) {
         var fileTitle = "FintX (*.zip)";
-
-        var zipFile = await DialogUtils.SelectFile("Export request", fileName, fileTitle, $"*{Ext.zipExt}");
+        var zipFile = await DialogUtils.SelectFile("Export request", suggestedName, fileTitle, $"*{Ext.zipExt}");
         return zipFile;
     }
 }

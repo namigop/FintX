@@ -45,7 +45,8 @@ public sealed class MethodNode : NodeBase {
 
     private async Task OnExport() {
         var share = new SharingFeature();
-        var zipFile = await share.GetZipFile();
+        var zipName = $"{this.MethodInfo.Name}_export.zip";
+        var zipFile = await share.GetZipFile(zipName);
         if (string.IsNullOrEmpty(zipFile)) {
             return;
         }

@@ -94,7 +94,7 @@
                                   Stroke="LightSlateGray" StrokeThickness="1" />
                         <Polygon
                             Points="8.607,12.933 7.896,12.229 10.102,10 0.098,10 0.098,9 10.102,9 7.896,6.771 8.607,6.067 12.003,9.5"
-                            Fill="#1ED15D" />
+                            Fill="{StaticResource Bym.Color.Green}" />
                         <Rectangle Canvas.Left="4.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070"
                                    Stroke="LightSlateGray" StrokeThickness="1" />
                     </Canvas>
@@ -108,7 +108,7 @@
                     <Canvas>
                         <Polyline Points="10.5,11.017 10.5,15.5 0.5,15.5 0.5,3.5 10.5,3.5 10.5,8" Fill="#4E4E4E"
                                   Stroke="LightSlateGray" StrokeThickness="1" />
-                        <Path Data="M12.251,6.419L15.3,9.5l-3.049,3.081M15.149,9.5H5.098" Stroke="#F73737"
+                        <Path Data="M12.251,6.419L15.3,9.5l-3.049,3.081M15.149,9.5H5.098" Stroke="{StaticResource Bym.Color.Red}"
                               StrokeThickness="1" />
                         <Rectangle Canvas.Left="0.5" Canvas.Top="0.5" Width="10" Height="3" Fill="#707070"
                                    Stroke="LightSlateGray" StrokeThickness="1" />
