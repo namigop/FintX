@@ -7,8 +7,8 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\fire.ico</ApplicationIcon>
         <AssemblyName>FintX</AssemblyName>
-        <AssemblyVersion>1.0.0</AssemblyVersion>
-        <FileVersion>1.0.0</FileVersion>
+        <AssemblyVersion>2.0.0</AssemblyVersion>
+        <FileVersion>2.0.0</FileVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
@@ -28,32 +28,32 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
-        <AvaloniaResource Remove="Views\Types\**"/>
+        <AvaloniaResource Include="Assets\**" />
+        <AvaloniaResource Remove="Views\Types\**" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1"/>
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5"/>
+        <PackageReference Include="Avalonia" Version="11.0.5" />
+        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5"/>
-        <PackageReference Include="DotNet.Bundle" Version="0.9.13"/>
-        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1"/>
-        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
-        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2"/>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
+        <PackageReference Include="DotNet.Bundle" Version="0.9.13" />
+        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
+        <PackageReference Include="Google.Protobuf" Version="3.24.4" />
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj"/>
-        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj"/>
+        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
+        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
     </ItemGroup>
 
 
@@ -350,13 +350,13 @@
 
 
     <ItemGroup>
-        <None Remove="Assets\fire.ico"/>
-        <None Remove="Assets\fire.png"/>
-        <None Remove="Resources\json.xshd"/>
-        <EmbeddedResource Include="Resources\json.xshd"/>
-        <None Remove="Resources\log.xshd"/>
-        <Content Include="Assets\fire.ico"/>
-        <EmbeddedResource Include="Resources\log.xshd"/>
+        <None Remove="Assets\fire.ico" />
+        <None Remove="Assets\fire.png" />
+        <None Remove="Resources\json.xshd" />
+        <EmbeddedResource Include="Resources\json.xshd" />
+        <None Remove="Resources\log.xshd" />
+        <Content Include="Assets\fire.ico" />
+        <EmbeddedResource Include="Resources\log.xshd" />
         <None Update="Resources\fire.icns">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
@@ -364,45 +364,45 @@
 
 
     <ItemGroup>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png"/>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json" />
     </ItemGroup>
 
 

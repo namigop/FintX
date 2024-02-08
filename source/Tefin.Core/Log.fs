@@ -16,10 +16,15 @@ type ILog =
   abstract Debug: string -> unit
 
 let private write (msg: string) = Console.WriteLine msg
+
 let private write2 (msg: string) =
       #if DEBUG
       Console.WriteLine msg
       #endif
+      #if !DEBUG
+      ()
+      #endif
+
 
 let private log (l: LogType) (msg:string) =
   match l with
