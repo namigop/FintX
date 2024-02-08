@@ -18,8 +18,14 @@
             </Grid>
 
             <!-- main control body -->
-            <ContentControl Content="{Binding MenuItem}" Grid.Row="1" Margin="0 8 0 0" 
-                            Background="{StaticResource Bym.Color.DefaultControlBackground}" />
+            <!-- <ContentControl Content="{Binding MenuItem}" Grid.Row="1" Margin="0 8 0 0"  -->
+            <!--                 Background="{StaticResource Bym.Color.DefaultControlBackground}" /> -->
+            <TransitioningContentControl Content="{Binding MenuItem}" Grid.Row="1" Margin="0 8 0 0" 
+                                         Background="{StaticResource Bym.Color.DefaultControlBackground}">
+                <TransitioningContentControl.PageTransition>
+                    <PageSlide Orientation="Horizontal" Duration="0:00:00.300" />
+                </TransitioningContentControl.PageTransition>
+            </TransitioningContentControl>
 
         </Grid>
     </Border>

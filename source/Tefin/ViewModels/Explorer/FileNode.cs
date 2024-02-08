@@ -3,6 +3,7 @@ using System.Windows.Input;
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
+using Tefin.Core.Interop;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
@@ -23,6 +24,14 @@ public class FileNode : NodeBase {
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
         this.OpenMethodInWindowCommand = this.CreateCommand(this.OpenMethodInWindow);
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+    }
+
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        if (this.FullPath.StartsWith(obj.PreviousPath)) {
+            this.UpdateFilePath(this.FullPath.Replace(obj.PreviousPath, obj.Path));
+        }
     }
 
     public ICommand OpenMethodInWindowCommand { get; }
@@ -84,6 +93,7 @@ public class FileNode : NodeBase {
 
     public void UpdateFilePath(string newFilePath) {
         if (this.Io.File.Exists(newFilePath)) {
+            Io.Log.Debug($"Updated fileReqNode : {this.FullPath} -> {newFilePath}");
             this.FullPath = newFilePath;
             this.Title = Path.GetFileName(newFilePath);
             this.UpdateSubTitle();
