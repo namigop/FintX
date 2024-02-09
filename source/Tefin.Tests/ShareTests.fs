@@ -60,7 +60,7 @@ let methodFolder1 =
       [| { Path = testFile1Request
            Content = testFile1Content } |]
     Folders =
-      [| { Path = Project.AutoSaveFolderName
+      [| { Path = ClientStructure.AutoSaveFolderName
            Files = Array.empty
            Folders = Array.empty } |] }
 
@@ -70,7 +70,7 @@ let methodFolder2 =
       [| { Path = testFile2Request
            Content = testFile2Content } |]
     Folders =
-      [| { Path = Project.AutoSaveFolderName
+      [| { Path = ClientStructure.AutoSaveFolderName
            Files = Array.empty
            Folders = Array.empty } |] }
 
@@ -131,7 +131,7 @@ let ``Can create zip for method`` () =
   let methodName = testMethodName2
   let methodPath = $"projects{sep}{testProjectName}{sep}{testClientName}{sep}methods{sep}{methodName}"
   let proj =
-    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+    ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
 
   let client = proj.Clients[0]
@@ -180,7 +180,7 @@ let ``Can create zip for client`` () =
   let io = ioMock projectsFolder
 
   let proj =
-    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+    ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
 
   let client = proj.Clients[0]
@@ -232,7 +232,7 @@ let ``Can create zip for selected files`` () =
   let io = ioMock projectsFolder
 
   let proj =
-    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+    ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   let filesToZip = [|reqFile1; reqFile2|]
   let client = proj.Clients[0]

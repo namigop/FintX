@@ -206,7 +206,7 @@ public class ExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = Core.Project.getMethodPath(node.Client.Path, node.MethodInfo.Name);
+            var methodPath = ClientStructure.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
                 if (existing != null) {
@@ -226,7 +226,7 @@ public class ExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = Core.Project.getMethodPath(node.Client.Path, node.MethodInfo.Name);
+            var methodPath = ClientStructure.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
                 if (existing == null) {

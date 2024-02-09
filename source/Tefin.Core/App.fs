@@ -4,7 +4,7 @@ open System
 open System.IO
 open Tefin.Core.Interop
 open Tefin.Core.Reflection
-open Tefin.Core.Project
+open Tefin.Core.ProjectStructure
 
 module App =
 
