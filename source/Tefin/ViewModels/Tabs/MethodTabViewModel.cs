@@ -1,7 +1,9 @@
 #region
 
 using Tefin.Core;
+using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
 
 #endregion
@@ -10,15 +12,26 @@ namespace Tefin.ViewModels.Tabs;
 
 public sealed class MethodTabViewModel : PersistedTabViewModel {
     private readonly string? _requestFile;
+    private ProjectTypes.ClientGroup _client;
 
     public MethodTabViewModel(MethodNode item, string requestFile = "") : base(item) {
         this._requestFile = requestFile;
         this.ClientMethod = item.CreateViewModel();
-        this.Client = item.Client;
+        this._client = item.Client;
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+    }
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
+            this._client = obj.Client;
+            this.Io.Log.Debug($"Updated clientInstance for tab {this.GetTabId()}");
+        }
     }
 
-    public override ProjectTypes.ClientGroup Client { get; }
+    public override ProjectTypes.ClientGroup Client => this._client;
+
     public override ClientMethodViewModelBase ClientMethod { get; }
     public override string Icon { get; } = "Icon.Method";
 

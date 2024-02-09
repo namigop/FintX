@@ -214,10 +214,11 @@ public class ClientNode : NodeBase {
         this.Desc = cg.Config.Value.Description;
         this.ClientConfigFile = cg.ConfigFile;
 
-        foreach (var node in this.Items) {
-            if (node is MethodNode methodNode) {
-                methodNode.Client = cg;
-            }
-        }
+        // foreach (var node in this.Items) {
+        //     if (node is MethodNode methodNode) {
+        //         methodNode.Client = cg;
+        //     }
+        // }
+        
     }
 }

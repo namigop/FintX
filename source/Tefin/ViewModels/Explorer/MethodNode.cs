@@ -27,6 +27,16 @@ public sealed class MethodNode : NodeBase {
         this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
         this.ExportCommand = this.CreateCommand(this.OnExport);
         this.OpenMethodInWindowCommand = this.CreateCommand(this.OnOpenMethodInWindow);
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+    }
+
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
+            this.Client = obj.Client;
+            this.Io.Log.Debug($"Updated methodNode {this.MethodInfo.Name} clientInstance");
+        }
     }
 
     public ProjectTypes.ClientGroup Client { get; set; }

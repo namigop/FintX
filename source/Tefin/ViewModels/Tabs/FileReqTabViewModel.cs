@@ -8,13 +8,14 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public sealed class FileReqTabViewModel : PersistedTabViewModel {
+    
     public FileReqTabViewModel(FileReqNode item) : base(item) {
+         
         this.ClientMethod = item.CreateViewModel()!;
-        this.Client = ((MethodNode)item.Parent!).Client;
         this.ClientMethod.SubscribeTo(x => x.IsBusy, this.OnIsBusyChanged);
     }
 
-    public override ProjectTypes.ClientGroup Client { get; }
+    public override ProjectTypes.ClientGroup Client => ((MethodNode)this.ExplorerItem.Parent!).Client;
     public override ClientMethodViewModelBase ClientMethod { get; }
 
     public string FilePath => ((FileNode)this.ExplorerItem).FullPath;

@@ -3,8 +3,10 @@
 using System.Reflection;
 
 using Tefin.Core;
+using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Grpc;
+using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
 
 #endregion
@@ -30,7 +32,15 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
         }
 
         this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
-        ;
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
+    }
+
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (!string.IsNullOrEmpty(this._importFile) && this._importFile.StartsWith(obj.PreviousPath)) {
+            this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
+        }
     }
 
     public override string ApiType { get; } = GrpcPackage.packageName;
@@ -46,17 +56,19 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
     public override void ImportRequestFile(string requestFile) => this._importFile = requestFile;
 
     public void Init() {
-        this.CallType.Init();
-        if (string.IsNullOrEmpty(this._importFile)) {
-            return;
-        }
+        this.Exec(() => {
+            this.CallType.Init();
+            if (string.IsNullOrEmpty(this._importFile)) {
+                return;
+            }
 
-        if (this.Io.File.Exists(this._importFile)) {
-            this.CallType.ImportRequest(this._importFile);
-        }
-        else {
-            var content = this.GetRequestContent();
-            this.Io.File.WriteAllText(this._importFile, content);
-        }
+            if (this.Io.File.Exists(this._importFile)) {
+                this.CallType.ImportRequest(this._importFile);
+            }
+            else {
+                var content = this.GetRequestContent();
+                this.Io.File.WriteAllText(this._importFile, content);
+            }
+        });
     }
 }

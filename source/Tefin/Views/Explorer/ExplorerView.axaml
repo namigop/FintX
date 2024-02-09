@@ -30,6 +30,12 @@
                                         ContentTemplate="{StaticResource NodeViewLocator}" />
                     </DataTemplate>
                     <DataTemplate x:Key="CellActionTemplate" x:DataType="explorer:IExplorerItem">
+                        <!-- <TransitioningContentControl Content="{Binding}" Margin="4 0 0 0"  -->
+                        <!--                              ContentTemplate="{StaticResource NodeActionViewLocator}"> -->
+                        <!--     <TransitioningContentControl.PageTransition> -->
+                        <!--         <PageSlide Orientation="Horizontal" Duration="0:00:00.500" /> -->
+                        <!--     </TransitioningContentControl.PageTransition> -->
+                        <!-- </TransitioningContentControl> -->
                         <ContentControl Content="{Binding}" Margin="4 0 0 0"
                                         ContentTemplate="{StaticResource NodeActionViewLocator}" />
                     </DataTemplate>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="Tefin.Resources/FintStyles.Button.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin.Resources/FintStyles.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin.Resources/IconDictionary.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin.Resources/ResourceDictionary.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/App.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/ChildWindow.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ClientNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ClientNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ExplorerView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/FileReqNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/FileReqNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/FileReqNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/MethodNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/MethodNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/MultiNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Footer/FooterView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ClientMenuItemView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ClientSubMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/MainMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/SelectedMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ServerMenuItemView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainWindow.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/ProjectEnv/ProjectMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/FileReqTabView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/ClientStreamingReqView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/ClientStreamingView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/DuplexStreamingReqView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/DuplexStreamingView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/ServerStreamingReqView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/ServerStreamingView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/UnaryReqView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/UnaryView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/MethodTabView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/TabHostView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeItemStyles.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Window.axaml" value="Tefin/Tefin.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
