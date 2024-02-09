@@ -2,14 +2,14 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "FintX"
-#define MyAppVersion "1.0"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "Erik Araojo"
 #define MyAppURL "https://github.com/namigop/FintX/"
 #define MyAppExeName "FintX.exe"
-#define SourceFileDir "C:\work\fintx\source\tefin\bin\release\net8.0\publish\win-x64"
-#define IconFile "C:\Work\FintX\source\Tefin\Assets\fire.ico"
-#define ResourcesDir "C:\Work\FintX\source\Tefin\Resources"
-#define Installer "C:\Work\FintX\source\Setup\Output"
+#define SourceFileDir "C:\Work\FintX\FintX_main\source\tefin\bin\release\net8.0\publish\win-x64"
+#define IconFile "C:\Work\FintX\FintX_main\source\Tefin\Assets\fire.ico"
+#define ResourcesDir "C:\Work\FintX\FintX_main\source\Tefin\Resources"
+#define Installer "C:\Work\FintX\FintX_main\source\Setup\Output"
 
 
 [Setup]
