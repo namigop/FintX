@@ -5,7 +5,7 @@ namespace Tefin.Features;
 
 public class LoadProjectFeature(IOs io, string projPath) {
     public ProjectTypes.Project Run() {
-        var project = Project.loadProject(io, projPath);
+        var project = ProjectStructure.loadProject(io, projPath);
         var mon = new MonitorChangesFeature(io);
         mon.Run(project);
         return project;

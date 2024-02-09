@@ -87,7 +87,7 @@ module Share =
         |> Array.filter (fun f -> not (Path.GetFileName(f) = ProjectSaveState.FileName))
         |> Array.filter (fun f ->
           let parentDir = f |> Path.GetDirectoryName |> Path.GetFileName
-          not (parentDir = Project.AutoSaveFolderName))
+          not (parentDir = ClientStructure.AutoSaveFolderName))
 
       Res.ok filesToZip
 
@@ -110,7 +110,7 @@ module Share =
     (zipOpen: string -> ZipArchiveMode -> IZipArchive)
     =
 
-    let methodsPath = Project.getMethodsPath client.Path
+    let methodsPath = ClientStructure.getMethodsPath client.Path
 
     let filterOutMethodFiles (files: string array) =
       seq {
@@ -141,8 +141,8 @@ module Share =
     (readAllText: string -> string)
     (zipOpen: string -> ZipArchiveMode -> IZipArchive)
     =
-    let methodPath = Project.getMethodPath client.Path methodName
-    let methodsPath = Project.getMethodsPath client.Path
+    let methodPath = ClientStructure.getMethodPath client.Path methodName
+    let methodsPath = ClientStructure.getMethodsPath client.Path
 
     let filterForMethodFiles (files: string array) =
       seq {
@@ -184,7 +184,7 @@ module Share =
         |> Array.filter (fun f -> not (Path.GetFileName(f) = ProjectSaveState.FileName))
         |> Array.filter (fun f ->
           let parentDir = f |> Path.GetDirectoryName |> Path.GetFileName
-          not (parentDir = Project.AutoSaveFolderName))
+          not (parentDir = ClientStructure.AutoSaveFolderName))
 
       let info = createInfo client.Name ShareInfo.ClientShare
       createZip targetZip filesToZip clientPath info fileExists fileDelete readAllText zipOpen

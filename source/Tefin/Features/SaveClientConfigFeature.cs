@@ -8,5 +8,5 @@ using Tefin.Core.Interop;
 namespace Tefin.Features;
 
 public class SaveClientConfigFeature(string clientConfigFile, ProjectTypes.ClientConfig cfg, IOs io) {
-    public async Task Save() => await Project.updateClientConfig(io, clientConfigFile, cfg);
+    public async Task Save() => await ClientStructure.updateClientConfig(io, clientConfigFile, cfg);
 }

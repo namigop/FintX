@@ -74,7 +74,7 @@ public sealed class MethodNode : NodeBase {
         new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);
 
     public override void Init() {
-        Project.getMethodPath(this.Client.Path, this.MethodInfo.Name)
+        ClientStructure.getMethodPath(this.Client.Path, this.MethodInfo.Name)
             .Then(d => this.Io.Dir.CreateDirectory(d));
 
         var method = this.Client.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
@@ -90,7 +90,7 @@ public sealed class MethodNode : NodeBase {
     }
 
     private void OnNewRequest() {
-        var path = Project.getMethodPath(this.Client.Path, this.MethodInfo.Name);
+        var path = ClientStructure.getMethodPath(this.Client.Path, this.MethodInfo.Name);
         var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
 
         var fn = new FileReqNode(file);

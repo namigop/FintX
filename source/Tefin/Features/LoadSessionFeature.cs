@@ -18,7 +18,7 @@ public class LoadSessionFeature(
     Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string reqFile) {
         var dir = Path.GetDirectoryName(reqFile);
-        return dir != null && dir.EndsWith(Project.AutoSaveFolderName);
+        return dir != null && dir.EndsWith(ClientStructure.AutoSaveFolderName);
     }
 
     private void LoadOne(string json, string reqFile) {
@@ -69,7 +69,7 @@ public class LoadSessionFeature(
 
     public void Run() {
         var projectPath = Path.GetDirectoryName(clientPath);
-        var state = Project.getSaveState(io, projectPath);
+        var state = ProjectStructure.getSaveState(io, projectPath);
         var openFiles = state.ClientState.SelectMany(c => c.OpenFiles)
             .Where(io.File.Exists)
             .OrderBy(c => c)

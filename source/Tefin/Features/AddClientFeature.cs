@@ -16,5 +16,5 @@ public class AddClientFeature(
     string[] csFiles,
     IOs io) {
     public async Task Add() =>
-        await Project.addClient(io, project, clientName, serviceName, protoOrUrl, description, csFiles);
+        await ClientStructure.addClient(io, project, clientName, serviceName, protoOrUrl, description, csFiles);
 }

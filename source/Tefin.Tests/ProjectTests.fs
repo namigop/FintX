@@ -57,7 +57,7 @@ let methodFolder1 =
       [| { Path = testFile1Request
            Content = testFile1Content } |]
     Folders =
-      [| { Path = Project.AutoSaveFolderName
+      [| { Path = ClientStructure.AutoSaveFolderName
            Files = Array.empty
            Folders = Array.empty } |] }
 
@@ -67,7 +67,7 @@ let methodFolder2 =
       [| { Path = testFile2Request
            Content = testFile2Content } |]
     Folders =
-      [| { Path = Project.AutoSaveFolderName
+      [| { Path = ClientStructure.AutoSaveFolderName
            Files = Array.empty
            Folders = Array.empty } |] }
 
@@ -134,7 +134,7 @@ let ``Can add client`` () =
     let io = ioMock projectsFolder
 
     let proj =
-      Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+      ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
     let createDir (dir: string) =
       //newly created folders will contain the new client name
@@ -176,7 +176,7 @@ let ``Can add client`` () =
     let io2 = ioMock updateFolder
 
     do!
-      Project._addClient
+      ClientStructure._addClient
         proj
         newClient
         "serviceName"
@@ -242,7 +242,7 @@ let ``Can update client config`` () =
     |> ignore
 
     do!
-      Project._updateClientConfig
+      ClientStructure._updateClientConfig
         clientConfig
         updatedConfig
         moveDir
@@ -263,7 +263,7 @@ let ``Can load project with no save state`` () =
   let projPath = $"projects{sep}proj1"
 
   let proj =
-    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+    ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   //if we have an instance of proj, then it loaded just fine
   Assert.Equal("proj1", proj.Name)
@@ -281,7 +281,7 @@ let ``Can load project with no save state`` () =
   let projPath2 = $"projects{sep}proj2"
 
   let proj2 =
-    Project._loadProject projPath2 io2.GetFiles io2.ReadAllText io2.CreateDirectory io2.GetDirectories io2.FileExists
+    ProjectStructure._loadProject projPath2 io2.GetFiles io2.ReadAllText io2.CreateDirectory io2.GetDirectories io2.FileExists
 
   //if we have an instance of proj, then it loaded just fine
   Assert.Equal("proj2", proj2.Name)
@@ -299,7 +299,7 @@ let ``Can load valid project`` () =
   let io = ioMock projectsFolder
 
   let proj =
-    Project._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
+    ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   Assert.Equal(testProjectName, proj.Name)
   Assert.Equal(1, proj.Clients.Length)

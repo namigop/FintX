@@ -113,7 +113,9 @@
                 <controls:IconControl Width="64" Height="64" Icon="{StaticResource Icon.ArrowLeft}" />
                 <TextBlock Text="Double-click on one of the methods over there to open it"
                            FontSize="24"
+                           Foreground="{StaticResource Bym.Color.DefaultTextColor}"
                            Margin="10 0 0 0"
+                           Opacity="0.65"
                            VerticalAlignment="Center"
                            ToolTip.Tip="If you don't see any methods, you have to compile the client first" />
             </StackPanel>

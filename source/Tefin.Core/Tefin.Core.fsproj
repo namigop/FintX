@@ -47,7 +47,8 @@
         <Compile Include="StatusConverter.fs"/>
         <Compile Include="CancellationTokenConverter.fs"/>
         <Compile Include="Instance.fs"/>
-        <Compile Include="Project.fs"/>
+        <Compile Include="ClientStructure.fs" />
+        <Compile Include="ProjectStructure.fs" />
         <Compile Include="ClientCompiler.fs"/>
         <Compile Include="CallPipeline.fs"/>
         <Compile Include="CoreExport.fs"/>

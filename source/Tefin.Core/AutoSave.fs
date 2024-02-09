@@ -113,7 +113,7 @@ module AutoSave =
         writer.Remove e
 
   let private saveMethod (io: IOs) (clientPath: string) (method: MethodParam) (writer: Writer) =
-    let autoSavePath = Project.getAutoSavePath clientPath method.Name
+    let autoSavePath = ClientStructure.getAutoSavePath clientPath method.Name
     io.Dir.CreateDirectory autoSavePath
 
     let autoSavedFiles =
@@ -127,9 +127,9 @@ module AutoSave =
 
 
   let getAutoSavedFiles (io: IOs) (clientPath: string) =
-    Project.getMethodsPath clientPath
+    ClientStructure.getMethodsPath clientPath
     |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
-    |> Array.filter (fun fp -> fp.Contains(Project.AutoSaveFolderName))
+    |> Array.filter (fun fp -> fp.Contains(ClientStructure.AutoSaveFolderName))
     |> Array.sortBy id
 
   let private saveClient (io: IOs) (clientParam: ClientParam) (writer: Writer) =
@@ -147,7 +147,7 @@ module AutoSave =
 
   let getAutoSaveLocation (io: IOs) (methodInfo: MethodInfo) (clientPath: string) =
     let methodName = methodInfo.Name
-    let autoSavePath = Project.getAutoSavePath (clientPath) methodName
+    let autoSavePath = ClientStructure.getAutoSavePath (clientPath) methodName
 
     io.Dir.CreateDirectory autoSavePath
     let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt

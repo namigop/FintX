@@ -8,5 +8,5 @@ using Tefin.Core.Interop;
 namespace Tefin.Features;
 
 public class DeleteClientFeature(ProjectTypes.ClientGroup client, IOs io) {
-    public void Delete() => Project.deleteClient(client, io);
+    public void Delete() => ClientStructure.deleteClient(client, io);
 }
