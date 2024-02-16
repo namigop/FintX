@@ -23,11 +23,11 @@ public class TabHostViewModel : ViewModelBase {
             .Then(this.MarkForCleanup);
         GlobalHub.subscribeTask<CloseTabMessage>(this.OnReceiveTabCloseMessage)
             .Then(this.MarkForCleanup);
-        GlobalHub.subscribeTask<FileChangeMessage>(this.OnReceiveFileChangeMessage)
+        GlobalHub.subscribe<FileChangeMessage>(this.OnReceiveFileChangeMessage)
             .Then(this.MarkForCleanup);
-        GlobalHub.subscribeTask<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage)
+        GlobalHub.subscribe<CloseAllTabsMessage>(this.OnReceiveCloseAllTabsMessage)
             .Then(this.MarkForCleanup);
-        GlobalHub.subscribeTask<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage)
+        GlobalHub.subscribe<CloseAllOtherTabsMessage>(this.OnReceiveCloseAllOtherTabsMessage)
             .Then(this.MarkForCleanup);
         GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage)
             .Then(this.MarkForCleanup);
@@ -40,27 +40,30 @@ public class TabHostViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
     }
 
-    private async Task OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
+    private void OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {
         var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
         foreach (var tab in tabs) {
             if (tab != arg.Tab) {
-                await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
+                tab.CloseCommand.Execute(Unit.Default);
+                //await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
             }
         }
     }
 
-    private async Task OnReceiveCloseAllTabsMessage(CloseAllTabsMessage arg) {
+    private void OnReceiveCloseAllTabsMessage(CloseAllTabsMessage arg) {
         var tabs = this.Items.Where(t => t is PersistedTabViewModel).ToArray();
         foreach (var tab in tabs) {
-            await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
+            tab.CloseCommand.Execute(Unit.Default);
+            //await this.OnReceiveTabCloseMessage(new CloseTabMessage(tab));
         }
     }
 
-    private async Task OnReceiveFileChangeMessage(FileChangeMessage msg) {
+    private void OnReceiveFileChangeMessage(FileChangeMessage msg) {
         if (msg.ChangeType == WatcherChangeTypes.Deleted) {
             var existingTab = this.Items.FirstOrDefault(t => t is PersistedTabViewModel && t.Id == msg.FullPath);
             if (existingTab != null) {
-                await this.OnReceiveTabCloseMessage(new CloseTabMessage(existingTab));
+                existingTab.CloseCommand.Execute(Unit.Default);
+                //await this.OnReceiveTabCloseMessage(new CloseTabMessage(existingTab));
             }
         }
 
@@ -90,7 +93,7 @@ public class TabHostViewModel : ViewModelBase {
 
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
         await this.RemoveTab(obj.Tab);
-        obj.Tab.CloseCommand.Execute(Unit.Default);
+       // obj.Tab.CloseCommand.Execute(Unit.Default);
     }
 
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
