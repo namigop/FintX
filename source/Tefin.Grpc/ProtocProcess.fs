@@ -21,19 +21,25 @@ module ProtocProcess =
     for cs in io.Dir.GetFiles(protosPath, "*.cs", SearchOption.AllDirectories) do
       io.File.Delete(cs)
 
-  let private getProtocArgs (io: IOs) (grpcRoot: string) (csharpPlugin: string) (protoFiles: string array) =
+  let private getProtocArgs (io: IOs) (grpcRoot: string) (csharpPlugin: string) (protoFile: string) =
     let googlePath = Path.Combine(grpcRoot, "google", "protobuf")
-    let sourceProtoPath = Path.GetDirectoryName(protoFiles[0])
+    let sourceProtoPath = Path.GetDirectoryName(protoFile)
 
+    // let args =
+    //   $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\" --proto_path=\"{googlePath}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
+
+    let oneLevelup = Path.GetDirectoryName(sourceProtoPath);
     let args =
-      $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\" --proto_path=\"{googlePath}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
+      $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\"   --proto_path=\"{oneLevelup}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
 
-    if (protoFiles.Length = 1) then
-      $"{args} {Path.GetFileName(protoFiles[0])}"
-    else
-      let names = protoFiles |> Array.map (fun f -> Path.GetFileName(f))
-      let files = String.Join(" ", names)
-      $"{args} {files}"
+    $"{args} \"{protoFile}\""
+    // if (protoFiles.Length = 1) then
+    //   //$"{args} {Path.GetFileName(protoFiles[0])}"
+    //   $"{args} \"{protoFiles[0]}\""
+    // else
+    //   let names = protoFiles |> Array.map (fun f -> Path.GetFileName(f))
+    //   let files = String.Join(" ", names)
+    //   $"{args} {files}"
 
   let extractExecutablesAndGoogleProtos
     (io: IOs)
@@ -124,19 +130,43 @@ module ProtocProcess =
       io.Dir.SetCurrentDirectory grpcRoot
       cleanupWorkingDirectory io grpcRoot protosPath
 
-      //Copy the protofiles to the working directory
-      let workingProtoFiles = List<string>(protosFiles)
-
-      //for protoFile in protosFiles do
-      //    let tempProtosFile = Path.Combine(grpcRoot, Path.GetFileName protoFile)
-      //    io.File.Copy(protoFile, tempProtosFile, true)
-      //    workingProtoFiles.Add(tempProtosFile)
-
-      //var googlePath = Path.Combine(grpcRoot, "google", "protobuf");
-      //var args = $"--proto_path={googlePath} --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos {Path.GetFileName(tempProtosFile)}";
-      let args = getProtocArgs io grpcRoot csharpPlugin (workingProtoFiles.ToArray())
-
-      let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly))
-
-      return files
+      let findImports (protoFile:string) =
+        let lines = io.File.ReadAllLines protoFile
+        lines
+        |> Array.filter (fun line -> line.Trim().StartsWith("import"))
+        |> Array.map (fun line -> line.Substring(line.IndexOf("\"")).Replace("\"", "").Replace(";", ""))
+        |> Array.filter (fun line -> not <| line.StartsWith("google/protobuf"))
+        
+      let rec findFile (basePath:string) (filePart:string) =
+        let file = Path.Combine(basePath, filePart)
+        if (io.File.Exists file) then
+          file        
+        else
+          //Move up one level because the proto files created by Visual studio do not have the
+          //correct import path For example, if you want to import another protobuf that is in
+          //same "Protos" folder you will need to write
+          //
+          //    import "Protos/other.proto".
+          //
+          // For non-.NET projects that will just be simply
+          //
+          //    import "other.proto"
+          
+          findFile (Path.GetDirectoryName basePath) filePart
+          
+      let rec generateFor (protoFile:string) (csFiles:ResizeArray<string>) =
+        task {
+          let args = getProtocArgs io grpcRoot csharpPlugin protoFile
+          let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly))
+          csFiles.AddRange files
+          let basePath = Path.GetDirectoryName protoFile
+          let imports = findImports protoFile        
+          let importFiles = imports |> Array.map (fun p -> findFile basePath p)
+          for i in importFiles do
+            do! generateFor i csFiles
+         }
+         
+      let csFiles = ResizeArray<string>()
+      do! generateFor protosFiles[0] csFiles
+      return csFiles |> Seq.distinct |> Seq.toArray
     }
