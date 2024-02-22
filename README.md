@@ -1,5 +1,7 @@
 # FintX
-FintX is a native, cross-platform, gRPC test bench.  It not only works on Windows, MacOS and Linux but any data files created are portable to all platforms
+FintX is a native, cross-platform, gRPC test bench.  It not only works on Windows, MacOS and Linux but any data files created are portable to all platforms.  
+
+Extremely honored to have FintX featured in the Avalonia App Showcase https://avaloniaui.net/Showcase
 
 <img src="https://github.com/namigop/FintX/blob/main/docs/ServerStreaming.png" style="width: 80%; height: 80%" />
 
