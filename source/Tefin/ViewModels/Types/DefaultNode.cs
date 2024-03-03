@@ -102,6 +102,7 @@ public class DefaultNode : TypeBaseNode {
     }
 
     protected override void OnValueChanged(object? oldValue, object? newValue) {
+        base.OnValueChanged(oldValue, newValue);
         this.Items.Clear();
         this.Init();
     }
