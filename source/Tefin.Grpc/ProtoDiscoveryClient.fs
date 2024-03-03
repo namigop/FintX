@@ -50,14 +50,3 @@ module ProtoDiscoveryClient =
 
       return csFilesResult
     }
-
-// let validate (discoParams: DiscoverParameters) =
-//     if (discoParams.ProtoFiles.Length = 0) then
-//          Ret.Error (failwith $"Proto file not provided")
-//     else
-//         let missing = discoParams.ProtoFiles |> Array.filter (fun f -> not (File.Exists f))
-//
-//         if missing.Length > 0 then
-//            Ret.Error (failwith $"Proto file not found ({missing.[0]}).")
-//         else
-//             Ok ""

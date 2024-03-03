@@ -7,6 +7,7 @@ open System.Linq
 open System.IO
 open System.Threading.Tasks
 open Google.Protobuf.Reflection
+open Google.Protobuf
 
 open Grpc.Net.Client
 open Grpc.Reflection.V1Alpha
@@ -15,6 +16,49 @@ open Tefin.Core
 open Tefin.Core.Res
 
 module GrpcReflectionClient =
+
+  let fileDescriptorProtoComparer (fileDescriptors: FileDescriptorProto seq) =
+    let _fileDescriptors = fileDescriptors.ToDictionary(fun x -> x.Name)
+
+    let getDependencies (fileDescriptor: FileDescriptorProto) =
+      fileDescriptor.Dependency
+      |> Seq.map (fun name ->
+        let ok, descriptor = _fileDescriptors.TryGetValue(name)
+        if ok then Some(descriptor) else None)
+      |> Seq.filter (fun d -> d.IsSome)
+      |> Seq.map (fun opt -> Option.get opt)
+      |> Seq.toArray
+
+    let rec getTransitiveDependencies (descriptor: FileDescriptorProto) : IReadOnlyCollection<string> =
+      if descriptor = null then
+        Array.empty
+      else
+        let dependencies = ResizeArray<string>()
+
+        for dependency in getDependencies descriptor do
+          dependencies.Add(dependency.Name)
+          dependencies.AddRange(getTransitiveDependencies dependency)
+
+        dependencies
+
+    { new IComparer<FileDescriptorProto> with
+        member x.Compare(left: FileDescriptorProto, right: FileDescriptorProto) : int =
+          let mutable compare = 0
+
+          if (left = null) then
+            compare <- if right = null then 0 else -1
+          elif right = null then
+            compare <- 1
+          elif (getTransitiveDependencies left).Contains(right.Name) then
+            compare <- 1
+          elif (getTransitiveDependencies right).Contains(left.Name) then
+            compare <- -1
+          else
+            compare <- String.Compare(left.Name, right.Name, StringComparison.Ordinal)
+
+          compare }
+
+
   let private Indent = "  "
   let private NoIndent = ""
 
@@ -61,7 +105,7 @@ module GrpcReflectionClient =
         do! writer.WriteAsync("repeated ")
 
       match field.FieldType with
-      | FieldType.Enum -> do! writer.WriteAsync(field.EnumType.Name)
+      | FieldType.Enum -> do! writer.WriteAsync(field.EnumType.FullName)
       | FieldType.Message -> do! writer.WriteAsync(field.MessageType.FullName)
       | FieldType.Group -> ()
       | _ -> do! writer.WriteAsync(field.FieldType.ToString().ToLowerInvariant())
@@ -79,10 +123,25 @@ module GrpcReflectionClient =
       do! writer.WriteLineAsync($"{indentation}}}")
     }
 
+  let writeEnumDescriptor (enumDescriptor: EnumDescriptor) (writer: ITextWriter) (indentation: string) =
+    task {
+      do! writer.WriteAsync indentation
+      do! writer.WriteLineAsync($"enum {enumDescriptor.Name} {{")
+
+      for value in enumDescriptor.Values do
+        do! writer.WriteAsync(indentation + Indent)
+        do! writer.WriteLineAsync($" {value.Name} = {value.Number};")
+
+      do! writer.WriteLineAsync($"{indentation}}}")
+    }
+
   let rec private writeMessageDescriptor (message: MessageDescriptor) (writer: ITextWriter) (indentation: string) =
     task {
       do! writer.WriteAsync(indentation)
       do! writer.WriteLineAsync($"message {message.Name} {{")
+
+      for enumDesc in message.EnumTypes do
+        do! writeEnumDescriptor enumDesc writer (indentation + Indent)
 
       for nestedType in message.NestedTypes do
         do! writeMessageDescriptor nestedType writer (indentation + Indent)
@@ -96,7 +155,9 @@ module GrpcReflectionClient =
         do! writeOneOfDescriptor oneof writer (indentation + Indent)
 
       do! writer.WriteLineAsync($"{indentation}}}")
+
     }
+
 
   let private writeFileDescriptor (descriptor: FileDescriptor) (writer: ITextWriter) =
     task {
@@ -113,6 +174,11 @@ module GrpcReflectionClient =
       // Empty line
       do! writer.WriteLineAsync()
 
+      //Enums
+      for enumVal in descriptor.EnumTypes do
+        do! writeEnumDescriptor enumVal writer NoIndent
+        do! writer.WriteLineAsync()
+
       // Messages
       for message in descriptor.MessageTypes do
         do! writeMessageDescriptor message writer NoIndent
@@ -124,6 +190,17 @@ module GrpcReflectionClient =
         do! writer.WriteLineAsync()
     }
 
+  let sortFileDescriptors (descriptorData: ByteString seq ) : ByteString seq =
+    let messageParser = FileDescriptorProto.Parser
+    let descriptors =
+      descriptorData
+      |> Seq.map (fun descriptor -> messageParser.ParseFrom(descriptor))
+      |> Seq.toArray
+                
+    let comparer = fileDescriptorProtoComparer(descriptors)
+    let ordered =  SortedSet<FileDescriptorProto>(descriptors, comparer)
+    ordered |> Seq.map (fun x -> x.ToByteString())
+       
   let private getDescriptors (service: string) (client: ServerReflection.ServerReflectionClient) =
     execTask (fun () ->
       task {
@@ -131,10 +208,10 @@ module GrpcReflectionClient =
         do! stream.RequestStream.WriteAsync(ServerReflectionRequest(FileContainingSymbol = service))
         let! _ = stream.ResponseStream.MoveNext(CancellationToken.None)
 
-        let protos =
-          stream.ResponseStream.Current.FileDescriptorResponse.FileDescriptorProto.Reverse()
-
-        let descriptors = FileDescriptor.BuildFromByteStrings(protos)
+        let descriptors =
+          sortFileDescriptors(stream.ResponseStream.Current.FileDescriptorResponse.FileDescriptorProto)
+          |> FileDescriptor.BuildFromByteStrings
+       
         do! stream.RequestStream.CompleteAsync()
         return descriptors
       })

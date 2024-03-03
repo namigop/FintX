@@ -8,6 +8,7 @@ package greet;
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc SayEnum (EnumRequest) returns (EnumResponse);
 }
 
 // The request message containing the user's name.
@@ -19,3 +20,22 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
+
+enum SampleEnum {
+  A = 0;
+  B = 1;
+}
+
+message EnumMsg {
+  repeated SampleEnum someEnums = 1;
+}
+
+
+message EnumRequest {
+  SampleEnum sample = 1;
+}
+
+message EnumResponse {
+  EnumMsg response = 1;
+}
+

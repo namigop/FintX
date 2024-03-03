@@ -19,4 +19,14 @@ public class GreeterService : Greeter.GreeterBase
             Message = "Hello " + request.Name
         });
     }
+
+    public override Task<EnumResponse> SayEnum(EnumRequest request, ServerCallContext context) {
+        var msg = new EnumMsg();
+        msg.SomeEnums.Add(SampleEnum.A);
+        msg.SomeEnums.Add(SampleEnum.B);
+        msg.SomeEnums.Add(SampleEnum.A);
+        
+        var resp = new EnumResponse() { Response = msg };
+        return Task.FromResult(resp);
+    }
 }

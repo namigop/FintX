@@ -16,17 +16,7 @@ type ServerDiscoverParameters =
     Config: ReadOnlyDictionary<string, string> }
 
 module ServerReflectionDiscoveryClient =
-
-  // type T(address, serviceName, customClientName, description, discover, validate) =
-  //     interface IDiscoverClient with
-  //         member val Description = address with get, set
-  //         member val Locations = Array.empty with get, set
-  //         member val Name = customClientName with get, set
-  //         member x.Discover cfg = discover cfg x
-  //         member x.Validate() = validate x
-
-
-
+ 
   let private validate (discoParams: ServerDiscoverParameters) =
     if String.IsNullOrWhiteSpace(discoParams.Address) then
       Ret.Error(failwith "Empty reflection service address!")
