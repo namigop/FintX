@@ -34,11 +34,6 @@ Please see the [feature list](https://github.com/namigop/FintX/wiki/List-of-Feat
    <img src="https://github.com/namigop/FintX/blob/main/docs/RequestResponse.png" style="width: 70%; height: 70%">
 
 
-### [Hire me]
-Hi there! author of FintX here. I am currently looking for a new position. 
-
-I have held several roles over the years, either as an individual contributor or in a leadership position.  I've been a developer, tech lead, software architect and engineering manager/head. I have led cross-site teams and delivered multi-million budget projects. Apart from C#/F#/.NET (15+ years and counting), I have passing familiarity with Java, Golang, python. If you have a need for someone with a work profile like mine, please drop me an email at erik.araojo@wcfstorm.com
-
 
 #### Special Thanks
 
