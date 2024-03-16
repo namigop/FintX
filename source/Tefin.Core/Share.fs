@@ -50,6 +50,9 @@ module Share =
       use zip = zipOpen targetZip ZipArchiveMode.Create
 
       files
+      |> Array.filter (fun file -> 
+        //dlls cannot be added nto the zip because its not x-platform
+        not (".dll" = Path.GetExtension file)) 
       |> Array.iter (fun file ->
         let projPath = Path.GetDirectoryName clientPath
 

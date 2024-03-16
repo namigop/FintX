@@ -22,20 +22,26 @@ module ClientCompiler =
       Ret.Error(failwith "Missing Grpc.* dll references")
 
   let compile (io: IOs) (assemblyFile: string) (sourceFiles: string array) =
-    getGrpcReferencedFiles io
-    |> map (fun grpcDlls ->
-      let cIn: CompileInput =
-        { ModuleFile = assemblyFile
-          SourceFiles = sourceFiles
-          ReferencedFiles = grpcDlls
-          TargetOutput = OutputKind.DynamicallyLinkedLibrary
-          AdditionalReferences = grpcDlls |> Array.map (fun f -> MetadataReference.CreateFromFile f) }
+     task {
+        return!
+            System.Threading.Tasks.Task.FromResult(getGrpcReferencedFiles io)
+            |> mapTask (fun grpcDlls ->
+              task {
+                  let cIn: CompileInput =
+                    { ModuleFile = assemblyFile
+                      SourceFiles = sourceFiles
+                      ReferencedFiles = grpcDlls
+                      TargetOutput = OutputKind.DynamicallyLinkedLibrary
+                      AdditionalReferences = grpcDlls |> Array.map (fun f -> MetadataReference.CreateFromFile f) }
 
-      let output = ClientCompiler.compile io cIn
+                  let! output = ClientCompiler.compile io cIn
+                  return Ret.Ok output })
 
-      if output.Success then
-        output
-      else
-        let err = String.Join(Environment.NewLine, output.CompilationErrors)
-        io.Log.Error err
-        failwith err)
+                  //if output.Success then
+                  //  return output
+                  //else
+                  //  let err = String.Join(Environment.NewLine, output.CompilationErrors)
+                  //  io.Log.Error err
+                  //  failwith err })
+
+     }

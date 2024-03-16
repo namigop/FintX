@@ -35,6 +35,12 @@ public class CompileFeature(
                 return (true, com.ResultValue);
             }
 
+            var output = com.ResultValue;
+            if (!output.Success) {
+                var err = String.Join(Environment.NewLine, output.CompilationErrors);
+                io.Log.Error(err);
+            }
+
             io.Log.Error(com.ErrorValue);
             return (false, com.ResultValue);
         }

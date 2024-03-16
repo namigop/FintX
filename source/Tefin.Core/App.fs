@@ -49,9 +49,9 @@ module App =
       let recents = state.RecentProjects |> Array.filter (fun d -> io.Dir.Exists d.Path)
       let activeOpt = recents |> Array.tryFind (fun d -> d.Path = state.ActiveProject.Path)
       match activeOpt with
-      | Some a -> { state with RecentProjects = recents; ActiveProject = a }
-      | None -> { state with RecentProjects = recents
-                             ActiveProject = AppProject.Create (getDefaultProjectPath defaultPackage) defaultPackage }
+      | Some a -> { RecentProjects = recents; ActiveProject = a }
+      | None -> { RecentProjects = recents
+                  ActiveProject = AppProject.Create (getDefaultProjectPath defaultPackage) defaultPackage }
     else
       let path = getDefaultProjectPath defaultPackage
 

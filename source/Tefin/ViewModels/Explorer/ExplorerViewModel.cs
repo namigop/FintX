@@ -281,7 +281,7 @@ public class ExplorerViewModel : ViewModelBase {
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
                 var feature = new AddClientFeature(this.Project, obj.ClientName, obj.SelectedDiscoveredService!,
-                    obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, this.Io);
+                    obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, obj.Dll, this.Io);
                 await feature.Add();
 
                 //reload the project to take in the newly added client

@@ -92,7 +92,7 @@ module ServiceClient =
     }
 
   let compile (io: IOs) (sourceFiles: string array) (compileParams: CompileParameters) =
-    task {
+    task {      
       let grpcParams =
         { compileParams with
             Config = GrpcPackage.grpcConfigValues
@@ -108,16 +108,18 @@ module ServiceClient =
         grpcParams.CsFiles |> Array.tryFind (fun f -> f.EndsWith("Grpc.cs"))
 
       match grpcClientFileOpt with
-      | None -> return Ret.Error(Exception("Unable to generate the source code of the service client"))
+      | None -> return Ret.Error(Exception("Unable to generate the source code of the service client. Missing *Grpc.cs file"))
       | Some grpcClientFile ->
         let rootPath = grpcParams.Config["RootPath"]
         let name = Path.GetFileNameWithoutExtension(grpcClientFile)
         let assemblyName = $"{name}_{Path.GetFileNameWithoutExtension(tempFile)}"
+        let codePath = Path.GetDirectoryName grpcClientFile
+        let assemblyFile =  
+            let dll = io.Dir.GetFiles(codePath, "*.dll")
+            if dll.Length = 1 then dll[0]
+            else Path.Combine(codePath, $"{assemblyName}.dll")
 
-        let assemblyFile =
-          Path.Combine(rootPath, "clients", assemblyName, $"{assemblyName}.dll")
-
-        let! compileOutput = Task.Run(fun () -> ClientCompiler.compile io assemblyFile grpcParams.CsFiles)
+        let! compileOutput = ClientCompiler.compile io assemblyFile grpcParams.CsFiles
         return compileOutput
     }
 

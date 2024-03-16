@@ -158,7 +158,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
                 address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
                 var msg = new ShowClientMessage(output, address, this.ClientName, this.SelectedDiscoveredService,
-                    this.Description, csFiles);
+                    this.Description, csFiles, output.Input.Value.ModuleFile);
                 GlobalHub.publish(msg);
             }
         }

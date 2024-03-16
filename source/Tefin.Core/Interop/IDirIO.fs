@@ -3,7 +3,7 @@ namespace Tefin.Core
 open System.IO
 
 type IDirIO =
-  abstract GetFiles: file: string -> string array
+  abstract GetFiles: path: string -> string array
   abstract GetFiles: path: string * searchPattern: string -> string array
   abstract GetFiles: path: string * searchPattern: string * searchOption: SearchOption -> string array
   abstract CreateDirectory: path: string -> unit

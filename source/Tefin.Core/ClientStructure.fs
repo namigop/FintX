@@ -142,6 +142,7 @@ module ClientStructure =
     protoOrUrl
     description
     (csFiles: string array)
+    (dll:string)
     (createDirectory: string -> unit)
     (fileCopy: string * string * bool -> unit)
     (moveDirectory: string -> string -> unit)
@@ -160,10 +161,13 @@ module ClientStructure =
 
       let clientConfigFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)
 
-      //2. Copy the C# files
+      //2. Copy the C# files and *Client.dll file
       let codePath = Path.Combine(clientPath, "code")
       createDirectory codePath
 
+      let dllName = Path.GetFileName dll
+      let dlLTarget = Path.Combine(codePath, dllName)
+      fileCopy(dll, dlLTarget, true)
       for source in csFiles do
         let name = Path.GetFileName source
         let target = Path.Combine(codePath, name)
@@ -174,7 +178,7 @@ module ClientStructure =
 
     }
 
-  let addClient (io: IOs) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) =
+  let addClient (io: IOs) (project: Project) clientName serviceName protoOrUrl description (csFiles: string array) (dll:string) =
     _addClient
       project
       clientName
@@ -182,6 +186,7 @@ module ClientStructure =
       protoOrUrl
       description
       csFiles
+      dll
       io.Dir.CreateDirectory
       io.File.Copy
       io.Dir.Move

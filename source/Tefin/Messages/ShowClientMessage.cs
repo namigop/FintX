@@ -12,8 +12,9 @@ public class ShowClientMessage(
     string clientName,
     string? selectedDiscoveredService,
     string description,
-    string[] csFiles)
+    string[] csFiles, string dll)
     : MessageBase {
+    public string Dll { get; } = dll;
     public string ClientName { get; } = clientName;
     public string[] CsFiles { get; } = csFiles;
     public string Description { get; } = description;

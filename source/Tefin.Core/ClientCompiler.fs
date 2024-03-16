@@ -98,43 +98,51 @@ module ClientCompiler =
       Input = None }
 
   let compile (io: IOs) (input: CompileInput) =
-    use ms = new MemoryStream()
-    let moduleName = Path.GetFileName input.ModuleFile
+    task {
+        if io.File.Exists input.ModuleFile then
+          let! compiledBytes = io.File.ReadAllBytesAsync(input.ModuleFile)
+          return 
+              { CompilationErrors = Array.empty
+                CompiledBytes = compiledBytes
+                Success = true
+                TargetOutput = input.TargetOutput
+                Input = Some input }
+        else
+            use ms = new MemoryStream()
+            let moduleName = Path.GetFileName input.ModuleFile
 
-    let compilation =
-      createCompilation io input.SourceFiles moduleName input.TargetOutput input.AdditionalReferences
+            let compilation = createCompilation io input.SourceFiles moduleName input.TargetOutput input.AdditionalReferences
+            let result = compilation.Emit ms
 
-    let result = compilation.Emit ms
+            if (result.Success) then
+              ms.Seek(0, SeekOrigin.Begin) |> ignore
+              let compiledBytes = ms.ToArray()
+              ignore (io.File.WriteAllBytesAsync input.ModuleFile compiledBytes)
+              let res: CompileOutput =
+                { CompilationErrors = Array.empty
+                  CompiledBytes = compiledBytes
+                  Success = true
+                  TargetOutput = input.TargetOutput
+                  Input = Some input }
 
-    if (result.Success) then
-      ms.Seek(0, SeekOrigin.Begin) |> ignore
-      let compiledBytes = ms.ToArray()
+              return res
+            else
+              let failures =
+                result.Diagnostics
+                |> Seq.filter (fun diagnostic -> diagnostic.IsWarningAsError || diagnostic.Severity = DiagnosticSeverity.Error)
 
-      let res: CompileOutput =
-        { CompilationErrors = Array.empty
-          CompiledBytes = compiledBytes
-          Success = true
-          TargetOutput = input.TargetOutput
-          Input = Some input }
+              let errors =
+                failures
+                |> Seq.map (fun diagnostic -> $"{diagnostic.Id}, {diagnostic.GetMessage()}")
 
-      res
-    else
-      let failures =
-        result.Diagnostics
-        |> Seq.filter (fun diagnostic -> diagnostic.IsWarningAsError || diagnostic.Severity = DiagnosticSeverity.Error)
+              let res: CompileOutput =
+                { CompilationErrors = errors |> Seq.toArray
+                  CompiledBytes = Array.empty
+                  Success = false
+                  TargetOutput = input.TargetOutput
+                  Input = Some input }
 
-      let errors =
-        failures
-        |> Seq.map (fun diagnostic -> $"{diagnostic.Id}, {diagnostic.GetMessage()}")
-
-      let res: CompileOutput =
-        { CompilationErrors = errors |> Seq.toArray
-          CompiledBytes = Array.empty
-          Success = false
-          TargetOutput = input.TargetOutput
-          Input = Some input }
-
-      res
+              return res }
 
   let getTypes (bytes: byte array) =
     use ms = new MemoryStream(bytes)
