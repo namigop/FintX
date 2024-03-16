@@ -16,5 +16,20 @@
 
         <TextBlock Text="{Binding License}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
         <TextBlock Text="{Binding Copyright}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
+        
+        <TextBlock Text="Looking for more features?" FontSize="20" VerticalAlignment="Stretch" Margin="0 20 0 10 " />
+        <TextBox IsReadOnly="True" BorderThickness="0" Background="Transparent" Text="Send an email to erik.araojo@wcfstorm.com to get access to" ></TextBox>
+        <TextBlock Text="1. Creation of functional tests" Margin="0 8 0 0" ></TextBlock>
+        <TextBlock Text="2. Viewer showing diff b/w actual and expected responses" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="3. Generate test reports" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="4. Creation of test collections" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="5. Execute collections sequentially/in parallel" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="6. Creation of load tests" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="7. Support for load testing profiles (Constant, Burst, Incremental)" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="8. Real-time display of load testing progress" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="9. File/Folder management" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="10. Cut/Copy/Paste support" Margin="0 8 0 0"></TextBlock>
+        <TextBlock Text="11. Auto-sync with the file system" Margin="0 8 0 0"></TextBlock>
+
     </StackPanel>
 </UserControl>

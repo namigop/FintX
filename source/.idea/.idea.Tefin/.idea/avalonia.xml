@@ -22,6 +22,7 @@
         <entry key="Tefin/Views/Footer/FooterView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientSubMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/InfoMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/MainMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/SelectedMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ServerMenuItemView.axaml" value="Tefin/Tefin.csproj" />
