@@ -22,6 +22,10 @@ public class LoadSessionFeature(
     }
 
     private void LoadOne(string json, string reqFile) {
+        var ext = Path.GetExtension(reqFile);
+        if (ext != Ext.requestFileExt)
+            return;
+        
         var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
         var item = nodes.FirstOrDefault(i => i.MethodInfo.Name == methodName);
         if (item != null) {

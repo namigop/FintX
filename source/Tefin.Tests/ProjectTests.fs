@@ -141,8 +141,10 @@ let ``Can add client`` () =
       Assert.True(dir.Contains(newClient))
 
     let fileCopy (source: string, target: string, overwrite: bool) =
-      //this will be called to copy the cs files
-      Assert.Equal(newCsFile, source)
+      //this will be called to copy the cs files and dll
+      let ext = Path.GetExtension source
+      let c = [|".dll"; ".cs"|] |> Array.contains ext
+      Assert.True c
 
       let expected =
         $"projects{sep}{testProjectName}{sep}{newClient}{sep}code{sep}{Path.GetFileName(source)}"
@@ -183,6 +185,7 @@ let ``Can add client`` () =
         "protoUrl.proto"
         "my desc"
         [| newCsFile |]
+        "my.dll"
         createDir
         fileCopy
         moveDir
