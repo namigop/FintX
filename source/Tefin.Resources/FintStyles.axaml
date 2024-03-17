@@ -16,7 +16,7 @@
     <Style Selector="TextBlock.FormField">
         <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Margin" Value="0 15 0 2"></Setter>
+        <Setter Property="Margin" Value="0 15 0 2" />
     </Style>
 
     <Style Selector="TextBlock.DashboardHeader">
@@ -31,16 +31,16 @@
     </Style>
 
     <Style Selector="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}"></Setter>
+        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}" />
     </Style>
     <!-- end of TextBlock Classes -->
 
     <Style Selector="RadioButton">
-        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}"></Setter>
+        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}" />
     </Style>
 
     <Style Selector="ComboBoxItem">
-        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}"></Setter>
+        <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}" />
     </Style>
 
     <!-- Textbox Classes ============================================================================= -->
@@ -74,31 +74,31 @@
         <Setter Property="Width" Value="1" />
         <Setter Property="Height" Value="18" />
         <Setter Property="Background" Value="#FF3A4252" />
-        <Setter Property="Margin" Value="2 0 2 0"></Setter>
+        <Setter Property="Margin" Value="2 0 2 0" />
     </Style>
     <Style Selector="Separator.Horizontal">
-        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Height" Value="1" />
         <Setter Property="Background" Value="#FF3A4252" />
-        <Setter Property="Margin" Value="0 10 0 10"></Setter>
+        <Setter Property="Margin" Value="0 10 0 10" />
     </Style>
 
     <!-- start of default styles -->
 
     <Style Selector="Window">
-        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}"></Setter>
+        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}" />
     </Style>
     <Style Selector="Separator">
         <Setter Property="Width" Value="1" />
         <Setter Property="Height" Value="18" />
-         <Setter Property="Background" Value="#FF3A4252" />
+        <Setter Property="Background" Value="#FF3A4252" />
         <!-- <Setter Property="Background" Value="LightSlateGray" /> -->
-        <Setter Property="Margin" Value="2 0 2 0"></Setter>
+        <Setter Property="Margin" Value="2 0 2 0" />
     </Style>
     <Style Selector="GridSplitter">
-        <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
-        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
-        <Setter Property="Background" Value="Transparent"></Setter>
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 
 
@@ -108,6 +108,11 @@
 
     <Style Selector="TextBox">
         <Setter Property="Foreground" Value="#969faa" />
+        <Setter Property="SelectionBrush" Value="{StaticResource Bym.Color.TextAreaSelectionBrush}" />
+    </Style>
+    <Style Selector="SelectableTextBlock">
+        <Setter Property="Foreground" Value="#969faa" />
+        <Setter Property="SelectionBrush" Value="{StaticResource Bym.Color.TextAreaSelectionBrush}" />
     </Style>
     <Style Selector="ComboBoxItem">
         <Setter Property="Foreground" Value="#969faa" />
@@ -119,7 +124,7 @@
 
     <Style Selector="TabControl">
         <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultControlBackground}" />
-        <Setter Property="CornerRadius" Value="12"></Setter>
+        <Setter Property="CornerRadius" Value="12" />
     </Style>
     <Style Selector="TabControl WrapPanel">
         <Setter Property="Background" Value="#0e1014" />
@@ -130,7 +135,7 @@
         <Setter Property="FontStyle" Value="Italic" />
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="CornerRadius" Value="12"></Setter>
+        <Setter Property="CornerRadius" Value="12" />
     </Style>
     <Style Selector="TabItem:selected">
         <Setter Property="FontSize" Value="15" />

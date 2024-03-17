@@ -1,7 +1,9 @@
 #region
 
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Reactive;
+using System.Windows.Input;
 
 using Avalonia.Threading;
 
@@ -31,7 +33,19 @@ public class TabHostViewModel : ViewModelBase {
             .Then(this.MarkForCleanup);
         GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage)
             .Then(this.MarkForCleanup);
+
+        this.SendEmailRequestCommand = this.CreateCommand(() => {
+            var email = "erik.araojo@wcfstorm.com";
+            var subject = "Hey, can I try FintX Pro?";
+            var body = "I am interested in the Pro version.  Do you mind sending over the download link%3f";
+            var arg = $"mailto:{email}?Subject={subject}&Body={body}";
+            //var arg = $"mailto:{email}?subject=sdfsdf";
+            var pi = new ProcessStartInfo(arg) { UseShellExecute = true };
+            Process.Start(pi);
+        });
     }
+
+    public ICommand SendEmailRequestCommand { get; }
 
     public ObservableCollection<ITabViewModel> Items { get; } = new();
 
@@ -91,11 +105,9 @@ public class TabHostViewModel : ViewModelBase {
 
     private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) => await this.RemoveTab(obj.Tab);
 
-    private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) {
-        await this.RemoveTab(obj.Tab);
-       // obj.Tab.CloseCommand.Execute(Unit.Default);
-    }
+    private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) => await this.RemoveTab(obj.Tab);
 
+    // obj.Tab.CloseCommand.Execute(Unit.Default);
     private void OnReceiveTabOpenMessage(OpenTabMessage obj) {
         obj.Tab.Init();
         var existing = this.Items.FirstOrDefault(t => t.Id == obj.Tab.Id);

@@ -1,34 +1,38 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:resources="clr-namespace:Tefin.Resources"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
-  <!--Brushes-->
-  <SolidColorBrush x:Key="DefaultPanelBackground" Color="White"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.EditorTextBackground" Color="#FFFCF4"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#16191F"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#101217"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultMenuBackground" Color="#09162D"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultTextColor" Color="#a3abb5"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultTextInputColor">#40424C</SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor" Color="White"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.Red" Color="#A84E4B"></SolidColorBrush>
-  <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor" Color="#101217"></SolidColorBrush>
-  <!--end of Brushes-->
- 
+    <Color x:Key="Color.TextAreaSelectionBrush">#1A3E60</Color>
+    <!--Brushes-->
+    <SolidColorBrush x:Key="DefaultPanelBackground" Color="White" />
+    <SolidColorBrush x:Key="Bym.Color.EditorTextBackground" Color="#FFFCF4" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#16191F" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#101217" />
+    <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultMenuBackground" Color="#09162D" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultTextColor" Color="#a3abb5" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultTextInputColor">#40424C</SolidColorBrush>
+    <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor" Color="White" />
+    <SolidColorBrush x:Key="Bym.Color.Red" Color="#A84E4B" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor" Color="#101217" />
 
-  <!-- Data templates-->
-  <DataTemplate x:Key="Bym.MandatoryFieldTemplate">
-    <StackPanel Orientation="Horizontal">
-      <TextBlock Text="{Binding}"  Classes="FormField" />
-      <TextBlock Text="*" Foreground="DarkRed" Margin="2 0 0 0" />
-    </StackPanel>
-  </DataTemplate>
 
-  <DataTemplate x:Key="Bym.FieldHeaderTemplate">
-    <TextBlock Text="{Binding}" Classes="FormField" />
-  </DataTemplate>
+    <SolidColorBrush x:Key="Bym.Color.TextAreaSelectionBrush" Color="{StaticResource Color.TextAreaSelectionBrush}" />
 
-  
+    <!--end of Brushes-->
+
+
+    <!-- Data templates-->
+    <DataTemplate x:Key="Bym.MandatoryFieldTemplate">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding}" Classes="FormField" />
+            <TextBlock Text="*" Foreground="DarkRed" Margin="2 0 0 0" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="Bym.FieldHeaderTemplate">
+        <TextBlock Text="{Binding}" Classes="FormField" />
+    </DataTemplate>
+
+
 </ResourceDictionary>

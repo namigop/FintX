@@ -16,7 +16,10 @@
                 <ResourceInclude Source='avares://Tefin.Resources/ResourceDictionary.axaml' />
                 <ResourceInclude Source='avares://Tefin.Resources/IconDictionary.axaml' />
             </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="TextAreaSelectionBrush" Color="{StaticResource Color.TextAreaSelectionBrush}" />
         </ResourceDictionary>
+
+
     </Application.Resources>
     <NativeMenu.Menu>
         <NativeMenu>

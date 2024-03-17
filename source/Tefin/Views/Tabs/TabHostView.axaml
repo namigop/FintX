@@ -107,18 +107,51 @@
                     </DataTemplate>
                 </TabControl.ItemTemplate>
             </TabControl>
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                        IsVisible="{Binding !Items.Count}"
-                        HorizontalAlignment="Center">
-                <controls:IconControl Width="64" Height="64" Icon="{StaticResource Icon.ArrowLeft}" />
-                <TextBlock Text="Double-click on one of the methods over there to open it"
-                           FontSize="24"
-                           Foreground="{StaticResource Bym.Color.DefaultTextColor}"
-                           Margin="10 0 0 0"
-                           Opacity="0.65"
-                           VerticalAlignment="Center"
-                           ToolTip.Tip="If you don't see any methods, you have to compile the client first" />
-            </StackPanel>
+            <Grid ColumnDefinitions="*, Auto, *" IsVisible="{Binding !Items.Count}">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+
+                            HorizontalAlignment="Center">
+                    <controls:IconControl Width="64" Height="64" Icon="{StaticResource Icon.ArrowLeft}" />
+                    <TextBlock xml:space="preserve"
+                               Text="Double-click on one of the methods&#xD;over there to get started"
+                               FontSize="24"
+                               Foreground="{StaticResource Bym.Color.DefaultTextColor}"
+                               Margin="10 0 0 0"
+                               Opacity="0.65"
+                               VerticalAlignment="Center"
+                               ToolTip.Tip="If you don't see any methods, you have to compile the client first" />
+                </StackPanel>
+                <Border Width="1" CornerRadius="2" Grid.Column="1" Margin="10"
+                        Background="{StaticResource Bym.Color.DefaultWindowBackground}" />
+
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <TextBlock Text="Looking for more features?" FontSize="20" VerticalAlignment="Stretch"
+                               Margin="0 20 0 10 " />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding SendEmailRequestCommand}">
+                            <TextBlock Text="Send an email" />
+                        </Button>
+                        <SelectableTextBlock VerticalAlignment="Center" Background="Transparent"
+                                             Text=" to erik.araojo@wcfstorm.com to try out these features" />
+                    </StackPanel>
+
+                    <SelectableTextBlock Text="1. Creation of functional tests" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="2. Viewer showing diff b/w actual and expected responses"
+                                         Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="3. Generate test reports" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="4. Creation of test collections" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="5. Execute collections sequentially/in parallel" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="6. Creation of load tests" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="7. Support for load testing profiles (Constant, Burst, Incremental)"
+                                         Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="8. Real-time display of load testing progress" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="9. File/Folder management" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="10. Cut/Copy/Paste support" Margin="0 8 0 0" />
+                    <SelectableTextBlock Text="11. Auto-sync with the file system" Margin="0 8 0 0" />
+
+                </StackPanel>
+            </Grid>
+
 
         </Grid>
     </Border>
