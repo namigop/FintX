@@ -19,9 +19,9 @@ public class CompileFeature(
     IOs io) {
     private static readonly Dictionary<string, CompileOutput> CompilationCache = new();
 
-    public async Task<(bool, CompileOutput)> CompileExisting(string[] csFiles) {
+    public async Task<(bool, CompileOutput)> CompileExisting(string[] codeFiles) {
         try {
-            var key = string.Join("-", csFiles);
+            var key = string.Join("-", codeFiles);
             if (CompilationCache.TryGetValue(key, out var cOutput)) {
                 return (true, cOutput);
             }
@@ -29,7 +29,7 @@ public class CompileFeature(
             GlobalHub.publish(new ClientCompileMessage(true));
             CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, Array.Empty<string>(),
                 reflectionUrl, null);
-            var com = await ServiceClient.compile(io, csFiles, cParams);
+            var com = await ServiceClient.compile(io, codeFiles, cParams);
             if (com.IsOk) {
                 CompilationCache.Add(key, com.ResultValue);
                 return (true, com.ResultValue);
@@ -59,7 +59,7 @@ public class CompileFeature(
             var com = await ServiceClient.compile(Resolver.value, csFilesRet.ResultValue, cParams);
             if (com.IsOk) {
                 var key = string.Join("-", csFilesRet.ResultValue);
-                CompilationCache.Add(key, com.ResultValue);
+                CompilationCache[key] = com.ResultValue;
                 return (true, com.ResultValue);
             }
 

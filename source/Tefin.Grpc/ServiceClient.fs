@@ -52,8 +52,12 @@ module ServiceClient =
       let lastParam = m.GetParameters() |> Array.last
       not (lastParam.ParameterType = typeof<CallOptions>))
 
+
   let generateSourceFiles (io: IOs) (compileParams: CompileParameters) =
     task {
+
+      let check () = ()
+
       let grpcParams =
         { compileParams with
             Config = GrpcPackage.grpcConfigValues }

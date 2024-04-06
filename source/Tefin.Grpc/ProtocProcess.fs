@@ -168,5 +168,14 @@ module ProtocProcess =
          
       let csFiles = ResizeArray<string>()
       do! generateFor protosFiles[0] csFiles
-      return csFiles |> Seq.distinct |> Seq.toArray
+
+      let generatedCsFiles = csFiles |> Seq.distinct |> Seq.toArray
+
+      if (generatedCsFiles.Length > 0) then
+        //If we have generated new *.cs files, delete any dll lying around
+        let dlls = io.Dir.GetFiles(System.IO.Path.GetDirectoryName(generatedCsFiles[0]), "*.dll", System.IO.SearchOption.TopDirectoryOnly)
+        for dll in dlls do
+          io.File.Delete dll
+
+      return generatedCsFiles
     }

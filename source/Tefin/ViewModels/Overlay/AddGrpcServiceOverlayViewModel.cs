@@ -22,11 +22,11 @@ namespace Tefin.ViewModels.Overlay;
 
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
-    private string _address = "";
-    private string _clientName = "";
+    private string _address = string.Empty;
+    private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
-    private string _protoFile = "";
-    private string _protoFilesOrUrl = "";
+    private string _protoFile = string.Empty;
+    private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
 
     public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
@@ -36,7 +36,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.OkayCommand = this.CreateCommand(this.OnOkay);
         this.ReflectionUrl = "http://localhost:5000";
         this.Title = "Add a client";
-        this.Description = "";
+        this.Description = string.Empty;
     }
 
     [IsHttp]
@@ -80,7 +80,19 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     [Required(ErrorMessage = "Service is required")]
     public string? SelectedDiscoveredService {
         get => this._selectedDiscoveredService;
-        set => this.RaiseAndSetIfChanged(ref this._selectedDiscoveredService, value);
+        set {
+            this.RaiseAndSetIfChanged(ref this._selectedDiscoveredService, value);
+            if (!string.IsNullOrWhiteSpace(this._selectedDiscoveredService)) {
+                if (string.IsNullOrWhiteSpace(this.ClientName)) {
+                    var name = this._selectedDiscoveredService.Split(".").Last();
+                    this.ClientName = $"{name}Client";
+                }
+
+                if (string.IsNullOrWhiteSpace(this.Address)) {
+                    this.Address = "http://";
+                }
+            }
+        }
     }
 
     public string Title { get; }
@@ -149,8 +161,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (ok2, _) = await disco.Discover(this.Io);
         if (ok2) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
-                this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
