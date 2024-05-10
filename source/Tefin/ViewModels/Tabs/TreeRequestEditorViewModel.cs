@@ -68,7 +68,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             this.CtsReq?.Dispose();
             this.CtsReq = null;
             this.CtsReq = new CancellationTokenSource();
-            mParams[mParams.Length - 1] = this.CtsReq.Token;
+            mParams[^1] = this.CtsReq.Token;
         }
 
         return (mParams.Any(), mParams);

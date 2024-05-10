@@ -7,17 +7,17 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <ApplicationIcon>Assets\fire.ico</ApplicationIcon>
         <AssemblyName>FintX</AssemblyName>
-        <AssemblyVersion>2.1.0</AssemblyVersion>
-        <FileVersion>2.1.0</FileVersion>
+        <AssemblyVersion>2.2.0</AssemblyVersion>
+        <FileVersion>2.2.0</FileVersion>
         <TargetFramework>net8.0</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
         <CFBundleName>FintX</CFBundleName> <!-- Also defines .app file name -->
         <CFBundleDisplayName>FintX</CFBundleDisplayName>
         <CFBundleIdentifier>com.erik.FintX</CFBundleIdentifier>
-        <CFBundleVersion>2.1.0</CFBundleVersion>
+        <CFBundleVersion>2.2.0</CFBundleVersion>
         <CFBundlePackageType>APPL</CFBundlePackageType>
-        <CFBundleShortVersionString>FintX 2.0+</CFBundleShortVersionString>
+        <CFBundleShortVersionString>FintX 2.2+</CFBundleShortVersionString>
         <CFBundleSignature>com.erik.FintX</CFBundleSignature>
         <CFBundleExecutable>FintX</CFBundleExecutable>
         <CFBundleIconFile>Resources/fire.icns</CFBundleIconFile>

@@ -67,6 +67,9 @@ public class MainWindowViewModel : ViewModelBase {
     private void OnSponsor() => Core.Utils.openBrowser("https://github.com/sponsors/namigop");
 
     private void StartAutoSave() {
+        #if DEBUG
+        return;
+        #endif
         AutoSave.ClientParam[] Get() {
             var methodTabs = this.TabHost.Items
                 .Where(t => t.CanAutoSave)
