@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
 using Tefin.Core.Reflection;
@@ -31,7 +32,18 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
             }
         };
 
+        this.StreamTree.RowSelection!.SingleSelect = true;
+        this.StreamTree.RowSelection!.SelectionChanged += OnSelectionChanged;
         this._listItemType = TypeHelper.getListItemType(listType).Value;
+    }
+
+    private void OnSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
+            item!.IsSelected = false;
+        }
+        foreach (var item in e.SelectedItems.Where(i => i != null)) {
+            item!.IsSelected = true;
+        }
     }
 
     public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
@@ -40,7 +52,28 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     public Type ListType {
         get;
     }
+    public void RemoveSelectedItem() {
+        if (this.StreamItems.Count <= 0)
+            return;
+        
+        var streamNode = (ResponseStreamNode)this.StreamItems[0];
+        var selectedNode = streamNode.FindSelected();
+        var listItemNode = selectedNode?.FindParentNode<IExplorerItem>(FindSelected);
 
+        if (listItemNode != null) {
+            Dispatcher.UIThread.Post(() => {
+                streamNode.RemoveItem(listItemNode);
+            });
+        }
+
+        bool FindSelected(IExplorerItem item) {
+            if (item.Parent != null && item.Parent is ResponseStreamNode) {
+                return true;
+            }
+
+            return false;
+        }
+    }
     public void AddItem(object instance) =>
         Dispatcher.UIThread.Post(() => {
             var streamNode = (ResponseStreamNode)this.StreamItems[0];

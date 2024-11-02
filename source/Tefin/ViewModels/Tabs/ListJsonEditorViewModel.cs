@@ -38,6 +38,9 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
 
     public void Clear() => this.Json = "";
 
+    public void RemoveSelectedItem() {
+        Io.Log.Info("Removing items is not supported with the json editor");
+    }
     public (bool, object) GetList() {
         try {
             var list = Instance.indirectDeserialize(this.ListType, this._json);

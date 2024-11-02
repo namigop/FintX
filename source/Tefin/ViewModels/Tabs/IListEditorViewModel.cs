@@ -7,9 +7,11 @@ public interface IListEditorViewModel {
 
     void Clear();
 
-    public (bool, object) GetList();
+    (bool, object) GetList();
 
-    public IEnumerable<object> GetListItems();
+    IEnumerable<object> GetListItems();
 
-    public void Show(object listInstance);
+    void Show(object listInstance);
+
+    void RemoveSelectedItem();
 }

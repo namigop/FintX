@@ -17,7 +17,7 @@ public abstract class TypeBaseNode : NodeBase {
     private object? _value;
 
     protected TypeBaseNode(string name, Type type, ITypeInfo? typeInfo, object? instance, TypeBaseNode? parent) {
-        this.Title = name;
+        base.Title = name;
         this.FormattedTypeName = type.Name;
         this._isNull = instance == null;
         this.CanSetAsNull = TypeHelper.getDefault(type) == null;

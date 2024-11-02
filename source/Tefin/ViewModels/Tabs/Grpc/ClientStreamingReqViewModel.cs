@@ -60,9 +60,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
     }
     private void OnRemoveListItem() {
-        throw new NotImplementedException();
+        this._clientStreamEditor.RemoveSelectedItem();
     }
-
+    
     public ClientStreamingCallResponse CallResponse {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);

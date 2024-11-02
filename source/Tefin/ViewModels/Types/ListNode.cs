@@ -8,6 +8,7 @@ using Microsoft.FSharp.Core;
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
+using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types.TypeNodeBuilders;
 
 #endregion
@@ -80,6 +81,19 @@ public class ListNode : TypeBaseNode {
         this._listItemsCount = this.Items.Count;
         this._targetListItemsCount = this.Items.Count;
         this.RaisePropertyChanged(nameof(this.FormattedValue));
+    }
+
+    public void RemoveItem(IExplorerItem item) {
+        var index = this.Items.IndexOf(item);
+        if (index > 0) {
+            this.Items.RemoveAt(index);
+            int count = 0;
+            foreach (var i in Items) {
+                var name = $"{this.ItemName}[{count}]";
+                i.Title = name;
+                count++;
+            }
+        }
     }
 
     public override void Init(Dictionary<string, int> processedTypeNames) {

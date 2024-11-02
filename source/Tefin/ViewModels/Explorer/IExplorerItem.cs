@@ -17,5 +17,5 @@ public interface IExplorerItem {
 
     IExplorerItem? FindSelected();
 
-    T? FindParentNode<T>() where T : IExplorerItem;
+    T? FindParentNode<T>(Func<IExplorerItem, bool>? predicate = null) where T : IExplorerItem;
 }

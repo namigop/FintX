@@ -56,14 +56,20 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public IExplorerItem? FindSelected() => this.FindChildNode(i => i.IsSelected);
 
-    public T? FindParentNode<T>() where T : IExplorerItem {
+    public T? FindParentNode<T>(Func<IExplorerItem, bool>? predicate = null) where T : IExplorerItem {
         T? Find(IExplorerItem? item) {
             if (item == null) {
                 return default;
             }
 
-            if (item is T found) {
-                return found;
+            if (item is T foundItem) {
+                if (predicate != null) {
+                    if (predicate.Invoke(item))
+                        return foundItem;
+                }
+                else {
+                    return foundItem;
+                }
             }
 
             return Find(item.Parent);

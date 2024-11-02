@@ -85,7 +85,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         } 
     }
     private void OnRemoveListItem() {
-        throw new NotImplementedException();
+        this._clientStreamEditor.RemoveSelectedItem();
     }
     public override async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
