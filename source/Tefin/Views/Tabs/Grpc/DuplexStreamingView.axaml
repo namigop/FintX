@@ -59,6 +59,7 @@
                     </Button>
                     <Separator Background="DimGray" Height="1" CornerRadius="2" Margin="8" />
 
+                    <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
                         <Button Command="{Binding ReqViewModel.WriteCommand}" Classes="MenuButton"
                                 CornerRadius="24 0 0 24"
@@ -77,6 +78,30 @@
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
                         </Button>
                     </StackPanel>
+                        <Button Classes="MenuButton" Margin="1 2 0 0" Command="{Binding ReqViewModel.AddListItemCommand}">
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.PlusGray}" />
+                            <!-- <Viewbox Width="18" Height="18"> -->
+                            <!--     <Path -->
+                            <!--         Width="28" -->
+                            <!--         Height="28" -->
+                            <!--         Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" -->
+                            <!--         Fill="LightSlateGray" -->
+                            <!--         Stretch="Uniform" /> -->
+                            <!-- </Viewbox> -->
+                        </Button>
+                        <Button Classes="MenuButton" Margin="1 2 0 0"  Command="{Binding ReqViewModel.RemoveListItemCommand}">
+                            <!-- <Viewbox Width="18" Height="18"> -->
+                            <!--     <Path -->
+                            <!--         Width="28" -->
+                            <!--         Height="28" -->
+                            <!--         Data="M19,13H5V11H19V13Z" -->
+                            <!--         Fill="LightSlateGray" -->
+                            <!--         Stretch="Uniform" /> -->
+                            <!-- </Viewbox> -->
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Delete}" />
+                        </Button>
+                        </StackPanel>
+                        
                     <!-- <Separator Background="DimGray" Height="1" Margin="6" /> -->
                     <!-- <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file" -->
                     <!--         IsEnabled="{Binding !CanStop}" -->

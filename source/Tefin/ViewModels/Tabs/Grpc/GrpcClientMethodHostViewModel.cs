@@ -55,7 +55,7 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public override void ImportRequestFile(string requestFile) => this._importFile = requestFile;
 
-    public void Init() {
+    public void Init() =>
         this.Exec(() => {
             this.CallType.Init();
             if (string.IsNullOrEmpty(this._importFile)) {
@@ -70,5 +70,4 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
                 this.Io.File.WriteAllText(this._importFile, content);
             }
         });
-    }
 }

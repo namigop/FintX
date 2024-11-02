@@ -65,7 +65,7 @@ module Actor =
                   | Choice1Of2() -> ()
                   | Choice2Of2 exn -> Console.WriteLine(exn)
 
-              do! loop ()
+              return! loop ()
           }
 
         loop ())

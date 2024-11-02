@@ -3,6 +3,8 @@
 using System.Reflection;
 using System.Windows.Input;
 
+using Grpc.Core;
+
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
@@ -31,6 +33,10 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
+        this.AddListItemCommand = this.CreateCommand(this.OnAddListItem);
+        this.RemoveListItemCommand = this.CreateCommand(this.OnRemoveListItem);
+
+        
         this._callResponse = DuplexStreamingCallResponse.Empty();
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._requestItemType = args[0];
@@ -69,7 +75,18 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public ICommand WriteCommand { get; }
+    public ICommand RemoveListItemCommand { get; }
+    public ICommand AddListItemCommand { get; }
 
+    private void OnAddListItem() {
+        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        if (ok) {
+            this._clientStreamEditor.AddItem(reqInstance);
+        } 
+    }
+    private void OnRemoveListItem() {
+        throw new NotImplementedException();
+    }
     public override async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
@@ -100,8 +117,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(this.RequestEditor,
         this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
+
     public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
-      this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
+        this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this._callResponse = response;

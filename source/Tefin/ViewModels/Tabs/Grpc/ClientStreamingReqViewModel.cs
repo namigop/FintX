@@ -29,6 +29,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         : base(methodInfo, generateFullTree, methodParameterInstances) {
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
+        this.AddListItemCommand = this.CreateCommand(this.OnAddListItem);
+        this.RemoveListItemCommand = this.CreateCommand(this.OnRemoveListItem);
+        
         this._callResponse = ClientStreamingCallResponse.Empty();
 
         var args = methodInfo.ReturnType.GetGenericArguments();
@@ -43,6 +46,21 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree,
             this.OnIsShowingClientStreamTreeChanged);
+    }
+
+    private void OnAddListItem() {
+        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        var (_, list) = this._clientStreamEditor.GetList();
+        if (ok) {
+            var add = this._listType.GetMethod("Add");
+            add!.Invoke(list, new[] { reqInstance });
+        }
+        else {
+            this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
+        }
+    }
+    private void OnRemoveListItem() {
+        throw new NotImplementedException();
     }
 
     public ClientStreamingCallResponse CallResponse {
@@ -72,6 +90,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     public ICommand WriteCommand {
         get;
     }
+
+    public ICommand AddListItemCommand { get; }
+    public ICommand RemoveListItemCommand { get; }
 
     public override async Task ExportRequest() {
         var (ok, mParams) = this.GetMethodParameters();

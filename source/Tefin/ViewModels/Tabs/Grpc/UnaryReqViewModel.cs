@@ -24,6 +24,7 @@ public class UnaryReqViewModel : ViewModelBase {
     private bool _showTreeEditor;
 
     private bool _isLoaded = false;
+
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree,
         List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? Array.Empty<object?>();
@@ -104,10 +105,10 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public void Init() {
-        this._methodParameterInstances = this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
+        this._methodParameterInstances =
+            this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
         this._requestEditor.Show(this._methodParameterInstances);
         this._isLoaded = true;
-
     }
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
