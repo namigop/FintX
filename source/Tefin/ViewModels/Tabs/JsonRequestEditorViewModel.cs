@@ -39,12 +39,13 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
                 .Select(prop => prop.GetValue(val))
                 .ToArray();
             var last = mParams.Last();
-            this.CtsReq = null;
+            
             if (last is CancellationToken) {
-                this.CtsReq?.Dispose();
-                this.CtsReq = null;
-                this.CtsReq = new CancellationTokenSource();
-                mParams[mParams.Length - 1] = this.CtsReq.Token;
+                if (CtsReq == null) {
+                    this.CtsReq = new CancellationTokenSource();
+                }
+                //replace the CancellationToken with one that we can cancel
+                mParams[^1] = this.CtsReq.Token;
             }
 
             return (true, mParams);

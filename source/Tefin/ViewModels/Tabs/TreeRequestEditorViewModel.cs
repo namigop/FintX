@@ -63,11 +63,12 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
-        this.CtsReq = null;
+       
         if (last is CancellationToken) {
-            this.CtsReq?.Dispose();
-            this.CtsReq = null;
-            this.CtsReq = new CancellationTokenSource();
+            if (CtsReq == null) {
+                this.CtsReq = new CancellationTokenSource();
+            }
+            //replace the CancellationToken with one that we can cancel
             mParams[^1] = this.CtsReq.Token;
         }
 
