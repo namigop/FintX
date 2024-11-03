@@ -85,7 +85,7 @@ public class ListNode : TypeBaseNode {
 
     public void RemoveItem(IExplorerItem item) {
         var index = this.Items.IndexOf(item);
-        if (index > 0) {
+        if (index >= 0) {
             this.Items.RemoveAt(index);
             int count = 0;
             foreach (var i in Items) {
