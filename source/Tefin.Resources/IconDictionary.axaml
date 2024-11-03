@@ -26,6 +26,7 @@
     <system:String x:Key="Icon.CurlyBrace">Icon.CurlyBrace</system:String>
     <system:String x:Key="Icon.Plus">Icon.Plus</system:String>
     <system:String x:Key="Icon.PlusGray">Icon.PlusGray</system:String>
+    <system:String x:Key="Icon.PlusWhite">Icon.PlusWhite</system:String>
     <system:String x:Key="Icon.FolderWithFile">Icon.FolderWithFile</system:String>
     <system:String x:Key="Icon.FolderOpen">Icon.FolderOpen</system:String>
     <system:String x:Key="Icon.FolderPlus">Icon.FolderPlus</system:String>
@@ -35,6 +36,7 @@
     <system:String x:Key="Icon.Build">Icon.Build</system:String>
     <system:String x:Key="Icon.Config">Icon.Config</system:String>
     <system:String x:Key="Icon.Delete">Icon.Delete</system:String>
+    <system:String x:Key="Icon.Minus">Icon.Minus</system:String>
     <system:String x:Key="Icon.TabClose">Icon.TabClose</system:String>
     <system:String x:Key="Icon.CircledArrow">Icon.CircledArrow</system:String>
 
@@ -292,6 +294,17 @@
             </Viewbox>
         </DataTemplate>
 
+       
+        <DataTemplate x:Key="{StaticResource Icon.Minus}">
+            <Viewbox Stretch="Uniform">
+                <Canvas  Width="24" Height="24">
+                    <Path Fill="#DEDEDE"
+                          Data="M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M7,13H17V11H7" />
+                </Canvas>
+               
+            </Viewbox>
+
+        </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.Delete}">
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
@@ -529,6 +542,17 @@
                         <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent"
                                  Stroke="LightSlateGray" StrokeThickness="1" />
                         <Path Data="M3,7.5h9M7.5,12V3" Stroke="LightSlateGray" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.PlusWhite}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Ellipse Canvas.Left="0" Canvas.Top="0" Width="15" Height="15" Fill="Transparent"
+                                 Stroke="DarkGray" StrokeThickness="1" />
+                        <Path Data="M3,7.5h9M7.5,12V3" Stroke="DarkGray" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

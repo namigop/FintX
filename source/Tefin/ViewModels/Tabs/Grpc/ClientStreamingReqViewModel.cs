@@ -50,14 +50,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     private void OnAddListItem() {
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
-        var (_, list) = this._clientStreamEditor.GetList();
         if (ok) {
-            var add = this._listType.GetMethod("Add");
-            add!.Invoke(list, new[] { reqInstance });
-        }
-        else {
-            this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
-        }
+            this._clientStreamEditor.AddItem(reqInstance);
+        } 
     }
     private void OnRemoveListItem() {
         this._clientStreamEditor.RemoveSelectedItem();

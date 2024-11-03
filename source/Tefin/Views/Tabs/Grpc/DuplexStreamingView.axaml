@@ -74,31 +74,20 @@
                                 Margin="1 0 0 0"
                                 ToolTip.Tip="Finish writing to the request stream"
                                 Background="{StaticResource Bym.Color.Red}"
+                                Opacity="0.8"
                                 IsEnabled="{Binding ReqViewModel.CanWrite}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
                         </Button>
                     </StackPanel>
-                        <Button Classes="MenuButton" Margin="1 2 0 0" Command="{Binding ReqViewModel.AddListItemCommand}">
-                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.PlusGray}" />
-                            <!-- <Viewbox Width="18" Height="18"> -->
-                            <!--     <Path -->
-                            <!--         Width="28" -->
-                            <!--         Height="28" -->
-                            <!--         Data="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" -->
-                            <!--         Fill="LightSlateGray" -->
-                            <!--         Stretch="Uniform" /> -->
-                            <!-- </Viewbox> -->
+                        <Button Classes="MenuButton" Margin="1 6 0 0" 
+                                ToolTip.Tip = "Add an item to the client stream"
+                                Command="{Binding ReqViewModel.AddListItemCommand}">
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.PlusWhite}" />
                         </Button>
-                        <Button Classes="MenuButton" Margin="1 2 0 0"  Command="{Binding ReqViewModel.RemoveListItemCommand}">
-                            <!-- <Viewbox Width="18" Height="18"> -->
-                            <!--     <Path -->
-                            <!--         Width="28" -->
-                            <!--         Height="28" -->
-                            <!--         Data="M19,13H5V11H19V13Z" -->
-                            <!--         Fill="LightSlateGray" -->
-                            <!--         Stretch="Uniform" /> -->
-                            <!-- </Viewbox> -->
-                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Delete}" />
+                        <Button Classes="MenuButton" Margin="1 2 0 0"  
+                                ToolTip.Tip = "Remove the selected item from the client stream"
+                                Command="{Binding ReqViewModel.RemoveListItemCommand}">
+                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Minus}" />
                         </Button>
                         </StackPanel>
                         

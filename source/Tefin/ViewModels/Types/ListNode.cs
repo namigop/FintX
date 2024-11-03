@@ -71,7 +71,7 @@ public class ListNode : TypeBaseNode {
         this.GetMethods().AddMethod!.Invoke(listInstance, new[] { itemInstance });
         var itemType = this.GetItemType();
         var count = GetListSize(listInstance!);
-        var name = $"{this.ItemName}[{count}]";
+        var name = $"{this.ItemName}[{count-1}]";
         var processedTypeNames = new Dictionary<string, int>();
 
         var node = this.CreateListItemNode(name, itemType, processedTypeNames, count, itemInstance, this);
@@ -87,12 +87,18 @@ public class ListNode : TypeBaseNode {
         var index = this.Items.IndexOf(item);
         if (index >= 0) {
             this.Items.RemoveAt(index);
+            dynamic listInstance = this.GetListInstance()!;
+            listInstance?.RemoveAt(index);
             int count = 0;
             foreach (var i in Items) {
                 var name = $"{this.ItemName}[{count}]";
                 i.Title = name;
                 count++;
             }
+            
+            this._listItemsCount = this.Items.Count;
+            this._targetListItemsCount = this.Items.Count;
+            this.RaisePropertyChanged(nameof(this.FormattedValue));
         }
     }
 

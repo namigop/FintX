@@ -76,6 +76,9 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     }
     public void AddItem(object instance) =>
         Dispatcher.UIThread.Post(() => {
+            if (this.StreamItems.Count == 0)
+                return;
+            
             var streamNode = (ResponseStreamNode)this.StreamItems[0];
             streamNode.AddItem(instance);
             if (streamNode.Items.Count == 1) {

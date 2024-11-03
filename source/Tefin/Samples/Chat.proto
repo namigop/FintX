@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package chat.v1;
+
+option csharp_namespace = "Chat.V1";
+
+service ChatService {
+  // Unary RPC
+  // Simple message send and receive acknowledgment
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+
+  // Server Streaming RPC
+  // Client subscribes to receive messages for a specific chat room
+  rpc SubscribeToRoom(SubscribeRequest) returns (stream ChatMessage) {}
+
+  // Client Streaming RPC
+  // Client sends multiple messages and gets a summary response
+  rpc BatchSendMessages(stream ChatMessage) returns (BatchSendResponse) {}
+
+  // Bidirectional Streaming RPC
+  // Real-time chat where both client and server can send messages
+  rpc ChatStream(stream ChatMessage) returns (stream ChatMessage) {}
+}
+
+message SendMessageRequest {
+  string room_id = 1;
+  ChatMessage message = 2;
+}
+
+message SendMessageResponse {
+  string message_id = 1;
+  int64 timestamp = 2;
+  bool success = 3;
+  string error = 4;
+}
+
+message SubscribeRequest {
+  string room_id = 1;
+  optional int64 since_timestamp = 2;
+}
+
+message ChatMessage {
+  string message_id = 1;
+  string room_id = 2;
+  string user_id = 3;
+  string content = 4;
+  int64 timestamp = 5;
+  MessageType type = 6;
+  map<string, string> metadata = 7;
+}
+
+message BatchSendResponse {
+  int32 messages_processed = 1;
+  int32 messages_failed = 2;
+  repeated string failed_message_ids = 3;
+  int64 batch_timestamp = 4;
+}
+
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_TEXT = 1;
+  MESSAGE_TYPE_IMAGE = 2;
+  MESSAGE_TYPE_VIDEO = 3;
+  MESSAGE_TYPE_SYSTEM = 4;
+}
