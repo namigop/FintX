@@ -15,6 +15,7 @@
         <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
                    IsVisible="{Binding !IsEditing}"
                    Background="Transparent"
+                   Foreground="{Binding GitStatusColor}"
                    VerticalAlignment="Center" />
 
         <TextBox Text="{Binding TempTitle}" x:Name="tbEditor" IsVisible="{Binding IsEditing}"

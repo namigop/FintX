@@ -64,8 +64,9 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
             if (item is T foundItem) {
                 if (predicate != null) {
-                    if (predicate.Invoke(item))
+                    if (predicate.Invoke(item)) {
                         return foundItem;
+                    }
                 }
                 else {
                     return foundItem;
@@ -134,7 +135,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
         return found;
     }
-
 
     public abstract void Init();
 }

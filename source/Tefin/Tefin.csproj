@@ -34,19 +34,19 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.5" />
-        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.0.1" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
+        <PackageReference Include="Avalonia" Version="11.2.2" />
+        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.1.0" />
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.1.0" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.2" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.2" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.2" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.5" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.2" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.2" />
         <PackageReference Include="DotNet.Bundle" Version="0.9.13" />
         <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.28.3" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
+        <PackageReference Include="Google.Protobuf" Version="3.29.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
         <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
     </ItemGroup>

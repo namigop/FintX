@@ -40,11 +40,11 @@
 
     <ItemGroup>
         <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1"/>
-        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
-        <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
-        <PackageReference Include="Grpc.Net.Client" Version="2.57.0"/>
-        <PackageReference Include="Grpc.Reflection" Version="2.57.0"/>
-        <PackageReference Include="Grpc.Tools" Version="2.58.0">
+        <PackageReference Include="Google.Protobuf" Version="3.29.1" />
+        <PackageReference Include="Grpc.Core.Api" Version="2.67.0" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
+        <PackageReference Include="Grpc.Reflection" Version="2.67.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.68.1">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

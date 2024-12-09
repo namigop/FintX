@@ -2,6 +2,7 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core.Git;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Messages;
@@ -12,8 +13,9 @@ namespace Tefin.ViewModels.Explorer;
 
 public class FileNode : NodeBase {
     private string _tempTitle = "";
+    private FileGitStatus _gitFileStatus = FileGitStatus.NoRepository;
 
-    public FileNode(string fullPath) {
+    protected FileNode(string fullPath) {
         this.CanOpen = true;
         this.FullPath = fullPath;
         base.Title = Path.GetFileName(fullPath);
@@ -26,8 +28,43 @@ public class FileNode : NodeBase {
         this.OpenMethodInWindowCommand = this.CreateCommand(this.OpenMethodInWindow);
         GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
+
+        this.CheckGitStatus();
     }
 
+    public FileGitStatus GitFileStatus {
+        get => this._gitFileStatus;
+        private set => this.RaiseAndSetIfChanged(ref _gitFileStatus , value, nameof(GitStatusColor));
+    }
+
+    public string GitStatusColor => this.GetGitStatusColor();
+
+    private string GetGitStatusColor() {
+        if (this.GitFileStatus.IsModified) {
+            return GitStatusColors.Modified;
+        }
+        if (this.GitFileStatus.IsRenamed) {
+            return GitStatusColors.Renamed;
+        }
+            
+        if (this.GitFileStatus.IsAdded) {
+            return GitStatusColors.Added;
+        }
+            
+        if (this.GitFileStatus.IsIgnored) {
+            return GitStatusColors.Ignored;
+        }
+            
+        if (this.GitFileStatus.IsUntracked) {
+            return GitStatusColors.Untracked;
+        }
+            
+        return GitStatusColors.Default;
+    }
+
+    public void CheckGitStatus() {
+        this.GitFileStatus = Git.getFileStatus(this.FullPath);
+    }
     private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
         if (this.FullPath.StartsWith(obj.PreviousPath)) {
             this.UpdateFilePath(this.FullPath.Replace(obj.PreviousPath, obj.Path));
@@ -93,7 +130,7 @@ public class FileNode : NodeBase {
 
     public void UpdateFilePath(string newFilePath) {
         if (this.Io.File.Exists(newFilePath)) {
-            Io.Log.Debug($"Updated fileReqNode : {this.FullPath} -> {newFilePath}");
+            this.Io.Log.Debug($"Updated fileReqNode : {this.FullPath} -> {newFilePath}");
             this.FullPath = newFilePath;
             this.Title = Path.GetFileName(newFilePath);
             this.UpdateSubTitle();

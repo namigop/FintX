@@ -112,7 +112,6 @@ public class ClientNode : NodeBase {
         }
     }
 
-
     public void Clear() => this.Items.Clear();
 
     public override void Init() {
@@ -201,7 +200,6 @@ public class ClientNode : NodeBase {
         GlobalHub.publish(new OpenOverlayMessage(vm));
     }
 
-
     private void Update(ProjectTypes.ClientGroup cg) {
         this.Client = cg;
         this.CanOpen = true;
@@ -219,6 +217,5 @@ public class ClientNode : NodeBase {
         //         methodNode.Client = cg;
         //     }
         // }
-        
     }
 }

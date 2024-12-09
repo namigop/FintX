@@ -32,7 +32,7 @@ namespace Tefin.ViewModels.Explorer;
 public class ExplorerViewModel : ViewModelBase {
     private readonly IExplorerNodeSelectionStrategy _nodeSelectionStrategy;
     private CopyPasteArg? _copyPastePending;
-    private ProjectTypes.Project? _project;
+    private Project? _project;
 
     public ExplorerViewModel() {
         this._nodeSelectionStrategy = new FileOnlyStrategy(this);
@@ -70,7 +70,7 @@ public class ExplorerViewModel : ViewModelBase {
 
     public ICommand PasteCommand { get; }
 
-    public ProjectTypes.Project? Project {
+    public Project? Project {
         get => this._project;
         set => this.RaiseAndSetIfChanged(ref this._project, value);
     }
@@ -174,8 +174,7 @@ public class ExplorerViewModel : ViewModelBase {
         });
 
     private void OnFileChanged(FileChangeMessage obj) {
-        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction,
-            Func<IExplorerItem, bool> check) {
+        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction, Func<IExplorerItem, bool> check) {
             lock (this) {
                 var item = items.FirstOrDefault();
                 if (item == null) {
@@ -196,6 +195,7 @@ public class ExplorerViewModel : ViewModelBase {
         void Delete(IExplorerItem item, FileChangeMessage msg) {
             if (item is FileReqNode node && node.FullPath == msg.FullPath) {
                 node.Parent?.Items.Remove(node);
+                node.CheckGitStatus();
             }
         }
 
@@ -208,14 +208,16 @@ public class ExplorerViewModel : ViewModelBase {
             var dir = Path.GetDirectoryName(msg.FullPath);
             var methodPath = ClientStructure.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
-                var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
-                if (existing != null) {
-                    existing.UpdateFilePath(msg.FullPath);
+                var existingFileNode = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
+                if (existingFileNode != null) {
+                    existingFileNode.UpdateFilePath(msg.FullPath);
                 }
                 else {
                     var n = new FileReqNode(msg.FullPath);
                     node.AddItem(n);
                 }
+                
+                existingFileNode.CheckGitStatus();
             }
         }
 

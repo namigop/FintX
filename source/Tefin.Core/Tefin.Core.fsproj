@@ -56,12 +56,14 @@
         <Compile Include="App.fs"/>
         <Compile Include="AutoSave.fs"/>
         <Compile Include="Share.fs" />
+        <Compile Include="Git.fs" />
 
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Google.Protobuf" Version="3.24.4"/>
-        <PackageReference Include="Grpc.Core.Api" Version="2.57.0"/>
+        <PackageReference Include="Google.Protobuf" Version="3.29.1" />
+        <PackageReference Include="Grpc.Core.Api" Version="2.67.0" />
+        <PackageReference Include="LibGit2Sharp" Version="0.31.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.7.0"/>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
