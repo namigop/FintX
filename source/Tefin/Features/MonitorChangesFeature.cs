@@ -19,6 +19,13 @@ public class MonitorChangesFeature(IOs io) {
         _watcher.Renamed += this.OnRenamed;
         _watcher.Deleted += this.OnDeleted;
         _watcher.Created += this.OnCreated;
+        _watcher.Changed += this.OnChanged;
+    }
+
+    private void OnChanged(object sender, FileSystemEventArgs e) {
+        io.Log.Info($"File changed: {e.Name}");
+        var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
+        GlobalHub.publish(msg);
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e) {

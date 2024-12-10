@@ -198,6 +198,14 @@ public class ExplorerViewModel : ViewModelBase {
                 node.CheckGitStatus();
             }
         }
+        
+        void FileChanged(IExplorerItem item, FileChangeMessage msg) {
+            if (item is FileNode node && node.FullPath == msg.FullPath) {
+                node.CheckGitStatus();
+            }
+        }
+
+        
 
         void Rename(IExplorerItem item, FileChangeMessage msg) {
             if (Path.GetExtension(msg.FullPath) != Ext.requestFileExt) {
@@ -211,13 +219,12 @@ public class ExplorerViewModel : ViewModelBase {
                 var existingFileNode = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.OldFullPath);
                 if (existingFileNode != null) {
                     existingFileNode.UpdateFilePath(msg.FullPath);
+                    existingFileNode.CheckGitStatus();
                 }
                 else {
                     var n = new FileReqNode(msg.FullPath);
                     node.AddItem(n);
                 }
-                
-                existingFileNode.CheckGitStatus();
             }
         }
 
@@ -245,7 +252,9 @@ public class ExplorerViewModel : ViewModelBase {
         if (obj.ChangeType == WatcherChangeTypes.Renamed) {
             Traverse(this.Items.ToArray(), obj, Rename, i => i is MethodNode);
         }
-
+        if (obj.ChangeType == WatcherChangeTypes.Changed) {
+            Traverse(this.Items.ToArray(), obj, FileChanged, i => i.Items.Count == 0);
+        }
         if (obj.ChangeType == WatcherChangeTypes.Created) {
             Traverse(this.Items.ToArray(), obj, Create, i => i is MethodNode);
         }

@@ -34,32 +34,53 @@ public class FileNode : NodeBase {
 
     public FileGitStatus GitFileStatus {
         get => this._gitFileStatus;
-        private set => this.RaiseAndSetIfChanged(ref _gitFileStatus , value, nameof(GitStatusColor));
+        private set {
+            this.RaiseAndSetIfChanged(ref _gitFileStatus, value, nameof(IsManagedByGit));
+            this.RaisePropertyChanged(nameof(GitFileIcon));
+        }
     }
 
-    public string GitStatusColor => this.GetGitStatusColor();
+    public bool IsManagedByGit => !this.GitFileStatus.IsNoRepository;
+    public string GitFileIcon => this.GetGitFileIcon();
 
-    private string GetGitStatusColor() {
+    private string GetGitFileIcon() {
         if (this.GitFileStatus.IsModified) {
-            return GitStatusColors.Modified;
+            return "Icon.GitCheckSmall";
         }
-        if (this.GitFileStatus.IsRenamed) {
-            return GitStatusColors.Renamed;
-        }
-            
-        if (this.GitFileStatus.IsAdded) {
-            return GitStatusColors.Added;
+        
+        if (this.GitFileStatus.IsRenamed || this.GitFileStatus.IsAdded) {
+            return "Icon.GitPlusSmall";
         }
             
-        if (this.GitFileStatus.IsIgnored) {
-            return GitStatusColors.Ignored;
+        if (this.GitFileStatus.IsNoRepository) {
+            return "Icon.GitEmptySmall";
         }
-            
-        if (this.GitFileStatus.IsUntracked) {
-            return GitStatusColors.Untracked;
+        if (this.GitFileStatus.IsIgnored || this.GitFileStatus.IsUntracked) {
+            return "Icon.GitQuestionSmall";
         }
-            
-        return GitStatusColors.Default;
+        
+        return "Icon.GitLockSmall";
+        
+        // if (this.GitFileStatus.IsModified) {
+        //     return GitStatusColors.Modified;
+        // }
+        // if (this.GitFileStatus.IsRenamed) {
+        //     return GitStatusColors.Renamed;
+        // }
+        //     
+        // if (this.GitFileStatus.IsAdded) {
+        //     return GitStatusColors.Added;
+        // }
+        //     
+        // if (this.GitFileStatus.IsIgnored) {
+        //     return GitStatusColors.Ignored;
+        // }
+        //     
+        // if (this.GitFileStatus.IsUntracked) {
+        //     return GitStatusColors.Untracked;
+        // }
+        //     
+        // return GitStatusColors.Default;
     }
 
     public void CheckGitStatus() {

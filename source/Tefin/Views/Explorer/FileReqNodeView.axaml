@@ -8,14 +8,17 @@
              x:DataType="explorer:FileReqNode"
              x:Class="Tefin.Views.Explorer.FileReqNodeView">
     <StackPanel Orientation="Horizontal">
-        <Border>
-            <controls:IconControl Icon="{StaticResource Icon.Grpc2}" Height="12" Width="16" />
-        </Border>
+        <StackPanel Orientation="Horizontal">
+            <controls:IconControl IsVisible="{Binding IsManagedByGit}" Icon="{Binding GitFileIcon}" Height="12" Width="16" />
+            <Border>
+                <controls:IconControl Icon="{StaticResource Icon.Grpc2}" Height="12" Width="16" />
+            </Border>
+        </StackPanel>
 
         <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
                    IsVisible="{Binding !IsEditing}"
                    Background="Transparent"
-                   Foreground="{Binding GitStatusColor}"
+                   
                    VerticalAlignment="Center" />
 
         <TextBox Text="{Binding TempTitle}" x:Name="tbEditor" IsVisible="{Binding IsEditing}"
