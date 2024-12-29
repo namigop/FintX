@@ -35,7 +35,12 @@ module ClientCompiler =
                       AdditionalReferences = grpcDlls |> Array.map (fun f -> MetadataReference.CreateFromFile f) }
 
                   let! output = ClientCompiler.compile io cIn
-                  return Ret.Ok output })
+                  if (output.Success) then
+                    return Res.ok output
+                  else
+                    let err = String.Join("\n" , output.CompilationErrors)
+                    return Res.failed (Exception(err))
+              })
 
                   //if output.Success then
                   //  return output
