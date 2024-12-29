@@ -63,7 +63,7 @@ module ServiceClient =
             Config = GrpcPackage.grpcConfigValues }
 
       let locations = grpcParams.ProtoFiles
-      let address = grpcParams.ReflectionServiceUrl
+      let address = grpcParams.ReflectionServiceUrl.Trim()
 
       if (locations.Length = 0) then
         let dp: ServerDiscoverParameters =

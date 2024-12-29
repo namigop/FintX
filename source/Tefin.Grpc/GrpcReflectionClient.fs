@@ -104,6 +104,9 @@ module GrpcReflectionClient =
       if field.IsRepeated then
         do! writer.WriteAsync("repeated ")
 
+      if field.HasPresence then
+        do! writer.WriteAsync("optional ")
+        
       match field.FieldType with
       | FieldType.Enum -> do! writer.WriteAsync(field.EnumType.FullName)
       | FieldType.Message -> do! writer.WriteAsync(field.MessageType.FullName)
@@ -115,12 +118,15 @@ module GrpcReflectionClient =
 
   let private writeOneOfDescriptor (oneof: OneofDescriptor) (writer: ITextWriter) (indentation: string) =
     task {
-      do! writer.WriteLineAsync($"{indentation}oneof {oneof.Name} {{")
+      if oneof.Fields.Count = 1 then
+        do! writeFieldDescriptor oneof.Fields[0] writer (indentation + Indent)
+      else  
+        do! writer.WriteLineAsync($"{indentation}oneof {oneof.Name} {{")
+        
+        for field in oneof.Fields do
+          do! writeFieldDescriptor field writer (indentation + Indent)
 
-      for field in oneof.Fields do
-        do! writeFieldDescriptor field writer (indentation + Indent)
-
-      do! writer.WriteLineAsync($"{indentation}}}")
+        do! writer.WriteLineAsync($"{indentation}}}")
     }
 
   let writeEnumDescriptor (enumDescriptor: EnumDescriptor) (writer: ITextWriter) (indentation: string) =
