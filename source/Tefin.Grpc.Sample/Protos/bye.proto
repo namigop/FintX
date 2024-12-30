@@ -1,0 +1,15 @@
+syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+ 
+
+// The request message containing the user's name.
+message ByeRequest {
+  string name = 1;
+
+}
+
+// The response message containing the greetings.
+message ByeReply {
+  string message = 1;
+  google.protobuf.Timestamp receivedAt = 2;
+}

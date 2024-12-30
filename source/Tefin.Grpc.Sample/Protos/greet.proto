@@ -1,5 +1,11 @@
 syntax = "proto3";
 
+import "Protos/bye.proto";
+import "Protos/wassup.proto";
+
+//import "bye.proto";
+//import "wassup.proto";
+
 option csharp_namespace = "Tefin.Grpc.Sample";
 
 package greet;
@@ -8,7 +14,10 @@ package greet;
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc SayBye (ByeRequest) returns (ByeReply);
+  rpc SayWassup (WassupRequest) returns (WassupReply);
   rpc SayEnum (EnumRequest) returns (EnumResponse);
+  rpc Duplex (stream ByeRequest) returns (stream EnumResponse);
 }
 
 // The request message containing the user's name.

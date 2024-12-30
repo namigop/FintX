@@ -1,13 +1,31 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
-        <Protobuf Include="Protos\greet.proto" GrpcServices="Server"/>
+        <Protobuf Include="Protos\bye.proto">
+            <GrpcServices>Server</GrpcServices>
+            <Access>Public</Access>
+            <ProtoCompile>True</ProtoCompile>
+            <CompileOutputs>True</CompileOutputs>
+            <OutputDir>obj\Debug\net8.0\</OutputDir>
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+        <Protobuf Include="Protos\wassup.proto">
+            <GrpcServices>Server</GrpcServices>
+            <Access>Public</Access>
+            <ProtoCompile>True</ProtoCompile>
+            <CompileOutputs>True</CompileOutputs>
+            <OutputDir>obj\Debug\net8.0\</OutputDir>
+            <Generator>MSBuild:Compile</Generator>
+        </Protobuf>
+        <None Remove="Protos\Northwind.proto" />
+        <Protobuf Include="Protos\Northwind.proto" GrpcServices="Server" />
     </ItemGroup>
 
     <ItemGroup>

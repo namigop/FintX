@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+//option csharp_namespace = "Tefin.Grpc.Sample";
+
+// The request message containing the user's name.
+message WassupRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message WassupReply {
+  string message = 1;
+}

@@ -1,0 +1,130 @@
+﻿syntax = "proto3";
+import "google/protobuf/timestamp.proto";
+
+package northwind;
+
+option go_package = "northwind/proto";
+
+// Main service definition for Northwind operations
+service NorthwindService {
+  // GetOrderById retrieves a single order by its ID
+  rpc GetOrderById(OrderRequest) returns (Order) {}
+
+  // GetOrdersByCustomer streams all orders for a given customer
+  rpc GetOrdersByCustomer(CustomerRequest) returns (stream Order) {}
+
+  // GetCustomers retrieves all customers
+  rpc GetCustomers(CustomersRequest) returns (CustomersResponse) {}
+
+  // UpdateOrderStatus allows bidirectional streaming of order status updates
+  rpc UpdateOrderStatus(stream OrderStatusUpdate) returns (stream OrderStatusResponse) {}
+
+  // AddOrderDetails allows streaming multiple order details for batch processing
+  rpc AddOrderDetails(stream OrderDetail) returns (OrderDetailsResponse) {}
+
+  // SubmitOrder creates a new order with all its details
+  rpc SubmitOrder(SubmitOrderRequest) returns (SubmitOrderResponse) {}
+}
+
+// Request/Response messages
+message OrderRequest {
+  int32 order_id = 1;
+}
+
+message CustomerRequest {
+  int32 customer_id = 1;
+}
+
+message CustomersRequest {
+  optional int32 page_size = 1;
+  optional int32 page_number = 2;
+}
+
+message CustomersResponse {
+  repeated Customer customers = 1;
+  int32 total_count = 2;
+}
+
+message OrderDetailsResponse {
+  bool success = 1;
+  int32 processed_count = 2;
+  repeated string errors = 3;
+}
+
+message OrderStatusUpdate {
+  int32 order_id = 1;
+  string status = 2;
+  string updated_by = 3;
+  string notes = 4;
+}
+
+message OrderStatusResponse {
+  int32 order_id = 1;
+  bool success = 2;
+  string message = 3;
+  string timestamp = 4;
+}
+
+message SubmitOrderRequest {
+  int32 customer_id = 1;
+  int32 employee_id = 2;
+  google.protobuf.Timestamp  required_date = 3;
+  int32 ship_via = 4;
+  double freight = 5;
+  string ship_name = 6;
+  string ship_address = 7;
+  string ship_city = 8;
+  string ship_region = 9;
+  string ship_postal_code = 10;
+  string ship_country = 11;
+  repeated OrderDetail order_details = 12;
+}
+
+message SubmitOrderResponse {
+  bool success = 1;
+  string message = 2;
+  int32 order_id = 3;
+  Order created_order = 4;
+}
+
+// Entity messages
+message Order {
+  int32 order_id = 1;
+  int32 customer_id = 2;
+  int32 employee_id = 3;
+  google.protobuf.Timestamp  order_date = 4;
+  google.protobuf.Timestamp  required_date = 5;
+  google.protobuf.Timestamp  shipped_date = 6;
+  int32 ship_via = 7;
+  double freight = 8;
+  string ship_name = 9;
+  string ship_address = 10;
+  string ship_city = 11;
+  string ship_region = 12;
+  string ship_postal_code = 13;
+  string ship_country = 14;
+  string status = 15;
+  repeated OrderDetail order_details = 16;
+}
+
+message OrderDetail {
+  int32 order_id = 1;
+  int32 product_id = 2;
+  double unit_price = 3;
+  int32 quantity = 4;
+  double discount = 5;
+}
+
+message Customer {
+  int32 customer_id = 1;
+  string company_name = 2;
+  string contact_name = 3;
+  string contact_title = 4;
+  string address = 5;
+  string city = 6;
+  string region = 7;
+  string postal_code = 8;
+  string country = 9;
+  string phone = 10;
+  string fax = 11;
+}
