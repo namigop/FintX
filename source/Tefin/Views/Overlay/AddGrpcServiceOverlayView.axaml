@@ -66,7 +66,13 @@
             </Grid>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 15 0 0">
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
-                    <TextBlock Text="Okay" HorizontalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal">
+                        <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
+                                              Width="16" Height="16" Margin="0 0 2 0"
+                                              ></controls:IconControl>
+                        <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </StackPanel>
+                    
                 </Button>
                 <Button Margin="6 0 0 0" Command="{Binding CancelCommand}">
                     <TextBlock Text="Cancel" HorizontalAlignment="Center" />
