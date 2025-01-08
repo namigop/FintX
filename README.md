@@ -5,6 +5,15 @@ Extremely honored to have FintX featured in the Avalonia App Showcase https://av
 
 <img src="https://github.com/namigop/FintX/blob/main/docs/ServerStreaming.png" style="width: 80%; height: 80%" />
 
+## Looking for Advanced Features?
+If you need to do
+- Performance/Load Testing with real-time results
+- Functional Testing (Test cases with req / resp comparison)
+- Funcitonal Test Collections
+- and more..
+
+Check out [https://fintx.dev](https://fintx.dev)
+
 ## Installation
 1. Windows : `winget install FintX`
 2. MacOS   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide)
