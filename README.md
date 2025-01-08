@@ -12,7 +12,7 @@ If you need to do
 - Funcitonal Test Collections
 - and more..
 
-Check out [https://fintx.dev](https://fintx.dev)
+Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
 
 ## Installation
 1. Windows : `winget install FintX`
