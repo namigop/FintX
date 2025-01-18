@@ -64,10 +64,66 @@
     <system:String x:Key="Icon.GitPlusSmall">Icon.GitPlusSmall</system:String>
     <system:String x:Key="Icon.GitEmptySmall">Icon.GitEmptySmall</system:String>
     <system:String x:Key="Icon.GitQuestionSmall">Icon.GitQuestionSmall</system:String>
-
-    
+    <system:String x:Key="Icon.Info32">Icon.Info32</system:String>
+    <system:String x:Key="Icon.Error32">Icon.Error32</system:String>
+    <system:String x:Key="Icon.Warn32">Icon.Warn32</system:String>
+    <system:String x:Key="Icon.Question32">Icon.Question32</system:String>
     
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.Question32}">
+
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Ellipse Canvas.Left="1" Canvas.Top="1" Width="29" Height="29" Fill="Transparent"
+                                 Stroke="#20A0E0"
+                                 StrokeThickness="1.2" />
+                        <Path
+                            Data="M10.07,9.55c0.818,-1.736,2.554,-3.05,5.208,-3.05c3.769,0,5.853,2.455,5.803,5.158c-0.05,2.653,-1.711,3.596,-3.199,4.389c-1.265,0.67,-2.407,1.215,-2.382,2.752v2.2"
+                            Fill="Transparent" Stroke="#20A0E0" StrokeThickness="1.2" />
+                        <Rectangle Canvas.Left="14.5" Canvas.Top="23" Width="2" Height="2" Fill="#20A0E0" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Warn32}">
+
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M16,3.5l14.15,26h-28.3L16,3.5z" Fill="#BA9B04" Stroke="#FBD28A" StrokeThickness="1" />
+                        <Path Data="M16,12v10M16,24v2" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="2" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Error32}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Ellipse Canvas.Left="1" Canvas.Top="1" Width="29" Height="29" Fill="Transparent"
+                                 Stroke="#F73737" />
+                        <Path Data="M15.5,7v13M15.5,22v2" Stroke="#F73737" StrokeThickness="2" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Info32}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Ellipse Canvas.Left="1" Canvas.Top="1" Width="29" Height="29" Fill="Transparent"
+                                 Stroke="#20A0E0"
+                                 StrokeThickness="1.2" />
+                        <Path Data="M15.5,11v13M15.5,7v2" Fill="#4E4E4E" Stroke="#20A0E0" StrokeThickness="2" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
 
         <DataTemplate x:Key="{StaticResource Icon.GitQuestionSmall}">
             <Viewbox Height="12" Width="12"  Stretch="Uniform">

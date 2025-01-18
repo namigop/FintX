@@ -15,7 +15,7 @@ namespace Tefin.ViewModels;
 public class ViewModelBase : ReactiveObject, IDisposable {
     private readonly List<IDisposable> _disposables = new();
     private bool _isBusy;
-
+    public static ICommand EmptyCommand { get; } = ReactiveCommand.Create(() => { });
     public IOs Io { get; } = Resolver.value;
 
     public bool IsBusy {

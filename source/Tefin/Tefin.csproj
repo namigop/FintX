@@ -63,14 +63,6 @@
             <DependentUpon>FooterView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\MainMenu\TestMenuItemView.axaml.cs">
-            <DependentUpon>TestMenuItemView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="Views\MainMenu\PerfTestMenuItemView.axaml.cs">
-            <DependentUpon>PerfTestMenuItemView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\Types\DefaultNodeEditView.axaml.cs">
             <DependentUpon>DefaultNodeEditView.axaml</DependentUpon>
         </Compile>
@@ -322,10 +314,6 @@
             <DependentUpon>ExceptionNodeView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Explorer\MethodNodeActionView.axaml.cs">
-            <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\MainMenu\InfoMenuItemView.axaml.cs">
             <DependentUpon>InfoMenuItemView.axaml</DependentUpon>
             <SubType>Code</SubType>
@@ -361,6 +349,10 @@
         <None Update="Resources\fire.icns">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <Compile Remove="ViewModels\Explorer\MethodNode.cs" />
+        <None Include="ViewModels\Explorer\MethodNode.cs" />
+        <AvaloniaXaml Remove="Views\Explorer\ExplorerView.axaml" />
+        <None Include="Views\Explorer\ExplorerView.axaml" />
     </ItemGroup>
 
 

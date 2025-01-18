@@ -4,6 +4,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.Views.Explorer;
 
@@ -16,7 +17,7 @@ public partial class ClientNodeContext : UserControl {
     }
 
     private void DeleteButtonClick(object? sender, RoutedEventArgs e) {
-        var vm = (ClientNode)this.DataContext!;
+        var vm = (ClientRootNode)this.DataContext!;
         vm.DeleteCommand.Execute(Unit.Default);
 
         var fly = this.btnDelete.Flyout;

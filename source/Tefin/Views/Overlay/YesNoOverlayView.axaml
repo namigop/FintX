@@ -1,0 +1,31 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:overlay="clr-namespace:Tefin.ViewModels.Overlay"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="150"
+             x:DataType="overlay:YesNoOverlayViewModel"
+             x:Class="Tefin.Views.Overlay.YesNoOverlayView">
+    <Border BorderBrush="{StaticResource Bym.Color.Gray}" BorderThickness="0 1 0 0" CornerRadius="2">
+        <Grid ColumnDefinitions="Auto, *" MinWidth="500" MinHeight="150">
+            <Grid Grid.Column="0">
+                <controls:IconControl Icon="{Binding DialogIcon}"
+                                      Width="48" Height="48"
+                                      VerticalAlignment="Center" Margin="8" />
+            </Grid>
+            <Grid Grid.Column="1" Grid.RowDefinitions="*, Auto">
+                <TextBlock Text="{Binding Message}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                           TextWrapping="Wrap" />
+                <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Right">
+                    <Button Command="{Binding YesCommand}" MinWidth="80">
+                        <TextBlock Text="Yes" HorizontalAlignment="Center" />
+                    </Button>
+                    <Button Command="{Binding NoCommand}" Margin="8 0 8 0" MinWidth="80">
+                        <TextBlock Text="No" HorizontalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

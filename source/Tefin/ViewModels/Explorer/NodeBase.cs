@@ -9,6 +9,7 @@ using ReactiveUI;
 namespace Tefin.ViewModels.Explorer;
 
 public abstract class NodeBase : ViewModelBase, IExplorerItem {
+    private bool _isCut;
     private bool _isEditing;
     private bool _isExpanded;
     private bool _isSelected;
@@ -18,6 +19,11 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     public virtual bool IsEditing {
         get => this._isEditing;
         set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
+    }
+
+    public virtual bool IsCut {
+        get => this._isCut;
+        set => this.RaiseAndSetIfChanged(ref this._isCut, value);
     }
 
     public bool CanOpen {
@@ -56,7 +62,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public IExplorerItem? FindSelected() => this.FindChildNode(i => i.IsSelected);
 
-    public T? FindParentNode<T>(Func<IExplorerItem, bool>? predicate = null) where T : IExplorerItem {
+    public T? FindParentNode<T>(Func<T, bool>? predicate = null) where T : IExplorerItem {
         T? Find(IExplorerItem? item) {
             if (item == null) {
                 return default;
@@ -64,7 +70,7 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
             if (item is T foundItem) {
                 if (predicate != null) {
-                    if (predicate.Invoke(item)) {
+                    if (predicate.Invoke(foundItem)) {
                         return foundItem;
                     }
                 }
@@ -77,19 +83,6 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         }
 
         return Find(this);
-    }
-
-    public void AddItem(IExplorerItem child) {
-        this.Items.Add(child);
-        child.Parent = this;
-    }
-
-    public override void Dispose() {
-        base.Dispose();
-        foreach (var explorerItem in this.Items) {
-            var n = (NodeBase)explorerItem;
-            n.Dispose();
-        }
     }
 
     public IExplorerItem? FindChildNode(Func<IExplorerItem, bool> predicate) {
@@ -128,12 +121,36 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             return foundItems;
         }
 
-        var found = Find(this.Items, new List<IExplorerItem>());
+        var found = Find(this.Items, []);
         if (predicate(this)) {
             found.Add(this);
         }
 
         return found;
+    }
+
+    public void AddItem(IExplorerItem child) {
+        this.Items.Add(child);
+        child.Parent = this;
+    }
+
+    public void Clear() {
+        foreach (var item in this.Items.ToArray()) {
+            this.RemoveItem((NodeBase)item);
+        }
+    }
+
+    public void RemoveItem(NodeBase item) {
+        this.Items.Remove(item);
+        item.Dispose();
+    }
+
+    public override void Dispose() {
+        base.Dispose();
+        foreach (var explorerItem in this.Items) {
+            var n = (NodeBase)explorerItem;
+            n.Dispose();
+        }
     }
 
     public abstract void Init();

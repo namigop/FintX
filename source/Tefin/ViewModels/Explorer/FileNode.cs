@@ -12,8 +12,8 @@ using Tefin.ViewModels.Tabs;
 namespace Tefin.ViewModels.Explorer;
 
 public class FileNode : NodeBase {
-    private string _tempTitle = "";
     private FileGitStatus _gitFileStatus = FileGitStatus.NoRepository;
+    private string _tempTitle = "";
 
     protected FileNode(string fullPath) {
         this.CanOpen = true;
@@ -35,32 +35,46 @@ public class FileNode : NodeBase {
     public FileGitStatus GitFileStatus {
         get => this._gitFileStatus;
         private set {
-            this.RaiseAndSetIfChanged(ref _gitFileStatus, value, nameof(IsManagedByGit));
-            this.RaisePropertyChanged(nameof(GitFileIcon));
+            this.RaiseAndSetIfChanged(ref this._gitFileStatus, value, nameof(this.IsManagedByGit));
+            this.RaisePropertyChanged(nameof(this.GitFileIcon));
         }
     }
 
     public bool IsManagedByGit => !this.GitFileStatus.IsNoRepository;
     public string GitFileIcon => this.GetGitFileIcon();
 
+    public ICommand OpenMethodInWindowCommand { get; }
+
+    public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
+    public ICommand DeleteCommand { get; }
+    public string FullPath { get; private set; }
+    public ICommand OpenCommand { get; }
+    public ICommand RenameCommand { get; }
+
+    public string TempTitle {
+        get => this._tempTitle;
+        set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
+    }
+
     private string GetGitFileIcon() {
         if (this.GitFileStatus.IsModified) {
             return "Icon.GitCheckSmall";
         }
-        
+
         if (this.GitFileStatus.IsRenamed || this.GitFileStatus.IsAdded) {
             return "Icon.GitPlusSmall";
         }
-            
+
         if (this.GitFileStatus.IsNoRepository) {
             return "Icon.GitEmptySmall";
         }
+
         if (this.GitFileStatus.IsIgnored || this.GitFileStatus.IsUntracked) {
             return "Icon.GitQuestionSmall";
         }
-        
+
         return "Icon.GitLockSmall";
-        
+
         // if (this.GitFileStatus.IsModified) {
         //     return GitStatusColors.Modified;
         // }
@@ -83,26 +97,12 @@ public class FileNode : NodeBase {
         // return GitStatusColors.Default;
     }
 
-    public void CheckGitStatus() {
-        this.GitFileStatus = Git.getFileStatus(this.FullPath);
-    }
+    public void CheckGitStatus() => this.GitFileStatus = Git.getFileStatus(this.FullPath);
+
     private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
         if (this.FullPath.StartsWith(obj.PreviousPath)) {
             this.UpdateFilePath(this.FullPath.Replace(obj.PreviousPath, obj.Path));
         }
-    }
-
-    public ICommand OpenMethodInWindowCommand { get; }
-
-    public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
-    public ICommand DeleteCommand { get; }
-    public string FullPath { get; private set; }
-    public ICommand OpenCommand { get; }
-    public ICommand RenameCommand { get; }
-
-    public string TempTitle {
-        get => this._tempTitle;
-        set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
     }
 
     private void OpenMethodInWindow() {

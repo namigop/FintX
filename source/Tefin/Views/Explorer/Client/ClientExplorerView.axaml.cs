@@ -8,14 +8,15 @@ using Avalonia.VisualTree;
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Tabs;
 
 #endregion
 
-namespace Tefin.Views.Explorer;
+namespace Tefin.Views.Explorer.Client;
 
-public partial class ExplorerView : UserControl {
-    public ExplorerView() {
+public partial class ClientExplorerView : UserControl {
+    public ClientExplorerView() {
         this.InitializeComponent();
         this.TreeDg.DoubleTapped += this.OnDoubleTapped;
         //this.TreeDg.Tapped += this.TreeDgOnTapped;
@@ -28,7 +29,7 @@ public partial class ExplorerView : UserControl {
             var context = row.DataContext;
             var item = (IExplorerItem)context!;
             if (item.CanOpen) {
-                var vm = this.DataContext as ExplorerViewModel;
+                var vm = this.DataContext as ClientExplorerViewModel;
                 var tab = TabFactory.From(item, vm!.Io);
                 if (tab != null) {
                     GlobalHub.publish(new OpenTabMessage(tab));

@@ -1,18 +1,20 @@
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 using AvaloniaEdit.Utils;
 
+using Microsoft.FSharp.Core;
+
+using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
-using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.ViewModels.Explorer;
 
-public class MultiNode : NodeBase {
-    private readonly ProjectTypes.ClientGroup _client;
+public abstract class MultiNodeFile : NodeBase {
+    protected readonly ProjectTypes.ClientGroup _client;
 
-    public MultiNode(IExplorerItem[] items) {
-        this._client = items[0].FindParentNode<ClientRootNode>()!.Client;
+    public MultiNodeFile(IExplorerItem[] items, ProjectTypes.ClientGroup client) {
+        this._client = client; //items[0].FindParentNode<ClientRootNode>()!.Client;
         this.Items.AddRange(items);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.ExportCommand = this.CreateCommand(this.OnExport);
@@ -24,6 +26,8 @@ public class MultiNode : NodeBase {
 
     public ICommand DeleteCommand { get; }
 
+    protected abstract FSharpResult<string, Exception> CreateZipShare(IOs io, string zipFile, string[] folders, ProjectTypes.ClientGroup client);
+
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipName = "export.zip";
@@ -32,12 +36,9 @@ public class MultiNode : NodeBase {
             return;
         }
 
-        var files = this.Items
-            .Where(c => c is FileNode)
-            .Select(t => ((FileNode)t).FullPath)
-            .ToArray();
+        var files = this.Items.Where(c => c is FileNode).Select(t => ((FileNode)t).FullPath).ToArray();
 
-        var result = share.ShareRequests(this.Io, zipFile, files, this._client);
+        var result = this.CreateZipShare(this.Io, zipFile, files, this._client);
         if (result.IsOk) {
             this.Io.Log.Info($"Export created: {zipFile}");
         }
@@ -47,9 +48,7 @@ public class MultiNode : NodeBase {
     }
 
     private void OnDelete() {
-        var files = this.Items
-            .Where(c => c is FileNode)
-            .Select(t => ((FileNode)t).FullPath);
+        var files = this.Items.Where(c => c is FileNode).Select(t => ((FileNode)t).FullPath);
 
         foreach (var file in files) {
             this.Io.File.Delete(file);

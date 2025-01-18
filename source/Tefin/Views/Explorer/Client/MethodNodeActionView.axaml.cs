@@ -4,7 +4,7 @@ using Avalonia.Controls;
 
 #endregion
 
-namespace Tefin.Views.Explorer;
+namespace Tefin.Views.Explorer.Client;
 
 public partial class MethodNodeActionView : UserControl {
     public MethodNodeActionView() => this.InitializeComponent();

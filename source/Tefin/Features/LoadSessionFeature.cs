@@ -7,6 +7,7 @@ using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Tabs;
 
 namespace Tefin.Features;

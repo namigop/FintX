@@ -9,6 +9,7 @@ using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Overlay;
 
 #endregion
@@ -16,9 +17,9 @@ using Tefin.ViewModels.Overlay;
 namespace Tefin.ViewModels.MainMenu;
 
 public class ClientSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
-    private readonly ExplorerViewModel _explorerViewModel;
+    private readonly ClientExplorerViewModel _explorerViewModel;
 
-    public ClientSubMenuViewModel(ExplorerViewModel explorerViewModel) {
+    public ClientSubMenuViewModel(ClientExplorerViewModel explorerViewModel) {
         this._explorerViewModel = explorerViewModel;
         this.AddClientCommand = this.CreateCommand(this.OnAddClient);
         this.ImportCommand = this.CreateCommand(this.OnImport);

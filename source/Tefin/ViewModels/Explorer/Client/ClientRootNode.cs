@@ -1,6 +1,4 @@
-#region
-
-using System.Windows.Input;
+﻿using System.Windows.Input;
 
 using Avalonia.Threading;
 
@@ -15,15 +13,11 @@ using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Overlay;
 
-using static Tefin.Core.Interop.MessageProject;
-
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 
-#endregion
+namespace Tefin.ViewModels.Explorer.Client;
 
-namespace Tefin.ViewModels.Explorer;
-
-public class ClientNode : NodeBase {
+public class ClientRootNode : RootNode {
     private string _clientName = "";
     private Type? _clientType;
     private bool _compileInProgress;
@@ -31,7 +25,7 @@ public class ClientNode : NodeBase {
     private bool _sessionLoaded;
     private string _url = "";
 
-    public ClientNode(ProjectTypes.ClientGroup cg, Type? clientType) {
+    public ClientRootNode(ProjectTypes.ClientGroup cg, Type? clientType) : base(cg, clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
         this.ClientType = clientType;
@@ -43,13 +37,13 @@ public class ClientNode : NodeBase {
         this.Update(cg);
 
         this.IsExpanded = true;
-        this.AddItem(new EmptyNode());
+        // this.AddItem(new EmptyNode());
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
         this.ExportCommand = this.CreateCommand(this.OnExport);
-        GlobalHub.subscribe<MsgClientUpdated>(this.OnClientUpdated)
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
     }
 
@@ -152,7 +146,7 @@ public class ClientNode : NodeBase {
     private void OnClientNameChanged() {
     }
 
-    private void OnClientUpdated(MsgClientUpdated obj) {
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
         //update in case the Url and ClientName has been changed
         if (this.ClientPath == obj.Path || this.ClientPath == obj.PreviousPath) {
             var cg = obj.Client;

@@ -3,7 +3,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Input;
-
+using System.Reactive;
 using ReactiveUI;
 
 using Tefin.Core.Infra.Actors;
@@ -19,7 +19,49 @@ using Tefin.ViewModels.Validations;
 //using Tefin.Core.ServiceClient;
 
 namespace Tefin.ViewModels.Overlay;
+public enum DialogType {
+    Info,
+    Question,
+    Warning,
+    Error
+}
+public class DialogViewModel(string title, DialogType dialogType) : ViewModelBase, IOverlayViewModel {
+    public string DialogIcon {
+        get {
+            switch (dialogType) {
+                case DialogType.Error: return "Icon.Error32";
+                case DialogType.Question: return "Icon.Question32";
+                case DialogType.Warning: return "Icon.Warn32";
+                default: return "Icon.Info32";
+            }
+        }
+    }
 
+    public string Title { get; } = title;
+
+    public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
+}
+public class YesNoOverlayViewModel : DialogViewModel {
+    public YesNoOverlayViewModel(string title, string message, ICommand yesCommand, ICommand noCommand) : base(title, DialogType.Question) {
+        this.Message = message;
+
+        this.YesCommand = this.CreateCommand(() => {
+            yesCommand.Execute(Unit.Default);
+            this.Close();
+        });
+
+        this.NoCommand = this.CreateCommand(() => {
+            noCommand.Execute(Unit.Default);
+            this.Close();
+        });
+    }
+
+    public string Message { get; }
+
+    public ICommand YesCommand { get; }
+
+    public ICommand NoCommand { get; }
+}
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;

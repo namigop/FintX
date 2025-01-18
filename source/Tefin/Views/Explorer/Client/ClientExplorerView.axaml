@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
+             xmlns:client="clr-namespace:Tefin.ViewModels.Explorer.Client"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="explorer:ExplorerViewModel"
-             x:Class="Tefin.Views.Explorer.ExplorerView">
+             x:DataType="client:ClientExplorerViewModel"
+             x:Class="Tefin.Views.Explorer.Client.ClientExplorerView">
     <!-- <UserControl.DataTemplates> -->
     <!--     <viewModels:NodeViewLocator /> -->
     <!-- </UserControl.DataTemplates> -->
@@ -20,6 +21,7 @@
                     <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteCommand}" />
                     <KeyBinding Gesture="Cmd+V" Command="{Binding PasteCommand}" />
                     <KeyBinding Gesture="F2" Command="{Binding EditCommand}" />
+                    <KeyBinding Gesture="Delete" Command="{Binding DeleteCommand}" />
                 </TreeDataGrid.KeyBindings>
                 <TreeDataGrid.Resources>
                     <viewModels:NodeViewLocator x:Key="NodeViewLocator" />
@@ -30,12 +32,6 @@
                                         ContentTemplate="{StaticResource NodeViewLocator}" />
                     </DataTemplate>
                     <DataTemplate x:Key="CellActionTemplate" x:DataType="explorer:IExplorerItem">
-                        <!-- <TransitioningContentControl Content="{Binding}" Margin="4 0 0 0"  -->
-                        <!--                              ContentTemplate="{StaticResource NodeActionViewLocator}"> -->
-                        <!--     <TransitioningContentControl.PageTransition> -->
-                        <!--         <PageSlide Orientation="Horizontal" Duration="0:00:00.500" /> -->
-                        <!--     </TransitioningContentControl.PageTransition> -->
-                        <!-- </TransitioningContentControl> -->
                         <ContentControl Content="{Binding}" Margin="4 0 0 0"
                                         ContentTemplate="{StaticResource NodeActionViewLocator}" />
                     </DataTemplate>

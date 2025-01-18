@@ -52,6 +52,9 @@ public class MainWindowViewModel : ViewModelBase {
 
         //var package = this.Root.Packages.First(t => t.Name == packageName);
         this.MainMenu.ClientMenuItem.Init(project);
+        this.MainMenu.ServerMenuItem.Init();
+        this.MainMenu.ConfigMenuItem.Init();
+        this.MainMenu.InfoMenuItem.Init();
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
 
         var hasClients = this.MainMenu.ClientMenuItem.Project.Clients.Any();

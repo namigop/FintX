@@ -5,6 +5,7 @@ using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 
 #endregion
 

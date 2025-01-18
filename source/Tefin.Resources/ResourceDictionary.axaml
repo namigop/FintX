@@ -15,7 +15,7 @@
     <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor" Color="White" />
     <SolidColorBrush x:Key="Bym.Color.Red" Color="#A84E4B" />
     <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor" Color="#101217" />
-
+    <SolidColorBrush x:Key="Bym.Color.Gray" Color="DimGray"></SolidColorBrush>
 
     <SolidColorBrush x:Key="Bym.Color.TextAreaSelectionBrush" Color="{StaticResource Color.TextAreaSelectionBrush}" />
 

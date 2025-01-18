@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer.Client"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
              xmlns:utils="clr-namespace:Tefin.Utils"
+             xmlns:client="clr-namespace:Tefin.ViewModels.Explorer.Client"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:DataType="explorer:ClientRootNode"
-             x:Class="Tefin.Views.Explorer.ClientNodeContext">
+             x:DataType="client:ClientRootNode"
+             x:Class="Tefin.Views.Explorer.Client.ClientRootNodeContext">
     <StackPanel>
         <StackPanel.Styles>
             <Style Selector="Button > StackPanel > TextBlock">

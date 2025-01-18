@@ -9,8 +9,13 @@
         <entry key="Tefin.Resources/ResourceDictionary.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/App.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ChildWindow.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Client/ClientExplorerView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Client/ClientRootNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Client/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ClientNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/EmptyNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ExplorerView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/FileReqNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/FileReqNodeContext.axaml" value="Tefin/Tefin.csproj" />
@@ -22,8 +27,10 @@
         <entry key="Tefin/Views/Footer/FooterView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientSubMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ConfigMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/InfoMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/MainMenuView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/PerfTestMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/SelectedMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ServerMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainWindow.axaml" value="Tefin/Tefin.csproj" />
@@ -32,6 +39,7 @@
         <entry key="Tefin/Views/Overlay/AddGrpcServiceOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/AddNewProjectOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/GrpcClientConfigView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Overlay/YesNoOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ProjectEnv/ProjectMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/FileReqTabView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/ClientStreamingReqView.axaml" value="Tefin/Tefin.csproj" />

@@ -3,6 +3,7 @@
 using System.Reactive;
 
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 
 using static Tefin.Core.Interop.ProjectTypes;
 
@@ -16,11 +17,11 @@ namespace Tefin.ViewModels.MainMenu;
 
 public class ClientMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel {
     public ClientMenuItemViewModel(MainMenuViewModel main) : base(main) {
-        this.Explorer = new ExplorerViewModel();
+        this.Explorer = new ClientExplorerViewModel();
         this.SubMenus = new ClientSubMenuViewModel(this.Explorer);
     }
 
-    public ExplorerViewModel Explorer {
+    public ClientExplorerViewModel Explorer {
         get;
     }
 

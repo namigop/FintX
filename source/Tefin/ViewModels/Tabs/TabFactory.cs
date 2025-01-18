@@ -2,6 +2,7 @@
 
 using Tefin.Core;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Client;
 
 #endregion
 
