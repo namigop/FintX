@@ -5,10 +5,13 @@ using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 
-namespace Tefin.ViewModels.Explorer;
+using Tefin.Core.Interop;
 
-public class ConfigExplorerViewModel : ViewModelBase {
+namespace Tefin.ViewModels.Explorer.Config;
+
+public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
     public ConfigExplorerViewModel() {
+        this.SupportedExtensions = [".fxv"];
         //this._nodeSelectionStrategy = new FileOnlyStrategy(this);
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
@@ -42,6 +45,7 @@ public class ConfigExplorerViewModel : ViewModelBase {
     private ObservableCollection<IExplorerItem> Items { get; } = new();
 
     public IExplorerItem? SelectedItem { get; set; }
+    protected override string[] SupportedExtensions { get; }
 
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) =>
         this.Exec(() => {
@@ -50,15 +54,27 @@ public class ConfigExplorerViewModel : ViewModelBase {
             }
         });
 
+    protected override MultiNodeFile CreateMultiNodeFile(IExplorerItem[] items, ProjectTypes.ClientGroup client) {
+        throw new NotImplementedException();
+    }
+
+    protected override NodeBase CreateMultiNodeFolder(IExplorerItem[] items, ProjectTypes.ClientGroup client) {
+        throw new NotImplementedException();
+    }
+
+    protected override string GetRootFilePath(string clientPath) => throw new NotImplementedException();
+
     private void OnPaste() { }
     private void OnCopy() { }
+    protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) => throw new NotImplementedException();
+
     private void OnEdit() { }
 
     public void Init() {
-        var envGroup = new EnvGroupNode { Title = "Environments", SubTitle = "All environments" };
+        var envGroup = new ConfigGroupNode { Title = "Environments", SubTitle = "All environments" };
         var devEnv = new EnvNode { Title = "DEV", SubTitle = "Development environments" };
-        var uatEnv = new EnvNode { Title = "DEV", SubTitle = "Development environments" };
-        var prodEnv = new EnvNode { Title = "DEV", SubTitle = "Development environments" };
+        var uatEnv = new EnvNode { Title = "UAT", SubTitle = "Development environments" };
+        var prodEnv = new EnvNode { Title = "PROD", SubTitle = "Development environments" };
         envGroup.AddItem(devEnv);
         envGroup.AddItem(uatEnv);
         envGroup.AddItem(prodEnv);

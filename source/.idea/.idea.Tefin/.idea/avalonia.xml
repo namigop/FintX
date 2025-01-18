@@ -15,6 +15,9 @@
         <entry key="Tefin/Views/Explorer/ClientNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeContext.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Config/ConfigExplorerView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Config/ConfigGroupNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Config/EnvNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/EmptyNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ExplorerView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/FileReqNodeActionView.axaml" value="Tefin/Tefin.csproj" />

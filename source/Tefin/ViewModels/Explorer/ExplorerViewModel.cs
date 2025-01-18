@@ -39,12 +39,6 @@ public interface IExplorerItem {
     List<IExplorerItem> FindChildNodes(Func<IExplorerItem, bool> predicate);
 }
 
-public interface IExplorerTree<T> where T : NodeBase {
-    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; }
-    public T[] GetRootNodes();
-    public void Clear();
-}
-
 public abstract class ExplorerViewModel<TRoot> : ViewModelBase, IExplorerTree<TRoot> where TRoot : RootNode {
     private readonly IExplorerNodeSelectionStrategy _nodeSelectionStrategy;
     private CutCopyPasteArg? _copyPastePending;

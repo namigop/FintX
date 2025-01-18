@@ -3,13 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mainMenu="clr-namespace:Tefin.ViewModels.MainMenu"
-             xmlns:explorer="clr-namespace:Tefin.Views.Explorer"
+             xmlns:explorer="clr-namespace:Tefin.Views.Explorer.Config"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="mainMenu:ConfigMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.ConfigMenuItemView">
     <Border>
         <Grid RowDefinitions="*, Auto">
-            <!-- <explorer:ExplorerView DataContext="{Binding Explorer}" /> -->
+            <explorer:ConfigExplorerView DataContext="{Binding Explorer}" />
         </Grid>
     </Border>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Explorer.Config;
 
 namespace Tefin.ViewModels.MainMenu;
 
