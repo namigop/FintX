@@ -48,6 +48,7 @@
         <Compile Include="CancellationTokenConverter.fs"/>
         <Compile Include="Instance.fs"/>
         <Compile Include="ClientStructure.fs" />
+        <Compile Include="EnvConfig.fs" />
         <Compile Include="ProjectStructure.fs" />
         <Compile Include="ClientCompiler.fs"/>
         <Compile Include="CallPipeline.fs"/>

@@ -3,6 +3,7 @@
 using Tefin.Core;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Explorer.Config;
 
 #endregion
 
@@ -22,7 +23,11 @@ public static class TabFactory {
 
             case MethodNode p4:
                 return new MethodTabViewModel(p4, requestFile);
+            
+            case EnvNode e2:
+                return new EnvEditorTabViewModel(e2);
 
+            
             default:
                 io.Log.Warn($"Unable to open unknown item type: {item.GetType().FullName}");
                 return default;

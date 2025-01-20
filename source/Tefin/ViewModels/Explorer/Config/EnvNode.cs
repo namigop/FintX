@@ -1,5 +1,13 @@
-﻿namespace Tefin.ViewModels.Explorer.Config;
+﻿using System.Windows.Input;
 
-public class EnvNode : NodeBase {
+namespace Tefin.ViewModels.Explorer.Config;
+
+public class EnvNode : FileNode {
+    public EnvNode(string fullPath) : base(fullPath) => this.ExportCommand = this.CreateCommand(this.OnExport);
+
+    public ICommand ExportCommand { get; }
+
+    private Task OnExport() => throw new NotImplementedException();
+
     public override void Init() { }
 }

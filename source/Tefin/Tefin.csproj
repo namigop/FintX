@@ -334,6 +334,18 @@
             <DependentUpon>FileReqNodeContext.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Explorer\Config\EnvNodeActionView.axaml.cs">
+          <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\Config\EnvNodeContext.axaml.cs">
+          <DependentUpon>FileReqNodeContext.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Tabs\EnvEditorTabView.axaml.cs">
+          <DependentUpon>EnvEditorTabView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

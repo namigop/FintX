@@ -1,0 +1,43 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer.Config"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:explorer1="clr-namespace:Tefin.Views.Explorer"
+             xmlns:config="clr-namespace:Tefin.Views.Explorer.Config"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="explorer:EnvNode"
+             x:Class="Tefin.Views.Explorer.Config.EnvNodeActionView">
+    <UserControl.Styles>
+        <StyleInclude Source="/Views/Types/TypeItemStyles.axaml" />
+    </UserControl.Styles>
+    <Grid>
+
+        <!--client node button actions -->
+        <StackPanel Orientation="Horizontal"
+                    Margin="0 0 14 0"
+                    IsVisible="{Binding IsSelected}"
+                    HorizontalAlignment="Right">
+
+            <Button Classes="ClearButtonStyle" Command="{Binding OpenCommand}"
+                    ToolTip.Tip="Open in new tab">
+                <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
+            </Button>
+
+            <Button Classes="ClearButtonStyle" ToolTip.Tip="More actions">
+                <controls:IconControl Icon="{StaticResource Icon.VerticalDots}" />
+                <Button.Resources>
+                </Button.Resources>
+                <Button.Flyout>
+                    <Flyout>
+                        <config:EnvNodeContext />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+        </StackPanel>
+    </Grid>
+
+
+</UserControl>

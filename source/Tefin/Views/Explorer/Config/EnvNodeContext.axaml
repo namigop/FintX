@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer.Config"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:utils="clr-namespace:Tefin.Utils"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="explorer:EnvNode"
+             x:Class="Tefin.Views.Explorer.Config.EnvNodeContext">
+    <StackPanel>
+        <StackPanel.Styles>
+            <Style Selector="Button > StackPanel > TextBlock">
+                <Setter Property="Margin" Value="8 0 0 0 " />
+                <Setter Property="FontSize" Value="12.6" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <!-- <Style Selector="Button"> -->
+            <!--     <Setter Property="HorizontalAlignment" Value="Stretch"></Setter> -->
+            <!-- </Style> -->
+
+        </StackPanel.Styles>
+        <Button Classes="ClearButtonStyle ContextFlyout"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                Command="{Binding OpenCommand}" ToolTip.Tip="Open in a new tab">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.OpenNew}" />
+                <TextBlock Text="Open in a tab" />
+            </StackPanel>
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenMethodInWindowCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Open in a new tab">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Window}" />
+                <TextBlock Text="Open in a window" />
+            </StackPanel>
+        </Button>
+        <Separator Classes="Horizontal" Width="200" />
+
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding RenameCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Rename this file">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Rename}" />
+                <TextBlock Text="Rename" />
+            </StackPanel>
+
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Export">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
+                <TextBlock Text="Export" />
+            </StackPanel>
+        </Button>
+        <Separator Classes="Horizontal" Width="200" />
+        <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete"
+                IsVisible="{Binding IsSelected}"
+                ToolTip.Tip="delete this client">
+
+            <Button.Flyout>
+                <Flyout Placement="BottomEdgeAlignedLeft">
+                    <Grid RowDefinitions="*, Auto" Height="100">
+                        <TextBlock Text="Are you sure? This delete is permanent" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center" />
+
+                        <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
+                            <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right">
+                                <Button Click="DeleteButtonClick">
+                                    <TextBlock Text="Yes, delete it" />
+                                </Button>
+                                <Button Click="CancelButtonClick" Margin="6 6 6 6">
+                                    <TextBlock Text="Cancel" />
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Flyout>
+            </Button.Flyout>
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Delete}" />
+                <TextBlock Text="Delete" />
+
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</UserControl>
