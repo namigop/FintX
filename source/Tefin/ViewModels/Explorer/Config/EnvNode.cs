@@ -3,7 +3,10 @@
 namespace Tefin.ViewModels.Explorer.Config;
 
 public class EnvNode : FileNode {
-    public EnvNode(string fullPath) : base(fullPath) => this.ExportCommand = this.CreateCommand(this.OnExport);
+    public EnvNode(string fullPath) : base(fullPath) {
+        this.ExportCommand = this.CreateCommand(this.OnExport);
+    }
+
 
     public ICommand ExportCommand { get; }
 
