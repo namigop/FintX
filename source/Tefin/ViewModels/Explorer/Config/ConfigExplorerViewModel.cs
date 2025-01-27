@@ -45,7 +45,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
             if (obj.ChangeType == WatcherChangeTypes.Created) {
                 NodeWalker.Walk(this.Items.ToArray(),
                     obj,
-                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path), clientPath => "TODO :uatpath"),
+                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path), VarsStructure.getVarPath),
                     i => i is ConfigGroupNode);
             }
         }
@@ -79,19 +79,20 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
 
     protected override NodeBase CreateMultiNodeFolder(IExplorerItem[] items, ProjectTypes.ClientGroup client) => throw new NotImplementedException();
 
-    protected override string GetRootFilePath(string clientPath) => throw new NotImplementedException();
-    protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) => throw new NotImplementedException();
+    protected override string GetRootFilePath(string clientPath) {
+        return VarsStructure.getVarPath(clientPath);
+    }
+
+    protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) {
+        return new ConfigGroupNode(cg, type);
+    }
 
     private void OnEdit() { }
 
     public void Init() {
-        var envGroup = new ConfigGroupNode { Title = "Environments", SubTitle = "All environments" };
-        var devEnv = new EnvNode("TODOPath") { Title = "DEV", SubTitle = "Development environments" };
-        var uatEnv = new EnvNode("TODOPath") { Title = "UAT", SubTitle = "UAT environments" };
-        var prodEnv = new EnvNode("TODOPath") { Title = "PROD", SubTitle = "Production environments" };
-        envGroup.AddItem(devEnv);
-        envGroup.AddItem(uatEnv);
-        envGroup.AddItem(prodEnv);
-        this.Items.Add(envGroup);
+        //Load UAT Files
+        
+        LoadEnvVarsFeature..
     }
+    
 }

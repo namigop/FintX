@@ -9,16 +9,19 @@ using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Explorer.Config;
 using Tefin.ViewModels.Overlay;
 
 namespace Tefin.ViewModels.ProjectEnv;
 
 public class ProjectMenuViewModel : ViewModelBase {
     private readonly ClientExplorerViewModel _explorerViewModel;
+    private readonly ConfigExplorerViewModel _configExplorer;
     private ProjectSelection _selectedProject;
 
-    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel, AppTypes.AppState? appState) {
+    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel, ConfigExplorerViewModel configExplorer, AppTypes.AppState? appState) {
         this._explorerViewModel = explorerViewModel;
+        this._configExplorer = configExplorer;
         this.NewProjectCommand = this.CreateCommand(this.OnNewProject);
         this.OpenProjectCommand = this.CreateCommand(this.OnOpenProject);
         this.RecentProjects = new ObservableCollection<ProjectSelection>();

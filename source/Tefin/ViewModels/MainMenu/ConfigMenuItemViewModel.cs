@@ -1,5 +1,6 @@
 #region
 
+using Tefin.Core.Interop;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Explorer.Config;
@@ -13,14 +14,18 @@ public class ConfigMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
         this.Explorer = new ConfigExplorerViewModel();
         //this.SubMenus = new ConfigSubMenuViewModel(this.Explorer);
     }
-    public ConfigExplorerViewModel Explorer { get; set; } = new();
-    public override string ToolTip { get; } = "Edit app configuration";
-    public override string Name { get; } = "Configuration";
-    public override string ShortName { get; } = "config";
-    public override ISubMenusViewModel? SubMenus { get; } = null;
+    public ConfigExplorerViewModel Explorer { get; } 
+    public ProjectTypes.Project? Project {
+        get => this.Explorer.Project;
+        set => this.Explorer.Project = value;
+    }
 
-    public void Init() {
+    public override string ToolTip { get; } = "Edit app variables";
+    public override string Name { get; } = "Variables";
+    public override string ShortName { get; } = "var";
+    public override ISubMenusViewModel? SubMenus { get; } = null;
+    public void Init(ProjectTypes.Project proj) {
+        this.Project = proj;
         this.Explorer.Init();
-        //this.Explorer.Items.Add(envGroup);
     }
 }

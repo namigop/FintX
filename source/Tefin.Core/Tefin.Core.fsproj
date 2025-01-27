@@ -50,6 +50,7 @@
         <Compile Include="ClientStructure.fs" />
         <Compile Include="EnvConfig.fs" />
         <Compile Include="ProjectStructure.fs" />
+        <Compile Include="VarsStructure.fs" />
         <Compile Include="ClientCompiler.fs"/>
         <Compile Include="CallPipeline.fs"/>
         <Compile Include="CoreExport.fs"/>

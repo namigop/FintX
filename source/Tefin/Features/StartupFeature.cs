@@ -17,6 +17,7 @@ public class StartupFeature {
         //     Console.WriteLine($"{sf} : {Environment.GetFolderPath(sf)}");
         // }
 
+        var fo = VarsStructure.demo();
 
         Startup.init();
         LiveCharts.Configure(config => {

@@ -24,7 +24,7 @@ public class MainWindowViewModel : ViewModelBase {
         this.Root = default;
         this.MainMenu = new MainMenuViewModel();
         var appState = Core.App.getAppState(this.Io);
-        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, appState);
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, this.MainMenu.ConfigMenuItem.Explorer, appState);
     }
 
     public FooterViewModel Footer { get; } = new();
@@ -53,7 +53,7 @@ public class MainWindowViewModel : ViewModelBase {
         //var package = this.Root.Packages.First(t => t.Name == packageName);
         this.MainMenu.ClientMenuItem.Init(project);
         this.MainMenu.ServerMenuItem.Init();
-        this.MainMenu.ConfigMenuItem.Init();
+        this.MainMenu.ConfigMenuItem.Init(project);
         this.MainMenu.InfoMenuItem.Init();
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
 

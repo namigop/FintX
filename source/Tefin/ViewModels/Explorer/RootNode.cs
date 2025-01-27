@@ -16,8 +16,6 @@ public abstract class RootNode : NodeBase {
     private string _desc = "";
     private string _url = "";
 
-    protected RootNode() { }
-
     protected RootNode(ProjectTypes.ClientGroup cg, Type? clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
