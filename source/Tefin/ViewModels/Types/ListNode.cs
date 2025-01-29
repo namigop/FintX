@@ -68,7 +68,7 @@ public class ListNode : TypeBaseNode {
 
     public void AddItem(object itemInstance) {
         var listInstance = this.GetListInstance();
-        this.GetMethods().AddMethod!.Invoke(listInstance, new[] { itemInstance });
+        this.GetMethods().AddMethod!.Invoke(listInstance, [itemInstance]);
         var itemType = this.GetItemType();
         var count = GetListSize(listInstance!);
         var name = $"{this.ItemName}[{count-1}]";
@@ -179,7 +179,7 @@ public class ListNode : TypeBaseNode {
                 Dictionary<string, int>? processedTypeNames = new();
                 var (ok, instance) = TypeBuilder.getDefault(itemType, true, FSharpOption<object>.Some(listInstance), 0);
                 if (ok) {
-                    this.GetMethods().AddMethod!.Invoke(listInstance, new[] { instance });
+                    this.GetMethods().AddMethod!.Invoke(listInstance, [instance]);
                     var node = this.CreateListItemNode(name, itemType, processedTypeNames, counter, instance, this);
                     node.Init();
                     node.IsExpanded = false;
@@ -195,7 +195,7 @@ public class ListNode : TypeBaseNode {
             for (var i = 0; i < delta; i++) {
                 var last = this.Items.Count - 1;
                 this.Items.RemoveAt(last);
-                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, new object[] { last });
+                this.GetMethods().RemoveAtMethod!.Invoke(listInstance, [last]);
             }
         }
 

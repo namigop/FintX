@@ -27,7 +27,7 @@ public class CompileFeature(
             }
 
             GlobalHub.publish(new ClientCompileMessage(true));
-            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, Array.Empty<string>(),
+            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [],
                 reflectionUrl, null);
             var com = await ServiceClient.compile(io, codeFiles, cParams);
             if (com.IsOk) {

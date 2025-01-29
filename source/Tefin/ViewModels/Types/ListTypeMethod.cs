@@ -9,7 +9,7 @@ using Tefin.Core.Reflection;
 namespace Tefin.ViewModels.Types;
 
 public class ListTypeMethod {
-    private static readonly List<ListTypeMethod> Cache = new();
+    private static readonly List<ListTypeMethod> Cache = [];
 
     private ListTypeMethod(Type type) {
         this.Type = type;
@@ -44,7 +44,7 @@ public class ListTypeMethod {
             this.AddRangeMethod = type.GetMethod("AddRange", BindingFlags.Public | BindingFlags.Instance);
             this.GetEnumeratorMethod = type.GetMethod("GetEnumerator", BindingFlags.Public | BindingFlags.Instance);
             var itemType = TypeHelper.getListItemType(type).Value;
-            this.AddMethod = type.GetMethod("Add", new[] { itemType });
+            this.AddMethod = type.GetMethod("Add", [itemType]);
             this.RemoveAtMethod = type.GetMethod("RemoveAt", BindingFlags.Public | BindingFlags.Instance);
         }
     }

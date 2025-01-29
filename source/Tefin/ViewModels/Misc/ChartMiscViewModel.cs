@@ -47,13 +47,13 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
         }
     }
 
-    public ObservableCollection<ISeries> Series { get; } = new();
+    public ObservableCollection<ISeries> Series { get; } = [];
 
-    public ObservableCollection<SeriesModel> SeriesModels { get; } = new();
+    public ObservableCollection<SeriesModel> SeriesModels { get; } = [];
 
     public override string Title { get; } = "Chart";
 
-    public Axis[] XAxes { get; } = {
+    public Axis[] XAxes { get; } = [
         new() {
             MinStep = 1, TextSize = 0
             // SeparatorsPaint = new SolidColorPaint(SKColors.LightSlateGray)
@@ -62,9 +62,9 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
             //     //PathEffect = new DashEffect(new float[] { 3, 3 })
             // }
         }
-    };
+    ];
 
-    public Axis[] YAxes { get; } = {
+    public Axis[] YAxes { get; } = [
         new() {
             MinLimit = 0,
             Name = "Elapsed (msec)",
@@ -77,7 +77,7 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
                 //PathEffect = new DashEffect(new float[] { 3, 3 })
             }
         }
-    };
+    ];
 
     private void AddPoint(string clientName, string method, double point) {
         lock (this) {
@@ -140,6 +140,6 @@ public class ChartMiscViewModel : MiscViewModelTabItem {
             get;
         }
 
-        public ObservableCollection<double> Values { get; } = new();
+        public ObservableCollection<double> Values { get; } = [];
     }
 }

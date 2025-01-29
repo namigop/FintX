@@ -43,7 +43,7 @@ public class DictionaryNode : ListNode {
 
         var lpInstance = Activator.CreateInstance(lpType);
         var fromDictionary = lpType.GetMethod("FromDictionary", BindingFlags.Public | BindingFlags.Instance);
-        fromDictionary!.Invoke(lpInstance, new[] { dict });
+        fromDictionary!.Invoke(lpInstance, [dict]);
         return lpInstance;
     }
 

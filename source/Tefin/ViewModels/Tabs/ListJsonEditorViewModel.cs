@@ -28,7 +28,7 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
     } = listType;
 
     public void AddItem(object instance) {
-        this._addMethod.Invoke(this._listInstance, new[] { instance });
+        this._addMethod.Invoke(this._listInstance, [instance]);
         var jsonInstance = Instance.indirectSerialize(this._listItemType, instance);
         var startIndex = this.Json.Length - 1;
         var endPos = this.Json.LastIndexOf(']', startIndex);

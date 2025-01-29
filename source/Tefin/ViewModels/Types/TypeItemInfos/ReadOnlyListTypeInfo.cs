@@ -23,7 +23,7 @@ public class ReadOnlyListTypeInfo : TypeInfo {
         //Update the list only if we are working on different instances
         if (parentListValue != value) {
             this._clearMethod.Invoke(parentListValue, null);
-            this._addRangeMethod.Invoke(parentListValue, new[] { value });
+            this._addRangeMethod.Invoke(parentListValue, [value]);
         }
     }
 }

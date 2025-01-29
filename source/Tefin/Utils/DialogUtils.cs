@@ -24,7 +24,7 @@ public static class DialogUtils {
         var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
             Title = dialogTitle,
             AllowMultiple = allowMultipleSelection,
-            FileTypeFilter = new[] { new FilePickerFileType(fileTitle) { Patterns = filterExtensions } }
+            FileTypeFilter = [new FilePickerFileType(fileTitle) { Patterns = filterExtensions }]
         });
 
         if (files.Count >= 1) {
@@ -32,7 +32,7 @@ public static class DialogUtils {
             return (true, filePaths);
         }
 
-        return (false, Array.Empty<string>());
+        return (false, []);
     }
 
     public static async Task<string>
@@ -44,7 +44,7 @@ public static class DialogUtils {
             Title = dialogTitle,
             ShowOverwritePrompt = true,
             SuggestedFileName = fileName,
-            FileTypeChoices = new[] { new FilePickerFileType(fileTitle) { Patterns = new[] { extension } } }
+            FileTypeChoices = [new FilePickerFileType(fileTitle) { Patterns = [extension] }]
         });
 
         return file?.Path.LocalPath ?? string.Empty;
@@ -59,7 +59,7 @@ public static class DialogUtils {
             Title = dialogTitle,
             ShowOverwritePrompt = true,
             SuggestedFileName = fileName,
-            FileTypeChoices = new[] { new FilePickerFileType(fileTitle) { Patterns = new[] { extension } } }
+            FileTypeChoices = [new FilePickerFileType(fileTitle) { Patterns = [extension] }]
         });
 
         if (file is not null) {

@@ -337,8 +337,8 @@ public abstract class ExplorerViewModel<TRoot> : ViewModelBase, IExplorerTree<TR
 
         public void Clear() {
             this.IsFile = false;
-            this.PathsToCopy = Array.Empty<string>();
-            this.Nodes = Array.Empty<NodeBase>();
+            this.PathsToCopy = [];
+            this.Nodes = [];
             this.IsCut = false;
         }
     }

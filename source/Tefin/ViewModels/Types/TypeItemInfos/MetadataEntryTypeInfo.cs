@@ -22,11 +22,11 @@ public class MetadataEntryTypeInfo(int index, MetadataNode parentNode) : ITypeIn
 
     public object? GetValue(object parentInstance) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        return pi?.GetValue(parentInstance, new object[] { index });
+        return pi?.GetValue(parentInstance, [index]);
     }
 
     public void SetValue(object parentInstance, object? value) {
         var pi = parentInstance.GetType().GetProperty(this.Name);
-        pi?.SetValue(parentInstance, value, new object[] { index });
+        pi?.SetValue(parentInstance, value, [index]);
     }
 }

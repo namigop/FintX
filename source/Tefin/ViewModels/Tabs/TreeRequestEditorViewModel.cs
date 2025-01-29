@@ -40,7 +40,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         this.Items.Add(new EmptyNode());
     }
 
-    public ObservableCollection<IExplorerItem> Items { get; } = new();
+    public ObservableCollection<IExplorerItem> Items { get; } = [];
 
     public HierarchicalTreeDataGridSource<IExplorerItem> MethodTree { get; }
 
@@ -58,7 +58,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     //public List<object?> MethodParameterInstances { get; }
     public (bool, object?[]) GetParameters() {
         if (this.Items.Count == 0 || this.Items[0].Items.Count == 0) {
-            return (false, Array.Empty<object?>());
+            return (false, []);
         }
 
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;

@@ -51,7 +51,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
             return (true, mParams);
         }
 
-        return (false, Array.Empty<object>());
+        return (false, []);
     }
 
     public void Show(object?[] parameters) {

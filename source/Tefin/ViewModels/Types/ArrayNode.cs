@@ -32,7 +32,7 @@ public class ArrayNode : ListNode {
         this._internalList = list;
         this._internalListType = this._internalList.GetType();
         if (instance != null) {
-            this._listMethods.AddRangeMethod?.Invoke(this._internalList, new[] { instance });
+            this._listMethods.AddRangeMethod?.Invoke(this._internalList, [instance]);
         }
 
         this.SubscribeTo(x => ((ArrayNode)x).ListItemsCount, this.OnCountChanged);

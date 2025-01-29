@@ -98,7 +98,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Description { get; set; }
     public ICommand DiscoverCommand { get; }
-    public ObservableCollection<string> DiscoveredServices { get; } = new();
+    public ObservableCollection<string> DiscoveredServices { get; } = [];
 
     public bool IsDiscoveringUsingProto {
         get => this._isDiscoveringUsingProto;
@@ -146,14 +146,14 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
         if (!this.IsDiscoveringUsingProto) {
             //Discover using the reflection service
-            discoParams = new DiscoverParameters(Array.Empty<string>(), new Uri(this.ReflectionUrl));
+            discoParams = new DiscoverParameters([], new Uri(this.ReflectionUrl));
         }
         else {
-            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", new[] { "*.proto" });
+            var (ok, files) = await DialogUtils.OpenFile("Open File", "Proto Files", ["*.proto"]);
             if (ok) {
                 this.ProtoFile = files[0];
                 // PopulateServiceNamesFromProto();
-                discoParams = new DiscoverParameters(new[] { this.ProtoFile }, null);
+                discoParams = new DiscoverParameters([this.ProtoFile], null);
             }
         }
 
