@@ -8,7 +8,40 @@
              x:DataType="tabs:EnvEditorTabViewModel"
              x:Class="Tefin.Views.Tabs.EnvEditorTabView">
     <Grid>
-        <TextBlock Text="Env editor"></TextBlock>
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+            
+            <TextBlock Text="Name*" Classes="FormField" Grid.Row="0" MinWidth="600"/>
+            <TextBox Grid.Row="1" MinWidth="600"
+                     HorizontalAlignment="Left"
+                     Watermark="Enter the environment name"
+                     ToolTip.Tip="Enter the environment name"
+                     Text="{Binding EnvData.Name}" />
+            
+            <TextBlock Text="Description" Classes="FormField" Grid.Row="2" MinWidth="600"/>
+            <TextBox Grid.Row="3" HorizontalAlignment="Left" MinWidth="600"
+                     Watermark="Enter the description"
+                     ToolTip.Tip="Enter the description"
+                     MinHeight="100"
+                     Text="{Binding EnvData.Description}" />
+            
+            <TextBlock Text="Variables" Classes="FormField" Grid.Row="4" MinWidth="600"/>
+            <DataGrid Grid.Row="5" HorizontalAlignment="Left"  MinWidth="600"
+                      ItemsSource="{Binding EnvData.Variables}">
+                <DataGrid.Styles>
+                    <Style Selector="DataGridRow:nth-child(odd)">
+                        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}"/>
+                    </Style>
+                </DataGrid.Styles>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Template" Binding="{Binding Name}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Current Value" Binding="{Binding CurrentValue}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Default Value" Binding="{Binding DefaultValue}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Header="Desc" Binding="{Binding Description}"></DataGridTextColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+        
         <!-- <ContentControl Content="{Binding ClientMethod}" /> -->
         <!-- -->
         <!-- <StackPanel Orientation="Vertical" IsVisible="{Binding IsBusy}" VerticalAlignment="Center" -->
