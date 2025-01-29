@@ -16,6 +16,10 @@ type EnvConfigData = {
     Variables: ResizeArray<EnvVar>
 }   
 
+type ProjectEnvConfigData = {      
+    Variables: ResizeArray<string * EnvConfigData>
+}
+
 module EnvConfig =
     let createVar name  defaultValue curValue desc dataType =
         let envVar = { Name = name

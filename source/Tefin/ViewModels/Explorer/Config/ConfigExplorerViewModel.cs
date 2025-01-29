@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 
@@ -84,15 +85,29 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
     }
 
     protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) {
-        return new ConfigGroupNode(cg, type);
+        return new ConfigGroupNode();
     }
 
     private void OnEdit() { }
 
     public void Init() {
-        //Load UAT Files
+        if (this.Project is null)
+            return;
         
-        LoadEnvVarsFeature..
+        //Load env files
+        var load = new LoadEnvVarsFeature();
+        var projectEnvData = load.Run(this.Project, this.Io);
+
+        Dispatcher.UIThread.Invoke(() => {
+            var root = new ConfigGroupNode() { Title = "Project Variables", SubTitle = "All environment variables for this project"};
+            this.Items.Add(root);
+        
+            foreach (var (fullPath, env) in projectEnvData.Variables) {
+                var node = new EnvNode(fullPath) { SubTitle = env.Description};
+                root.Items.Add(node);
+            }
+        });
+        
     }
     
 }

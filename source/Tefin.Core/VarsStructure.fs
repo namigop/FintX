@@ -8,17 +8,26 @@ open ClientStructure
 
 module VarsStructure =
     
-    let getVarPath (projectPath: string) = Path.Combine(projectPath, "vars")
+    let getVarPath  (projectPath: string) =
+        let dir = Path.Combine(projectPath, "vars")         
+        dir
     let getVarFiles (io:IOs) (projectPath: string) =
         let varPath = getVarPath projectPath
+        io.Dir.CreateDirectory varPath
         let varFiles = io.Dir.GetFiles(varPath, "*" + Ext.envExt, SearchOption.TopDirectoryOnly)
         varFiles
     
     let getVars (io:IOs) (projectPath: string) =
-        let files = getVarFiles io projectPath
+        let files = getVarFiles io projectPath         
         files
-        |> Array.map (fun c -> io.File.ReadAllText c)
-        |> Array.map (fun c ->  Instance.jsonDeserialize<EnvConfigData>(c))
+        |> Array.map (fun c -> c, io.File.ReadAllText c)
+        |> Array.map (fun (file, c) -> file, Instance.jsonDeserialize<EnvConfigData>(c))
+        |> fun v ->
+            let projEnvs = { Variables = ResizeArray<string * EnvConfigData> () }
+            for (file, c) in v do
+               let e = file, c
+               projEnvs.Variables.Add(e)            
+            projEnvs
          
     let demo() =
         let vars = EnvConfig.createConfig "UAT" "UAT env variables"

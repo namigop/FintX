@@ -10,5 +10,5 @@ public class EnvEditorTabViewModel(EnvNode item) : TabViewModelBase(item) {
         this.Title = Path.GetFileName(this.Id);
     }
 
-    protected override string GetTabId() => ((EnvNode)this.ExplorerItem).Title + " environment variables";
+    protected override string GetTabId() => ((EnvNode)this.ExplorerItem).Title;
 }

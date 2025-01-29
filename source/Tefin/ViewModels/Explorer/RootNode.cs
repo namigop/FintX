@@ -29,8 +29,16 @@ public abstract class RootNode : NodeBase {
 
         this.IsExpanded = true;
         this.AddItem(new EmptyNode());
-        this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
-        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
+        if (clientType != null) {
+            this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
+            GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
+        }
+    }
+
+    protected RootNode() {
+        this.Client = ProjectTypes.ClientGroup.Empty();
+        this.ClientConfigFile = "";
+        this.ServiceName = "";
     }
 
     public ProjectTypes.ClientGroup Client { get; protected set; }
@@ -40,7 +48,7 @@ public abstract class RootNode : NodeBase {
         set => this.RaiseAndSetIfChanged(ref this._clientType, value);
     }
 
-    public ICommand OpenClientConfigCommand { get; }
+    public ICommand? OpenClientConfigCommand { get; }
     public string ClientConfigFile { get; protected set; }
     public string ClientPath { get; protected set; } = "";
 
