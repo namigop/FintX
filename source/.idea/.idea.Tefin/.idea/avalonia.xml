@@ -59,6 +59,10 @@
         <entry key="Tefin/Views/Tabs/Grpc/UnaryView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/MethodTabView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TabHostView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/SystemNodeEditView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/SystemNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/BoolEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/DecimalEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeItemStyles.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Window.axaml" value="Tefin/Tefin.csproj" />
       </map>

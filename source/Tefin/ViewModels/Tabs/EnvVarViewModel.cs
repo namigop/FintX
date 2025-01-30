@@ -1,6 +1,9 @@
 ﻿using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Reflection;
+using Tefin.ViewModels.Types;
+using Tefin.ViewModels.Types.TypeEditors;
 
 namespace Tefin.ViewModels.Tabs;
 
@@ -10,15 +13,31 @@ public class EnvVarViewModel : ViewModelBase {
     private string _defaultValue = "";
     private string _currentValue = "";
     private string _name = "";
-
+    private string _selectedDisplayType;
+    private static string[] DisplayTypes = SystemType.getTypesForDisplay();
     public EnvVarViewModel(EnvVar envVar) {
         this.Name = envVar.Name;
         this.CurrentValue = envVar.CurrentValue;
         this.DefaultValue = envVar.DefaultValue;
         this.Description = envVar.Description;
         this.Type = envVar.Type;
-
+        var currentValueNode = new SystemNode(envVar.Name, typeof(int), default, 1, null);
+        this.CurrentValueEditor = currentValueNode.Editor;
+        var defaultValueNode = new SystemNode(envVar.Name, typeof(int), default, 1, null);
+        this.DefaultValueEditor = defaultValueNode.Editor;
+        this.SelectedDisplayType = this.Type;
     }
+
+    public string[] TypeList => DisplayTypes;
+
+    public string SelectedDisplayType {
+        get => this._selectedDisplayType;
+        set => this.RaiseAndSetIfChanged(ref _selectedDisplayType, value);
+    }
+
+    public ITypeEditor DefaultValueEditor { get; init; }
+
+    public ITypeEditor CurrentValueEditor { get; init; }
 
     public string Type {
         get => this._type;

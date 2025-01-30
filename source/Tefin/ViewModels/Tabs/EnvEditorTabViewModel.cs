@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using System.Windows.Input;
+
+using ReactiveUI;
 
 using Tefin.ViewModels.Explorer.Config;
 
@@ -18,7 +20,7 @@ public class EnvEditorTabViewModel : TabViewModelBase {
     }
 
     public override string Icon => this._icon;
-
+ 
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);

@@ -63,7 +63,7 @@ module SystemType =
     temp.Add(typeof<bool>, ((fun () -> true), "bool"))
     temp.Add(typeof<DateTime>, ((fun () -> DateTime.Now.AddDays 1), "dateTime"))
     temp.Add(typeof<DateTimeOffset>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset"))
-    temp.Add(typeof<Guid>, ((fun () -> Guid.NewGuid()), ""))
+    temp.Add(typeof<Guid>, ((fun () -> Guid.NewGuid()), "guid"))
     temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1), "timespan"))
     //temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
     temp.Add(typeof<CancellationToken>, ((fun () -> markerToken), "token"))
@@ -89,10 +89,18 @@ module SystemType =
     temp.Add(typeof<Nullable<char>>, ((fun () -> 'c'), "char?"))
     temp
 
+  
   let getDisplayName (thisType: Type) =
     let ok, (_, display) = info.TryGetValue(thisType)
     if ok then display else "not a system type"
 
+  let getTypes() = info.Keys
+  let getTypesForDisplay() =
+    info
+    |> Seq.map (fun kv -> kv.Value)
+    |> Seq.map (fun (_, display) -> display)
+    |> Seq.toArray
+    
   let isSystemType (thisType: Type) =
     let ok, _ = info.TryGetValue(thisType)
     ok

@@ -3,12 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:tabs="clr-namespace:Tefin.ViewModels.Tabs"
+             xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="{StaticResource Bym.Color.DefaultControlBackground}"
              x:DataType="tabs:EnvEditorTabViewModel"
              x:Class="Tefin.Views.Tabs.EnvEditorTabView">
     <Grid>
-        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+        <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
             
             <TextBlock Text="Name*" Classes="FormField" Grid.Row="0" MinWidth="600"/>
             <TextBox Grid.Row="1" MinWidth="600"
@@ -24,7 +25,10 @@
                      MinHeight="100"
                      Text="{Binding EnvData.Description}" />
             
-            <TextBlock Text="Variables" Classes="FormField" Grid.Row="4" MinWidth="600"/>
+            <StackPanel Orientation="Horizontal" Grid.Row="4">
+                <TextBlock Text="Variables" Classes="FormField" />
+                <Button Command="{Binding  EnvData.AddNewRowCommand}" Margin="6 0 0 0" VerticalAlignment="Center">new</Button>
+            </StackPanel>
             <DataGrid Grid.Row="5" HorizontalAlignment="Left"  MinWidth="600"
                       ItemsSource="{Binding EnvData.Variables}">
                 <DataGrid.Styles>
@@ -34,9 +38,38 @@
                 </DataGrid.Styles>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Template" Binding="{Binding Name}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Current Value" Binding="{Binding CurrentValue}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Default Value" Binding="{Binding DefaultValue}"></DataGridTextColumn>
-                    <DataGridTextColumn Header="Type" Binding="{Binding Type}"></DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Current Value">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding CurrentValueEditor}" Margin="4">
+                                    <ContentControl.DataTemplates>
+                                        <viewModels:TypeEditorLocator />
+                                    </ContentControl.DataTemplates>
+                                </ContentControl>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Default Value">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding DefaultValueEditor}" Margin="4">
+                                    <ContentControl.DataTemplates>
+                                        <viewModels:TypeEditorLocator />
+                                    </ContentControl.DataTemplates>
+                                </ContentControl>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
+                    <DataGridTemplateColumn Header="Default Value">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                               <ComboBox Margin="4" MinWidth="100" ItemsSource="{Binding TypeList}"
+                                        SelectedItem="{Binding SelectedDisplayType}">
+                               </ComboBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Width="*" Header="Desc" Binding="{Binding Description}"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
