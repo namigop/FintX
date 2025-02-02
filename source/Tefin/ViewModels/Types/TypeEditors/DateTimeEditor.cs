@@ -16,6 +16,8 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
         this._isUtc = dateTime.Kind == DateTimeKind.Utc;
     }
 
+    public SystemNode TypeNode => (SystemNode)this.Node;
+
     public string DateTimeText {
         get => this._dateTimeText;
         set => this.RaiseAndSetIfChanged(ref this._dateTimeText, value);

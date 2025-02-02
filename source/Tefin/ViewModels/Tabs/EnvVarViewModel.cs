@@ -1,7 +1,12 @@
-﻿using ReactiveUI;
+﻿using DynamicData;
+
+using Microsoft.FSharp.Control;
+
+using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Reflection;
+using Tefin.Utils;
 using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeEditors;
 
@@ -15,17 +20,22 @@ public class EnvVarViewModel : ViewModelBase {
     private string _name = "";
     private string _selectedDisplayType;
     private static string[] DisplayTypes = SystemType.getTypesForDisplay();
+    private static Type[] ActualTypes = SystemType.getTypes().ToArray();
     public EnvVarViewModel(EnvVar envVar) {
         this.Name = envVar.Name;
         this.CurrentValue = envVar.CurrentValue;
         this.DefaultValue = envVar.DefaultValue;
         this.Description = envVar.Description;
-        this.Type = envVar.Type;
-        var currentValueNode = new SystemNode(envVar.Name, typeof(int), default, 1, null);
+        this.DisplayType = envVar.Type;
+        var actualType = DisplayTypes.IndexOf(envVar.Type).Then(i => ActualTypes[i]);
+        
+        var cur = TypeHelper.indirectCast(envVar.CurrentValue, actualType);
+        var def = TypeHelper.indirectCast(envVar.DefaultValue, actualType);
+        var currentValueNode = new SystemNode(envVar.Name, actualType, default, cur, null);
         this.CurrentValueEditor = currentValueNode.Editor;
-        var defaultValueNode = new SystemNode(envVar.Name, typeof(int), default, 1, null);
+        var defaultValueNode =new SystemNode(envVar.Name, actualType, default, def, null);
         this.DefaultValueEditor = defaultValueNode.Editor;
-        this.SelectedDisplayType = this.Type;
+        this.SelectedDisplayType = this.DisplayType;
     }
 
     public string[] TypeList => DisplayTypes;
@@ -39,7 +49,7 @@ public class EnvVarViewModel : ViewModelBase {
 
     public ITypeEditor CurrentValueEditor { get; init; }
 
-    public string Type {
+    public string DisplayType {
         get => this._type;
         set => this.RaiseAndSetIfChanged(ref this._type, value);
     }

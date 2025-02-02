@@ -13,6 +13,8 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
         var dateTime = (DateTimeOffset)(node.Value ?? DateTimeOffset.Now.AddDays(1));
         this._dateTimeText = $"{dateTime:O}";
     }
+    
+    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public string DateTimeText {
         get => this._dateTimeText;

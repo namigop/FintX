@@ -111,5 +111,4 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
         });
         
     }
-    
 }

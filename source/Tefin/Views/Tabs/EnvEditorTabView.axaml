@@ -35,13 +35,17 @@
                     <Style Selector="DataGridRow:nth-child(odd)">
                         <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}"/>
                     </Style>
+                    <Style Selector="TextBox">
+                        <Setter Property="BorderBrush" Value="Transparent"></Setter>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                    </Style>
                 </DataGrid.Styles>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Template" Binding="{Binding Name}"></DataGridTextColumn>
                     <DataGridTemplateColumn Header="Current Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentControl Content="{Binding CurrentValueEditor}" Margin="4">
+                                <ContentControl Content="{Binding CurrentValueEditor}" Margin="8 6 8 6">
                                     <ContentControl.DataTemplates>
                                         <viewModels:TypeEditorLocator />
                                     </ContentControl.DataTemplates>
@@ -52,7 +56,9 @@
                     <DataGridTemplateColumn Header="Default Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentControl Content="{Binding DefaultValueEditor}" Margin="4">
+                                <ContentControl Content="{Binding DefaultValueEditor}" 
+                                                HorizontalAlignment="Stretch"
+                                                Margin="8 6 8 6">
                                     <ContentControl.DataTemplates>
                                         <viewModels:TypeEditorLocator />
                                     </ContentControl.DataTemplates>
@@ -61,10 +67,10 @@
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                     
-                    <DataGridTemplateColumn Header="Default Value">
+                    <DataGridTemplateColumn Header="Data Type">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                               <ComboBox Margin="4" MinWidth="100" ItemsSource="{Binding TypeList}"
+                               <ComboBox Margin="8 6 8 6" MinWidth="100" ItemsSource="{Binding TypeList}"
                                         SelectedItem="{Binding SelectedDisplayType}">
                                </ComboBox>
                             </DataTemplate>

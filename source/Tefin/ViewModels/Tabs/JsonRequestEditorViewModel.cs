@@ -32,6 +32,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
     public void EndRequest() => this.CtsReq = null;
 
     public (bool, object?[]) GetParameters() {
+        //howtofahndle when this.Json is templated
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
         if (ret.IsOk & (ret.ResultValue != null)) {
             var val = ret.ResultValue;

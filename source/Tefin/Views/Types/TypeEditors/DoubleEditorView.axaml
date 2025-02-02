@@ -8,10 +8,8 @@
              x:DataType="typeEditors:DoubleEditor"
              x:Class="Tefin.Views.Types.TypeEditors.DoubleEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel>
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
-
-                             Width="80" />
-        </StackPanel>
+        
+            <controls:Number Value="{Binding TempValue, Mode=TwoWay}" MinWidth="80" />
+         
     </Border>
 </UserControl>

@@ -14,6 +14,8 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
         this._dateTimeText = $"{dateTime:O}";
     }
 
+    public SystemNode TypeNode => (SystemNode)this.Node;
+
     public string DateTimeText {
         get => this._dateTimeText;
         set {

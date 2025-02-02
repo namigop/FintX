@@ -1,6 +1,9 @@
 #region
 
 using System.Threading;
+using System.Windows.Input;
+
+using ReactiveUI;
 
 using Tefin.Core.Reflection;
 using Tefin.ViewModels.Types.TypeEditors;
@@ -10,9 +13,12 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.ViewModels.Types;
 
 public class SystemNode : TypeBaseNode {
+    private string _envVarTag;
+
     public SystemNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name,
         type, propInfo, instance, parent) {
-        //Debug.WriteLine($"{name} = {type.Name}");
+
+        this.CreateEnvVariableCommand = ReactiveCommand.Create(OnCreateEnvVariable);
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         if (type == typeof(string)) {
             this.Editor = new StringEditor(this);
@@ -117,6 +123,11 @@ public class SystemNode : TypeBaseNode {
         }
     }
 
+    private void OnCreateEnvVariable() {
+        var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
+        this.EnvVarTag = tag;
+    }
+
     public ITypeEditor Editor { get; }
     public override string FormattedTypeName { get; }
 
@@ -126,6 +137,18 @@ public class SystemNode : TypeBaseNode {
         get => this.Editor.IsEditing;
         set => this.Editor.IsEditing = value;
     }
+
+    public string EnvVarTag {
+        get => this._envVarTag;
+        set {
+            this.RaiseAndSetIfChanged(ref _envVarTag, value);
+            this.RaisePropertyChanged(nameof(IsEnvVarTagVisible));
+        }
+    }
+    
+    public bool IsEnvVarTagVisible => !string.IsNullOrWhiteSpace(this.EnvVarTag);
+
+    public ICommand CreateEnvVariableCommand { get; }
 
     public override void Dispose() {
         base.Dispose();

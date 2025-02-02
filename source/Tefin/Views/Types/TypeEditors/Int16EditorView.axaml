@@ -8,12 +8,12 @@
              x:DataType="typeEditors:Int16Editor"
              x:Class="Tefin.Views.Types.TypeEditors.Int16EditorView">
     <Border x:Name="MainBorder">
-        <StackPanel>
+      
             <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
 
-                             Width="80"
+                             MinWidth="80"
                              Minimum="-32767"
                              Maximum="32767" />
-        </StackPanel>
+       
     </Border>
 </UserControl>

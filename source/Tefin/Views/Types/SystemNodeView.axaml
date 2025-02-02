@@ -30,6 +30,17 @@
                    VerticalAlignment="Center"
                    Foreground="WhiteSmoke" />
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
-        <TextBlock Text="{Binding FormattedValue}" Margin="6 0 0 0" Classes="FormattedValue" />
+        
+        <Panel Margin="6 0 0 0">
+            <TextBlock IsVisible="{Binding IsEnvVarTagVisible}" Classes="FormattedValue" Foreground="Khaki"
+                       Text="{Binding EnvVarTag}"></TextBlock>
+            <TextBlock  IsVisible="{Binding !IsEnvVarTagVisible}" 
+                        Text="{Binding FormattedValue}"  Classes="FormattedValue" />
+        </Panel>
     </StackPanel>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Create env variable" Command="{Binding CreateEnvVariableCommand}"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
 </UserControl>
