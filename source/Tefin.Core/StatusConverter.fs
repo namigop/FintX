@@ -23,3 +23,26 @@ type StatusConverter() =
     let v = jo["Detail"].ToObject<string>()
     let d = jo["DebugException"].ToObject<Exception>()
     Status(k, v, d)
+
+type StatusConverter2() =
+  inherit System.Text.Json.Serialization.JsonConverter<Status>()
+
+  override x.CanConvert(objectType: Type) = objectType = typeof<Status>
+
+  override x.Read(reader: byref<System.Text.Json.Utf8JsonReader>, typeToConvert: Type, options: System.Text.Json.JsonSerializerOptions) =
+    // let doc = System.Text.Json.JsonDocument.ParseValue(&reader)
+    // let root = doc.RootElement
+    // let k = root.GetProperty("StatusCode").Deserialize<StatusCode>(options)
+    // let v = root.GetProperty("Detail").GetString()
+    // let d = root.GetProperty("DebugException").Deserialize<Exception>(options)
+    
+    let doc = System.Text.Json.JsonDocument.ParseValue(&reader)
+    let root = doc.RootElement
+    let k = System.Text.Json.JsonSerializer.Deserialize<StatusCode>(root.GetProperty("StatusCode").GetRawText(), options)
+    let v = root.GetProperty("Detail").GetString()
+    let d = System.Text.Json.JsonSerializer.Deserialize<Exception>(root.GetProperty("DebugException").GetRawText(), options)
+    
+    Status(k, v, d)
+
+  override x.Write(writer: System.Text.Json.Utf8JsonWriter, value: Status, options: System.Text.Json.JsonSerializerOptions) =
+    raise (System.NotSupportedException("Writing is not supported"))

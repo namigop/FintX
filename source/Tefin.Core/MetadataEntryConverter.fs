@@ -23,3 +23,18 @@ type MetadataEntryConverter() =
     let v = jo["Value"].ToObject<string>()
     let entry = Metadata.Entry(k, v)
     entry
+
+type MetadataEntryConverter2() =
+  inherit System.Text.Json.Serialization.JsonConverter<Metadata.Entry>()
+
+  override x.CanConvert(objectType: Type) = objectType = typeof<Metadata.Entry>
+
+  override x.Read(reader: byref<System.Text.Json.Utf8JsonReader>, typeToConvert: Type, options: System.Text.Json.JsonSerializerOptions) =
+    let doc = System.Text.Json.JsonDocument.ParseValue(&reader)
+    let root = doc.RootElement
+    let k = root.GetProperty("Key").GetString()
+    let v = root.GetProperty("Value").GetString()
+    Metadata.Entry(k, v)
+
+  override x.Write(writer: System.Text.Json.Utf8JsonWriter, value: Metadata.Entry, options: System.Text.Json.JsonSerializerOptions) =
+    raise (System.NotSupportedException("Writing is not supported"))

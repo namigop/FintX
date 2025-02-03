@@ -33,3 +33,20 @@ type ByteStringConverter() =
       |> Seq.toArray
 
     ByteString.CopyFrom bytes
+
+type ByteStringConverter2() =
+  inherit System.Text.Json.Serialization.JsonConverter<ByteString>()
+
+  override x.CanConvert(objectType: Type) = objectType = typeof<ByteString>
+
+  override x.Read(reader: byref<System.Text.Json.Utf8JsonReader>, typeToConvert: Type, options: System.Text.Json.JsonSerializerOptions) =
+     let bytes = ResizeArray<byte>()
+     while reader.TokenType = System.Text.Json.JsonTokenType.Number do
+       bytes.Add(reader.GetByte())
+       reader.Read() |> ignore
+
+     ByteString.CopyFrom (Seq.toArray bytes)
+
+  override x.Write(writer: System.Text.Json.Utf8JsonWriter, value: ByteString, options: System.Text.Json.JsonSerializerOptions) =
+    // Not implemented since conversion is one-way
+    raise (System.NotSupportedException("Writing is not supported"))
