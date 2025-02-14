@@ -45,4 +45,18 @@ type StatusConverter2() =
     Status(k, v, d)
 
   override x.Write(writer: System.Text.Json.Utf8JsonWriter, value: Status, options: System.Text.Json.JsonSerializerOptions) =
-    raise (System.NotSupportedException("Writing is not supported"))
+    //raise (System.NotSupportedException("Writing is not supported"))
+    writer.WriteStartObject()
+    writer.WritePropertyName("StatusCode")
+    let scConverter = options.GetConverter(typeof<StatusCode>) :?> System.Text.Json.Serialization.JsonConverter<StatusCode>
+    scConverter.Write(writer, value.StatusCode, options)
+    
+    writer.WritePropertyName("Detail")
+    let detailConverter = options.GetConverter(typeof<string>) :?> System.Text.Json.Serialization.JsonConverter<string>
+    detailConverter.Write(writer, value.Detail, options)
+    
+    writer.WritePropertyName("DebugException")
+    let detailConverter = options.GetConverter(typeof<Exception>) :?> System.Text.Json.Serialization.JsonConverter<Exception>
+    detailConverter.Write(writer, value.DebugException, options)
+    
+    writer.WriteEndObject();

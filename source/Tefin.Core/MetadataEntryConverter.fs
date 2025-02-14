@@ -37,4 +37,15 @@ type MetadataEntryConverter2() =
     Metadata.Entry(k, v)
 
   override x.Write(writer: System.Text.Json.Utf8JsonWriter, value: Metadata.Entry, options: System.Text.Json.JsonSerializerOptions) =
-    raise (System.NotSupportedException("Writing is not supported"))
+    //raise (System.NotSupportedException("Writing is not supported"))
+    writer.WriteStartObject()
+       
+    
+    writer.WritePropertyName("Key")
+    let conv = options.GetConverter(typeof<string>) :?> System.Text.Json.Serialization.JsonConverter<string>
+    conv.Write(writer, value.Key, options)
+    
+    writer.WritePropertyName("Value")    
+    conv.Write(writer, value.Value, options)
+     
+    writer.WriteEndObject();

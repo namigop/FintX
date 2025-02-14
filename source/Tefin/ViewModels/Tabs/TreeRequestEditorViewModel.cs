@@ -92,7 +92,8 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo,
                 new Dictionary<string, int>(), instance, null);
             paramNode.Init();
-            methodNode.Items.Add(paramNode);
+            methodNode.AddItem(paramNode);
+            //methodNode.Items.Add(paramNode);
             counter += 1;
         }
 

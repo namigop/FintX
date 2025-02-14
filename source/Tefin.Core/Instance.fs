@@ -19,9 +19,18 @@ module Instance =
     settings.Converters.Add(CancellationTokenConverter())
     settings
 
+  let jsonOptions =
+    let settings = new System.Text.Json.JsonSerializerOptions( WriteIndented = true);
+    settings.Converters.Add(ByteStringConverter2())
+    settings.Converters.Add(MetadataEntryConverter2())
+    settings.Converters.Add(StatusConverter2())
+    settings.Converters.Add(CancellationTokenConverter2())
+    settings
+    
   let jsonSerialize<'T when 'T: equality> (objToSerialize: 'T) =
     try
       if not (objToSerialize = Unchecked.defaultof<'T>) then
+        //System.Text.Json.JsonSerializer.Serialize(objToSerialize, jsonOptions)
         use sw = new StringWriter()
         use jw = new JsonTextWriter(sw, Formatting = Formatting.Indented, Indentation = 4)
         let ser = JsonSerializer.Create jsonSettings // .CreateDefault()
@@ -38,6 +47,7 @@ module Instance =
   let jsonDeserialize<'T> (json: string) =
     try
       let obj = JsonConvert.DeserializeObject<'T>(json, jsonSettings)
+      //let obj = System.Text.Json.JsonSerializer.Deserialize<'T>(json, jsonOptions)
       obj
     with exc ->
       Log.logError (exc.ToString())

@@ -6,6 +6,7 @@ using System.Threading;
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
+using Tefin.Features;
 using Tefin.Grpc.Dynamic;
 
 #endregion
@@ -65,6 +66,12 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
                 return inst;
             }).ToArray();
         }
+
+        // var feature = new ExportFeature(this.MethodInfo, parameters);
+        // var exportReqJson = feature.Export();
+        // if (exportReqJson.IsOk) {
+        //     this.Json =  exportReqJson.ResultValue;
+        // }
 
         var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));
         if (json.IsOk) {

@@ -1,6 +1,7 @@
 #region
 
 using System.Collections.ObjectModel;
+using System.Text;
 
 using ReactiveUI;
 
@@ -61,6 +62,19 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     }
 
     public IExplorerItem? FindSelected() => this.FindChildNode(i => i.IsSelected);
+
+    protected static void GetJsonPath(IExplorerItem? node, StringBuilder sb) {
+        while (true) {
+            if (node is null) {
+                sb.Insert(0, "$");
+                return;
+            }
+
+            sb.Insert(0, node.Title);
+            sb.Insert(0, '.');
+            node = node.Parent;
+        }
+    }
 
     public T? FindParentNode<T>(Func<T, bool>? predicate = null) where T : IExplorerItem {
         T? Find(IExplorerItem? item) {

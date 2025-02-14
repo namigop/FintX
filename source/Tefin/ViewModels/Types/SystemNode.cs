@@ -1,5 +1,6 @@
 #region
 
+using System.Text;
 using System.Threading;
 using System.Windows.Input;
 
@@ -17,8 +18,7 @@ public class SystemNode : TypeBaseNode {
 
     public SystemNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name,
         type, propInfo, instance, parent) {
-
-        this.CreateEnvVariableCommand = ReactiveCommand.Create(OnCreateEnvVariable);
+        this.CreateEnvVariableCommand = ReactiveCommand.Create(this.OnCreateEnvVariable);
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         if (type == typeof(string)) {
             this.Editor = new StringEditor(this);
@@ -123,11 +123,6 @@ public class SystemNode : TypeBaseNode {
         }
     }
 
-    private void OnCreateEnvVariable() {
-        var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
-        this.EnvVarTag = tag;
-    }
-
     public ITypeEditor Editor { get; }
     public override string FormattedTypeName { get; }
 
@@ -141,14 +136,23 @@ public class SystemNode : TypeBaseNode {
     public string EnvVarTag {
         get => this._envVarTag;
         set {
-            this.RaiseAndSetIfChanged(ref _envVarTag, value);
-            this.RaisePropertyChanged(nameof(IsEnvVarTagVisible));
+            this.RaiseAndSetIfChanged(ref this._envVarTag, value);
+            this.RaisePropertyChanged(nameof(this.IsEnvVarTagVisible));
         }
     }
-    
+
     public bool IsEnvVarTagVisible => !string.IsNullOrWhiteSpace(this.EnvVarTag);
 
     public ICommand CreateEnvVariableCommand { get; }
+
+    private void OnCreateEnvVariable() {
+        var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
+        this.EnvVarTag = tag;
+        var sb = new StringBuilder();
+        GetJsonPath(this, sb);
+        var jpath = sb.ToString();
+        var requestNode = this.FindParentNode<TypeBaseNode>(n => n.Title == "request");
+    }
 
     public override void Dispose() {
         base.Dispose();

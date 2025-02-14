@@ -49,18 +49,11 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public virtual async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
-            var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
-                var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
-                await DialogUtils.SaveFile("Export request", fileName, exportReqJson.ResultValue, "FintX request",
-                    $"*{Ext.requestFileExt}");
-            }
-            else {
-                this.Io.Log.Error(exportReqJson.ErrorValue);
-            }
+        var reqJson = this.GetRequestContent();
+        if (!string.IsNullOrWhiteSpace(reqJson)) {
+            var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+            await DialogUtils.SaveFile("Export request", fileName, reqJson, "FintX request",
+                $"*{Ext.requestFileExt}");
         }
     }
 
@@ -71,7 +64,10 @@ public class UnaryReqViewModel : ViewModelBase {
         if (ok) {
             var feature = new ExportFeature(this.MethodInfo, mParams);
             var exportReqJson = feature.Export();
-            if (exportReqJson.IsOk) {
+            if (!exportReqJson.IsOk) {
+                this.Io.Log.Error(exportReqJson.ErrorValue);
+            }
+            else {
                 return exportReqJson.ResultValue;
             }
         }
