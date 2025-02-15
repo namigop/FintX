@@ -2,6 +2,7 @@
 
 open System.Threading.Tasks
 open Tefin.Core.Infra.Actors
+open Tefin.Core.Infra.Actors.Logging
 open Tefin.Core.Interop
 open System.IO
 open ClientStructure
@@ -29,6 +30,12 @@ module VarsStructure =
                projEnvs.Variables.Add(e)            
             projEnvs
          
+    let saveEnv (io:IOs) (cfg:EnvConfigData) projectPath =
+        let path = getVarPath projectPath 
+        let file = Utils.makeValidFileName(cfg.Name + Ext.envExt)
+        let envFile = Path.Combine(path, file)
+        io.File.WriteAllText envFile (Instance.jsonSerialize cfg)
+    
     let demo() =
         let vars = EnvConfig.createConfig "UAT" "UAT env variables"
         vars.Variables.Add( {Name = "{{FooVar}}"

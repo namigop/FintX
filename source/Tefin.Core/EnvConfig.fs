@@ -28,6 +28,6 @@ module EnvConfig =
                        Description = desc
                        Type = dataType }        
         envVar
-    
+       
     let createConfig name desc =
         { Name = name; Description = desc; Variables = ResizeArray<EnvVar>() }

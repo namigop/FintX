@@ -170,6 +170,7 @@ public class FileNode : NodeBase {
     private void OnOpen() {
         var tab = TabFactory.From(this, this.Io);
         if (tab != null) {
+            Io.Log.Info($"Opening {this.FullPath}");
             GlobalHub.publish(new OpenTabMessage(tab));
         }
     }

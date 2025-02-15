@@ -46,6 +46,7 @@
         <entry key="Tefin/Views/Overlay/AddNewProjectOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/GrpcClientConfigView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/YesNoOverlayView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/ProjectEnv/EnvMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ProjectEnv/ProjectMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/EnvEditorTabView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/FileReqTabView.axaml" value="Tefin/Tefin.csproj" />

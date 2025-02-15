@@ -4,6 +4,8 @@ using System.Text;
 using System.Threading;
 using System.Windows.Input;
 
+using Microsoft.FSharp.Core;
+
 using ReactiveUI;
 
 using Tefin.Core.Reflection;
@@ -146,12 +148,29 @@ public class SystemNode : TypeBaseNode {
     public ICommand CreateEnvVariableCommand { get; }
 
     private void OnCreateEnvVariable() {
+        string BuildJsonPath() {
+            var sb = new StringBuilder();
+            GetJsonPath(this, sb);
+            var s = sb.ToString();
+            return s;
+        }
+
         var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
         this.EnvVarTag = tag;
-        var sb = new StringBuilder();
-        GetJsonPath(this, sb);
-        var jpath = sb.ToString();
-        var requestNode = this.FindParentNode<TypeBaseNode>(n => n.Title == "request");
+        var jsonPath = BuildJsonPath();
+        var methodInfoNode = this.FindParentNode<MethodInfoNode>();
+        if (methodInfoNode != null && !methodInfoNode.Variables.Exists(t => t.JsonPath == jsonPath)) {
+            var (_, defaultValue) = TypeBuilder.getDefault(this.Type, true, FSharpOption<object>.None, 0);
+            var v = new RequestVariable() {
+                Tag = tag,
+                CurrentValue = this.Value?.ToString() ?? defaultValue.ToString()!,
+                DefaultValue = defaultValue.ToString()!,
+                TypeName = this.Type.FullName!,
+                JsonPath = jsonPath
+            };
+            
+            methodInfoNode.Variables.Add(v);
+        }
     }
 
     public override void Dispose() {

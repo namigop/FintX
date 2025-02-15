@@ -24,6 +24,7 @@ public class EnvEditorTabViewModel : TabViewModelBase {
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);
+        
     }
 
     protected override string GetTabId() => ((EnvNode)this.ExplorerItem).Title;

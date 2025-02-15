@@ -17,6 +17,8 @@ public sealed class MethodInfoNode : NodeBase {
         this.SubTitle = $"{{{GrpcMethod.getMethodType(mi)}}}";
     }
 
+    public List<RequestVariable> Variables { get; } = [];
+    
     public override void Init() {
     }
 }

@@ -23,6 +23,9 @@ public class MonitorChangesFeature(IOs io) {
     }
 
     private void OnChanged(object sender, FileSystemEventArgs e) {
+        if (e.Name == ProjectTypes.ProjectSaveState.FileName)
+            return;
+        
         io.Log.Info($"File changed: {e.Name}");
         var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
         GlobalHub.publish(msg);

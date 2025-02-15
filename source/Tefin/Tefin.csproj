@@ -347,6 +347,10 @@
           <DependentUpon>EnvEditorTabView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\ProjectEnv\EnvMenuView.axaml.cs">
+          <DependentUpon>EnvMenuView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

@@ -16,12 +16,12 @@ namespace Tefin.ViewModels.ProjectEnv;
 
 public class ProjectMenuViewModel : ViewModelBase {
     private readonly ClientExplorerViewModel _explorerViewModel;
-    private readonly ConfigExplorerViewModel _configExplorer;
+    private readonly EnvMenuViewModel _envMenu;
     private ProjectSelection _selectedProject;
 
-    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel, ConfigExplorerViewModel configExplorer, AppTypes.AppState? appState) {
+    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel, EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
         this._explorerViewModel = explorerViewModel;
-        this._configExplorer = configExplorer;
+        this._envMenu = envMenu;
         this.NewProjectCommand = this.CreateCommand(this.OnNewProject);
         this.OpenProjectCommand = this.CreateCommand(this.OnOpenProject);
         this.RecentProjects = new ObservableCollection<ProjectSelection>();
@@ -41,6 +41,7 @@ public class ProjectMenuViewModel : ViewModelBase {
 
             this._selectedProject = this.RecentProjects.First(f => f.Path == appState.ActiveProject.Path);
             this._selectedProject.IsSelected = true;
+            this._envMenu.Init(this._selectedProject.Path);
         }
 
         GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage)
@@ -75,6 +76,7 @@ public class ProjectMenuViewModel : ViewModelBase {
             }
 
             vm.OpenProject(vm.SelectedProject.Path);
+            this._envMenu.Init(vm.SelectedProject.Path);
         });
 
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) =>

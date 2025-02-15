@@ -47,7 +47,9 @@
             <StackPanel VerticalAlignment="Center">
                 <ContentControl Content="{Binding ProjectMenuViewModel}" />
             </StackPanel>
-
+            <StackPanel VerticalAlignment="Center">
+                <ContentControl Content="{Binding EnvMenuViewModel}" />
+            </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="20 0 0 0">
                 <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18"
                                       VerticalAlignment="Center"

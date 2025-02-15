@@ -24,8 +24,11 @@ public class MainWindowViewModel : ViewModelBase {
         this.Root = default;
         this.MainMenu = new MainMenuViewModel();
         var appState = Core.App.getAppState(this.Io);
-        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, this.MainMenu.ConfigMenuItem.Explorer, appState);
+        this.EnvMenuViewModel = new EnvMenuViewModel();
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, this.EnvMenuViewModel, appState);
     }
+
+    public EnvMenuViewModel EnvMenuViewModel { get; set; }
 
     public FooterViewModel Footer { get; } = new();
     public MainMenuViewModel MainMenu { get; }
@@ -72,7 +75,7 @@ public class MainWindowViewModel : ViewModelBase {
 
     private void StartAutoSave() {
         #if DEBUG
-        return;
+        //return;
         #endif
         AutoSave.ClientParam[] Get() {
             var methodTabs = this.TabHost.Items

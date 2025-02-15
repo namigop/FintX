@@ -9,6 +9,7 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Features;
 using Tefin.Utils;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -61,6 +62,8 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public virtual string GetRequestContent() {
         var (ok, mParams) = this.GetMethodParameters();
+        var methodInfoNode = (MethodInfoNode)this._treeEditor.Items[0];
+        var variables = methodInfoNode.Variables;
         if (ok) {
             var feature = new ExportFeature(this.MethodInfo, mParams);
             var exportReqJson = feature.Export();
