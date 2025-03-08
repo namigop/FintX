@@ -9,6 +9,11 @@ type EnvVar = {
     Description: string
     Type:string
 }
+type RequestEnvVar = {
+    Tag: string
+    JsonPath:string
+    Type:string
+}
 
 type EnvConfigData = {   
     Name: string    
@@ -29,5 +34,7 @@ module EnvConfig =
                        Type = dataType }        
         envVar
        
+    let createReqVar tag jsonPath dataType =        
+        { Tag=tag; JsonPath=jsonPath; Type=dataType }
     let createConfig name desc =
         { Name = name; Description = desc; Variables = ResizeArray<EnvVar>() }

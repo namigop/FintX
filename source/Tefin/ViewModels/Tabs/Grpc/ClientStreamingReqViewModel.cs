@@ -8,6 +8,7 @@ using ReactiveUI;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -96,8 +97,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             if (!isValid) {
                 this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
             }
-
-            await GrpcUiUtils.ExportRequest(mParams, reqStream, this.MethodInfo, this.Io);
+            var methodInfoNode = (MethodInfoNode)this.TreeEditor.Items[0];
+            var variables = methodInfoNode.Variables;
+            await GrpcUiUtils.ExportRequest(mParams, variables, reqStream, this.MethodInfo, this.Io);
         }
     }
 
@@ -105,8 +107,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, mParams) = this.GetMethodParameters();
         if (ok) {
             var (isValid, reqStream) = this.ClientStreamEditor.GetList();
+            
             if (isValid) {
-                var feature = new ExportFeature(this.MethodInfo, mParams, reqStream);
+                var methodInfoNode = (MethodInfoNode)this.TreeEditor.Items[0];
+                var variables = methodInfoNode.Variables;
+                var feature = new ExportFeature(this.MethodInfo, mParams, variables, reqStream);
                 var exportReqJson = feature.Export();
                 if (exportReqJson.IsOk) {
                     return exportReqJson.ResultValue;

@@ -15,6 +15,7 @@
         <Compile Include="Proc.fs"/>
         <Compile Include="Res.fs"/>
         <Compile Include="Config.fs"/>
+        <Compile Include="EnvConfig.fs" />
         <Compile Include="LoadContext.fs"/>
         <Compile Include="Actors\Actor.fs"/>
         <Compile Include="Actors\Hub.fs"/>
@@ -48,7 +49,6 @@
         <Compile Include="CancellationTokenConverter.fs"/>
         <Compile Include="Instance.fs"/>
         <Compile Include="ClientStructure.fs" />
-        <Compile Include="EnvConfig.fs" />
         <Compile Include="ProjectStructure.fs" />
         <Compile Include="VarsStructure.fs" />
         <Compile Include="ClientCompiler.fs"/>

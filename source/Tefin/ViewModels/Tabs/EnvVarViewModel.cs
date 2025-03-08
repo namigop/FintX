@@ -21,6 +21,7 @@ public class EnvVarViewModel : ViewModelBase {
     private string _selectedDisplayType;
     private static string[] DisplayTypes = SystemType.getTypesForDisplay();
     private static Type[] ActualTypes = SystemType.getTypes().ToArray();
+    
     public EnvVarViewModel(EnvVar envVar) {
         this.Name = envVar.Name;
         this.CurrentValue = envVar.CurrentValue;

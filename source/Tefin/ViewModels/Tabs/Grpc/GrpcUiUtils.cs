@@ -5,14 +5,15 @@ using System.Reflection;
 using Tefin.Core;
 using Tefin.Features;
 using Tefin.Utils;
+using Tefin.ViewModels.Types;
 
 #endregion
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
-    public static async Task ExportRequest(object?[] mParams, object reqStream, MethodInfo methodInfo, IOs io) {
-        var feature = new ExportFeature(methodInfo, mParams, reqStream);
+    public static async Task ExportRequest(object?[] mParams, List<RequestVariable> variables, object reqStream, MethodInfo methodInfo, IOs io) {
+        var feature = new ExportFeature(methodInfo, mParams, variables, reqStream);
         var exportReqJson = feature.Export();
         if (exportReqJson.IsOk) {
             var fileName = $"{methodInfo.Name}_req{Ext.requestFileExt}";

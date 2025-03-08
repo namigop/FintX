@@ -24,7 +24,7 @@ module Export =
         let t = CoreExport.emitRequestExportClass None requestType
         false, t)
 
-  let private createExportInstance (methodInfo: MethodInfo) (requestStream: obj option) (reqInstance: obj) =
+  let private createExportInstance (methodInfo: MethodInfo) (requestStream: obj option) (reqInstance: obj) (vars : RequestEnvVar array) =
     requestToExportType methodInfo requestStream
     |> Res.map (fun (isStreaming, exportType) ->
       let exportInstance = Activator.CreateInstance exportType
@@ -34,6 +34,7 @@ module Export =
       exportType.GetProperty("Api").SetValue(exportInstance, GrpcPackage.packageName)
       exportType.GetProperty("Method").SetValue(exportInstance, methodInfo.Name)
       exportType.GetProperty("MethodType").SetValue(exportInstance, $"{methodType}")
+      exportType.GetProperty("Variables").SetValue(exportInstance, vars)
 
       exportType
         .GetProperty("RequestType")
@@ -116,6 +117,5 @@ module Export =
     let isStreaming, exportType =
       Res.getValue (requestToExportType p.Method p.RequestStream)
 
-    let exportInstanceRet = createExportInstance p.Method p.RequestStream reqInstance
-
+    let exportInstanceRet = createExportInstance p.Method p.RequestStream reqInstance p.EnvVariables
     exportInstanceRet |> Res.map (Instance.indirectSerialize exportType)

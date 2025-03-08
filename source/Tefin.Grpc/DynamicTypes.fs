@@ -10,11 +10,13 @@ open Tefin.Grpc
 type SerParam =
   { Method: MethodInfo
     RequestParams: obj array
+    EnvVariables : RequestEnvVar array
     RequestStream: obj option }
 
   static member Create(m, r) =
     { Method = m
       RequestParams = r
+      EnvVariables = Array.empty
       RequestStream = None }
 
   static member WithStream (r: SerParam) list = { r with RequestStream = list }

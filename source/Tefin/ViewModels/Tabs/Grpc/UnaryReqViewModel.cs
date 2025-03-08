@@ -43,6 +43,7 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public MethodInfo MethodInfo { get; }
+    public TreeRequestEditorViewModel TreeEditor => _treeEditor;
 
     public IRequestEditorViewModel RequestEditor {
         get => this._requestEditor;
@@ -65,7 +66,7 @@ public class UnaryReqViewModel : ViewModelBase {
         var methodInfoNode = (MethodInfoNode)this._treeEditor.Items[0];
         var variables = methodInfoNode.Variables;
         if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams);
+            var feature = new ExportFeature(this.MethodInfo, mParams, variables);
             var exportReqJson = feature.Export();
             if (!exportReqJson.IsOk) {
                 this.Io.Log.Error(exportReqJson.ErrorValue);
