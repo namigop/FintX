@@ -3,6 +3,7 @@
 using System.Diagnostics;
 using System.Net.Http.Json;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using ReactiveUI;
 
@@ -89,25 +90,40 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public virtual void ImportRequestFile(string file) {
         var import = new ImportFeature(this.Io, file, this.MethodInfo);
-        var (export, _) = import.Run();
-        if (export.IsOk) {
-            var methodParams = export.ResultValue;
+        var importResult = import.Run();
+        if (importResult.IsOk) {
+            var methodParams = importResult.ResultValue.MethodParameters;
             if (methodParams == null) {
                 Debugger.Break();
             }
-
             this._methodParameterInstances = methodParams ?? [];
             this.Init();
+            
+            var methodInfoNode = (MethodInfoNode)this._treeEditor.Items[0];
+            foreach (var envVar in importResult.ResultValue.Variables) {
+                var node = methodInfoNode.FindChildNode(i => {
+                    if (i is SystemNode sn) {
+                        var pathToRoot = sn.GetJsonPath();
+                        return pathToRoot == envVar.JsonPath;
+                    }
+
+                    return false;
+                });
+
+                if (node is SystemNode sysNode) {
+                    sysNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
+                }
+            }
         }
         else {
-            this.Io.Log.Error(export.ErrorValue);
+            this.Io.Log.Error(importResult.ErrorValue);
         }
     }
 
     public void Init() {
-        this._methodParameterInstances =
-            this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
+        this._methodParameterInstances = this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
         this._requestEditor.Show(this._methodParameterInstances);
+       
         this._isLoaded = true;
     }
 

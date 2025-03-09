@@ -148,23 +148,17 @@ public class SystemNode : TypeBaseNode {
     public ICommand CreateEnvVariableCommand { get; }
 
     private void OnCreateEnvVariable() {
-        string BuildJsonPath() {
-            var sb = new StringBuilder();
-            GetJsonPath(this, sb);
-            var s = sb.ToString();
-            return s;
-        }
-
         var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
+        var jsonPath = GetJsonPath();
+        this.CreateEnvVariable(tag, jsonPath);
+    }
+
+    public void CreateEnvVariable(string tag, string jsonPath) {
         this.EnvVarTag = tag;
-        var jsonPath = BuildJsonPath();
         var methodInfoNode = this.FindParentNode<MethodInfoNode>();
         if (methodInfoNode != null && !methodInfoNode.Variables.Exists(t => t.JsonPath == jsonPath)) {
-            var (_, defaultValue) = TypeBuilder.getDefault(this.Type, true, FSharpOption<object>.None, 0);
             var v = new RequestVariable() {
                 Tag = tag,
-                CurrentValue = this.Value?.ToString() ?? defaultValue.ToString()!,
-                DefaultValue = defaultValue.ToString()!,
                 TypeName = this.Type.FullName!,
                 JsonPath = jsonPath
             };

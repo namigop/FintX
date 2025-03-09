@@ -39,20 +39,16 @@ public static class GrpcUiUtils {
         IOs io) {
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);
-        var (importReq, importReqStream) = import.Run();
-        if (importReq.IsOk) {
-            var methodParams = importReq.ResultValue;
+        //var (importReq, importReqStream) = import.Run();
+        var importResult = import.Run();
+        
+        if (importResult.IsOk) {
+            var methodParams = importResult.ResultValue.MethodParameters;
             requestEditor.Show(methodParams);
+            listEditor.Show(importResult.ResultValue.RequestStream);
         }
         else {
-            io.Log.Error(importReq.ErrorValue);
-        }
-
-        if (importReqStream.IsOk) {
-            listEditor.Show(importReqStream.ResultValue);
-        }
-        else {
-            io.Log.Error(importReqStream.ErrorValue);
+            io.Log.Error(importResult.ErrorValue);
         }
     }
 }

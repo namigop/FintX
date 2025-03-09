@@ -18,13 +18,9 @@ using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 namespace Tefin.ViewModels.Explorer.Client;
 
 public class ClientRootNode : RootNode {
-    private string _clientName = "";
-    private Type? _clientType;
     private bool _compileInProgress;
-    private string _desc = "";
     private bool _sessionLoaded;
-    private string _url = "";
-
+    
     public ClientRootNode(ProjectTypes.ClientGroup cg, Type? clientType) : base(cg, clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
@@ -37,8 +33,6 @@ public class ClientRootNode : RootNode {
         this.Update(cg);
 
         this.IsExpanded = true;
-        // this.AddItem(new EmptyNode());
-        this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
@@ -48,46 +42,12 @@ public class ClientRootNode : RootNode {
     }
 
     public ICommand ExportCommand { get; }
-
-    public ProjectTypes.ClientGroup Client {
-        get;
-        private set;
-    }
-
-    public string ClientConfigFile { get; private set; }
-
-    public string ClientName {
-        get => this._clientName;
-        set => this.RaiseAndSetIfChanged(ref this._clientName, value);
-    }
-
-    public string ClientPath { get; private set; }
-
-    public Type? ClientType {
-        get => this._clientType;
-        set => this.RaiseAndSetIfChanged(ref this._clientType, value);
-    }
-
+    
     public ICommand CompileClientTypeCommand { get; }
 
     public ICommand DeleteCommand { get; }
 
-    public string Desc {
-        get => this._desc;
-        set => this.RaiseAndSetIfChanged(ref this._desc, value);
-    }
-
     public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
-
-    //public ReadOnlyDictionary<string, string> Config { get; }
-    public ICommand OpenClientConfigCommand { get; }
-
-    public string ServiceName { get; private set; }
-
-    public string Url {
-        get => this._url;
-        set => this.RaiseAndSetIfChanged(ref this._url, value);
-    }
 
     private async Task OnExport() {
         var share = new SharingFeature();
@@ -105,9 +65,6 @@ public class ClientRootNode : RootNode {
             this.Io.Log.Error(result.ErrorValue);
         }
     }
-
-    public void Clear() => this.Items.Clear();
-
     public override void Init() {
         if (this.ClientType == null) {
             return;
@@ -120,7 +77,7 @@ public class ClientRootNode : RootNode {
 
         this.Items.Clear();
 
-        var methodInfos = ServiceClient.findMethods(this._clientType);
+        var methodInfos = ServiceClient.findMethods(this.ClientType);
         foreach (var m in methodInfos) {
             var item = new MethodNode(m, this.Client);
             item.Init();
@@ -187,11 +144,6 @@ public class ClientRootNode : RootNode {
 
         this.Items.Clear();
         GlobalHub.publish(new ClientDeletedMessage(this.Client));
-    }
-
-    private void OnOpenClientConfig() {
-        var vm = new GrpcClientConfigViewModel(this.ClientConfigFile, this.OnClientNameChanged);
-        GlobalHub.publish(new OpenOverlayMessage(vm));
     }
 
     private void Update(ProjectTypes.ClientGroup cg) {

@@ -9,7 +9,7 @@ type ReqExport =
     MethodType: string
     RequestType: string
     Request: obj
-    Variables: EnvVar array
+    Variables: RequestEnvVar array
     RequestStream: obj option }
 
 module CoreExport =
@@ -57,7 +57,7 @@ module CoreExport =
     let methodType = exportType.GetProperty("MethodType").GetValue(exportInstance) |> toString
     let requestType = exportType.GetProperty("RequestType").GetValue(exportInstance) |> toString
     let request = exportType.GetProperty("Request").GetValue(exportInstance)
-    let vars = exportType.GetProperty("Variables").GetValue(exportInstance) :?> EnvVar array
+    let vars = exportType.GetProperty("Variables").GetValue(exportInstance) :?> RequestEnvVar array
     let requestStream =
       let prop = exportType.GetProperty("RequestStream")
       if prop = null then

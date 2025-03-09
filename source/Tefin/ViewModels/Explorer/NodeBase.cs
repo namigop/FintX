@@ -63,17 +63,21 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
 
     public IExplorerItem? FindSelected() => this.FindChildNode(i => i.IsSelected);
 
-    protected static void GetJsonPath(IExplorerItem? node, StringBuilder sb) {
+    public string GetJsonPath() {
+        var node = (IExplorerItem)this;
+        var sb = new StringBuilder();
         while (true) {
             if (node is null) {
                 sb.Insert(0, "$");
-                return;
+                break;
             }
 
             sb.Insert(0, node.Title);
             sb.Insert(0, '.');
             node = node.Parent;
         }
+
+        return sb.ToString();
     }
 
     public T? FindParentNode<T>(Func<T, bool>? predicate = null) where T : IExplorerItem {

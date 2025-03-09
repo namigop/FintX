@@ -5,6 +5,11 @@ open System.Reflection
 open Tefin.Core
 open Tefin.Grpc.Dynamic
 
+type RequestImport = {
+  MethodParameters : obj array
+  RequestStream : obj option
+  Variables : RequestEnvVar array
+}
 module Export =
 
   let private requestToExportType (methodInfo: MethodInfo) (reqStreamOpt: obj option) =
@@ -91,11 +96,13 @@ module Export =
         if not isStreaming then
           let a = Res.ok objArray
           let b = Res.failed (Exception("not expected"))
-          struct (a, b)
+          Res.ok ({ MethodParameters = objArray; Variables = info.Variables; RequestStream = None  })
+          //struct (a, b)
         //struct ((Res.ok objArray), (Res.failed (failwith "not expected")))
         else
           let reqStream = info.RequestStream.Value
-          struct ((Res.ok objArray), (Res.ok reqStream))
+          Res.ok ({ MethodParameters = objArray; Variables = info.Variables; RequestStream = Some reqStream  })
+          //struct ((Res.ok objArray), (Res.ok reqStream))
       //failwith "not yet supported for client stream and duplex"
       )
       |> Res.getValue
