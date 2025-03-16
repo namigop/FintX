@@ -70,5 +70,5 @@ module CoreExport =
       MethodType = methodType
       RequestType = requestType
       Request = request
-      Variables = vars
+      Variables = if vars = null then Array.empty else vars
       RequestStream = requestStream }

@@ -135,6 +135,11 @@ public class SystemNode : TypeBaseNode {
         set => this.Editor.IsEditing = value;
     }
 
+    public override object? Value {
+        get => base.Value;
+        set => this.TryReadFromEnvFile(value);
+    }
+
     public string EnvVarTag {
         get => this._envVarTag;
         set {
@@ -147,6 +152,15 @@ public class SystemNode : TypeBaseNode {
 
     public ICommand CreateEnvVariableCommand { get; }
 
+    private void TryReadFromEnvFile(object? value) {
+        if (string.IsNullOrWhiteSpace(this._envVarTag) || string.IsNullOrWhiteSpace(Current.EnvFilePath)) {
+            base.Value = value;
+            return;
+        }
+
+        var json = Io.File.ReadAllText(Current.EnvFilePath);
+
+    }
     private void OnCreateEnvVariable() {
         var tag = $"{{{{{this.Title.ToUpperInvariant()}}}}}";
         var jsonPath = GetJsonPath();

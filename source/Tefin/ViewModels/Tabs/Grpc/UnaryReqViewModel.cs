@@ -27,8 +27,7 @@ public class UnaryReqViewModel : ViewModelBase {
 
     private bool _isLoaded = false;
 
-    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree,
-        List<object?>? methodParameterInstances = null) {
+    public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? [];
         this._showTreeEditor = true;
         this.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
@@ -92,6 +91,7 @@ public class UnaryReqViewModel : ViewModelBase {
         var import = new ImportFeature(this.Io, file, this.MethodInfo);
         var importResult = import.Run();
         if (importResult.IsOk) {
+            //1. Show the request
             var methodParams = importResult.ResultValue.MethodParameters;
             if (methodParams == null) {
                 Debugger.Break();
@@ -99,6 +99,7 @@ public class UnaryReqViewModel : ViewModelBase {
             this._methodParameterInstances = methodParams ?? [];
             this.Init();
             
+            //2. Update the nodes with env variables (if any)
             var methodInfoNode = (MethodInfoNode)this._treeEditor.Items[0];
             foreach (var envVar in importResult.ResultValue.Variables) {
                 var node = methodInfoNode.FindChildNode(i => {
@@ -125,6 +126,7 @@ public class UnaryReqViewModel : ViewModelBase {
         this._requestEditor.Show(this._methodParameterInstances);
        
         this._isLoaded = true;
+         
     }
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {

@@ -5,6 +5,7 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
 
@@ -20,14 +21,14 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     private string _statusText;
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
+        
         this._reqViewModel = new UnaryReqViewModel(mi, true);
         this.RespViewModel = new UnaryRespViewModel(mi);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this.StopCommand = this.CreateCommand(this.OnStop);
         this._statusText = "";
         this._showTreeEditor = true;
-        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor,
-            this.OnShowTreeEditorChanged);
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
@@ -114,17 +115,4 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
         }
     }
-
-    // public class TestClass {
-    //     public byte[] Bytes { get; set; }
-    //
-    //     public void GetBytes(byte[] bytes, TestEnum[] selections, List<Dictionary<TestClass, TestEnum>> dickinsian) {
-    //     }
-    // }
-    //
-    // public enum TestEnum {
-    //     A = 1,
-    //     B = 2,
-    //     C= 3
-    // }
 }

@@ -43,6 +43,9 @@ public class ProjectMenuViewModel : ViewModelBase {
             this._selectedProject.IsSelected = true;
             this._envMenu.Init(this._selectedProject.Path);
         }
+        
+        GlobalHub.publish(new ProjectSelectedMessage(this._selectedProject.Name,
+            this._selectedProject.Path, this._selectedProject.Package));
 
         GlobalHub.subscribe<NewProjectCreatedMessage>(this.OnReceiveNewProjectCreatedMessage)
             .Then(this.MarkForCleanup);
@@ -77,6 +80,7 @@ public class ProjectMenuViewModel : ViewModelBase {
 
             vm.OpenProject(vm.SelectedProject.Path);
             this._envMenu.Init(vm.SelectedProject.Path);
+            GlobalHub.publish(new ProjectSelectedMessage(vm.SelectedProject.Name, vm.SelectedProject.Path, vm.SelectedProject.Package));
         });
 
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) =>

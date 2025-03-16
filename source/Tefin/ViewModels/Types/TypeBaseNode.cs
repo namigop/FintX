@@ -42,7 +42,7 @@ public abstract class TypeBaseNode : NodeBase {
     public Type Type { get; }
 
     //  set => this.RaiseAndSetIfChanged(ref this._formattedValue, value);
-    public object? Value {
+    public virtual object? Value {
         get => this._value;
         set {
             var oldValue = this._value;

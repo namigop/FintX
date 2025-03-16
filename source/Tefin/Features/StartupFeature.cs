@@ -20,6 +20,7 @@ public class StartupFeature {
         //var fo = VarsStructure.demo();
 
         Startup.init();
+        Current.Init();
         LiveCharts.Configure(config => {
             config.AddDarkTheme();
         });

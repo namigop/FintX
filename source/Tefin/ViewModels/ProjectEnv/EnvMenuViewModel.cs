@@ -3,6 +3,8 @@
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Infra.Actors;
+using Tefin.Messages;
 
 namespace Tefin.ViewModels.ProjectEnv;
 
@@ -37,6 +39,7 @@ public class EnvMenuViewModel : ViewModelBase {
                     e.IsSelected = false;
 
                 this._selectedEnvironment.IsSelected = true;
+                GlobalHub.publish(new EnvSelectedMessage(this._selectedEnvironment.Name, this._selectedEnvironment.Path));
             }
         }
     }
