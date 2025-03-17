@@ -26,15 +26,17 @@ public static class GrpcUiUtils {
     }
 
     public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+        RequestEnvVar[] envVariables,
         Type listType, MethodInfo methodInfo, IOs io) {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            ImportRequest(requestEditor, listEditor, listType, methodInfo, files[0], io);
+            ImportRequest(requestEditor, listEditor, envVariables, listType, methodInfo, files[0], io);
         }
     }
 
     public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+        RequestEnvVar[] envVariables,
         Type listType, MethodInfo methodInfo, string file,
         IOs io) {
         var requestStream = Activator.CreateInstance(listType);
@@ -44,7 +46,7 @@ public static class GrpcUiUtils {
         
         if (importResult.IsOk) {
             var methodParams = importResult.ResultValue.MethodParameters;
-            requestEditor.Show(methodParams);
+            requestEditor.Show(methodParams, envVariables);
             listEditor.Show(importResult.ResultValue.RequestStream);
         }
         else {

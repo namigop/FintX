@@ -26,6 +26,7 @@ public class UnaryReqViewModel : ViewModelBase {
     private bool _showTreeEditor;
 
     private bool _isLoaded = false;
+    private RequestEnvVar[] _envVariables = [];
 
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? [];
@@ -37,6 +38,7 @@ public class UnaryReqViewModel : ViewModelBase {
         this._requestEditor = this._treeEditor;
     }
 
+    public RequestEnvVar[] EnvVariables => this._envVariables;
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
@@ -97,24 +99,9 @@ public class UnaryReqViewModel : ViewModelBase {
                 Debugger.Break();
             }
             this._methodParameterInstances = methodParams ?? [];
+            this._envVariables = importResult.ResultValue.Variables;
             this.Init();
             
-            //2. Update the nodes with env variables (if any)
-            var methodInfoNode = (MethodInfoNode)this._treeEditor.Items[0];
-            foreach (var envVar in importResult.ResultValue.Variables) {
-                var node = methodInfoNode.FindChildNode(i => {
-                    if (i is SystemNode sn) {
-                        var pathToRoot = sn.GetJsonPath();
-                        return pathToRoot == envVar.JsonPath;
-                    }
-
-                    return false;
-                });
-
-                if (node is SystemNode sysNode) {
-                    sysNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
-                }
-            }
         }
         else {
             this.Io.Log.Error(importResult.ErrorValue);
@@ -123,7 +110,7 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public void Init() {
         this._methodParameterInstances = this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
-        this._requestEditor.Show(this._methodParameterInstances);
+        this._requestEditor.Show(this._methodParameterInstances, this._envVariables);
        
         this._isLoaded = true;
          
@@ -143,7 +130,7 @@ public class UnaryReqViewModel : ViewModelBase {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._jsonEditor;
         if (ok) {
-            this.RequestEditor.Show(parameters);
+            this.RequestEditor.Show(parameters, this._envVariables);
         }
     }
 
@@ -151,7 +138,7 @@ public class UnaryReqViewModel : ViewModelBase {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._treeEditor;
         if (ok) {
-            this.RequestEditor.Show(parameters);
+            this.RequestEditor.Show(parameters, this._envVariables);
         }
     }
 }

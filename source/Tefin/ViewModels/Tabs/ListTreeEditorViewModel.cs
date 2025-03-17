@@ -108,5 +108,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();
+        
+        //TODO: Env variables
     }
 }

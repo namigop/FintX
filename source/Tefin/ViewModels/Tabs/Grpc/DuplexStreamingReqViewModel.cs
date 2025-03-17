@@ -120,10 +120,10 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(this.RequestEditor,
-        this.ClientStreamEditor, this._listType, this.MethodInfo, this.Io);
+        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, this.Io);
 
     public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
-        this.ClientStreamEditor, this._listType, this.MethodInfo, file, this.Io);
+        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, file, this.Io);
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this._callResponse = response;

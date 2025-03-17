@@ -3,6 +3,8 @@
 using System.Reflection;
 using System.Threading;
 
+using Tefin.Core;
+
 #endregion
 
 namespace Tefin.ViewModels.Tabs;
@@ -15,7 +17,7 @@ public interface IRequestEditorViewModel {
 
     public (bool, object?[]) GetParameters();
 
-    public void Show(object?[] parameters);
+    public void Show(object?[] methodParameterInstances, RequestEnvVar[] parameters);
 
     void StartRequest();
 }

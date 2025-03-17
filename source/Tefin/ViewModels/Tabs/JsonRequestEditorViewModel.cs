@@ -5,6 +5,7 @@ using System.Threading;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Dynamic;
@@ -56,7 +57,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         return (false, []);
     }
 
-    public void Show(object?[] parameters) {
+    public void Show(object?[] parameters, RequestEnvVar[] envVars) {
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
