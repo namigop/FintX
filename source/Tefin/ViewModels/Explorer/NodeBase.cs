@@ -2,6 +2,7 @@
 
 using System.Collections.ObjectModel;
 using System.Text;
+using System.Threading;
 
 using ReactiveUI;
 
@@ -66,18 +67,24 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
     public string GetJsonPath() {
         var node = (IExplorerItem)this;
         var sb = new StringBuilder();
+
+        List<string> parts = [];
         while (true) {
             if (node is null) {
-                sb.Insert(0, "$");
+                parts.Insert(0, "$");
+                //sb.Insert(0, "$");
                 break;
             }
 
-            sb.Insert(0, node.Title);
-            sb.Insert(0, '.');
+            //sb.Insert(0, node.Title);
+            //sb.Insert(0, '.');
+            parts.Insert(0, node.Title);
             node = node.Parent;
         }
 
-        return sb.ToString();
+        parts.RemoveAt(1);
+        return string.Join(".", parts);
+        //return sb.ToString();
     }
 
     public T? FindParentNode<T>(Func<T, bool>? predicate = null) where T : IExplorerItem {

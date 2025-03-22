@@ -12,7 +12,10 @@ public class EnvNode : FileNode {
         base.Title = Path.GetFileName(fullPath);
     }
     public string EnvFile { get; init; }
-    public EnvConfigData EnvData { get; init; }
+
+    public EnvConfigData GetEnvData() {
+        return VarsStructure.getVarsFromFile(this.Io, this.EnvFile);
+    }
 
     public ICommand ExportCommand { get; }
 

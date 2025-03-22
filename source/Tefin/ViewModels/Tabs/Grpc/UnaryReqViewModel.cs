@@ -111,9 +111,7 @@ public class UnaryReqViewModel : ViewModelBase {
     public void Init() {
         this._methodParameterInstances = this._isLoaded ? this.GetMethodParameters().Item2 : this._methodParameterInstances;
         this._requestEditor.Show(this._methodParameterInstances, this._envVariables);
-       
         this._isLoaded = true;
-         
     }
 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {

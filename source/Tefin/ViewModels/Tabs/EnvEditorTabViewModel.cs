@@ -11,7 +11,7 @@ public class EnvEditorTabViewModel : TabViewModelBase {
     private EnvDataViewModel _envData;
 
     public EnvEditorTabViewModel(EnvNode item) : base(item) {
-        this.EnvData = new EnvDataViewModel(item.EnvData);
+        this.EnvData = new EnvDataViewModel(item.GetEnvData());
     }
 
     public EnvDataViewModel EnvData {

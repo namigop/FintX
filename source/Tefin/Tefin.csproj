@@ -367,7 +367,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <Compile Remove="ViewModels\Explorer\MethodNode.cs" />
-        <None Include="ViewModels\Explorer\MethodNode.cs" />
         <AvaloniaXaml Remove="Views\Explorer\ExplorerView.axaml" />
         <None Include="Views\Explorer\ExplorerView.axaml" />
     </ItemGroup>

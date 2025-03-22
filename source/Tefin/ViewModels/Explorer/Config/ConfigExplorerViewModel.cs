@@ -103,7 +103,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
             this.Items.Add(root);
         
             foreach (var (fullPath, env) in projectEnvData.Variables) {
-                var node = new EnvNode(fullPath) { SubTitle = env.Description, EnvData = env};
+                var node = new EnvNode(fullPath) { SubTitle = env.Description};
                 root.Items.Add(node);
             }
 

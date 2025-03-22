@@ -18,11 +18,14 @@ module VarsStructure =
         let varFiles = io.Dir.GetFiles(varPath, "*" + Ext.envExt, SearchOption.TopDirectoryOnly)
         varFiles
     
+    let getVarsFromFile (io:IOs) (file:string) =
+        let c = io.File.ReadAllText file
+        let data = Instance.jsonDeserialize<EnvConfigData>(c)
+        data
     let getVars (io:IOs) (projectPath: string) =
         let files = getVarFiles io projectPath         
-        files
-        |> Array.map (fun c -> c, io.File.ReadAllText c)
-        |> Array.map (fun (file, c) -> file, Instance.jsonDeserialize<EnvConfigData>(c))
+        files        
+        |> Array.map (fun file -> file, getVarsFromFile io file)
         |> fun v ->
             let projEnvs = { Variables = ResizeArray<string * EnvConfigData> () }
             for (file, c) in v do
