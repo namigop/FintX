@@ -39,22 +39,19 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
     public (bool, object?[]) GetParameters() {
          
         if (this._envVars.Length > 0) {
-            var projEnv = VarsStructure.getVars(this.Io, Current.ProjectPath);
-            var curEnv = projEnv.Variables.FirstOrDefault(t => t.Item2.Name == Current.Env);
+            var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath); // .getVars(this.Io, Current.ProjectPath);
             if (curEnv != null) {
                 var jsonObject = JObject.Parse(this.Json);
                 foreach (var e in this._envVars) {
                     var token = jsonObject.SelectToken(e.JsonPath);
-                    var newValue = GetFromEnvFile(e.Tag, curEnv.Item2);
+                    var newValue =  curEnv.Variables.FirstOrDefault(t => t.Name == e.Tag)?.CurrentValue; 
                     if (newValue != null)
                         token?.Replace(newValue); // Replace the value
                 }
 
                 this.Json = jsonObject.ToString();
             }
-
         }
-        
         
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
         if (ret is { IsOk: true, ResultValue: not null }) {

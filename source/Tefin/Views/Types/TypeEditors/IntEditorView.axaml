@@ -10,18 +10,18 @@
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
             <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
-                     
                      VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVarTag}"></TextBox>
-            
-            <controls:Number 
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <controls:Number
                 IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}"
                 Value="{Binding TempValue, Mode=TwoWay}" HorizontalAlignment="Stretch"
-                             MinWidth="80"
-                             Minimum="-2147483647"
-                             Maximum="2147483647" />
+                MinWidth="80"
+                Minimum="-2147483647"
+                Maximum="2147483647" />
         </Grid>
-        
+
 
     </Border>
 </UserControl>

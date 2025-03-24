@@ -8,10 +8,17 @@
              x:DataType="typeEditors:NullableDecimalEditor"
              x:Class="Tefin.Views.Types.TypeEditors.NullableDecimalEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel>
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}" Width="80" IsEnabled="{Binding !IsNull}" />
-            <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
-                      IsVisible="{Binding AcceptsNull}" />
-        </StackPanel>
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <StackPanel IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <controls:Number Value="{Binding TempValue, Mode=TwoWay}" Width="80" IsEnabled="{Binding !IsNull}" />
+                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
+                          IsVisible="{Binding AcceptsNull}" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

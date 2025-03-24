@@ -7,8 +7,15 @@
              x:DataType="typeEditors:DateTimeOffsetEditor"
              x:Class="Tefin.Views.Types.TypeEditors.DateTimeOffsetEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
-        </StackPanel>
+        <Grid>
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <TextBox
+                IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}"
+                Text="{Binding DateTimeText}" x:Name="TextBox" />
+        </Grid>
     </Border>
 </UserControl>

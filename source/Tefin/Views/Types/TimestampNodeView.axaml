@@ -11,6 +11,11 @@
     <UserControl.Styles>
         <StyleInclude Source="TypeItemStyles.axaml" />
     </UserControl.Styles>
+    <UserControl.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Create env variable" Command="{Binding CreateEnvVariableCommand}"/>
+        </ContextMenu>
+    </UserControl.ContextMenu>
     <UserControl.DataTemplates>
         <viewModels:TypeEditorLocator />
     </UserControl.DataTemplates>
@@ -36,6 +41,17 @@
                    VerticalAlignment="Center"
                    Foreground="WhiteSmoke" />
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
-        <TextBlock Text="{Binding FormattedValue}" Margin="6 0 0 0" Classes="FormattedValue" />
+        <Grid>
+        <TextBlock IsVisible="{Binding IsEnvVarTagVisible}"
+                   Margin="6 0 0 0"
+                   Foreground="Khaki"
+                 VerticalAlignment="Center"
+                 Text="{Binding EnvVarTag}"></TextBlock>
+
+        <TextBlock Text="{Binding FormattedValue}" 
+                   IsVisible="{Binding !IsEnvVarTagVisible}"
+                   Margin="6 0 0 0" Classes="FormattedValue" />
+        </Grid>
+        
     </StackPanel>
 </UserControl>

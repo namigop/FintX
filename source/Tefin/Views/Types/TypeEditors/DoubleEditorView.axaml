@@ -8,8 +8,16 @@
              x:DataType="typeEditors:DoubleEditor"
              x:Class="Tefin.Views.Types.TypeEditors.DoubleEditorView">
     <Border x:Name="MainBorder">
-        
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}" MinWidth="80" />
-         
+        <Grid>
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <controls:Number
+                IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}"
+                Value="{Binding TempValue, Mode=TwoWay}" MinWidth="80" />
+        </Grid>
+
     </Border>
 </UserControl>

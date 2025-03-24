@@ -7,8 +7,15 @@
              x:DataType="typeEditors:TimestampEditor"
              x:Class="Tefin.Views.Types.TypeEditors.TimestampEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <TimePicker SelectedTime="{Binding TempValue}" />
-        </StackPanel>
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <TimePicker SelectedTime="{Binding TempValue}" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

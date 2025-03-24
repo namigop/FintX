@@ -61,9 +61,11 @@
         <entry key="Tefin/Views/Tabs/MethodTabView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TabHostView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TreeRequestEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/EnumNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TimestampNodeEditView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TimestampNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/BoolEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/DateTimeEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/DateTimeOffsetEditorView.axaml" value="Tefin/Tefin.csproj" />
@@ -73,7 +75,25 @@
         <entry key="Tefin/Views/Types/TypeEditors/Int16EditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/Int64EditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/IntEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableBoolEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableDateTimeEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableDateTimeOffsetEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableDecimalEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableDoubleEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/NullableFloat32EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableInt16EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableInt64EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableIntEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableTimeSpanEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableUInt16EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableUInt64EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/NullableUIntEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/StringEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/TimeSpanEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/TimestampEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/UInt16EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/UInt64EditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/UIntEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeItemStyles.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Window.axaml" value="Tefin/Tefin.csproj" />
       </map>

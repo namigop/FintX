@@ -7,11 +7,18 @@
              x:DataType="typeEditors:DateTimeEditor"
              x:Class="Tefin.Views.Types.TypeEditors.DateTimeEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
-            <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" />
-            <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
-            <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
-        </StackPanel>
+        <Grid>
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
+
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
+                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" />
+                <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
+                <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

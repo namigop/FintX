@@ -7,14 +7,21 @@
              x:DataType="typeEditors:NullableDateTimeOffsetEditor"
              x:Class="Tefin.Views.Types.TypeEditors.NullableDateTimeOffsetEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"
-                     IsEnabled="{Binding !IsNull}" />
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
 
-            <Border Width="2" Margin="6" Background="WhiteSmoke" />
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"
+                         IsEnabled="{Binding !IsNull}" />
 
-            <CheckBox Margin="0 0 0 0" IsChecked="{Binding IsNull}" Content="null"
-                      IsVisible="{Binding AcceptsNull}" />
-        </StackPanel>
+                <Border Width="2" Margin="6" Background="WhiteSmoke" />
+
+                <CheckBox Margin="0 0 0 0" IsChecked="{Binding IsNull}" Content="null"
+                          IsVisible="{Binding AcceptsNull}" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

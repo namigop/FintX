@@ -8,15 +8,21 @@
              x:Class="Tefin.Views.Types.TypeEditors.StringEditorView">
 
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <TextBox x:Name="TextBox"
-                     MinWidth="200"
-                     KeyDown="InputElement_OnKeyDown"
-                     Text="{Binding TempValue}"
-                     IsEnabled="{Binding !IsNull}"
-                     x:CompileBindings="False" />
-            <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />
-        </StackPanel>
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
 
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <TextBox x:Name="TextBox"
+                         MinWidth="200"
+                         KeyDown="InputElement_OnKeyDown"
+                         Text="{Binding TempValue}"
+                         IsEnabled="{Binding !IsNull}"
+                         x:CompileBindings="False" />
+                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

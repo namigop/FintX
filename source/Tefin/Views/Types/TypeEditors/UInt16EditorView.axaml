@@ -8,12 +8,19 @@
              x:DataType="typeEditors:UInt16Editor"
              x:Class="Tefin.Views.Types.TypeEditors.UInt16EditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
 
-                             Width="80"
-                             Minimum="0"
-                             Maximum="65535" />
-        </StackPanel>
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
+
+                                 Width="80"
+                                 Minimum="0"
+                                 Maximum="65535" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>

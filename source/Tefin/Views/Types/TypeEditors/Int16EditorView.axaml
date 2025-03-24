@@ -8,12 +8,18 @@
              x:DataType="typeEditors:Int16Editor"
              x:Class="Tefin.Views.Types.TypeEditors.Int16EditorView">
     <Border x:Name="MainBorder">
-      
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
 
+            <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
+                             IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}"
                              MinWidth="80"
                              Minimum="-32767"
                              Maximum="32767" />
-       
+        </Grid>
+
     </Border>
 </UserControl>

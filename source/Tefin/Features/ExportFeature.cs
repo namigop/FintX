@@ -22,7 +22,13 @@ public class ExportFeature(MethodInfo methodInfo, object?[] methodsParams, List<
         var displayTypes = SystemType.getTypesForDisplay();
         var actualTypes = SystemType.getTypes().Select(t => t.FullName).ToArray();
          
-        var envItems = variables.Select(v => EnvConfig.createReqVar(v.Tag, v.JsonPath, displayTypes[actualTypes.IndexOf(v.TypeName)])).ToArray();
+        var envItems = variables.Select(v => {
+            if (v.TypeName == "Google.Protobuf.WellKnownTypes.Timestamp") {
+                return EnvConfig.createReqVar(v.Tag, v.JsonPath, "protobufTimestamp");
+            }
+            
+            return EnvConfig.createReqVar(v.Tag, v.JsonPath, displayTypes[actualTypes.IndexOf(v.TypeName)]);
+        }).ToArray();
         var sdParam = new SerParam(methodInfo, methodsParams, envItems, responseStream == null ? none<object>() : some(responseStream));
         var exportReqJson = Grpc.Export.requestToJson(sdParam);
         return exportReqJson;

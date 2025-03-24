@@ -8,15 +8,21 @@
              x:DataType="typeEditors:NullableUIntEditor"
              x:Class="Tefin.Views.Types.TypeEditors.NullableUIntEditorView">
     <Border x:Name="MainBorder">
-        <StackPanel Orientation="Horizontal">
-            <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
-                             IsEnabled="{Binding !IsNull}"
-                             Width="80"
-                             Minimum="0"
-                             Maximum="4294967295" />
-            <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
-                      IsVisible="{Binding AcceptsNull}" />
-        </StackPanel>
+        <Grid ColumnDefinitions="*">
+            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+                     VerticalAlignment="Center"
+                     Text="{Binding TypeNode.EnvVarTag}">
+            </TextBox>
 
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+                <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
+                                 IsEnabled="{Binding !IsNull}"
+                                 Width="80"
+                                 Minimum="0"
+                                 Maximum="4294967295" />
+                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null"
+                          IsVisible="{Binding AcceptsNull}" />
+            </StackPanel>
+        </Grid>
     </Border>
 </UserControl>
