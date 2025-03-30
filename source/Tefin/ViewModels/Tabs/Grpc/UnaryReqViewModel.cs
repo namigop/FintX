@@ -8,6 +8,8 @@ using System.Runtime.CompilerServices;
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Infra.Actors;
+using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Utils;
 using Tefin.ViewModels.Types;
@@ -26,7 +28,7 @@ public class UnaryReqViewModel : ViewModelBase {
     private bool _showTreeEditor;
 
     private bool _isLoaded = false;
-    private RequestEnvVar[] _envVariables = [];
+    private List<RequestVariable> _envVariables = [];
 
     public UnaryReqViewModel(MethodInfo methodInfo, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._methodParameterInstances = methodParameterInstances?.ToArray() ?? [];
@@ -38,7 +40,7 @@ public class UnaryReqViewModel : ViewModelBase {
         this._requestEditor = this._treeEditor;
     }
 
-    public RequestEnvVar[] EnvVariables => this._envVariables;
+    public List<RequestVariable> EnvVariables => this._envVariables;
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
@@ -99,7 +101,15 @@ public class UnaryReqViewModel : ViewModelBase {
                 Debugger.Break();
             }
             this._methodParameterInstances = methodParams ?? [];
-            this._envVariables = importResult.ResultValue.Variables;
+            this._envVariables =
+                importResult.ResultValue.Variables
+                    .Select(t => new RequestVariable() {
+                        Tag = t.Tag,
+                        JsonPath = t.JsonPath,
+                        TypeName = SystemType.getActualType(t.Type)
+                    })
+                    .ToList();
+                ;
             this.Init();
             
         }
@@ -128,7 +138,11 @@ public class UnaryReqViewModel : ViewModelBase {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._jsonEditor;
         if (ok) {
-            this.RequestEditor.Show(parameters, this._envVariables);
+            // var reqVars = this._envVariables
+            //     .Select(t => new RequestVariable() { Tag = t.Tag, JsonPath = t.JsonPath, TypeName = t.TypeName})
+            //     .ToArray();
+            
+            this.RequestEditor.Show(parameters, _envVariables);
         }
     }
 
@@ -136,7 +150,10 @@ public class UnaryReqViewModel : ViewModelBase {
         var (ok, parameters) = this._requestEditor.GetParameters();
         this.RequestEditor = this._treeEditor;
         if (ok) {
-            this.RequestEditor.Show(parameters, this._envVariables);
+            // var reqVars = this._envVariables
+            //     .Select(t => new RequestVariable() { Tag = t.Tag, JsonPath = t.JsonPath, TypeName = t.Type })
+            //     .ToArray();
+            this.RequestEditor.Show(parameters, _envVariables);
         }
     }
 }

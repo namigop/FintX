@@ -101,6 +101,26 @@ module SystemType =
     |> Seq.map (fun (_, display) -> display)
     |> Seq.toArray
     
+  let getDisplayType  =
+    fun (actualTypeFullName:string) ->
+      if (actualTypeFullName = "Google.Protobuf.WellKnownTypes.Timestamp") then
+          "protobufTimestamp"
+      else               
+        let displayTypes = getTypesForDisplay()
+        let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
+        let index = Array.IndexOf(actualTypes, actualTypeFullName)
+        if index >= 0 then displayTypes.[index] else "not a system type"
+    
+  let getActualType  =
+    fun (displayType:string) ->
+      if (displayType = "protobufTimestamp") then
+          "Google.Protobuf.WellKnownTypes.Timestamp"
+      else
+        let displayTypes = getTypesForDisplay()
+        let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
+        let index = Array.IndexOf(displayTypes, displayType)
+        if index >= 0 then actualTypes.[index] else "not a system type"
+           
   let isSystemType (thisType: Type) =
     let ok, _ = info.TryGetValue(thisType)
     ok

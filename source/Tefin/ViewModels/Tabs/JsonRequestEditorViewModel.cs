@@ -11,6 +11,7 @@ using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Dynamic;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -18,7 +19,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IRequestEditorViewModel {
     private string _json = "";
-    private RequestEnvVar[] _envVars = [];
+    private List<RequestVariable> _envVars = [];
 
     public string Json {
         get => this._json;
@@ -35,10 +36,10 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
     } = methodInfo;
 
     public void EndRequest() => this.CtsReq = null;
-
+ 
     public (bool, object?[]) GetParameters() {
          
-        if (this._envVars.Length > 0) {
+        if (this._envVars.Count > 0) {
             var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath); // .getVars(this.Io, Current.ProjectPath);
             if (curEnv != null) {
                 var jsonObject = JObject.Parse(this.Json);
@@ -73,16 +74,12 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         }
 
         return (false, []);
-
-        string? GetFromEnvFile(string name, EnvConfigData data) {
-           var env = data.Variables.FirstOrDefault(t => t.Name == name);
-           return env?.CurrentValue;
-        }
-
     }
 
-    public void Show(object?[] parameters, RequestEnvVar[] envVars) {
-        this._envVars = envVars;
+    public void Show(object?[] parameters,  List<RequestVariable> envVars) {
+        if (this._envVars.Count == 0)
+            this._envVars = envVars;
+
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 

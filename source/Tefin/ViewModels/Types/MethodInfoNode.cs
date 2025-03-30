@@ -12,14 +12,15 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Types;
 
 public sealed class MethodInfoNode : NodeBase {
-    public MethodInfoNode(MethodInfo mi) {
+    public MethodInfoNode(MethodInfo mi, List<RequestVariable> variables) {
         this.IsExpanded = true;
         this.CanOpen = true;
         this.Title = mi.Name;
         this.SubTitle = $"{{{GrpcMethod.getMethodType(mi)}}}";
+        this.Variables = variables;
     }
 
-    public List<RequestVariable> Variables { get; } = [];
+    public List<RequestVariable> Variables { get; }
     
     public override void Init() {
     }

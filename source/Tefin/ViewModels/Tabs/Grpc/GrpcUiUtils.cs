@@ -26,7 +26,7 @@ public static class GrpcUiUtils {
     }
 
     public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
-        RequestEnvVar[] envVariables,
+        List<RequestVariable> envVariables,
         Type listType, MethodInfo methodInfo, IOs io) {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
@@ -36,7 +36,7 @@ public static class GrpcUiUtils {
     }
 
     public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
-        RequestEnvVar[] envVariables,
+        List<RequestVariable>envVariables,
         Type listType, MethodInfo methodInfo, string file,
         IOs io) {
         var requestStream = Activator.CreateInstance(listType);

@@ -24,7 +24,7 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-    private RequestEnvVar[] _envVars = [];
+    private List<RequestVariable> _envVars = [];
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -87,13 +87,15 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     
 
 
-    public void Show(object?[] parameters, RequestEnvVar[] envVars) {
-        this._envVars = envVars;
+    public void Show(object?[] parameters,  List<RequestVariable> envVars) {
+        if (this._envVars.Count == 0)
+            this._envVars = envVars;
+        
         this.Items.Clear();
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
-        var methodNode = new MethodInfoNode(this.MethodInfo);
+        var methodNode = new MethodInfoNode(this.MethodInfo,  this._envVars);
         this.Items.Add(methodNode);
 
         var counter = 0;
@@ -124,8 +126,13 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
                 return false;
             });
 
+             
             if (node is SystemNode sysNode) {
                 sysNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
+            }
+            
+            if (node is TimestampNode tsNode) {
+                tsNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
             }
         }
         

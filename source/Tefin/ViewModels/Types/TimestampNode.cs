@@ -1,13 +1,9 @@
 #region
 
 using System.Windows.Input;
-
 using Google.Protobuf.WellKnownTypes;
-
 using ReactiveUI;
-
 using Type = System.Type;
-
 #endregion
 
 namespace Tefin.ViewModels.Types;
@@ -77,7 +73,6 @@ public class TimestampNode : TypeBaseNode {
                 TypeName = this.Type.FullName!,
                 JsonPath = jsonPath
             };
-            
             methodInfoNode.Variables.Add(v);
         }
     }

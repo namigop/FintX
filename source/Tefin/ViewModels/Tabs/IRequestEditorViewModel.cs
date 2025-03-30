@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading;
 
 using Tefin.Core;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -16,8 +17,8 @@ public interface IRequestEditorViewModel {
     void EndRequest();
 
     public (bool, object?[]) GetParameters();
-
-    public void Show(object?[] methodParameterInstances, RequestEnvVar[] parameters);
+    
+    public void Show(object?[] methodParameterInstances,  List<RequestVariable> parameters);
 
     void StartRequest();
 }
