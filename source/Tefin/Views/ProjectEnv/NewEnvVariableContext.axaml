@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" 
+             x:Class="Tefin.Views.ProjectEnv.NewEnvVariableContext">
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"  >
+        <TextBlock Text="New environment variable" FontSize="18" VerticalAlignment="Center" Margin="16"></TextBlock>
+        <TextBlock Margin="12 0 0 0 " Grid.Row="1" Text="Name" Classes="FormField" ></TextBlock>
+        <Border Grid.Row="2" >
+            <StackPanel Grid.Row="1"  Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center">{{</TextBlock>
+                <TextBox Text=""  VerticalContentAlignment="Center" Width="220"  Background="Transparent"></TextBox>
+                <TextBlock VerticalAlignment="Center">}}</TextBlock>
+            </StackPanel>
+        </Border>
+        
+        <TextBlock Grid.Row="3" Margin="12 16 0 0 " Text="Default value" Classes="FormField"></TextBlock>
+        <TextBox Grid.Row="4" Margin="12 0 0 0 " Text="Name" Width="220" HorizontalAlignment="Left"></TextBox>
+        
+        <TextBlock Grid.Row="5" Margin="12 16 0 0 " Text="Scope" Classes="FormField"></TextBlock>
+        <ComboBox Grid.Row="6" SelectedIndex="0" Margin="12 0 0 0" Width="220" HorizontalAlignment="Left">
+            <ComboBoxItem >Global</ComboBoxItem>
+            <ComboBoxItem>Client</ComboBoxItem>
+        </ComboBox>
+        
+        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 16 20 0">
+            <Button Width="80">okay</Button>
+            <Button Margin="8 0 0 0">cancel</Button>
+        </StackPanel>
+    </Grid>
+</UserControl>

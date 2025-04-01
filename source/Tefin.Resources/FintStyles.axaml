@@ -16,7 +16,7 @@
     <Style Selector="TextBlock.FormField">
         <Setter Property="Foreground" Value="{StaticResource Bym.Color.DefaultTextColor}" />
         <Setter Property="FontSize" Value="12" />
-        <Setter Property="Margin" Value="0 15 0 2" />
+        <Setter Property="Margin" Value="0 15 0 4" />
     </Style>
 
     <Style Selector="TextBlock.DashboardHeader">

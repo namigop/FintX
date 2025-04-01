@@ -5,6 +5,7 @@
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:projectEnv="clr-namespace:Tefin.Views.ProjectEnv"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:SystemNode"
              x:Class="Tefin.Views.Types.SystemNodeView">
@@ -38,9 +39,15 @@
                         Text="{Binding FormattedValue}"  Classes="FormattedValue" />
         </Panel>
     </StackPanel>
-    <UserControl.ContextMenu>
-        <ContextMenu>
-            <MenuItem Header="Create env variable" Command="{Binding CreateEnvVariableCommand}"/>
-        </ContextMenu>
-    </UserControl.ContextMenu>
+    <UserControl.ContextFlyout>
+        <Flyout>
+            <projectEnv:NewEnvVariableContext />
+        </Flyout>
+       
+    </UserControl.ContextFlyout>
+    <!-- <UserControl.ContextMenu> -->
+    <!--     <ContextMenu> -->
+    <!--         <MenuItem Header="Create env variable" Command="{Binding CreateEnvVariableCommand}"/> -->
+    <!--     </ContextMenu> -->
+    <!-- </UserControl.ContextMenu> -->
 </UserControl>
