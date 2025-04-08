@@ -9,12 +9,12 @@
 
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
                      VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVarTag}">
+                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <TextBox x:Name="TextBox"
                          MinWidth="200"
                          KeyDown="InputElement_OnKeyDown"

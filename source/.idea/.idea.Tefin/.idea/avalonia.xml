@@ -9,6 +9,7 @@
         <entry key="Tefin.Resources/ResourceDictionary.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/App.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ChildWindow.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Controls/JsonEditor.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/ClientExplorerView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/ClientRootNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
@@ -45,6 +46,7 @@
         <entry key="Tefin/Views/Overlay/AddGrpcServiceOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/AddNewProjectOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/GrpcClientConfigView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Overlay/OverlayHostView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/YesNoOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ProjectEnv/EnvMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ProjectEnv/NewEnvVariableContext.axaml" value="Tefin/Tefin.csproj" />

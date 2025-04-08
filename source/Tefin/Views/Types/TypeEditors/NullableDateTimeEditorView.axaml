@@ -8,13 +8,13 @@
              x:Class="Tefin.Views.Types.TypeEditors.NullableDateTimeEditorView">
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.IsEnvVarTagVisible}"
+            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
 
                      VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVarTag}">
+                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.IsEnvVarTagVisible}">
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
                 <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
                 <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"

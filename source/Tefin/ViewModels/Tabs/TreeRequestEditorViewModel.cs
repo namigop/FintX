@@ -125,10 +125,9 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
                 return false;
             });
-
-             
+            
             if (node is SystemNode sysNode) {
-                sysNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
+                sysNode.EnvVar.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
             }
             
             if (node is TimestampNode tsNode) {

@@ -33,15 +33,15 @@
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
         
         <Panel Margin="6 0 0 0">
-            <TextBlock IsVisible="{Binding IsEnvVarTagVisible}" Classes="FormattedValue" Foreground="Khaki"
-                       Text="{Binding EnvVarTag}"></TextBlock>
-            <TextBlock  IsVisible="{Binding !IsEnvVarTagVisible}" 
+            <TextBlock IsVisible="{Binding EnvVar.IsEnvVarTagVisible}" Classes="FormattedValue" Foreground="Khaki"
+                       Text="{Binding EnvVar.EnvVarTag}"></TextBlock>
+            <TextBlock  IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}" 
                         Text="{Binding FormattedValue}"  Classes="FormattedValue" />
         </Panel>
     </StackPanel>
     <UserControl.ContextFlyout>
         <Flyout>
-            <projectEnv:NewEnvVariableContext />
+            <projectEnv:NewEnvVariableContext DataContext="{Binding EnvVar}" />
         </Flyout>
        
     </UserControl.ContextFlyout>

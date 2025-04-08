@@ -29,7 +29,7 @@ public sealed class MethodInfoNode : NodeBase {
             return;
         
         var templatedNodes =
-            this.FindChildNodes(n => n is SystemNode sn && !string.IsNullOrWhiteSpace(sn.EnvVarTag))
+            this.FindChildNodes(n => n is SystemNode sn && !string.IsNullOrWhiteSpace(sn.EnvVar.EnvVarTag))
                 .Cast<SystemNode>();
 
         var envFile = Current.EnvFilePath;
@@ -44,7 +44,7 @@ public sealed class MethodInfoNode : NodeBase {
         foreach (var node in templatedNodes) {
             foreach (var v in current.Item2.Variables) {
                 var tagName = v.Name;
-                if (node.EnvVarTag == tagName) {
+                if (node.EnvVar.EnvVarTag == tagName) {
                     var varValue = GetValueOrDefault2(v.CurrentValue, v.DefaultValue, node.Type, this.Io);
                     node.Value = varValue;
                     break;
