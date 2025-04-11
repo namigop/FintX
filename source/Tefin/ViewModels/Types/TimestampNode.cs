@@ -3,6 +3,9 @@
 using System.Windows.Input;
 using Google.Protobuf.WellKnownTypes;
 using ReactiveUI;
+
+using Tefin.Core;
+
 using Type = System.Type;
 #endregion
 
@@ -71,7 +74,9 @@ public class TimestampNode : TypeBaseNode {
             var v = new RequestVariable() {
                 Tag = tag,
                 TypeName = this.Type.FullName!,
-                JsonPath = jsonPath
+                JsonPath = jsonPath,
+                Scope = RequestEnvVarScope.Project
+               // Scope = 
             };
             methodInfoNode.Variables.Add(v);
         }

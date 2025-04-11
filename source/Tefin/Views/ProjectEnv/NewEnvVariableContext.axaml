@@ -12,8 +12,8 @@
         <TextBlock Margin="8 0 0 2 " Grid.Row="1" Text="Name" Classes="FormField" ></TextBlock>
         <Border Grid.Row="2" >
             <StackPanel Grid.Row="1"  Orientation="Horizontal" >
-                <TextBox Margin="8 0 0 0 " 
-                         Watermark="sdfsd"
+                <TextBox Margin="8 0 8 0 " 
+                        
                          Text="{Binding  EnvVarTag}"  VerticalContentAlignment="Center" Width="220"  Background="Transparent"></TextBox>
             </StackPanel>
         </Border>
@@ -22,12 +22,14 @@
         <TextBox Grid.Row="4" Margin="8 0 0 0 " Watermark="" Width="220" HorizontalAlignment="Left"></TextBox>
         
         <TextBlock Grid.Row="5" Margin="8 16 0 2 " Text="Scope" Classes="FormField"></TextBlock>
-        <ComboBox Grid.Row="6" SelectedIndex="0" Margin="8 0 0 0" Width="220" HorizontalAlignment="Left">
-            <ComboBoxItem >Project</ComboBoxItem>
-            <ComboBoxItem>Client</ComboBoxItem>
+        <ComboBox Grid.Row="6" SelectedIndex="0" Margin="8 0 0 0" 
+                  ItemsSource="{Binding Scopes}"
+                  SelectedItem="{Binding SelectedScope}"
+                  Width="220" HorizontalAlignment="Left">
+            
         </ComboBox>
         
-        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 16 0 0">
+        <StackPanel Grid.Row="7" Orientation="Horizontal" HorizontalAlignment="Right" Margin="8 16 8 0">
             <Button Width="80" x:CompileBindings="False" 
                     Click="ButtonOkayClick"
                     Command="{Binding CreateEnvVariableCommand}">okay</Button>

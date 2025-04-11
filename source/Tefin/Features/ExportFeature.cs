@@ -19,7 +19,14 @@ namespace Tefin.Features;
 
 public class ExportFeature(MethodInfo methodInfo, object?[] methodsParams, List<RequestVariable> variables, object? responseStream = null) {
     public FSharpResult<string, Exception> Export() {
-        var envItems = variables.Select(v => EnvConfig.createReqVar(v.Tag, v.JsonPath, SystemType.getDisplayType(v.TypeName))).ToArray();
+        var envItems = variables.Select(v => 
+            EnvConfig.createReqVar(
+                v.Tag, 
+                v.JsonPath,
+                SystemType.getDisplayType(v.TypeName),
+                v.Scope
+                )).ToArray();
+        
         var sdParam = new SerParam(methodInfo, methodsParams, envItems, responseStream == null ? none<object>() : some(responseStream));
         var exportReqJson = Grpc.Export.requestToJson(sdParam);
         return exportReqJson;

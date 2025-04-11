@@ -106,7 +106,8 @@ public class UnaryReqViewModel : ViewModelBase {
                     .Select(t => new RequestVariable() {
                         Tag = t.Tag,
                         JsonPath = t.JsonPath,
-                        TypeName = SystemType.getActualType(t.Type)
+                        TypeName = SystemType.getActualType(t.Type),
+                        Scope = t.Scope
                     })
                     .ToList();
                 ;
