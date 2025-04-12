@@ -46,7 +46,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
             if (obj.ChangeType == WatcherChangeTypes.Created) {
                 NodeWalker.Walk(this.Items.ToArray(),
                     obj,
-                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path), VarsStructure.getVarPath),
+                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path), VarsStructure.getVarPathForProject),
                     i => i is ConfigGroupNode);
             }
         }
@@ -81,7 +81,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
     protected override NodeBase CreateMultiNodeFolder(IExplorerItem[] items, ProjectTypes.ClientGroup client) => throw new NotImplementedException();
 
     protected override string GetRootFilePath(string clientPath) {
-        return VarsStructure.getVarPath(clientPath);
+        return VarsStructure.getVarPathForProject(clientPath);
     }
 
     protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) {

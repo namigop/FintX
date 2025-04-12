@@ -3,6 +3,8 @@
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Reflection;
+using Tefin.ViewModels.Types.TypeEditors;
 
 namespace Tefin.ViewModels.Types;
 
@@ -11,6 +13,9 @@ public class EnvVarNodeViewModel : ViewModelBase {
     private string _envVarTag = "";
     private string _ogTag;
     private string _selectedScope;
+    private ITypeEditor _defaultValueEditor;
+    public const string ProjectScope = "Project";
+    public const string ClientScope = "Client";
 
     public EnvVarNodeViewModel(TypeBaseNode node, string tag = "") {
         this._node = node;
@@ -18,7 +23,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         this._ogTag = tag;
         this.CreateEnvVariableCommand = ReactiveCommand.Create(this.OnCreateEnvVariable);
         this.CancelEnvVariableCommand = ReactiveCommand.Create(this.OnCancelEnvVariable);
-        this.SelectedScope = this.Scopes[0];
+        this._selectedScope = this.Scopes[0];
     }
 
     public string EnvVarTag {
@@ -31,8 +36,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
     public ICommand CreateEnvVariableCommand { get; }
     public ICommand CancelEnvVariableCommand { get; }
-    public const string ProjectScope = "Project";
-    public const string ClientScope = "Client";
+   
     public string[] Scopes { get; } = [ProjectScope, ClientScope];
 
     public string SelectedScope {
@@ -42,6 +46,11 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
     public void ShowDefault() {
         this.EnvVarTag = this._node.Title;
+        var actualType = _node.Type;
+        var cur = TypeHelper.getDefault(actualType);
+        
+        var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, default, cur, null);
+        this.DefaultValueEditor = defaultValueNode.Editor;
     }
 
     public void Reset() {
@@ -52,6 +61,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         var tag = this.EnvVarTag.ToUpperInvariant();
         var jsonPath = this._node.GetJsonPath();
         this.CreateEnvVariable(tag, jsonPath);
+        
     }
 
     private void OnCancelEnvVariable() {
@@ -72,8 +82,16 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
             methodInfoNode.Variables.Add(v);
             this._ogTag = tag;
+            this.IsEnvVarTagCreated = true;
         }
     }
 
+    public bool IsEnvVarTagCreated { get; private set; }
+
     public bool IsEnvVarTagVisible => !string.IsNullOrWhiteSpace(this.EnvVarTag);
+
+    public ITypeEditor DefaultValueEditor {
+        get => this._defaultValueEditor;
+        private set => this.RaiseAndSetIfChanged(ref _defaultValueEditor , value);
+    }
 }

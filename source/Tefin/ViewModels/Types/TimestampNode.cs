@@ -13,7 +13,7 @@ namespace Tefin.ViewModels.Types;
 
 public class TimestampNode : TypeBaseNode {
     private string _dateTime;
-    private string _envVarTag;
+    private string _envVarTag = "";
 
     public TimestampNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
         name, type, propInfo, instance, parent) {

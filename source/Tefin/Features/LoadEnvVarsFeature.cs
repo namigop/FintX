@@ -5,7 +5,7 @@ namespace Tefin.Features;
 
 public class LoadEnvVarsFeature {
     public ProjectEnvConfigData Run(ProjectTypes.Project proj, IOs io) {
-        var envVars =  VarsStructure.getVars(io, proj.Path);
+        var envVars =  VarsStructure.getVarsForProject(io, proj.Path);
         return envVars ?? new ProjectEnvConfigData([]);
     }
 }

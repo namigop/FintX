@@ -29,10 +29,10 @@ public abstract class RootNode : NodeBase {
 
         this.IsExpanded = true;
         this.AddItem(new EmptyNode());
-        if (clientType != null) {
-            this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
-            GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
-        }
+
+        this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
+
     }
 
     protected RootNode() {

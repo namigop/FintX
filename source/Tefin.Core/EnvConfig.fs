@@ -27,7 +27,8 @@ type EnvConfigData = {
     Variables: ResizeArray<EnvVar>
 }   
 
-type ProjectEnvConfigData = {      
+type GroupEnvConfigData = {
+    Path : string
     Variables: ResizeArray<string * EnvConfigData>
 }
 

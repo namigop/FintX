@@ -36,7 +36,7 @@ public sealed class MethodInfoNode : NodeBase {
         if (string.IsNullOrWhiteSpace(envFile))
             return;
 
-        var envVars = VarsStructure.getVars(this.Io, Current.ProjectPath);
+        var envVars = VarsStructure.getVarsForProject(this.Io, Current.ProjectPath);
         var current = envVars.Variables.FirstOrDefault(t => t.Item1 == Current.EnvFilePath);
         if (current == null)
             return;

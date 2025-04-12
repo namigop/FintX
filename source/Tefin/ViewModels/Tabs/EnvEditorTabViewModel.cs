@@ -7,11 +7,11 @@ using Tefin.ViewModels.Explorer.Config;
 namespace Tefin.ViewModels.Tabs;
 
 public class EnvEditorTabViewModel : TabViewModelBase {
-    private readonly string _icon = "";
+    private const string _icon = "";
     private EnvDataViewModel _envData;
 
     public EnvEditorTabViewModel(EnvNode item) : base(item) {
-        this.EnvData = new EnvDataViewModel(item.GetEnvData());
+        this._envData = new EnvDataViewModel(item.GetEnvData());
     }
 
     public EnvDataViewModel EnvData {
@@ -19,7 +19,7 @@ public class EnvEditorTabViewModel : TabViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref  _envData , value);
     }
 
-    public override string Icon => this._icon;
+    public override string Icon => _icon;
  
     public override void Init() {
         this.Id = this.GetTabId();

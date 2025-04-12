@@ -14,14 +14,14 @@ public class EnvMenuViewModel : ViewModelBase {
 
     public void Init(string projectPath) {
         this.Environments.Clear();
-        this._envVariables = VarsStructure.getVars(this.Io, projectPath);
+        this._envVariables = VarsStructure.getVarsForProject(this.Io, projectPath);
         foreach (var (file, env) in this._envVariables.Variables) {
             this.Environments.Add(new EnvSelection(file, env));
         }
 
         if (this.Environments.Count == 0) {
             var envConfig = EnvConfig.createConfig("Default", "Default environment");
-            VarsStructure.saveEnv(this.Io, envConfig, projectPath);
+            VarsStructure.saveEnvForProject(this.Io, envConfig, projectPath);
             Init(projectPath);
         }
 

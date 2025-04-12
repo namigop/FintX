@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
+             xmlns:viewModels="clr-namespace:Tefin.ViewModels"
 
              mc:Ignorable="d" 
              x:Class="Tefin.Views.ProjectEnv.NewEnvVariableContext"
@@ -19,9 +20,12 @@
         </Border>
         
         <TextBlock Grid.Row="3" Margin="8 16 0 2 " Text="Default value" Classes="FormField"></TextBlock>
-        <TextBox Grid.Row="4" Margin="8 0 0 0 " Watermark="" Width="220" HorizontalAlignment="Left"></TextBox>
-        
-        <TextBlock Grid.Row="5" Margin="8 16 0 2 " Text="Scope" Classes="FormField"></TextBlock>
+        <!-- <TextBox Grid.Row="4" Margin="8 0 0 0 " Watermark="" Width="220" HorizontalAlignment="Left"></TextBox> -->
+        <ContentControl Grid.Row="4" Margin="8 0 0 0 " Content="{Binding DefaultValueEditor}">
+            <ContentControl.DataTemplates>
+                <viewModels:TypeEditorLocator />
+            </ContentControl.DataTemplates>
+        </ContentControl> <TextBlock Grid.Row="5" Margin="8 16 0 2 " Text="Scope" Classes="FormField"></TextBlock>
         <ComboBox Grid.Row="6" SelectedIndex="0" Margin="8 0 0 0" 
                   ItemsSource="{Binding Scopes}"
                   SelectedItem="{Binding SelectedScope}"

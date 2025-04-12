@@ -17,15 +17,15 @@ public partial class NewEnvVariableContext : UserControl {
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e) {
         var vm = this.DataContext as EnvVarNodeViewModel;
-        if (string.IsNullOrEmpty(vm?.EnvVarTag)) {
+        if (!(bool)vm?.IsEnvVarTagCreated) {
             vm?.Reset();
         }
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e) {
-        var vm = this.DataContext as EnvVarNodeViewModel;
-        if (string.IsNullOrEmpty(vm?.EnvVarTag)) {
-            vm?.ShowDefault();
+        var node = e.Parent.DataContext as SystemNode;
+        if (string.IsNullOrEmpty(node?.EnvVar?.EnvVarTag)) {
+            node?.EnvVar?.ShowDefault();
         }
     }
 

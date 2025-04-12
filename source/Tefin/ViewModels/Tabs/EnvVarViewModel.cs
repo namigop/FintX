@@ -1,5 +1,7 @@
 ﻿using DynamicData;
 
+using Google.Protobuf.WellKnownTypes;
+
 using Microsoft.FSharp.Control;
 
 using ReactiveUI;
@@ -9,6 +11,8 @@ using Tefin.Core.Reflection;
 using Tefin.Utils;
 using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeEditors;
+
+using Type = System.Type;
 
 namespace Tefin.ViewModels.Tabs;
 
@@ -32,11 +36,12 @@ public class EnvVarViewModel : ViewModelBase {
         
         var cur = TypeHelper.indirectCast(envVar.CurrentValue, actualType);
         var def = TypeHelper.indirectCast(envVar.DefaultValue, actualType);
+        
         var currentValueNode = new SystemNode(envVar.Name, actualType, default, cur, null);
         this.CurrentValueEditor = currentValueNode.Editor;
         var defaultValueNode =new SystemNode(envVar.Name, actualType, default, def, null);
         this.DefaultValueEditor = defaultValueNode.Editor;
-        this.SelectedDisplayType = this.DisplayType;
+        this._selectedDisplayType = this.DisplayType;
     }
 
     public string[] TypeList => DisplayTypes;
