@@ -6,6 +6,7 @@ using System.Threading;
 using ReactiveUI;
 
 using Tefin.Core.Execution;
+using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
@@ -25,7 +26,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
 
     private IListEditorViewModel _serverStreamEditor;
 
-    public ServerStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
+    public ServerStreamingRespViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) : base(methodInfo, cg) {
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._responseItemType = args[0];
         var listType = typeof(List<>);

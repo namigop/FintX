@@ -16,7 +16,7 @@ module VarsStructure =
     let getVarFilesForProject (io:IOs) (projectPath: string) =
         let varPath = getVarPathForProject projectPath
         io.Dir.CreateDirectory varPath
-        let varFiles = io.Dir.GetFiles(varPath, "*.fxv" + Ext.envExt, SearchOption.TopDirectoryOnly)
+        let varFiles = io.Dir.GetFiles(varPath, $"*{Ext.envExt}", SearchOption.TopDirectoryOnly)
         varFiles
     
     let getVarPathForClient (clientPath: string) =
@@ -26,7 +26,7 @@ module VarsStructure =
     let getVarFilesForClient (io:IOs) (clientPath: string) =
         let varPath = getVarPathForClient clientPath
         io.Dir.CreateDirectory varPath
-        let varFiles = io.Dir.GetFiles(varPath, "*.fxv" + Ext.envExt, SearchOption.TopDirectoryOnly)
+        let varFiles = io.Dir.GetFiles(varPath, $"*{Ext.envExt}", SearchOption.TopDirectoryOnly)
         varFiles
     let getVarsFromFile (io:IOs) (file:string) =
         let c = io.File.ReadAllText file
@@ -36,6 +36,7 @@ module VarsStructure =
         let files = getVarFilesForProject io projectPath         
         files        
         |> Array.map (fun file -> file, getVarsFromFile io file)
+        |> Array.filter (fun (file, env) -> not ((box env) = null))
         |> fun v ->
             let allEnvs = { Path = projectPath; Variables = ResizeArray<string * EnvConfigData> () }
             for (file, c) in v do
@@ -63,12 +64,13 @@ module VarsStructure =
         let envConfig = all.Variables |> Seq.tryFind  (fun (_, data) -> data.Name = envName)
         match envConfig with
         | None -> ()
-        | Some (_, cfg) ->
+        | Some (envFile, cfg) ->
             let curVar = cfg.Variables |> Seq.tryFind (fun v -> v.Name = envVar.Name)
             if curVar.IsSome then
                 ignore <| cfg.Variables.Remove(curVar.Value)
                 cfg.Variables.Add envVar
-        updateonokclick
+                io.File.WriteAllText envFile (Instance.jsonSerialize cfg)
+        
     let saveEnvForProject (io:IOs) (cfg:EnvConfigData) projectPath =
         let path = getVarPathForProject projectPath 
         let file = Utils.makeValidFileName(cfg.Name + Ext.envExt)

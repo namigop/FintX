@@ -8,6 +8,7 @@ using Newtonsoft.Json.Linq;
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Dynamic;
@@ -76,7 +77,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         return (false, []);
     }
 
-    public void Show(object?[] parameters,  List<RequestVariable> envVars) {
+    public void Show(object?[] parameters, List<RequestVariable> envVars, ProjectTypes.ClientGroup clientGroup) {
         if (this._envVars.Count == 0)
             this._envVars = envVars;
 

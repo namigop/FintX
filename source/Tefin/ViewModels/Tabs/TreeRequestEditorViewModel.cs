@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
@@ -87,7 +88,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     
 
 
-    public void Show(object?[] parameters,  List<RequestVariable> envVars) {
+    public void Show(object?[] parameters, List<RequestVariable> envVars, ProjectTypes.ClientGroup clientGroup) {
         if (this._envVars.Count == 0)
             this._envVars = envVars;
         
@@ -95,7 +96,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
-        var methodNode = new MethodInfoNode(this.MethodInfo,  this._envVars);
+        var methodNode = new MethodInfoNode(this.MethodInfo, clientGroup,  this._envVars);
         this.Items.Add(methodNode);
 
         var counter = 0;

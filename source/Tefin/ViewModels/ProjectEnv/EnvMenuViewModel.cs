@@ -9,7 +9,7 @@ using Tefin.Messages;
 namespace Tefin.ViewModels.ProjectEnv;
 
 public class EnvMenuViewModel : ViewModelBase {
-    private ProjectEnvConfigData _envVariables = null!;
+    private GroupEnvConfigData _envVariables = null!;
     private EnvSelection? _selectedEnvironment;
 
     public void Init(string projectPath) {

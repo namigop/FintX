@@ -6,6 +6,7 @@ using System.Threading;
 using ReactiveUI;
 
 using Tefin.Core.Execution;
+using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 
@@ -14,6 +15,7 @@ using Tefin.Grpc.Execution;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingRespViewModel : StandardResponseViewModel {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly Type _listType;
     private readonly Type _responseItemType;
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
@@ -25,7 +27,8 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
 
     private IListEditorViewModel _serverStreamEditor;
 
-    public DuplexStreamingRespViewModel(MethodInfo methodInfo) : base(methodInfo) {
+    public DuplexStreamingRespViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) : base(methodInfo, cg) {
+        this._clientGroup = cg;
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._responseItemType = args[1];
         var listType = typeof(List<>);

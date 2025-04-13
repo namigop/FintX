@@ -19,8 +19,8 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private string _statusText = "";
 
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
-        this.ReqViewModel = new ClientStreamingReqViewModel(mi, true);
-        this.RespViewModel = new ClientStreamingRespViewModel(mi);
+        this.ReqViewModel = new ClientStreamingReqViewModel(mi, cg, true);
+        this.RespViewModel = new ClientStreamingRespViewModel(mi, cg);
         this.StartCommand = this.CreateCommand(this.OnStart);
         this.StopCommand = this.CreateCommand(this.OnStop);
         this.StatusText = "";

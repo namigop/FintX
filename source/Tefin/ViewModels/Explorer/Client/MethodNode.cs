@@ -29,7 +29,7 @@ public sealed class MethodNode : NodeBase {
     public MethodInfo MethodInfo { get; }
     public ICommand NewRequestCommand { get; }
     public ICommand OpenMethodCommand { get; }
-    public ICommand ExportCommand { get; }
+    //public ICommand ExportCommand { get; }
     public ICommand OpenMethodInWindowCommand { get; }
 
     private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {

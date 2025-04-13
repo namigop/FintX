@@ -7,6 +7,7 @@ using Grpc.Core;
 
 using ReactiveUI;
 
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
@@ -19,6 +20,7 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
     private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
     private readonly Type _listType;
@@ -29,9 +31,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
 
-    public DuplexStreamingReqViewModel(MethodInfo methodInfo, bool generateFullTree,
-        List<object?>? methodParameterInstances = null)
-        : base(methodInfo, generateFullTree, methodParameterInstances) {
+    public DuplexStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree, List<object?>? methodParameterInstances = null)
+        : base(methodInfo, cg, generateFullTree, methodParameterInstances) {
+        this._clientGroup = cg;
         this.WriteCommand = this.CreateCommand(this.OnWrite);
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
         this.AddListItemCommand = this.CreateCommand(this.OnAddListItem);
@@ -120,10 +122,10 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     }
 
     public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(this.RequestEditor,
-        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, this.Io);
+        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, this._clientGroup, this.Io);
 
     public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
-        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, file, this.Io);
+        this.ClientStreamEditor, this.EnvVariables, this._listType, this.MethodInfo, this._clientGroup, file, this.Io);
 
     public void SetupDuplexStream(DuplexStreamingCallResponse response) {
         this._callResponse = response;

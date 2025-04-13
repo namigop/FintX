@@ -4,6 +4,7 @@ using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Reflection;
+using Tefin.Features;
 using Tefin.ViewModels.Types.TypeEditors;
 
 namespace Tefin.ViewModels.Types;
@@ -83,6 +84,13 @@ public class EnvVarNodeViewModel : ViewModelBase {
             methodInfoNode.Variables.Add(v);
             this._ogTag = tag;
             this.IsEnvVarTagCreated = true;
+            var saveFeature = new SaveEnvVarsFeature();
+            var load = new LoadEnvVarsFeature();
+            //load.Run();
+            if (v.Scope == RequestEnvVarScope.Client) {
+                
+            }
+              //  saveFeature.SaveClientEnvConfig("", );
         }
     }
 

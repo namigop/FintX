@@ -96,7 +96,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
         
         //Load env files
         var load = new LoadEnvVarsFeature();
-        var projectEnvData = load.Run(this.Project, this.Io);
+        var projectEnvData = load.LoadProjectEnvVars(this.Project.Path, this.Io);
 
         Dispatcher.UIThread.Invoke(() => {
             var root = new ConfigGroupNode() { Title = "Project Variables", SubTitle = "All environment variables for this project"};

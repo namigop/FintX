@@ -41,15 +41,15 @@
                 <TextBlock Text="New request" />
             </StackPanel>
         </Button>
-        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}"
-                utils:CloseFlyoutBehavior.CloseOnClick="True"
-                ToolTip.Tip="Export">
-            <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.DataExport}" />
-                <TextBlock Text="Export" />
-            </StackPanel>
-
-        </Button>
+        <!-- <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}" -->
+        <!--         utils:CloseFlyoutBehavior.CloseOnClick="True" -->
+        <!--         ToolTip.Tip="Export"> -->
+        <!--     <StackPanel Orientation="Horizontal"> -->
+        <!--         <controls:IconControl Icon="{StaticResource Icon.DataExport}" /> -->
+        <!--         <TextBlock Text="Export" /> -->
+        <!--     </StackPanel> -->
+        <!-- -->
+        <!-- </Button> -->
 
 
     </StackPanel>

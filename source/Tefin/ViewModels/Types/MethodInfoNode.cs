@@ -3,6 +3,7 @@
 using System.Reflection;
 
 using Tefin.Core;
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.Grpc;
 using Tefin.ViewModels.Explorer;
@@ -12,7 +13,10 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Types;
 
 public sealed class MethodInfoNode : NodeBase {
-    public MethodInfoNode(MethodInfo mi, List<RequestVariable> variables) {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
+
+    public MethodInfoNode(MethodInfo mi, ProjectTypes.ClientGroup cg, List<RequestVariable> variables) {
+        this._clientGroup = cg;
         this.IsExpanded = true;
         this.CanOpen = true;
         this.Title = mi.Name;

@@ -26,7 +26,6 @@ public static class TabFactory {
             
             case EnvNode e2:
                 return new EnvEditorTabViewModel(e2);
-
             
             default:
                 io.Log.Warn($"Unable to open unknown item type: {item.GetType().FullName}");

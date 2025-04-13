@@ -4,8 +4,12 @@ using Tefin.Core.Interop;
 namespace Tefin.Features;
 
 public class LoadEnvVarsFeature {
-    public ProjectEnvConfigData Run(ProjectTypes.Project proj, IOs io) {
-        var envVars =  VarsStructure.getVarsForProject(io, proj.Path);
-        return envVars ?? new ProjectEnvConfigData([]);
+    public GroupEnvConfigData LoadProjectEnvVars(string projectPath, IOs io) {
+        var envVars =  VarsStructure.getVarsForProject(io, projectPath);
+        return envVars ?? new GroupEnvConfigData(projectPath, []);
+    }
+    public GroupEnvConfigData LoadClientEnvVars(string clientPath, IOs io) {
+        var envVars =  VarsStructure.getVarsForClient(io, clientPath);
+        return envVars ?? new GroupEnvConfigData(clientPath, []);
     }
 }

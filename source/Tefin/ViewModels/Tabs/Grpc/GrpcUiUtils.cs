@@ -3,6 +3,7 @@
 using System.Reflection;
 
 using Tefin.Core;
+using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Utils;
 using Tefin.ViewModels.Types;
@@ -25,19 +26,29 @@ public static class GrpcUiUtils {
         }
     }
 
-    public static async Task ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+    public static async Task ImportRequest(
+        IRequestEditorViewModel requestEditor,
+        IListEditorViewModel listEditor,
         List<RequestVariable> envVariables,
-        Type listType, MethodInfo methodInfo, IOs io) {
+        Type listType, 
+        MethodInfo methodInfo,
+        ProjectTypes.ClientGroup cg,
+        IOs io) {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            ImportRequest(requestEditor, listEditor, envVariables, listType, methodInfo, files[0], io);
+            ImportRequest(requestEditor, listEditor, envVariables, listType, methodInfo, cg, files[0], io);
         }
     }
 
-    public static void ImportRequest(IRequestEditorViewModel requestEditor, IListEditorViewModel listEditor,
+    public static void ImportRequest(
+        IRequestEditorViewModel requestEditor,
+        IListEditorViewModel listEditor,
         List<RequestVariable>envVariables,
-        Type listType, MethodInfo methodInfo, string file,
+        Type listType, 
+        MethodInfo methodInfo,
+        ProjectTypes.ClientGroup cg,
+        string file,
         IOs io) {
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);
@@ -46,7 +57,7 @@ public static class GrpcUiUtils {
         
         if (importResult.IsOk) {
             var methodParams = importResult.ResultValue.MethodParameters;
-            requestEditor.Show(methodParams, envVariables);
+            requestEditor.Show(methodParams, envVariables, cg);
             listEditor.Show(importResult.ResultValue.RequestStream);
         }
         else {

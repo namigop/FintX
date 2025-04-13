@@ -7,6 +7,7 @@ using Grpc.Core;
 using ReactiveUI;
 
 using Tefin.Core.Execution;
+using Tefin.Core.Interop;
 
 #endregion
 
@@ -15,12 +16,14 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public abstract class StandardResponseViewModel : ViewModelBase {
     private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly TreeResponseEditorViewModel _treeRespEditor;
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
 
-    protected StandardResponseViewModel(MethodInfo methodInfo) {
+    protected StandardResponseViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg) {
         this._methodInfo = methodInfo;
+        this._clientGroup = cg;
         this.IsShowingResponseTreeEditor = true;
 
         this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);

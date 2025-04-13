@@ -5,6 +5,7 @@ using System.Reflection;
 using ReactiveUI;
 
 using Tefin.Core.Execution;
+using Tefin.Core.Interop;
 
 #endregion
 
@@ -13,12 +14,14 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class UnaryRespViewModel : ViewModelBase {
     private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly TreeResponseEditorViewModel _treeRespEditor;
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
 
-    public UnaryRespViewModel(MethodInfo methodInfo) {
+    public UnaryRespViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup) {
         this._methodInfo = methodInfo;
+        this._clientGroup = clientGroup;
         this.IsShowingResponseTreeEditor = true;
 
         this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);
