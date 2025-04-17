@@ -12,6 +12,7 @@
         <entry key="Tefin/Views/Controls/JsonEditor.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/ClientExplorerView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/ClientRootNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/Client/MethodNodeContext.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/Client/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ClientNodeContext.axaml" value="Tefin/Tefin.csproj" />

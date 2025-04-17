@@ -70,25 +70,34 @@ public class EnvVarNodeViewModel : ViewModelBase {
     }
 
     public void CreateEnvVariable(string tag, string jsonPath) {
+        ArgumentException.ThrowIfNullOrWhiteSpace(tag);
+        ArgumentException.ThrowIfNullOrWhiteSpace(jsonPath);
+        
         tag = tag.Replace("{{", "").Replace("}}", "");
         this.EnvVarTag = tag;
+        this._ogTag = tag;
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
         if (methodInfoNode != null && !methodInfoNode.Variables.Exists(t => t.JsonPath == jsonPath)) {
             var v = new RequestVariable() {
-                Tag = $"{{{{{this.EnvVarTag.ToUpperInvariant()}}}}}",
+                Tag = this.EnvVarTag.ToUpperInvariant(),
                 TypeName = this._node.Type.FullName!,
                 JsonPath = jsonPath,
                 Scope = this.SelectedScope == ProjectScope ? RequestEnvVarScope.Project : RequestEnvVarScope.Client
             };
 
             methodInfoNode.Variables.Add(v);
-            this._ogTag = tag;
             this.IsEnvVarTagCreated = true;
             var saveFeature = new SaveEnvVarsFeature();
             var load = new LoadEnvVarsFeature();
-            //load.Run();
             if (v.Scope == RequestEnvVarScope.Client) {
-                
+                var (envFile, clientVars) = load.LoadClientEnvVarsForEnv(methodInfoNode.ClientGroup.Path, this.Io, Current.Env);
+                var defaultValue = this.DefaultValueEditor.FormattedValue;
+                var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", v.TypeName);
+                clientVars.Variables.Add(clientVar);
+                saveFeature.SaveClientEnvVars(methodInfoNode.ClientGroup.Path, clientVars, this.Io);
+                boo
+            } else {
+                throw new NotImplementedException();
             }
               //  saveFeature.SaveClientEnvConfig("", );
         }

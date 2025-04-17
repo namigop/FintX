@@ -44,6 +44,14 @@ module VarsStructure =
                allEnvs.Variables.Add(e)            
             allEnvs
     
+    let getVarsForProjectEnv (io:IOs) (projectPath: string) (envName:string) =
+        let all = getVarsForProject io projectPath
+        all.Variables
+        |> Seq.tryFind (fun (_, data) -> data.Name = envName)
+        |> function
+           | Some s -> s
+           | None -> "", EnvConfig.createConfig envName "no variables defined"
+    
     let getVarsForClient (io:IOs) (clientPath: string) =
         let files = getVarFilesForClient io clientPath         
         files        
@@ -54,6 +62,16 @@ module VarsStructure =
                let e = file, c
                allEnvs.Variables.Add(e)            
             allEnvs
+    let getVarsForClientEnv (io:IOs) (clientPath: string) (envName:string) =
+        let all = getVarsForClient io clientPath
+        all.Variables
+        |> Seq.tryFind (fun (_, data) -> data.Name = envName)
+        |> function
+           | Some s -> s
+           | None ->
+               let file = Path.Combine ( (getVarPathForClient clientPath), envName + Ext.envExt )
+               let data = EnvConfig.createConfig envName "no variables defined"
+               file, data
     let saveEnvForClient (io:IOs) (cfg:EnvConfigData) (clientPath:string) =
         let path = getVarPathForClient clientPath
         let envFile = Path.Combine(path, cfg.Name)                    
