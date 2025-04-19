@@ -38,7 +38,7 @@ module ServiceClient =
       else
         false
     //public Type ServiceClientType => this.GeneratedTypes.First(t => t.BaseType?.BaseType?.FullName == "Grpc.Core.ClientBase");
-    types |> Array.tryFind (fun t -> check t)
+    types |> Array.filter (fun t -> check t)
 
   let findMethods (serviceClientType: Type) =
     let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode" |]

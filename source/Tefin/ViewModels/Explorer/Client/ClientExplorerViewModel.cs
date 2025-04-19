@@ -310,7 +310,8 @@ public class ClientExplorerViewModel : ViewModelBase {
         async Task Foo() {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-            var type = ServiceClient.findClientType(types).Value;
+            var clientTypes = ServiceClient.findClientType(types);
+            var type = clientTypes.First(t => t.DeclaringType!.FullName.ToUpperInvariant() == obj.SelectedDiscoveredService.ToUpperInvariant());
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
                 var feature = new AddClientFeature(this.Project,

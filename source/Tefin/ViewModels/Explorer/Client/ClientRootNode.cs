@@ -125,7 +125,17 @@ public class ClientRootNode : RootNode {
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-                this.ClientType = ServiceClient.findClientType(types).Value;
+                var clientTypes = ServiceClient.findClientType(types);
+                if (clientTypes.Length == 0) {
+                    throw new Exception("No client types found");
+                }
+                if (clientTypes.Length == 1) {
+                    this.ClientType = clientTypes[0];
+                }
+                else {
+                    this.ClientType = clientTypes.First(c => c.DeclaringType!.FullName!.ToUpperInvariant() == this.ServiceName.ToUpperInvariant());
+                }
+
                 this.Init();
             }
         }
