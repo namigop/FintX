@@ -15,6 +15,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
     private string _ogTag;
     private string _selectedScope;
     private ITypeEditor _defaultValueEditor;
+    private object? _enVarValue;
     public const string ProjectScope = "Project";
     public const string ClientScope = "Client";
 
@@ -48,7 +49,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
     public void ShowDefault() {
         this.EnvVarTag = this._node.Title;
         var actualType = _node.Type;
-        var cur = TypeHelper.getDefault(actualType);
+        var cur = this._enVarValue ?? TypeHelper.getDefault(actualType);
         
         var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, default, cur, null);
         this.DefaultValueEditor = defaultValueNode.Editor;
@@ -61,6 +62,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
     private void OnCreateEnvVariable() {
         var tag = this.EnvVarTag.ToUpperInvariant();
         var jsonPath = this._node.GetJsonPath();
+        //var cur = TypeHelper.getDefault(this._node.Type);
         this.CreateEnvVariable(tag, jsonPath);
         
     }
@@ -69,13 +71,15 @@ public class EnvVarNodeViewModel : ViewModelBase {
         this.EnvVarTag = this._ogTag;
     }
 
-    public void CreateEnvVariable(string tag, string jsonPath) {
+    public void CreateEnvVariable(string tag, string jsonPath, string? currentValue = null) {
         ArgumentException.ThrowIfNullOrWhiteSpace(tag);
         ArgumentException.ThrowIfNullOrWhiteSpace(jsonPath);
         
-        tag = tag.Replace("{{", "").Replace("}}", "");
+        tag = tag.Replace("{", "").Replace("}", "");
         this.EnvVarTag = tag;
         this._ogTag = tag;
+        var inst = TypeHelper.indirectCast(currentValue, this._node.Type);
+        this._enVarValue = inst;
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
         if (methodInfoNode != null && !methodInfoNode.Variables.Exists(t => t.JsonPath == jsonPath)) {
             var v = new RequestVariable() {
@@ -87,19 +91,21 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
             methodInfoNode.Variables.Add(v);
             this.IsEnvVarTagCreated = true;
-            var saveFeature = new SaveEnvVarsFeature();
-            var load = new LoadEnvVarsFeature();
+            
+            var saveEnv = new SaveEnvVarsFeature();
             if (v.Scope == RequestEnvVarScope.Client) {
-                var (envFile, clientVars) = load.LoadClientEnvVarsForEnv(methodInfoNode.ClientGroup.Path, this.Io, Current.Env);
-                var defaultValue = this.DefaultValueEditor.FormattedValue;
-                var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", v.TypeName);
-                clientVars.Variables.Add(clientVar);
-                saveFeature.SaveClientEnvVars(methodInfoNode.ClientGroup.Path, clientVars, this.Io);
-                boo
+                saveEnv.Save(v, 
+                    this.DefaultValueEditor.FormattedValue,
+                    methodInfoNode.ClientGroup.Path, 
+                    Current.Env, 
+                    this.Io);
             } else {
-                throw new NotImplementedException();
+                saveEnv.Save(v, 
+                    this.DefaultValueEditor.FormattedValue,
+                    Current.ProjectPath, 
+                    Current.Env, 
+                    this.Io);
             }
-              //  saveFeature.SaveClientEnvConfig("", );
         }
     }
 

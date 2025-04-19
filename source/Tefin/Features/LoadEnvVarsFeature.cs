@@ -21,4 +21,22 @@ public class LoadEnvVarsFeature {
         var envVars =  VarsStructure.getVarsForClientEnv(io, clientPath, envName);
         return envVars;
     }
+
+    public EnvVar? FindEnvVar(string clientPath, string envName,  string tag, IOs io) {
+        //first check if it's a client env variable
+        var (_, envConfig) = LoadClientEnvVarsForEnv(clientPath, io, envName);
+        var clientVar = envConfig.Variables.FirstOrDefault(t => t.Name == tag);
+        if (clientVar != null) {
+            return clientVar;
+        }
+        
+        //then check if it's a project env variable
+        var projectPath = Path.GetDirectoryName(clientPath)!;
+        var (_, projectEnvConfig) = LoadProjectEnvVarsForEnv(projectPath, io, envName);
+        var projectVar = projectEnvConfig.Variables.FirstOrDefault(t => t.Name == tag);
+        if (projectVar != null) {
+            return projectVar;
+        }
+        return null;
+    }
 }

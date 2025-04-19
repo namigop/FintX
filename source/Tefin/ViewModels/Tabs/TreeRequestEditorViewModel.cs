@@ -14,6 +14,7 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
+using Tefin.Features;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeNodeBuilders;
@@ -25,7 +26,7 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-    private List<RequestVariable> _envVars = [];
+    private List<RequestVariable> _reqVars = [];
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -88,15 +89,15 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
     
 
 
-    public void Show(object?[] parameters, List<RequestVariable> envVars, ProjectTypes.ClientGroup clientGroup) {
-        if (this._envVars.Count == 0)
-            this._envVars = envVars;
+    public void Show(object?[] parameters, List<RequestVariable> reqVars, ProjectTypes.ClientGroup clientGroup) {
+        if (this._reqVars.Count == 0)
+            this._reqVars = reqVars;
         
         this.Items.Clear();
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
-        var methodNode = new MethodInfoNode(this.MethodInfo, clientGroup,  this._envVars);
+        var methodNode = new MethodInfoNode(this.MethodInfo, clientGroup,  this._reqVars);
         this.Items.Add(methodNode);
 
         var counter = 0;
@@ -117,22 +118,24 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         //setup the templated {{TAG}} nodes
         //----------------------------------
         var methodInfoNode = (MethodInfoNode)this.Items[0];
-        foreach (var envVar in envVars) {
+        foreach (var reqVar in reqVars) {
             var node = methodInfoNode.FindChildNode(i => {
                 if (i is SystemNode sn) {
                     var pathToRoot = sn.GetJsonPath();
-                    return pathToRoot == envVar.JsonPath;
+                    return pathToRoot == reqVar.JsonPath;
                 }
 
                 return false;
             });
-            
+
+            var load = new LoadEnvVarsFeature();
+            var envVar = load.FindEnvVar(methodNode.ClientGroup.Path, Current.Env, reqVar.Tag, this.Io);
             if (node is SystemNode sysNode) {
-                sysNode.EnvVar.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
+                sysNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath, envVar?.CurrentValue);
             }
             
             if (node is TimestampNode tsNode) {
-                tsNode.CreateEnvVariable(envVar.Tag, envVar.JsonPath);
+                tsNode.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath);
             }
         }
         

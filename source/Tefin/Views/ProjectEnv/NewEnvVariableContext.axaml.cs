@@ -23,9 +23,15 @@ public partial class NewEnvVariableContext : UserControl {
     }
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e) {
-        var node = e.Parent.DataContext as SystemNode;
-        if (string.IsNullOrEmpty(node?.EnvVar?.EnvVarTag)) {
+        if (e.Parent.DataContext is SystemNode node) {
+            // if (string.IsNullOrEmpty(node?.EnvVar?.EnvVarTag)) {
             node?.EnvVar?.ShowDefault();
+            // }
+        }
+        if (e.Parent.DataContext is TimestampNode tn) {
+           
+            //tn?.EnvVar?.ShowDefault();
+           
         }
     }
 

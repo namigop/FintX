@@ -74,9 +74,14 @@ module VarsStructure =
                file, data
     let saveEnvForClient (io:IOs) (cfg:EnvConfigData) (clientPath:string) =
         let path = getVarPathForClient clientPath
-        let envFile = Path.Combine(path, cfg.Name)                    
+        let envFile = Path.Combine(path, cfg.Name + Ext.envExt)                    
         io.File.WriteAllText envFile (Instance.jsonSerialize cfg)
-        
+    
+    let saveToEnvFile (io:IOs) (envFile:string) (cfg:EnvConfigData) =
+        let ext = Path.GetExtension envFile
+        if ext <> Ext.envExt then
+            failwithf $"Invalid file extension {ext}. Expected {Ext.envExt}"
+        io.File.WriteAllText envFile (Instance.jsonSerialize cfg)
     let updateEnvForClient (io:IOs) (envName:string) (envVar:EnvVar) (clientPath:string) =
         let all = getVarsForClient io clientPath
         let envConfig = all.Variables |> Seq.tryFind  (fun (_, data) -> data.Name = envName)
