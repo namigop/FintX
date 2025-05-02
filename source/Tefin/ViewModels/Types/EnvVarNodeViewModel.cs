@@ -25,6 +25,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         this._ogTag = tag;
         this.CreateEnvVariableCommand = ReactiveCommand.Create(this.OnCreateEnvVariable);
         this.CancelEnvVariableCommand = ReactiveCommand.Create(this.OnCancelEnvVariable);
+        this.RemoveEnvVariableCommand = ReactiveCommand.Create(this.OnRemoveEnvVariable);
         this._selectedScope = this.Scopes[0];
     }
 
@@ -38,7 +39,8 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
     public ICommand CreateEnvVariableCommand { get; }
     public ICommand CancelEnvVariableCommand { get; }
-   
+    public ICommand RemoveEnvVariableCommand { get; }
+
     public string[] Scopes { get; } = [ProjectScope, ClientScope];
 
     public string SelectedScope {
@@ -63,12 +65,21 @@ public class EnvVarNodeViewModel : ViewModelBase {
         var tag = this.EnvVarTag.ToUpperInvariant();
         var jsonPath = this._node.GetJsonPath();
         //var cur = TypeHelper.getDefault(this._node.Type);
-        this.CreateEnvVariable(tag, jsonPath);
+        if (this.DefaultValueEditor is not null) {
+            this.DefaultValueEditor.Node.IsEditing = false;
+        }
+       
+        this.CreateEnvVariable(tag, jsonPath, this.DefaultValueEditor?.FormattedValue);
         
     }
 
     private void OnCancelEnvVariable() {
         this.EnvVarTag = this._ogTag;
+    } 
+    
+    private void OnRemoveEnvVariable() {
+        this.EnvVarTag = "";
+        this._ogTag = "";
     }
 
     public void CreateEnvVariable(string tag, string jsonPath, string? currentValue = null) {
@@ -80,30 +91,40 @@ public class EnvVarNodeViewModel : ViewModelBase {
         this._ogTag = tag;
         var inst = TypeHelper.indirectCast(currentValue, this._node.Type);
         this._enVarValue = inst;
+      
+        var removeEnv = new RemoveEnvVarsFeature();
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
-        if (methodInfoNode != null && !methodInfoNode.Variables.Exists(t => t.JsonPath == jsonPath)) {
-            var v = new RequestVariable() {
+        if (methodInfoNode != null) {
+            var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
+            if (currentVar != null) {
+                //If a new tag is created with the same json path, we have to remove the old one
+                methodInfoNode.Variables.Remove(currentVar);
+                removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
+            }
+
+            currentVar = new RequestVariable() {
                 Tag = this.EnvVarTag.ToUpperInvariant(),
                 TypeName = this._node.Type.FullName!,
                 JsonPath = jsonPath,
                 Scope = this.SelectedScope == ProjectScope ? RequestEnvVarScope.Project : RequestEnvVarScope.Client
             };
-
-            methodInfoNode.Variables.Add(v);
+            methodInfoNode.Variables.Add(currentVar);
             this.IsEnvVarTagCreated = true;
+
             
             var saveEnv = new SaveEnvVarsFeature();
-            if (v.Scope == RequestEnvVarScope.Client) {
-                saveEnv.Save(v, 
-                    this.DefaultValueEditor.FormattedValue,
-                    methodInfoNode.ClientGroup.Path, 
-                    Current.Env, 
+            if (currentVar.Scope == RequestEnvVarScope.Client) {
+                saveEnv.Save(currentVar,
+                    this._enVarValue?.ToString() ?? "",
+                    methodInfoNode.ClientGroup.Path,
+                    Current.Env,
                     this.Io);
-            } else {
-                saveEnv.Save(v, 
-                    this.DefaultValueEditor.FormattedValue,
-                    Current.ProjectPath, 
-                    Current.Env, 
+            }
+            else {
+                saveEnv.Save(currentVar,
+                    this._enVarValue?.ToString() ?? "",
+                    methodInfoNode.ClientGroup.Path,
+                    Current.Env,
                     this.Io);
             }
         }
@@ -113,7 +134,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
     public bool IsEnvVarTagVisible => !string.IsNullOrWhiteSpace(this.EnvVarTag);
 
-    public ITypeEditor DefaultValueEditor {
+    public ITypeEditor? DefaultValueEditor {
         get => this._defaultValueEditor;
         private set => this.RaiseAndSetIfChanged(ref _defaultValueEditor , value);
     }

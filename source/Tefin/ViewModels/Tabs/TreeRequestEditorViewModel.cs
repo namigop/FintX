@@ -85,10 +85,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         return (mParams.Any(), mParams);
     }
-
     
-
-
     public void Show(object?[] parameters, List<RequestVariable> reqVars, ProjectTypes.ClientGroup clientGroup) {
         if (this._reqVars.Count == 0)
             this._reqVars = reqVars;
@@ -130,6 +127,9 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
             var load = new LoadEnvVarsFeature();
             var envVar = load.FindEnvVar(methodNode.ClientGroup.Path, Current.Env, reqVar.Tag, this.Io);
+            if (envVar is null)
+                return;
+            
             if (node is SystemNode sysNode) {
                 sysNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath, envVar?.CurrentValue);
             }

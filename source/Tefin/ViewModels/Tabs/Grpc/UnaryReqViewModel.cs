@@ -105,7 +105,7 @@ public class UnaryReqViewModel : ViewModelBase {
             }
             this._methodParameterInstances = methodParams ?? [];
             
-            //these variables, which are stored in the request file, does not contain
+            //these variables, which are stored in the request file, do not contain
             //the current value.  Those are in the *.fxv file in client/var folder
             this._envVariables =
                 importResult.ResultValue.Variables

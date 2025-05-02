@@ -10,10 +10,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.Views.ProjectEnv;
 
 public partial class NewEnvVariableContext : UserControl {
-    public NewEnvVariableContext() {
-        InitializeComponent();
-        
-    }
+    public NewEnvVariableContext() => this.InitializeComponent();
 
     protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e) {
         var vm = this.DataContext as EnvVarNodeViewModel;
@@ -24,14 +21,11 @@ public partial class NewEnvVariableContext : UserControl {
 
     protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e) {
         if (e.Parent.DataContext is SystemNode node) {
-            // if (string.IsNullOrEmpty(node?.EnvVar?.EnvVarTag)) {
             node?.EnvVar?.ShowDefault();
-            // }
         }
+
         if (e.Parent.DataContext is TimestampNode tn) {
-           
             //tn?.EnvVar?.ShowDefault();
-           
         }
     }
 

@@ -20,7 +20,7 @@ public sealed class MethodInfoNode : NodeBase {
         this.CanOpen = true;
         this.Title = mi.Name;
         this.SubTitle = $"{{{GrpcMethod.getMethodType(mi)}}}";
-        this.Variables = variables;
+        this.Variables = variables.ToList();
     }
 
     public ProjectTypes.ClientGroup ClientGroup { get; }
