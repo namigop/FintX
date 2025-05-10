@@ -80,6 +80,16 @@ public class EnvVarNodeViewModel : ViewModelBase {
     private void OnRemoveEnvVariable() {
         this.EnvVarTag = "";
         this._ogTag = "";
+        var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
+        if (methodInfoNode != null) {
+            var jsonPath = this._node.GetJsonPath();
+            var removeEnv = new RemoveEnvVarsFeature();
+            var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
+            if (currentVar != null) {
+                methodInfoNode.Variables.Remove(currentVar);
+                removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
+            }
+        }
     }
 
     public void CreateEnvVariable(string tag, string jsonPath, string? currentValue = null) {

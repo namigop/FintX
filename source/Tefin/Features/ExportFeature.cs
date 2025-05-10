@@ -19,7 +19,9 @@ namespace Tefin.Features;
 
 public class ExportFeature(MethodInfo methodInfo, object?[] methodsParams, List<RequestVariable> variables, object? responseStream = null) {
     public FSharpResult<string, Exception> Export() {
-        var envItems = variables.Select(v => 
+        var envItems = variables
+            .DistinctBy(v => v.JsonPath)
+            .Select(v => 
             EnvConfig.createReqVar(
                 v.Tag, 
                 v.JsonPath,
