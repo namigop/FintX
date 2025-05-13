@@ -6,10 +6,11 @@ public interface ITypeEditor : IDisposable {
     bool IsEditing { get; set; }
     bool IsNull { get; set; }
     TypeBaseNode Node { get; }
+    void CommitEdit();
 }
 
 public interface ITypeEditor<T> : ITypeEditor {
     T? TempValue { get; set; }
 
-    void CommitEdit();
+  
 }

@@ -85,7 +85,7 @@ module VarsStructure =
         //always store the variables in alphabetical order
         let thisVars = cfg.Variables.ToArray()
         cfg.Variables.Clear()
-        thisVars |> Seq.sortBy (fun v -> v.Name) |> Seq.iter (fun v -> cfg.Variables.Add v)    
+        thisVars |> Seq.sortBy _.Name |> Seq.iter (fun v -> cfg.Variables.Add v)    
         io.File.WriteAllText envFile (Instance.jsonSerialize cfg)
     let updateEnvForClient (io:IOs) (envName:string) (envVar:EnvVar) (clientPath:string) =
         let all = getVarsForClient io clientPath

@@ -77,17 +77,8 @@ public class MainWindowViewModel : ViewModelBase {
         #if DEBUG
         //return;
         #endif
-        AutoSave.ClientParam[] Get() {
-            var methodTabs = this.TabHost.Items
-                .Where(t => t.CanAutoSave)
-                .Cast<PersistedTabViewModel>()
-                .ToList();
-            var openWindows = 
-                this.WindowHost.Items.Select(f => f.Value.Content)
-                    .Where(t => t.CanAutoSave)
-                    .Cast<PersistedTabViewModel>();
-            
-            methodTabs.AddRange(openWindows);   
+
+        AutoSave.ClientParam[] GetClientParam(List<PersistedTabViewModel> persistableTabs) {
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
             var loadedClients = this.MainMenu.ClientMenuItem.Explorer.GetClientNodes()
                 .Where(c => c.IsLoaded)
@@ -95,7 +86,7 @@ public class MainWindowViewModel : ViewModelBase {
 
             var clientParams = new List<AutoSave.ClientParam>();
             foreach (var client in loadedClients) {
-                var methodsOfClient = methodTabs.Where(m => m.Client.Name == client.Name).ToArray();
+                var methodsOfClient = persistableTabs.Where(m => m.Client.Name == client.Name).ToArray();
                 var uniqueMethods = methodsOfClient.DistinctBy(m => m.ClientMethod.MethodInfo.Name);
                 var methodParams = new List<AutoSave.MethodParam>();
                 foreach (var method in uniqueMethods) {
@@ -103,13 +94,7 @@ public class MainWindowViewModel : ViewModelBase {
                         m.ClientMethod.MethodInfo.Name == method.ClientMethod.MethodInfo.Name);
                     var fileParams = new List<AutoSave.FileParam>();
                     foreach (var tab in tabsForMethod) {
-                        var json = tab.GetRequestContent();
-                        var title = tab.Title;
-                        var fileParam = AutoSave.FileParam.Empty()
-                            .WithJson(json)
-                            .WithFullPath(tab.Id)
-                            .WithHeader(title);
-                        fileParams.Add(fileParam);
+                        fileParams.Add(tab.GetFileParam());
                     }
 
                     var methodParam = AutoSave.MethodParam.Empty()
@@ -127,6 +112,25 @@ public class MainWindowViewModel : ViewModelBase {
             }
 
             return clientParams.ToArray();
+        }
+
+        AutoSave.FileParam[] GetEnvConfigParam(PersistedTabViewModel[] nonMethodTabs) {
+            return nonMethodTabs.Select(t => t.GetFileParam()).ToArray();
+        }
+        
+        AutoSave.AutoSaveParam[] Get() {
+            var persistableTabs = this.TabHost.Items.Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>().ToList();
+            var openWindows = this.WindowHost.Items.Select(f => f.Value.Content).Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>();
+            persistableTabs.AddRange(openWindows);
+            var nonMethodTabs = persistableTabs.Where(t => t.Client.Methods.Length == 0).ToArray();
+
+            var clientParams = GetClientParam(persistableTabs);
+            var fileParams = GetEnvConfigParam(nonMethodTabs);
+            //return clientParams.ToArray();
+            return [
+                AutoSave.AutoSaveParam.AsClientParams(clientParams),
+                AutoSave.AutoSaveParam.AsFileParams(fileParams),
+            ];
         }
 
         AutoSave.run.Invoke(Get);

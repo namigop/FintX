@@ -84,6 +84,11 @@ module TypeHelper =
       let methodInfo = m.MakeGenericMethod(targetType)
       methodInfo.Invoke(null, [| instance |])
 
+  let tryIndirectCast (instance: obj) (targetType: Type) =
+    try
+      let bb = indirectCast instance targetType
+      Res.ok bb
+    with e -> Res.failed e
   let createGenericInstanceType (targetGenericType: Type) (typeArgs: Type array) (instance: obj) =
     let t = targetGenericType.MakeGenericType(typeArgs)
     indirectCast (instance, t)

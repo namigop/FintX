@@ -41,7 +41,7 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
         this.ClientMethod.Dispose();
     }
 
-    public override string GetRequestContent() => this.ClientMethod.GetRequestContent();
+    public override string GenerateFileContent() => this.ClientMethod.GetRequestContent();
 
     public override void Init() {
         if (!string.IsNullOrEmpty(this._requestFile)) {

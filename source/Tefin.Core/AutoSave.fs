@@ -36,6 +36,7 @@ module AutoSave =
     member x.WithName n = { x with Name = n }
     member x.WithFiles f = { x with Files = f }
 
+    
   type ClientParam =
     { Project: Project
       Client: ClientGroup
@@ -50,6 +51,12 @@ module AutoSave =
     member x.WithClient c = { x with Client = c }
     member x.WithMethods m = { x with Methods = m }
 
+  type AutoSaveParam =
+    | ClientParams of ClientParam array
+    | FileParams of FileParam array 
+    with
+       static member AsClientParams p =  ClientParams p
+       static member AsFileParams p =  FileParams p
   type Writer =
     { Write: IOs -> string -> string -> unit
       Remove: string -> unit }
@@ -79,24 +86,23 @@ module AutoSave =
 
 
   let rec private saveFile
-    (io: IOs)
-    (methodName: string)
-    (autoSavePath: string)
+    (io: IOs)    
+    (savePath: string)
     (f: FileParam)
     (writer: Writer)
+    (ext: string)
     =
     match f.FullPath with
     | Some file ->
       if not (System.String.IsNullOrWhiteSpace f.Json) then
         writer.Write io file f.Json
-
       f
 
     | None ->
       // if the json content was provided but no full path, we save it with the
       // next available file name
-      let fileName = Utils.getAvailableFileName autoSavePath f.Header Ext.requestFileExt
-      let fullPath = Path.Combine(autoSavePath, fileName)
+      let fileName = Utils.getAvailableFileName savePath f.Header ext
+      let fullPath = Path.Combine(savePath, fileName)
       writer.Write io fullPath f.Json
 
       { Json = f.Json
@@ -118,7 +124,7 @@ module AutoSave =
 
     let autoSavedFiles =
       method.Files
-      |> Array.map (fun fileParam -> saveFile io method.Name autoSavePath fileParam writer)
+      |> Array.map (fun fileParam -> saveFile io autoSavePath fileParam writer Ext.requestFileExt)
 
     //removes any old autosaved files
     syncAutoSavedFiles io (autoSavedFiles |> Array.map (fun p -> p.FullPath.Value)) autoSavePath
@@ -158,54 +164,60 @@ module AutoSave =
 
     fullPath
 
+  let private saveClientParam (clientParams : ClientParam array) =
+    let io = Resolver.value
+    let w = writer
+    let updatedClientParams = clientParams |> Array.map (fun clientParam -> saveClient io clientParam w)
+
+    //create save state
+    let projects = updatedClientParams |> Array.map (fun p -> p.Project)
+    for p in projects do
+      let clients = clientParams |> Array.filter (fun c -> c.Project.Path = p.Path)
+
+      let files = clients |> Array.map (fun c ->
+          let clientName = c.Client.Name
+          let savedFiles =
+            c.Methods
+            |> Array.collect (fun m -> m.Files)
+            |> Array.map (fun f -> f.FullPath)
+            |> Array.filter (fun f -> f.IsSome)
+            |> Array.map (fun f -> f.Value)
+          clientName, savedFiles)
+
+      let saveState =
+        { Package = p.Package
+          ClientState =
+            files
+            |> Array.map (fun (clientName, openFiles) ->
+              { Name = clientName
+                OpenFiles = openFiles }) }
+
+      let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
+      io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
+
+  let saveFileParams (filesToSave : FileParam array) =
+    let io = Resolver.value  
+    for fileParam in filesToSave do
+      match fileParam.FullPath with
+      | Some path ->
+         let dir = Path.GetDirectoryName path
+         saveFile io dir fileParam writer (Path.GetExtension path) |> ignore
+      | None -> ()
+        
   let run =
     let timer = new System.Timers.Timer()
     timer.AutoReset <- true
     timer.Interval <- App.getAppConfig().AutoSaveFrequency * 1000 |> System.Convert.ToDouble
 
-    let io = Resolver.value
-    let w = writer
-
-    fun (getParam: System.Func<ClientParam array>) ->
+    fun (getParam: System.Func<AutoSaveParam[]>) ->
       if not timer.Enabled then
         timer.Enabled <- true
 
         timer.Elapsed
         |> Observable.add (fun args ->
-          let clientParams = getParam.Invoke()
-
-          let updatedClientParams =
-            clientParams |> Array.map (fun clientParam -> saveClient io clientParam w)
-
-          //create save state
-          let projects = updatedClientParams |> Array.map (fun p -> p.Project)
-
-          for p in projects do
-            let clients = clientParams |> Array.filter (fun c -> c.Project.Path = p.Path)
-
-            let files =
-              clients
-              |> Array.map (fun c ->
-                let clientName = c.Client.Name
-
-                let savedFiles =
-                  c.Methods
-                  |> Array.collect (fun m -> m.Files)
-                  |> Array.map (fun f -> f.FullPath)
-                  |> Array.filter (fun f -> f.IsSome)
-                  |> Array.map (fun f -> f.Value)
-
-                clientName, savedFiles)
-
-            let saveState =
-              { Package = p.Package
-                ClientState =
-                  files
-                  |> Array.map (fun (clientName, openFiles) ->
-                    { Name = clientName
-                      OpenFiles = openFiles }) }
-
-            let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
-            io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
-
+          let autoSaveParams = getParam.Invoke()
+          for autoSaveParam in autoSaveParams do
+            match autoSaveParam with
+            | ClientParams clientParams -> saveClientParam clientParams
+            | FileParams fileParams ->saveFileParams fileParams
         )

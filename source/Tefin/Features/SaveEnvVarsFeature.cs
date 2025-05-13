@@ -1,14 +1,22 @@
-﻿using Tefin.Core;
+﻿using DynamicData;
+
+using Tefin.Core;
+using Tefin.Core.Reflection;
 using Tefin.ViewModels.Types;
 
 namespace Tefin.Features;
 
 public class SaveEnvVarsFeature() {
-    
+    private static string[] DisplayTypes = SystemType.getTypesForDisplay();
+    private static Type[] ActualTypes = SystemType.getTypes().ToArray();
+
     /// <summary>
     /// Save to the var/{ENV}.fxv file. The .fxv file contains the Tags and default/current values 
     /// </summary>
     public void Save(RequestVariable v, string defaultValueAsText, string clientPath, string currentEnv, IOs io) {
+        var actualType = ActualTypes.FirstOrDefault(t => t.FullName == v.TypeName);
+        var displayType = DisplayTypes[ActualTypes.IndexOf(actualType)];
+        
         var load = new LoadEnvVarsFeature();
         if (v.Scope == RequestEnvVarScope.Client) {
             var (envFile, envConfigData) = load.LoadClientEnvVarsForEnv(clientPath, io, currentEnv);
@@ -18,7 +26,7 @@ public class SaveEnvVarsFeature() {
             if (curVar != null)
                 envConfigData.Variables.Remove(curVar);
             
-            var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", v.TypeName);
+            var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", displayType);
             envConfigData.Variables.Add(clientVar);
             VarsStructure.saveToEnvFile(io, envFile, envConfigData);
         }
@@ -31,7 +39,7 @@ public class SaveEnvVarsFeature() {
             if (curVar != null)
                 envConfigData.Variables.Remove(curVar);
             
-            var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", v.TypeName);
+            var clientVar = EnvConfig.createVar(v.Tag, defaultValue, defaultValue, "", displayType);
             envConfigData.Variables.Add(clientVar);
             VarsStructure.saveToEnvFile(io, envFile, envConfigData);
         }
