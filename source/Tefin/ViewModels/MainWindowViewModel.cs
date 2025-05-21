@@ -75,7 +75,7 @@ public class MainWindowViewModel : ViewModelBase {
 
     private void StartAutoSave() {
         #if DEBUG
-        //return;
+       // return;
         #endif
 
         AutoSave.ClientParam[] GetClientParam(List<PersistedTabViewModel> persistableTabs) {
@@ -93,7 +93,7 @@ public class MainWindowViewModel : ViewModelBase {
                     var tabsForMethod = methodsOfClient.Where(m =>
                         m.ClientMethod.MethodInfo.Name == method.ClientMethod.MethodInfo.Name);
                     var fileParams = new List<AutoSave.FileParam>();
-                    foreach (var tab in tabsForMethod) {
+                    foreach (var tab in tabsForMethod.Where(t => t.ClientMethod.IsLoaded)) {
                         fileParams.Add(tab.GetFileParam());
                     }
 

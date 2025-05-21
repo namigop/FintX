@@ -22,7 +22,7 @@ public abstract class GrpCallTypeViewModelBase : ViewModelBase {
     public ProjectTypes.ClientGroup Client { get; private set; }
 
     public MethodInfo MethodInfo { get; }
-
+    public abstract bool IsLoaded { get; }
     public abstract string GetRequestContent();
 
     public abstract void ImportRequest(string requestFile);

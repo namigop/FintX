@@ -104,16 +104,31 @@ public class EnvVarNodeViewModel : ViewModelBase {
       
         var removeEnv = new RemoveEnvVarsFeature();
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
+        var envTag = this.EnvVarTag.ToUpperInvariant();
         if (methodInfoNode != null) {
             var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
+            var saveEnvVariable = false;
             if (currentVar != null) {
-                //If a new tag is created with the same json path, we have to remove the old one
-                methodInfoNode.Variables.Remove(currentVar);
-                removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
+                if (currentVar.Tag != envTag) {
+                    //If a new tag is created with the same json path, we have to remove the old one
+                    methodInfoNode.Variables.Remove(currentVar);
+                    removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
+                    saveEnvVariable = true;
+                }
+                else {
+                    saveEnvVariable = false;
+                }
+            }
+            else {
+                //New variable was created. save it
+                saveEnvVariable = true;
             }
 
+            if (!saveEnvVariable)
+                return;
+            
             currentVar = new RequestVariable() {
-                Tag = this.EnvVarTag.ToUpperInvariant(),
+                Tag = envTag,
                 TypeName = this._node.Type.FullName!,
                 JsonPath = jsonPath,
                 Scope = this.SelectedScope == ProjectScope ? RequestEnvVarScope.Project : RequestEnvVarScope.Client

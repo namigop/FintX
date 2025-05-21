@@ -42,7 +42,7 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
             this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
         }
     }
-
+    public override bool IsLoaded => this.CallType.IsLoaded;
     public override string ApiType { get; } = GrpcPackage.packageName;
     public GrpCallTypeViewModelBase CallType { get; }
 
@@ -57,17 +57,18 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public void Init() =>
         this.Exec(() => {
-            this.CallType.Init();
+           
             if (string.IsNullOrEmpty(this._importFile)) {
+                this.CallType.Init();
                 return;
             }
 
             if (this.Io.File.Exists(this._importFile)) {
                 this.CallType.ImportRequest(this._importFile);
             }
-            else {
-                var content = this.GetRequestContent();
-                this.Io.File.WriteAllText(this._importFile, content);
-            }
+            // else { //WHY IS THIS HERE???  This is likely causing the request file to be created with empty content
+            //     var content = this.GetRequestContent();
+            //     this.Io.File.WriteAllText(this._importFile, content);
+            // }
         });
 }

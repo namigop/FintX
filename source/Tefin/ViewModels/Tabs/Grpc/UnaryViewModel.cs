@@ -34,7 +34,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     }
 
     public bool CanStop => this.ReqViewModel.RequestEditor.CtsReq != null;
-
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
 

@@ -33,7 +33,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public bool CanStop => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
-
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
 

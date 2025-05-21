@@ -40,6 +40,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
 
     public bool CanStart => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
 
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public bool CanStop => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
 
     public ICommand ExportRequestCommand { get; }

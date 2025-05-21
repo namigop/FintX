@@ -49,6 +49,7 @@ public class UnaryReqViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._showTreeEditor, value);
     }
 
+    public bool IsLoaded => this._isLoaded;
     public MethodInfo MethodInfo { get; }
     public TreeRequestEditorViewModel TreeEditor => _treeEditor;
 
@@ -95,6 +96,7 @@ public class UnaryReqViewModel : ViewModelBase {
     }
 
     public virtual void ImportRequestFile(string file) {
+        this._isLoaded = false;
         var import = new ImportFeature(this.Io, file, this.MethodInfo);
         var importResult = import.Run();
         if (importResult.IsOk) {
@@ -103,22 +105,16 @@ public class UnaryReqViewModel : ViewModelBase {
             if (methodParams == null) {
                 Debugger.Break();
             }
+
             this._methodParameterInstances = methodParams ?? [];
-            
+
             //these variables, which are stored in the request file, do not contain
             //the current value.  Those are in the *.fxv file in client/var folder
             this._envVariables =
                 importResult.ResultValue.Variables
-                    .Select(t => new RequestVariable() {
-                        Tag = t.Tag,
-                        JsonPath = t.JsonPath,
-                        TypeName = SystemType.getActualType(t.Type),
-                        Scope = t.Scope
-                    })
+                    .Select(t => new RequestVariable() { Tag = t.Tag, JsonPath = t.JsonPath, TypeName = SystemType.getActualType(t.Type), Scope = t.Scope })
                     .ToList();
-                ;
             this.Init();
-            
         }
         else {
             this.Io.Log.Error(importResult.ErrorValue);
