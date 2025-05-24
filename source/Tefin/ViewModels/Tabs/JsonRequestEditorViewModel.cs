@@ -19,6 +19,10 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IRequestEditorViewModel {
+    private static string[] DisplayTypes = SystemType.getTypesForDisplay();
+    private static Type[] ActualTypes = SystemType.getTypes().ToArray();
+
+    
     private string _json = "";
     private List<RequestVariable> _envVars = [];
 
@@ -41,14 +45,20 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
     public (bool, object?[]) GetParameters() {
          
         if (this._envVars.Count > 0) {
-            var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath); // .getVars(this.Io, Current.ProjectPath);
+            //Update the JSON with the env var values from .fxv
+            var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath); 
             if (curEnv != null) {
                 var jsonObject = JObject.Parse(this.Json);
                 foreach (var e in this._envVars) {
                     var token = jsonObject.SelectToken(e.JsonPath);
-                    var newValue =  curEnv.Variables.FirstOrDefault(t => t.Name == e.Tag)?.CurrentValue; 
+                    var newValue =  curEnv.Variables.FirstOrDefault(t => t.Name == e.Tag)?.CurrentValue;
+                    var type = ActualTypes.First(t => t.FullName == e.TypeName);
+                    var typedValue = TypeHelper.indirectCast(newValue, type);
+                    var writer = new JTokenWriter();
+                    writer.WriteValue(typedValue);
+                    writer.Close();
                     if (newValue != null)
-                        token?.Replace(newValue); // Replace the value
+                        token?.Replace(writer.Token!); // Replace the value
                 }
 
                 this.Json = jsonObject.ToString();

@@ -114,8 +114,13 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         //----------------------------------
         //setup the templated {{TAG}} nodes
         //----------------------------------
+        var load = new LoadEnvVarsFeature();
         var methodInfoNode = (MethodInfoNode)this.Items[0];
         foreach (var reqVar in reqVars) {
+            var envVar = load.FindEnvVar(methodNode.ClientGroup.Path, Current.Env, reqVar.Tag, this.Io);
+            if (envVar is null)
+                continue;
+            
             var node = methodInfoNode.FindChildNode(i => {
                 if (i is SystemNode sn) {
                     var pathToRoot = sn.GetJsonPath();
@@ -125,11 +130,6 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
                 return false;
             });
 
-            var load = new LoadEnvVarsFeature();
-            var envVar = load.FindEnvVar(methodNode.ClientGroup.Path, Current.Env, reqVar.Tag, this.Io);
-            if (envVar is null)
-                return;
-            
             if (node is SystemNode sysNode) {
                 sysNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath, envVar?.CurrentValue);
             }
