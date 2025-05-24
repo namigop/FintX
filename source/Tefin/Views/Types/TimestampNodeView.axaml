@@ -13,7 +13,7 @@
     </UserControl.Styles>
     <UserControl.ContextMenu>
         <ContextMenu>
-            <MenuItem Header="Create env variable" Command="{Binding CreateEnvVariableCommand}"/>
+            <MenuItem Header="Create env variable" Command="{Binding  EnvVar.CreateEnvVariableCommand}"/>
         </ContextMenu>
     </UserControl.ContextMenu>
     <UserControl.DataTemplates>
@@ -42,14 +42,14 @@
                    Foreground="WhiteSmoke" />
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
         <Grid>
-        <TextBlock IsVisible="{Binding IsEnvVarTagVisible}"
+        <TextBlock IsVisible="{Binding EnvVar.IsEnvVarTagVisible}"
                    Margin="6 0 0 0"
                    Foreground="Khaki"
                  VerticalAlignment="Center"
-                 Text="{Binding EnvVarTag}"></TextBlock>
+                 Text="{Binding EnvVar.EnvVarTag}"></TextBlock>
 
         <TextBlock Text="{Binding FormattedValue}" 
-                   IsVisible="{Binding !IsEnvVarTagVisible}"
+                   IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}"
                    Margin="6 0 0 0" Classes="FormattedValue" />
         </Grid>
         

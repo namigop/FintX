@@ -135,7 +135,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             }
             
             if (node is TimestampNode tsNode) {
-                tsNode.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath);
+                tsNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath);
             }
         }
         

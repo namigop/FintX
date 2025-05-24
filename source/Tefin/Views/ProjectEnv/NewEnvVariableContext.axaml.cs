@@ -25,7 +25,7 @@ public partial class NewEnvVariableContext : UserControl {
         }
 
         if (e.Parent.DataContext is TimestampNode tn) {
-            //tn?.EnvVar?.ShowDefault();
+            tn?.EnvVar?.ShowDefault();
         }
     }
 

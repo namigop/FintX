@@ -51,8 +51,17 @@ public class EnvVarNodeViewModel : ViewModelBase {
     public void ShowDefault() {
         this.EnvVarTag = this._node.Title;
         var actualType = _node.Type;
-        var cur = this._enVarValue ?? TypeHelper.getDefault(actualType);
+
+        var envData = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath);
+        var envVar = envData.Variables.FirstOrDefault(x => x.Name == this.EnvVarTag);
+        if (envVar is not null) {
+            var res = TypeHelper.tryIndirectCast(envVar.CurrentValue ?? envVar.DefaultValue, actualType);
+            if (res.IsOk) {
+                this._enVarValue = res.ResultValue;
+            }
+        }
         
+        var cur = this._enVarValue ?? TypeHelper.getDefault(actualType);
         var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, default, cur, null);
         this.DefaultValueEditor = defaultValueNode.Editor;
     }
@@ -99,10 +108,12 @@ public class EnvVarNodeViewModel : ViewModelBase {
         tag = tag.Replace("{", "").Replace("}", "");
         this.EnvVarTag = tag;
         this._ogTag = tag;
+       
+        
         var inst = TypeHelper.indirectCast(currentValue, this._node.Type);
         this._enVarValue = inst;
-      
-        var removeEnv = new RemoveEnvVarsFeature();
+
+        
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
         var envTag = this.EnvVarTag.ToUpperInvariant();
         if (methodInfoNode != null) {
@@ -112,6 +123,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
                 if (currentVar.Tag != envTag) {
                     //If a new tag is created with the same json path, we have to remove the old one
                     methodInfoNode.Variables.Remove(currentVar);
+                    var removeEnv = new RemoveEnvVarsFeature();
                     removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
                     saveEnvVariable = true;
                 }

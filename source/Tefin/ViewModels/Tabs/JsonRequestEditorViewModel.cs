@@ -21,7 +21,6 @@ namespace Tefin.ViewModels.Tabs;
 public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IRequestEditorViewModel {
     private static string[] DisplayTypes = SystemType.getTypesForDisplay();
     private static Type[] ActualTypes = SystemType.getTypes().ToArray();
-
     
     private string _json = "";
     private List<RequestVariable> _envVars = [];
