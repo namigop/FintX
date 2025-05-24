@@ -28,10 +28,10 @@ let private write2 (msg: string) =
 
 let private log (l: LogType) (msg:string) =
   match l with
-  | LogType.Info -> write $"INFO: {msg}"
-  | LogType.Warn -> write $"WARN: {msg}"
-  | LogType.Error -> write $"ERROR: {msg}"
-  | LogType.Debug -> write2 $"DEBUG: {msg}"
+  | LogType.Info -> write $"INFO: [{DateTime.Now}] {msg}"
+  | LogType.Warn -> write $"WARN: [{DateTime.Now}] {msg}"
+  | LogType.Error -> write $"ERROR: [{DateTime.Now}] {msg}"
+  | LogType.Debug -> write2 $"DEBUG: [{DateTime.Now}] {msg}"
  
 let logInfo = log LogType.Info
 let logError = log LogType.Error

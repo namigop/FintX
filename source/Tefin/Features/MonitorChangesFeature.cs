@@ -1,3 +1,7 @@
+using System.Timers;
+
+using Google.Protobuf.WellKnownTypes;
+
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
@@ -7,7 +11,7 @@ namespace Tefin.Features;
 
 public class MonitorChangesFeature(IOs io) {
     private static FileSystemWatcher? _watcher;
-
+    private Dictionary<string, Timer?> _changedFiles = new();
     public void Run(ProjectTypes.Project project) {
         //Whenever Run is called we dispose of the old one -essentially
         //just monitoring one folder at a time.
@@ -25,10 +29,20 @@ public class MonitorChangesFeature(IOs io) {
     private void OnChanged(object sender, FileSystemEventArgs e) {
         if (e.Name == ProjectTypes.ProjectSaveState.FileName)
             return;
-        
-        io.Log.Info($"File changed: {e.Name}");
-        var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
-        GlobalHub.publish(msg);
+
+        if (!this._changedFiles.TryGetValue(e.FullPath, out var timer)) {
+            timer = new Timer(TimeSpan.FromMilliseconds(500));
+            timer.AutoReset = false;
+            timer.Elapsed += (_, _) => {
+                this._changedFiles.Remove(e.FullPath);
+                io.Log.Info($"File changed: {e.Name}");
+                var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
+                GlobalHub.publish(msg);
+            };
+            
+            this._changedFiles.Add(e.FullPath, timer);
+            timer.Start();
+        }
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e) {
