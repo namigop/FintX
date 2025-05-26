@@ -5,20 +5,22 @@
              xmlns:types="clr-namespace:Tefin.ViewModels.Types"
              xmlns:viewModels="clr-namespace:Tefin.ViewModels"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             xmlns:projectEnv="clr-namespace:Tefin.Views.ProjectEnv"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:TimestampNode"
              x:Class="Tefin.Views.Types.TimestampNodeView">
     <UserControl.Styles>
         <StyleInclude Source="TypeItemStyles.axaml" />
     </UserControl.Styles>
-    <UserControl.ContextMenu>
-        <ContextMenu>
-            <MenuItem Header="Create env variable" Command="{Binding  EnvVar.CreateEnvVariableCommand}"/>
-        </ContextMenu>
-    </UserControl.ContextMenu>
     <UserControl.DataTemplates>
         <viewModels:TypeEditorLocator />
     </UserControl.DataTemplates>
+    <UserControl.ContextFlyout>
+        <Flyout>
+            <projectEnv:NewEnvVariableContext DataContext="{Binding EnvVar}" />
+        </Flyout>
+       
+    </UserControl.ContextFlyout>
     <StackPanel Orientation="Horizontal" x:Name="panel">
         <!-- <StackPanel.ContextFlyout> -->
         <!--     <Flyout><Grid> -->
@@ -52,6 +54,5 @@
                    IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}"
                    Margin="6 0 0 0" Classes="FormattedValue" />
         </Grid>
-        
     </StackPanel>
 </UserControl>
