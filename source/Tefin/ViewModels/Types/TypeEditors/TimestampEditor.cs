@@ -2,10 +2,14 @@
 
 using Google.Protobuf.WellKnownTypes;
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 #endregion
 
 namespace Tefin.ViewModels.Types.TypeEditors;
 
 public class TimestampEditor(TypeBaseNode node) : TypeEditorBase<Timestamp>(node) {
-    public SystemNode TypeNode => (SystemNode)this.Node;
+    public TimestampNode TypeNode => (TimestampNode)this.Node;
+
+    public override string FormattedValue { get => TypeNode.DateTimeText; }
 }

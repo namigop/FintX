@@ -3,6 +3,7 @@
 using System.Reflection;
 using System.Threading;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using ReactiveUI;
@@ -54,7 +55,8 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
                     var type = ActualTypes.First(t => t.FullName == e.TypeName);
                     var typedValue = TypeHelper.indirectCast(newValue, type);
                     var writer = new JTokenWriter();
-                    writer.WriteValue(typedValue);
+                    JsonSerializer.Create().Serialize(writer, typedValue);
+  
                     writer.Close();
                     if (newValue != null)
                         token?.Replace(writer.Token!); // Replace the value

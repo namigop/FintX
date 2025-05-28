@@ -79,7 +79,7 @@ module MethodInvoker =
 
         //if the config was changed clear the cached instance
         if not isConfigUnchanged then
-          let _ = cache.Remove(clientType)
+          let _ = cache.Remove(clientType)         
           ()
 
       if cache.ContainsKey clientType then

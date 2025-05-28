@@ -3,18 +3,34 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:typeEditors="clr-namespace:Tefin.ViewModels.Types.TypeEditors"
+             xmlns:node="clr-namespace:Tefin.ViewModels.Types"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="typeEditors:TimestampEditor"
              x:Class="Tefin.Views.Types.TypeEditors.TimestampEditorView">
-    <Border x:Name="MainBorder">
-        <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+    <!-- <Border x:Name="MainBorder"> -->
+    <!--     <Grid ColumnDefinitions="*"> -->
+    <!--         <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}" -->
+    <!--                  VerticalAlignment="Center" -->
+    <!--                  Text="{Binding TypeNode.EnvVar.EnvVarTag}"> -->
+    <!--         </TextBox> -->
+    <!-- -->
+    <!--         <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}"> -->
+    <!--             <TimePicker SelectedTime="{Binding TempValue}" /> -->
+    <!--         </StackPanel> -->
+    <!--     </Grid> -->
+    <!-- </Border> -->
+    <Border x:Name="MainBorder" x:CompileBindings="False">
+        <Grid>
+            <TextBox IsVisible="{Binding Node.EnvVar.IsEnvVarTagVisible}"
                      VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
+                     Text="{Binding Node.EnvVar.EnvVarTag}">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
-                <TimePicker SelectedTime="{Binding TempValue}" />
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding !Node.EnvVar.IsEnvVarTagVisible}">
+                <TextBox Text="{Binding Node.DateTimeText}" x:Name="TextBox" />
+                <!-- <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" /> -->
+                <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
+                <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
             </StackPanel>
         </Grid>
     </Border>

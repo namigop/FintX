@@ -2,7 +2,7 @@
 
 using DynamicData;
 
-using Google.Protobuf.WellKnownTypes;
+
 
 using Microsoft.FSharp.Control;
 using Microsoft.FSharp.Core;
@@ -41,23 +41,39 @@ public class EnvVarViewModel : ViewModelBase {
         
         var curInstRes = TypeHelper.tryIndirectCast(envVar.CurrentValue, actualType);
         var defInstRes = TypeHelper.tryIndirectCast(envVar.DefaultValue, actualType);
-       
-        var currentValueNode = new SystemNode(
-            envVar.Name, 
-            actualType, 
-            default,
-            curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
-            null);
-        
-        this.CurrentValueEditor = currentValueNode.Editor;
-        var defaultValueNode =new SystemNode(
-            envVar.Name,
-            actualType,
-            default, 
-            defInstRes.IsOk ? defInstRes.ResultValue : TypeHelper.getDefault(actualType),
-            null);
-        this.DefaultValueEditor = defaultValueNode.Editor;
         this._selectedDisplayType = this.DisplayType;
+        if (actualType == typeof( Google.Protobuf.WellKnownTypes.Timestamp)) {
+            var currentTsNode = new TimestampNode(envVar.Name,
+                actualType,
+                default,
+                curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
+                null);
+            this.CurrentValueEditor = new TimestampEditor(currentTsNode);
+            
+            var defaultTsNode = new TimestampNode(envVar.Name,
+                actualType,
+                default,
+                curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
+                null);
+            this.DefaultValueEditor = new TimestampEditor(defaultTsNode);
+        }
+        else {
+            var currentValueNode = new SystemNode(
+                envVar.Name,
+                actualType,
+                default,
+                curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
+                null);
+
+            this.CurrentValueEditor = currentValueNode.Editor;
+            var defaultValueNode = new SystemNode(
+                envVar.Name,
+                actualType,
+                default,
+                defInstRes.IsOk ? defInstRes.ResultValue : TypeHelper.getDefault(actualType),
+                null);
+            this.DefaultValueEditor = defaultValueNode.Editor;
+        }
     }
     
     public ICommand RemoveRowCommand { get; }

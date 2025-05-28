@@ -4,6 +4,7 @@ open System
 open System.Collections.Generic
 open System.Reflection
 open System.Threading
+//open Google.Protobuf.WellKnownTypes
 open Microsoft.FSharp.Core
 
 module TypeBuilder =
@@ -87,12 +88,14 @@ module SystemType =
     temp.Add(typeof<Nullable<DateTimeOffset>>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset?"))
     temp.Add(typeof<Nullable<TimeSpan>>, ((fun () -> TimeSpan.FromSeconds 1), "timespan?"))
     temp.Add(typeof<Nullable<char>>, ((fun () -> 'c'), "char?"))
+    temp.Add(typeof<Google.Protobuf.WellKnownTypes.Timestamp>, ((fun () -> Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow)), "timestamp"))   
     temp
 
   
   let getDisplayName (thisType: Type) =
     let ok, (_, display) = info.TryGetValue(thisType)
     if ok then display else "not a system type"
+    
 
   let getTypes() = info.Keys
   let getTypesForDisplay() =
@@ -100,12 +103,10 @@ module SystemType =
     |> Seq.map (fun kv -> kv.Value)
     |> Seq.map (fun (_, display) -> display)
     |> Seq.toArray
+    //|> Seq.append
     
   let getDisplayType  =
-    fun (actualTypeFullName:string) ->
-      if (actualTypeFullName = "Google.Protobuf.WellKnownTypes.Timestamp") then
-          "protobufTimestamp"
-      else               
+    fun (actualTypeFullName:string) ->                    
         let displayTypes = getTypesForDisplay()
         let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
         let index = Array.IndexOf(actualTypes, actualTypeFullName)
@@ -113,17 +114,17 @@ module SystemType =
     
   let getActualType  =
     fun (displayType:string) ->
-      if (displayType = "protobufTimestamp") then
-          "Google.Protobuf.WellKnownTypes.Timestamp"
-      else
         let displayTypes = getTypesForDisplay()
         let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
         let index = Array.IndexOf(displayTypes, displayType)
         if index >= 0 then actualTypes.[index] else "not a system type"
            
   let isSystemType (thisType: Type) =
-    let ok, _ = info.TryGetValue(thisType)
-    ok
+    if thisType = typeof<Google.Protobuf.WellKnownTypes.Timestamp> then
+      false
+    else  
+      let ok, _ = info.TryGetValue(thisType)
+      ok
 
   let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsEnum then

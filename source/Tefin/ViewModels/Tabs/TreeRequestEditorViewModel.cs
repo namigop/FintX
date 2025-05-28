@@ -125,6 +125,11 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
                 if (i is SystemNode sn) {
                     var pathToRoot = sn.GetJsonPath();
                     return pathToRoot == reqVar.JsonPath;
+                } 
+                
+                if (i is TimestampNode tn) {
+                    var pathToRoot = tn.GetJsonPath();
+                    return pathToRoot == reqVar.JsonPath;
                 }
 
                 return false;

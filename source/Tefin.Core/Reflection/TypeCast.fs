@@ -2,6 +2,7 @@ namespace Tefin.Core.Reflection
 
 open System
 open System.Globalization
+//open 
 
 [<AbstractClass; Sealed>]
 type TypeCast private () =
@@ -42,6 +43,13 @@ type TypeCast private () =
         | t when t = typeof<Nullable<char>>     -> unwrap (Convert.ToChar(o))
         | t when t = typeof<Nullable<DateTime>> -> unwrap (DateTime.Parse(o.ToString(), CultureInfo.CurrentCulture))
         | t when t = typeof<Nullable<DateTimeOffset>> -> unwrap (DateTimeOffset.Parse(o.ToString(), CultureInfo.CurrentCulture))
+        | t when t = typeof<Google.Protobuf.WellKnownTypes.Timestamp> ->
+           let ok, dt = DateTime.TryParse(o.ToString())
+           if ok then
+             unwrap <| Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(dt.ToUniversalTime())
+           else
+             failwith $"The value {o} is not a valid Timestamp"
+         
         | t when t.FullName.StartsWith("System.Nullable") ->
           let underlyingType = Nullable.GetUnderlyingType(typeof<'T>)
           let helperType = typeof<TypeCast>
@@ -55,7 +63,7 @@ type TypeCast private () =
   static member CastTo (targetType: Type) (instance: obj) =
     let t = typeof<TypeCast>
     let mi = t.GetMethod("Cast")
-    let generic = mi.MakeGenericMethod targetType
+    let generic = mi.MakeGenericMethod(targetType)
     generic.Invoke(null, [| instance |])
 
   static member GetDefault<'T>() = Unchecked.defaultof<'T>

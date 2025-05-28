@@ -1,11 +1,14 @@
 ﻿using System.Windows.Input;
 
+using Google.Protobuf.WellKnownTypes;
+
 using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.ViewModels.Types.TypeEditors;
+using Tefin.Views.Types;
 
 namespace Tefin.ViewModels.Types;
 
@@ -60,6 +63,13 @@ public class EnvVarNodeViewModel : ViewModelBase {
                 this._enVarValue = res.ResultValue;
             }
         }
+
+        if (actualType == typeof(Timestamp)) {
+            this._enVarValue ??= Timestamp.FromDateTime(DateTime.UtcNow);
+            var tn = new TimestampNode(this.EnvVarTag, actualType, default, this._enVarValue, null);
+            this.DefaultValueEditor = new TimestampEditor(tn);
+            return;
+        }
         
         var cur = this._enVarValue ?? TypeHelper.getDefault(actualType);
         var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, default, cur, null);
@@ -112,7 +122,6 @@ public class EnvVarNodeViewModel : ViewModelBase {
         
         var inst = TypeHelper.indirectCast(currentValue, this._node.Type);
         this._enVarValue = inst;
-
         
         var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
         var envTag = this.EnvVarTag.ToUpperInvariant();
@@ -150,16 +159,21 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
             
             var saveEnv = new SaveEnvVarsFeature();
+            var strValue = this._enVarValue?.ToString() ?? "";
+            if (this._enVarValue is Timestamp timestamp) {
+                strValue = timestamp.ToString().Trim('\"');
+            }
+            
             if (currentVar.Scope == RequestEnvVarScope.Client) {
                 saveEnv.Save(currentVar,
-                    this._enVarValue?.ToString() ?? "",
+                    strValue,
                     methodInfoNode.ClientGroup.Path,
                     Current.Env,
                     this.Io);
             }
             else {
                 saveEnv.Save(currentVar,
-                    this._enVarValue?.ToString() ?? "",
+                    strValue,
                     methodInfoNode.ClientGroup.Path,
                     Current.Env,
                     this.Io);
