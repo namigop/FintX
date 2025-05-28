@@ -1,7 +1,5 @@
 #region
 
-using Tefin.ViewModels.Explorer;
-
 #endregion
 
 namespace Tefin.ViewModels.MainMenu;

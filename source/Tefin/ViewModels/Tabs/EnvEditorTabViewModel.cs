@@ -1,13 +1,10 @@
-﻿using System.Windows.Input;
-
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 
 using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
-using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;

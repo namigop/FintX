@@ -8,7 +8,6 @@ using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.ViewModels.Types.TypeEditors;
-using Tefin.Views.Types;
 
 namespace Tefin.ViewModels.Types;
 
@@ -17,7 +16,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
     private string _envVarTag = "";
     private string _ogTag;
     private string _selectedScope;
-    private ITypeEditor _defaultValueEditor;
+    private ITypeEditor? _defaultValueEditor;
     private object? _enVarValue;
     public const string ProjectScope = "Project";
     public const string ClientScope = "Client";
@@ -66,13 +65,13 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
         if (actualType == typeof(Timestamp)) {
             this._enVarValue ??= Timestamp.FromDateTime(DateTime.UtcNow);
-            var tn = new TimestampNode(this.EnvVarTag, actualType, default, this._enVarValue, null);
+            var tn = new TimestampNode(this.EnvVarTag, actualType, null!, this._enVarValue, null);
             this.DefaultValueEditor = new TimestampEditor(tn);
             return;
         }
         
         var cur = this._enVarValue ?? TypeHelper.getDefault(actualType);
-        var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, default, cur, null);
+        var defaultValueNode = new SystemNode(this.EnvVarTag, actualType, null!, cur, null);
         this.DefaultValueEditor = defaultValueNode.Editor;
     }
 

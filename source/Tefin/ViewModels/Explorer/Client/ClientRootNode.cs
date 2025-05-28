@@ -11,7 +11,6 @@ using Tefin.Features;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
-using Tefin.ViewModels.Overlay;
 
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 

@@ -4,7 +4,6 @@ using System.Reactive;
 using System.Windows.Input;
 
 using Tefin.Core;
-using Tefin.Core.Git;
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.ViewModels.Footer;

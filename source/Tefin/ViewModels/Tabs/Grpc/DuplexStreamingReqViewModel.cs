@@ -3,8 +3,6 @@
 using System.Reflection;
 using System.Windows.Input;
 
-using Grpc.Core;
-
 using ReactiveUI;
 
 using Tefin.Core.Interop;

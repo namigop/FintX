@@ -1,5 +1,4 @@
-﻿using Tefin.Core;
-using Tefin.Core.Interop;
+﻿using Tefin.Core.Interop;
 using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.ViewModels.Explorer.Config;

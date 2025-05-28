@@ -1,7 +1,5 @@
 using System.Timers;
 
-using Google.Protobuf.WellKnownTypes;
-
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;

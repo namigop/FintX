@@ -7,11 +7,8 @@ using System.Threading;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 using ReactiveUI;
 
-using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.Features;

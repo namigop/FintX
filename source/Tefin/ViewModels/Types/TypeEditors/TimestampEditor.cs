@@ -2,8 +2,6 @@
 
 using Google.Protobuf.WellKnownTypes;
 
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
 #endregion
 
 namespace Tefin.ViewModels.Types.TypeEditors;

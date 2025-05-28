@@ -7,9 +7,7 @@ using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Messages;
 using Tefin.Utils;
-using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
-using Tefin.ViewModels.Explorer.Config;
 using Tefin.ViewModels.Overlay;
 
 namespace Tefin.ViewModels.ProjectEnv;

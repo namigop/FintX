@@ -1,9 +1,6 @@
 #region
 
-using System.Text;
 using System.Threading;
-
-using Microsoft.FSharp.Core;
 
 using Tefin.Core.Reflection;
 using Tefin.ViewModels.Types.TypeEditors;

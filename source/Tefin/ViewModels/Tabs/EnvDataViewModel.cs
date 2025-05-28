@@ -4,8 +4,6 @@ using System.Windows.Input;
 using ReactiveUI;
 
 using Tefin.Core;
-using Tefin.Core.Infra.Actors;
-using Tefin.Core.Reflection;
 using Tefin.Utils;
 
 namespace Tefin.ViewModels.Tabs;

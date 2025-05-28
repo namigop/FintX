@@ -2,7 +2,6 @@
 
 using System.Reactive;
 
-using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
 
 using static Tefin.Core.Interop.ProjectTypes;

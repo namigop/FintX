@@ -3,7 +3,6 @@
 using System.Reflection;
 using System.Threading;
 
-using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Types;
 

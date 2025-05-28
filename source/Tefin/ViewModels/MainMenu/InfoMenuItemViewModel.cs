@@ -1,7 +1,5 @@
 using System.Windows.Input;
 
-using Tefin.ViewModels.Explorer;
-
 namespace Tefin.ViewModels.MainMenu;
 
 public class InfoMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel {

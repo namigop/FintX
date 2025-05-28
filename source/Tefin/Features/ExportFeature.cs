@@ -2,8 +2,6 @@
 
 using System.Reflection;
 
-using DynamicData;
-
 using Microsoft.FSharp.Core;
 
 using Tefin.Core;

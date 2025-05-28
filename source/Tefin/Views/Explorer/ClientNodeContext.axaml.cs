@@ -3,7 +3,6 @@ using System.Reactive;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.Views.Explorer;

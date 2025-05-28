@@ -2,11 +2,6 @@
 
 using DynamicData;
 
-
-
-using Microsoft.FSharp.Control;
-using Microsoft.FSharp.Core;
-
 using ReactiveUI;
 
 using Tefin.Core;
@@ -16,7 +11,7 @@ using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeEditors;
 
 using Type = System.Type;
-using  Microsoft.FSharp.Core;
+
 namespace Tefin.ViewModels.Tabs;
 
 public class EnvVarViewModel : ViewModelBase {
@@ -45,14 +40,14 @@ public class EnvVarViewModel : ViewModelBase {
         if (actualType == typeof( Google.Protobuf.WellKnownTypes.Timestamp)) {
             var currentTsNode = new TimestampNode(envVar.Name,
                 actualType,
-                default,
+                null!,
                 curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
                 null);
             this.CurrentValueEditor = new TimestampEditor(currentTsNode);
             
             var defaultTsNode = new TimestampNode(envVar.Name,
                 actualType,
-                default,
+                null!,
                 curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
                 null);
             this.DefaultValueEditor = new TimestampEditor(defaultTsNode);
@@ -61,7 +56,7 @@ public class EnvVarViewModel : ViewModelBase {
             var currentValueNode = new SystemNode(
                 envVar.Name,
                 actualType,
-                default,
+                null!,
                 curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
                 null);
 
@@ -69,7 +64,7 @@ public class EnvVarViewModel : ViewModelBase {
             var defaultValueNode = new SystemNode(
                 envVar.Name,
                 actualType,
-                default,
+                null!,
                 defInstRes.IsOk ? defInstRes.ResultValue : TypeHelper.getDefault(actualType),
                 null);
             this.DefaultValueEditor = defaultValueNode.Editor;

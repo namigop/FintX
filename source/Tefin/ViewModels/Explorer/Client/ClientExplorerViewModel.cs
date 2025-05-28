@@ -307,11 +307,11 @@ public class ClientExplorerViewModel : ViewModelBase {
     }
 
     private async Task OnShowClient(ShowClientMessage obj) {
-        async Task Foo() {
+        async Task Show() {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
             var clientTypes = ServiceClient.findClientType(types);
-            var type = clientTypes.First(t => t.DeclaringType!.FullName.ToUpperInvariant() == obj.SelectedDiscoveredService.ToUpperInvariant());
+            var type = clientTypes.First(t => t.DeclaringType!.FullName!.ToUpperInvariant() == obj.SelectedDiscoveredService!.ToUpperInvariant());
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
                 var feature = new AddClientFeature(this.Project,
@@ -331,7 +331,7 @@ public class ClientExplorerViewModel : ViewModelBase {
             }
         }
 
-        await this.Exec(Foo);
+        await this.Exec(Show);
     }
 
     private void RowSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) =>
