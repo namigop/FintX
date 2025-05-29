@@ -132,7 +132,10 @@ public class ClientRootNode : RootNode {
                     this.ClientType = clientTypes[0];
                 }
                 else {
-                    this.ClientType = clientTypes.First(c => c.DeclaringType!.FullName!.ToUpperInvariant() == this.ServiceName.ToUpperInvariant());
+                    this.ClientType = clientTypes.First(c => {
+                        var svc = c.DeclaringType!.FullName!.ToUpperInvariant();
+                        return svc.EndsWith(this.ServiceName.ToUpperInvariant());
+                    });
                 }
 
                 this.Init();
