@@ -311,7 +311,11 @@ public class ClientExplorerViewModel : ViewModelBase {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
             var clientTypes = ServiceClient.findClientType(types);
-            var type = clientTypes.First(t => t.DeclaringType!.FullName!.ToUpperInvariant() == obj.SelectedDiscoveredService!.ToUpperInvariant());
+            var type = clientTypes.First(t => {
+                var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
+                return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
+            });
+            
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
                 var feature = new AddClientFeature(this.Project,

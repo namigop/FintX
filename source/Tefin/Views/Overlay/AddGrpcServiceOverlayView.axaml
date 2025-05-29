@@ -60,7 +60,7 @@
                          ToolTip.Tip="Enter a name" />
 
 
-                <TextBlock Grid.Row="8" Text="Description" Margin="0 15 0 0" />
+                <TextBlock Grid.Row="8" Text="Description" Classes="FormField"  />
                 <TextBox Grid.Row="9" HorizontalAlignment="Stretch" MinHeight="100" />
 
             </Grid>

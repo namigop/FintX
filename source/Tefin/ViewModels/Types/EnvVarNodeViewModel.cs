@@ -104,8 +104,9 @@ public class EnvVarNodeViewModel : ViewModelBase {
             var removeEnv = new RemoveEnvVarsFeature();
             var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
             if (currentVar != null) {
+                //remove from the variables. Auto-save will take care of saving the .fxrq file
                 methodInfoNode.Variables.Remove(currentVar);
-                removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
+                //removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
             }
         }
     }
