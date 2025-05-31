@@ -50,9 +50,9 @@ module CallDuplexStreaming =
           execContext
     }
 
-  let run (io: IOs) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) =
+  let run (io: IOs) (methodInfo: MethodInfo) (mParams: obj array) (cfg: ClientConfig) (envFile : string) =
     task {
-      let callConfig = CallConfig.From cfg io
+      let callConfig = CallConfig.From cfg io envFile
       let! ctx = runSteps io methodInfo mParams callConfig
       let resp = DuplexStreamingResponse.create methodInfo ctx
       return struct (ctx.Success, resp)

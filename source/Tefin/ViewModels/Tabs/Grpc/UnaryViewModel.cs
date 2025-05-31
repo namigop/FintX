@@ -94,7 +94,8 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
                 this.RaisePropertyChanged(nameof(this.CanStop));
 
                 var clientConfig = this.Client.Config.Value;
-                var feature = new CallUnaryFeature(mi, mParams, clientConfig, this.Io);
+                
+                var feature = new CallUnaryFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
 

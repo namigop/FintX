@@ -13,10 +13,11 @@ namespace Tefin.Features;
 public class CallDuplexStreamingFeature(
     MethodInfo mi,
     object?[] mParams,
+    string envFile,
     ProjectTypes.ClientConfig cfg,
     IOs io) {
     public async Task<(bool, ResponseDuplexStreaming)> Run() {
-        var (success, resp) = await CallDuplexStreaming.run(io, mi, mParams, cfg);
+        var (success, resp) = await CallDuplexStreaming.run(io, mi, mParams, cfg, envFile);
         return (success, resp);
     }
 }

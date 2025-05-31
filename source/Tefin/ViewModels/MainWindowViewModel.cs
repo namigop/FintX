@@ -93,7 +93,9 @@ public class MainWindowViewModel : ViewModelBase {
                         m.ClientMethod.MethodInfo.Name == method.ClientMethod.MethodInfo.Name);
                     var fileParams = new List<AutoSave.FileParam>();
                     foreach (var tab in tabsForMethod.Where(t => t.ClientMethod.IsLoaded)) {
-                        fileParams.Add(tab.GetFileParam());
+                        var fp = tab.GetFileParam();
+                        if (fp.CanSave)
+                            fileParams.Add(fp);
                     }
 
                     var methodParam = AutoSave.MethodParam.Empty()
@@ -114,7 +116,9 @@ public class MainWindowViewModel : ViewModelBase {
         }
 
         AutoSave.FileParam[] GetEnvConfigParam(PersistedTabViewModel[] nonMethodTabs) {
-            return nonMethodTabs.Select(t => t.GetFileParam()).ToArray();
+            return nonMethodTabs.Select(t => t.GetFileParam())
+                .Where(t => t.CanSave)
+                .ToArray();
         }
         
         AutoSave.AutoSaveParam[] Get() {

@@ -69,8 +69,15 @@ public class EnvVarViewModel : ViewModelBase {
                 null);
             this.DefaultValueEditor = defaultValueNode.Editor;
         }
+
+        //this.SubscribeTo(x => ((EnvVarViewModel)x).Name, OnNameChanged);
     }
-    
+
+    // private void OnNameChanged(ViewModelBase obj) {
+    //     var i = (EnvVarViewModel)obj;
+    //     this._name =  i.Name.Replace("{{", "").Replace("}}", "").Then(t => "{{" + t + "}}");
+    // }
+
     public ICommand RemoveRowCommand { get; }
     public string[] TypeList => DisplayTypes;
 
@@ -105,7 +112,7 @@ public class EnvVarViewModel : ViewModelBase {
 
     public string Name {
         get => this._name;
-        set => this.RaiseAndSetIfChanged(ref this._name, value);
+        set => this.RaiseAndSetIfChanged(ref this._name, value?.Trim() ?? "");
     }
 
     public EnvVar ToEnvVar() {

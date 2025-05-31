@@ -23,6 +23,7 @@ public abstract class PersistedTabViewModel : TabViewModelBase {
         var json = this.GenerateFileContent();
         var title = this.Title;
         var fileParam = AutoSave.FileParam.Empty()
+            .WithCanSave(!string.IsNullOrWhiteSpace(json))
             .WithJson(json)
             .WithFullPath(this.Id)
             .WithHeader(title);

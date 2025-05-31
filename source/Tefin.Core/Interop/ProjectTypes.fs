@@ -35,7 +35,6 @@ module ProjectTypes =
       Path: string }
 
     static member ConfigFilename = "config.json"
-
     static member Empty() =
       { Name = ""
         CodeFiles = Array.empty

@@ -85,7 +85,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                 this.ReqViewModel.RequestEditor.StartRequest();
 
                 var clientConfig = this.Client.Config.Value;
-                var feature = new CallServerStreamingFeature(mi, mParams, clientConfig, this.Io);
+                var feature = new CallServerStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 this.IsBusy = false;

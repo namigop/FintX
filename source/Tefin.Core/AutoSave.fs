@@ -10,15 +10,18 @@ module AutoSave =
   type FileParam =
     { Json: string
       Header: string
+      CanSave : bool
       FullPath: string option }
 
     static member Empty() =
       { Json = ""
         Header = ""
+        CanSave = false
         FullPath = None }
 
     member x.WithJson j = { x with Json = j }
     member x.WithHeader h = { x with Header = h }
+    member x.WithCanSave h = { x with CanSave = h }
 
     member x.WithFullPath p =
       { x with
@@ -107,6 +110,7 @@ module AutoSave =
 
       { Json = f.Json
         Header = f.Header
+        CanSave = f.CanSave
         FullPath = Some fullPath }
 
   let private syncAutoSavedFiles (io: IOs) autoSavedFiles autoSavePath =

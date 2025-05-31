@@ -27,7 +27,7 @@ type CallConfig =
     X509Cert: Cert option //todo
     Io: IOs }
 
-  static member From (cfg: ClientConfig) (io: IOs) =
+  static member From  (cfg: ClientConfig) (io: IOs) (envFile:string)=
     let cert =
       if cfg.IsUsingSSL then
         if cfg.IsCertFromFile then
@@ -45,7 +45,17 @@ type CallConfig =
       else
         None
 
-    { Url = cfg.Url.Trim()
+    let tryExpand (url:string) =
+      if url.Contains("{{") && url.Contains("}}") then       
+        let tag = url.Substring(url.IndexOf("{{"), url.IndexOf("}}") - url.IndexOf("{{") + 2)
+        (VarsStructure.getVarsFromFile io envFile).Variables
+        |> Seq.tryFind (fun x -> x.Name = tag)
+        |> function
+           | Some x -> x.CurrentValue
+           | None -> url         
+      else
+        url
+    { Url = tryExpand (cfg.Url.Trim())
       IsUsingSSL = cfg.IsUsingSSL
       JWT = cfg.Jwt.Trim()
       X509Cert = cert

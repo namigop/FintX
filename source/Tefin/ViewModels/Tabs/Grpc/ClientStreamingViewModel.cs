@@ -118,7 +118,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
                 var clientConfig = this.Client.Config.Value;
-                var feature = new CallClientStreamingFeature(mi, mParams, clientConfig, this.Io);
+                var feature = new CallClientStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok) {

@@ -36,7 +36,8 @@
                 </Button>
                 <Panel></Panel>
             </DockPanel>
-            <DataGrid Grid.Row="5" HorizontalAlignment="Left"  MinWidth="600"
+            <DataGrid Grid.Row="5" HorizontalAlignment="Left"  MinWidth="600" Name="VarGrid"
+                      CanUserReorderColumns="False"
                       ItemsSource="{Binding EnvData.Variables}">
                 <DataGrid.Styles>
                     <Style Selector="DataGridRow:nth-child(odd)">
@@ -77,7 +78,9 @@
                     <DataGridTemplateColumn Header="Data Type">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                               <ComboBox Margin="8 6 8 6" MinWidth="100" ItemsSource="{Binding TypeList}"
+                               <ComboBox Margin="8 6 8 6" MinWidth="100" 
+                                         BorderThickness="0"
+                                         ItemsSource="{Binding TypeList}"
                                         SelectedItem="{Binding SelectedDisplayType}">
                                </ComboBox>
                             </DataTemplate>

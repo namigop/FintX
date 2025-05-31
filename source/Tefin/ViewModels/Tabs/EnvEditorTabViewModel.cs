@@ -16,6 +16,7 @@ public class EnvEditorTabViewModel : PersistedTabViewModel {
     private const string _icon = "";
     private EnvDataViewModel _envData;
     private readonly EnvNode _envNode;
+    private bool _isEditing;
 
     public EnvEditorTabViewModel(EnvNode item) : base(item) {
         this._envNode = item;
@@ -44,12 +45,18 @@ public class EnvEditorTabViewModel : PersistedTabViewModel {
     public override ProjectTypes.ClientGroup Client => ProjectTypes.ClientGroup.Empty();
     public override ClientMethodViewModelBase ClientMethod  => throw new NotImplementedException();
 
-    public override string GenerateFileContent() => EnvData.GenerateFileContent();
+    public bool IsEditing {
+        get => this._isEditing;
+        set => this.RaiseAndSetIfChanged(ref _isEditing, value);
+    }
+
+    public override string GenerateFileContent() {
+        return this._isEditing ? "" : EnvData.GenerateFileContent();
+    }
 
     public override void Init() {
         this.Id = this.GetTabId();
         this.Title = Path.GetFileName(this.Id);
-        
     }
 
     public override void UpdateTitle(string oldFullPath, string newFullPath) => this.Title = Path.GetFileName(newFullPath);
