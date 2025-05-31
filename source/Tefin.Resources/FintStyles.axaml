@@ -132,7 +132,7 @@
 
     <Style Selector="TabItem">
         <Setter Property="FontSize" Value="15" />
-        <Setter Property="FontStyle" Value="Italic" />
+        <!-- <Setter Property="FontStyle" Value="Italic" /> -->
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="CornerRadius" Value="12" />
