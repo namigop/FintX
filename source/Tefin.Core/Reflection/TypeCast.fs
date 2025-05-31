@@ -26,8 +26,8 @@ type TypeCast private () =
         | t when t = typeof<uint32>   -> unwrap (Convert.ToUInt32(o))
         | t when t = typeof<uint64>   -> unwrap (Convert.ToUInt64(o))
         | t when t = typeof<char>     -> unwrap (Convert.ToChar(o))
-        | t when t = typeof<DateTime> -> unwrap (DateTime.Parse(o.ToString(), CultureInfo.CurrentCulture))
-        | t when t = typeof<DateTimeOffset> -> unwrap (DateTimeOffset.Parse(o.ToString(), CultureInfo.CurrentCulture))
+        | t when t = typeof<DateTime> -> unwrap (DateTime.Parse(o.ToString(), null, DateTimeStyles.RoundtripKind))
+        | t when t = typeof<DateTimeOffset> -> unwrap (DateTimeOffset.Parse(o.ToString(), null, DateTimeStyles.RoundtripKind))
         | t when t = typeof<Uri>      -> unwrap (Uri(o.ToString()))        
         | t when t = typeof<Nullable<int>>      -> unwrap (Int32.Parse(o.ToString()))
         | t when t = typeof<Nullable<bool>>     -> unwrap (Convert.ToBoolean(o))        
@@ -41,10 +41,10 @@ type TypeCast private () =
         | t when t = typeof<Nullable<uint32>>   -> unwrap (Convert.ToUInt32(o))
         | t when t = typeof<Nullable<uint64>>   -> unwrap (Convert.ToUInt64(o))
         | t when t = typeof<Nullable<char>>     -> unwrap (Convert.ToChar(o))
-        | t when t = typeof<Nullable<DateTime>> -> unwrap (DateTime.Parse(o.ToString(), CultureInfo.CurrentCulture))
-        | t when t = typeof<Nullable<DateTimeOffset>> -> unwrap (DateTimeOffset.Parse(o.ToString(), CultureInfo.CurrentCulture))
+        | t when t = typeof<Nullable<DateTime>> -> unwrap (DateTime.Parse(o.ToString(), null, DateTimeStyles.RoundtripKind))
+        | t when t = typeof<Nullable<DateTimeOffset>> -> unwrap (DateTimeOffset.Parse(o.ToString(), null, DateTimeStyles.RoundtripKind))
         | t when t = typeof<Google.Protobuf.WellKnownTypes.Timestamp> ->
-           let ok, dt = DateTime.TryParse(o.ToString())
+           let ok, dt = DateTime.TryParse(o.ToString(), null, DateTimeStyles.RoundtripKind)
            if ok then
              unwrap <| Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(dt.ToUniversalTime())
            else
