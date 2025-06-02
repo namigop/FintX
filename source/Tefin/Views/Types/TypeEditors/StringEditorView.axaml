@@ -14,15 +14,16 @@
                      Text="{Binding TypeNode.EnvVar.EnvVarTag}">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
+            <Grid ColumnDefinitions="*,auto"  IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <TextBox x:Name="TextBox"
+                         Grid.Column="0"
                          MinWidth="200"
                          KeyDown="InputElement_OnKeyDown"
                          Text="{Binding TempValue}"
                          IsEnabled="{Binding !IsNull}"
                          x:CompileBindings="False" />
-                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />
-            </StackPanel>
+                <CheckBox Grid.Column="1" Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

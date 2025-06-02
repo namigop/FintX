@@ -8,9 +8,16 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="tabs:TabHostViewModel"
              x:Class="Tefin.Views.Tabs.TabHostView">
-    <Border CornerRadius="10" BorderThickness="2" BorderBrush="#0e1014">
+    <Border CornerRadius="10" BorderThickness="2" BorderBrush="{StaticResource Bym.Color.DefaultMenuHeaderBackground}">
         <Grid>
-            <TabControl ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+            <TabControl ItemsSource="{Binding Items}" 
+                        Padding="0 0 0 0"
+                        SelectedItem="{Binding SelectedItem}">
+                <TabControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Background="{StaticResource Bym.Color.DefaultMenuHeaderBackground}"></WrapPanel>
+                    </ItemsPanelTemplate>
+                </TabControl.ItemsPanel>
                 <TabControl.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="Auto, *, Auto">

@@ -6,15 +6,18 @@
     <!--Brushes-->
     <SolidColorBrush x:Key="DefaultPanelBackground" Color="White" />
     <SolidColorBrush x:Key="Bym.Color.EditorTextBackground" Color="#FFFCF4" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#16191F" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#101217" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#2B2D30" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultMenuHeaderBackground" Color="#1E1F22" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultMenuBodyBackground" Color="#202424" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#262626" />
+
+    
     <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657" />
     <SolidColorBrush x:Key="Bym.Color.DefaultMenuBackground" Color="#09162D" />
     <SolidColorBrush x:Key="Bym.Color.DefaultTextColor" Color="#a3abb5" />
     <SolidColorBrush x:Key="Bym.Color.DefaultTextInputColor">#40424C</SolidColorBrush>
     <SolidColorBrush x:Key="Bym.Color.DefaultHeaderColor" Color="White" />
     <SolidColorBrush x:Key="Bym.Color.Red" Color="#A84E4B" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultPanelColor" Color="#101217" />
     <SolidColorBrush x:Key="Bym.Color.Gray" Color="DimGray"></SolidColorBrush>
 
     <SolidColorBrush x:Key="Bym.Color.TextAreaSelectionBrush" Color="{StaticResource Color.TextAreaSelectionBrush}" />

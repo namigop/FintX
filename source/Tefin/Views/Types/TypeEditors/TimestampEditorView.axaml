@@ -26,12 +26,12 @@
                      Text="{Binding Node.EnvVar.EnvVarTag}">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal" IsVisible="{Binding !Node.EnvVar.IsEnvVarTagVisible}">
+            <Grid IsVisible="{Binding !Node.EnvVar.IsEnvVarTagVisible}">
                 <TextBox Text="{Binding Node.DateTimeText}" x:Name="TextBox" />
                 <!-- <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" /> -->
                 <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
                 <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
-            </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

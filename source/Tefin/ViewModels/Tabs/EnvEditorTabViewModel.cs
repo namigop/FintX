@@ -12,28 +12,23 @@ using Tefin.ViewModels.Explorer.Config;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class EnvEditorTabViewModel : PersistedTabViewModel {
+public class EnvEditorTabViewModel(EnvNode item) : PersistedTabViewModel(item) {
     private const string _icon = "";
-    private EnvDataViewModel _envData;
-    private readonly EnvNode _envNode;
+    private EnvDataViewModel _envData = new(item.GetEnvData());
     private bool _isEditing;
 
-    public EnvEditorTabViewModel(EnvNode item) : base(item) {
-        this._envNode = item;
-        this._envData = new EnvDataViewModel(item.GetEnvData());
-        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
-    }
+    //GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
 
-    private void OnFileChanged(FileChangeMessage obj) {
-        Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
-    }
+    // private void OnFileChanged(FileChangeMessage obj) {
+    //     Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
+    // }
 
-    private void OnFileChangedInternal(FileChangeMessage fileChangeMessage) {
-        if (this._envNode.FullPath == fileChangeMessage.FullPath) {
-            var d = VarsStructure.getVarsFromFile(this.Io, fileChangeMessage.FullPath);
-            this.EnvData = new EnvDataViewModel(d);
-        }
-    }
+    // private void OnFileChangedInternal(FileChangeMessage fileChangeMessage) {
+    //     if (item.FullPath == fileChangeMessage.FullPath) {
+    //         var d = VarsStructure.getVarsFromFile(this.Io, fileChangeMessage.FullPath);
+    //         this.EnvData = new EnvDataViewModel(d);
+    //     }
+    // }
 
     public EnvDataViewModel EnvData {
         get => this._envData;
@@ -43,7 +38,7 @@ public class EnvEditorTabViewModel : PersistedTabViewModel {
     public override string Icon => _icon;
 
     public override ProjectTypes.ClientGroup Client => ProjectTypes.ClientGroup.Empty();
-    public override ClientMethodViewModelBase ClientMethod  => throw new NotImplementedException();
+    public override ClientMethodViewModelBase ClientMethod => null!;
 
     public bool IsEditing {
         get => this._isEditing;

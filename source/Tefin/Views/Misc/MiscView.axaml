@@ -6,8 +6,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="misc:MiscViewModel"
              x:Class="Tefin.Views.Misc.MiscView">
-    <Border BorderBrush="#0e1014" BorderThickness="2" CornerRadius="10">
-        <TabControl ItemsSource="{Binding MiscItems}" SelectedItem="">
+    <Border BorderBrush="{StaticResource Bym.Color.DefaultMenuHeaderBackground}" BorderThickness="2" CornerRadius="10">
+        <TabControl ItemsSource="{Binding MiscItems}" SelectedItem="" Padding="0 0 0 0">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="*, Auto">

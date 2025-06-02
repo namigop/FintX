@@ -65,7 +65,7 @@
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentControl Content="{Binding DefaultValueEditor}" 
-                                                HorizontalAlignment="Stretch"
+                                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
                                                 Margin="8 6 8 6">
                                     <ContentControl.DataTemplates>
                                         <viewModels:TypeEditorLocator />
@@ -78,7 +78,7 @@
                     <DataGridTemplateColumn Header="Data Type">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                               <ComboBox Margin="8 6 8 6" MinWidth="100" 
+                               <ComboBox Margin="8 6 8 6" MinWidth="120" 
                                          BorderThickness="0"
                                          ItemsSource="{Binding TypeList}"
                                         SelectedItem="{Binding SelectedDisplayType}">

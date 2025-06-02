@@ -123,11 +123,11 @@
 
 
     <Style Selector="TabControl">
-        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultControlBackground}" />
+        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultMenuHeaderBackground}" />
         <Setter Property="CornerRadius" Value="12" />
     </Style>
     <Style Selector="TabControl WrapPanel">
-        <Setter Property="Background" Value="#0e1014" />
+        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultMenuHeaderBackground}" />
     </Style>
 
     <Style Selector="TabItem">
