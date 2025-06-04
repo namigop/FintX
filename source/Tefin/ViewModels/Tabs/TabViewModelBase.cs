@@ -16,6 +16,7 @@ namespace Tefin.ViewModels.Tabs;
 public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     private string _subTitle;
     private string _title;
+    private bool _isSelected;
 
     protected TabViewModelBase(IExplorerItem item) {
         this._title = "";
@@ -44,6 +45,11 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
     public bool HasIcon => !string.IsNullOrEmpty(this.Icon);
 
     public abstract string Icon { get; }
+
+    public bool IsSelected {
+        get => this._isSelected;
+        set => this.RaiseAndSetIfChanged(ref _isSelected , value);
+    }
 
     public string Id {
         get;

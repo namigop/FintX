@@ -51,7 +51,14 @@ public class TabHostViewModel : ViewModelBase {
 
     public ITabViewModel? SelectedItem {
         get => this._selectedItem;
-        set => this.RaiseAndSetIfChanged(ref this._selectedItem, value);
+        set {
+            if (this._selectedItem != null)
+                this._selectedItem.IsSelected = false;
+            if (value != null)
+                value.IsSelected = true;
+            
+            this.RaiseAndSetIfChanged(ref this._selectedItem, value);
+        }
     }
 
     private void OnReceiveCloseAllOtherTabsMessage(CloseAllOtherTabsMessage arg) {

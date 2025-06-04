@@ -20,6 +20,7 @@ public interface ITabViewModel {
     string Id { get; }
     string SubTitle { get; set; }
     string Title { get; set; }
+    bool IsSelected { get; set; }
 
     void Init();
 }

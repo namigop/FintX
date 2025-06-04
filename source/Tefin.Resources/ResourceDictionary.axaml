@@ -8,8 +8,8 @@
     <SolidColorBrush x:Key="Bym.Color.EditorTextBackground" Color="#FFFCF4" />
     <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#2B2D30" />
     <SolidColorBrush x:Key="Bym.Color.DefaultMenuHeaderBackground" Color="#1E1F22" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultMenuBodyBackground" Color="#202424" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#262626" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultMenuBodyBackground" Color="#222326" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#1A1B1E" />
 
     
     <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657" />

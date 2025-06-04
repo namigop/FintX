@@ -22,6 +22,10 @@ public class IconTemplate : IDataTemplate {
             };
         }
 
+        if (string.IsNullOrWhiteSpace(param?.ToString())) {
+            return null;
+        }
+        
         return AllIcons[param.ToString()!].Build(param);
     }
 

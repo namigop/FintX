@@ -452,12 +452,21 @@
             </Viewbox>
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.TabClose}">
-            <Viewbox Stretch="Uniform">
-                <Canvas Width="24" Height="24">
-                    <Path Fill="#228BCB"
-                          Data="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M17,8.4L13.4,12L17,15.6L15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4Z" />
+            <!-- <Viewbox Stretch="Uniform"> -->
+            <!--     <Canvas Width="24" Height="24"> -->
+            <!--         <Path Fill="#228BCB" -->
+            <!--               Data="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M17,8.4L13.4,12L17,15.6L15.6,17L12,13.4L8.4,17L7,15.6L10.6,12L7,8.4L8.4,7L12,10.6L15.6,7L17,8.4Z" /> -->
+            <!--     </Canvas> -->
+            <!-- </Viewbox> -->
+            
+            <Viewbox Width="16" Height="16" Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M1.7,14.3L14.3,1.7M14.3,14.3L1.7,1.7" Fill="Transparent" Stroke="Gray" StrokeThickness="1.1" />
+                    </Canvas>
                 </Canvas>
             </Viewbox>
+
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.SystemType}">
             <Viewbox Stretch="Uniform">

@@ -14,7 +14,7 @@
                                  HorizontalScrollBarVisibility="Auto"
                                  VerticalScrollBarVisibility="Visible"
                                  FontWeight="Light"
-                                 Foreground="SlateGray"
+                                 Foreground="{StaticResource Bym.Color.DefaultTextColor}"
                                  Options=""
                                  FontSize="12" />
     </Border>
