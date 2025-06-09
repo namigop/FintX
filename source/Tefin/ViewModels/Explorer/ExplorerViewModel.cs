@@ -22,7 +22,7 @@ using static Tefin.Core.Interop.ProjectTypes;
 
 namespace Tefin.ViewModels.Explorer;
 
-public abstract class ExplorerViewModel<TRoot> : ViewModelBase, IExplorerTree<TRoot> where TRoot : RootNode {
+public abstract class ExplorerViewModel<TRoot> : ViewModelBase, IExplorerTree<TRoot> where TRoot : ExplorerRootNode {
     private readonly IExplorerNodeSelectionStrategy _nodeSelectionStrategy;
     private CutCopyPasteArg? _copyPastePending;
     private Project? _project;

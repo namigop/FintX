@@ -12,21 +12,16 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Types;
 
-public sealed class MethodInfoNode : NodeBase {
+public sealed class MethodInfoNode : TypeRootNode {
    
-    public MethodInfoNode(MethodInfo mi, ProjectTypes.ClientGroup cg, List<RequestVariable> variables) {
-        this.ClientGroup = cg;
+    public MethodInfoNode(MethodInfo mi, ProjectTypes.ClientGroup cg, List<RequestVariable> variables) : base(cg, variables){
         this.IsExpanded = true;
         this.CanOpen = true;
         this.Title = mi.Name;
         this.SubTitle = $"{{{GrpcMethod.getMethodType(mi)}}}";
-        this.Variables = variables.ToList();
+
     }
-
-    public ProjectTypes.ClientGroup ClientGroup { get; }
-
-    public List<RequestVariable> Variables { get; }
-    
+ 
     public override void Init() {
     }
     public void TryUpdateTemplatedChildNodes() {

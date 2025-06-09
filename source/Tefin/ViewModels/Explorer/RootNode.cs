@@ -10,13 +10,13 @@ using Tefin.ViewModels.Overlay;
 
 namespace Tefin.ViewModels.Explorer.Client;
 
-public abstract class RootNode : NodeBase {
+public abstract class ExplorerRootNode : NodeBase {
     private string _clientName = "";
     private Type? _clientType;
     private string _desc = "";
     private string _url = "";
 
-    protected RootNode(ProjectTypes.ClientGroup cg, Type? clientType) {
+    protected ExplorerRootNode(ProjectTypes.ClientGroup cg, Type? clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
         this.ClientType = clientType;
@@ -35,7 +35,7 @@ public abstract class RootNode : NodeBase {
 
     }
 
-    protected RootNode() {
+    protected ExplorerRootNode() {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.ClientConfigFile = "";
         this.ServiceName = "";

@@ -7,6 +7,7 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Features;
+using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Types.TypeEditors;
 
 namespace Tefin.ViewModels.Types;
@@ -118,12 +119,11 @@ public class EnvVarNodeViewModel : ViewModelBase {
         tag = tag.Replace("{", "").Replace("}", "");
         this.EnvVarTag = tag;
         this._ogTag = tag;
-       
         
         var inst = TypeHelper.indirectCast(currentValue, this._node.Type);
         this._enVarValue = inst;
         
-        var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
+        var methodInfoNode = this._node.FindParentNode<TypeRootNode>();  
         var envTag = this.EnvVarTag.ToUpperInvariant();
         if (methodInfoNode != null) {
             var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);

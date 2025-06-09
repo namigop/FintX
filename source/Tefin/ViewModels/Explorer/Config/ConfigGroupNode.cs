@@ -3,7 +3,7 @@ using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.ViewModels.Explorer.Config;
 
-public class ConfigGroupNode : RootNode {
+public class ConfigGroupNode : ExplorerRootNode {
     public ConfigGroupNode(ProjectTypes.ClientGroup cg, Type? clientType) : base(cg, clientType) {
         throw new NotImplementedException();
     }

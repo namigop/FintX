@@ -16,7 +16,7 @@ using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 
 namespace Tefin.ViewModels.Explorer.Client;
 
-public class ClientRootNode : RootNode {
+public class ClientRootNode : ExplorerRootNode {
     private bool _compileInProgress;
     private bool _sessionLoaded;
     

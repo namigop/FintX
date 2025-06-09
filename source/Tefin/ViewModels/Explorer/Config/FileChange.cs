@@ -6,7 +6,7 @@ using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.ViewModels.Explorer.Config;
 
-public static class FileChange<TRoot, TFile> where TRoot : RootNode where TFile : FileNode {
+public static class FileChange<TRoot, TFile> where TRoot : ExplorerRootNode where TFile : FileNode {
     public static void Delete(IExplorerItem item, FileChangeMessage msg) {
         if (item is TFile node && node.FullPath == msg.FullPath) {
             node.Parent?.Items.Remove(node);
