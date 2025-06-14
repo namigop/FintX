@@ -1,10 +1,12 @@
 #region
 
+using System.Reflection;
 using System.Xml;
 
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Media;
 using Avalonia.Threading;
 
 using AvaloniaEdit.Document;
@@ -90,7 +92,17 @@ public partial class JsonEditor : UserControl {
         }
 
         if (this._foldingManager != null && this.Editor.Document.TextLength > 0) {
+           
+            //HACK
+            var info = this._foldingManager.GetType().GetField("_margin", System.Reflection.BindingFlags.NonPublic | BindingFlags.Instance);
+            if (info != null) {
+                if (info.GetValue(this._foldingManager) is FoldingMargin foldingMargin) {
+                    foldingMargin.FoldingMarkerBackgroundBrush = SolidColorBrush.Parse("Transparent");
+                }
+            }
+
             this._folding.UpdateFoldings(this._foldingManager, this.Editor.Document);
+
         }
     }
 
