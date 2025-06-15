@@ -100,7 +100,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
                 var (_, response, context) = resp.OkayOrFailed();
 
                 this.StatusText = $"Elapsed {printTimeSpan(context.Elapsed.Value)}";
-                this.RespViewModel.Show(ok, response, context);
+                this.RespViewModel.Show(response);
             }
         }
         finally {

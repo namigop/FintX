@@ -48,7 +48,7 @@ public class UnaryRespViewModel : ViewModelBase {
         this.ResponseEditor.Init();
     }
 
-    public void Show(bool ok, object response, Context context) =>
+    public void Show(object response) =>
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
