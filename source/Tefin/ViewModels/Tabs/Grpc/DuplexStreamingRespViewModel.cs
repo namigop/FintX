@@ -34,8 +34,8 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._responseItemType);
 
-        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType);
-        this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType);
+        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg);
+        this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType, cg);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
 
@@ -89,7 +89,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     public override void Show(bool ok, object response, Context context) {
         //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
-        this.ServerStreamEditor.Show(stream!);
+        this.ServerStreamEditor.Show(stream!, this.EnvVariables);
     }
 
     private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
@@ -106,7 +106,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list);
+            this.ServerStreamEditor.Show(list, this.EnvVariables);
         }
     }
 
@@ -114,7 +114,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamTreeEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list);
+            this.ServerStreamEditor.Show(list, this.EnvVariables);
         }
     }
 }

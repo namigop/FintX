@@ -5,13 +5,15 @@ using System.Reflection;
 using ReactiveUI;
 
 using Tefin.Core;
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
+using Tefin.ViewModels.Types;
 
 #endregion
 
 namespace Tefin.ViewModels.Tabs;
 
-public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase, IListEditorViewModel {
+public class ListJsonEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup cg) : ViewModelBase, IListEditorViewModel {
     private readonly MethodInfo _addMethod = listType.GetMethod("Add")!;
     private readonly Type _listItemType = TypeHelper.getListItemType(listType).Value;
     private readonly string _name = name;
@@ -58,7 +60,7 @@ public class ListJsonEditorViewModel(string name, Type listType) : ViewModelBase
         }
     }
 
-    public void Show(object listInstance) {
+    public void Show(object listInstance, List<RequestVariable> variables) {
         try {
             this._listInstance = listInstance;
             var json = Instance.indirectSerialize(this.ListType, listInstance);

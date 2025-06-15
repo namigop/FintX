@@ -6,6 +6,7 @@ using ReactiveUI;
 
 using Tefin.Core.Execution;
 using Tefin.Core.Interop;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -24,7 +25,7 @@ public class UnaryRespViewModel : ViewModelBase {
         this._clientGroup = clientGroup;
         this.IsShowingResponseTreeEditor = true;
 
-        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);
+        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo, clientGroup);
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
         this._responseEditor = this._treeRespEditor;
         this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor,
@@ -40,8 +41,12 @@ public class UnaryRespViewModel : ViewModelBase {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-
-    public void Init() => this.ResponseEditor.Init();
+    
+    public List<RequestVariable> EnvVariables { get; set; }
+    public void Init(List<RequestVariable> envVariables) {
+        this.EnvVariables = envVariables;
+        this.ResponseEditor.Init();
+    }
 
     public void Show(bool ok, object response, Context context) =>
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response));
@@ -65,7 +70,7 @@ public class UnaryRespViewModel : ViewModelBase {
         var (ok, resp) = this._treeRespEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this._treeRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.EnvVariables, this._treeRespEditor.ResponseType);
         }
     }
 
@@ -73,7 +78,7 @@ public class UnaryRespViewModel : ViewModelBase {
         var (ok, resp) = this._jsonRespEditor.GetResponse();
         this.ResponseEditor = this._treeRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.EnvVariables, this._jsonRespEditor.ResponseType);
         }
     }
 }

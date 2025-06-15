@@ -44,8 +44,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._requestItemType);
 
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this._listType);
-        this._clientStreamJsonEditor = new ListJsonEditorViewModel("RequestStream", this._listType);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this._listType, cg);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("RequestStream", this._listType, cg);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
@@ -142,7 +142,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
         }
 
-        this._clientStreamEditor.Show(stream!);
+        this._clientStreamEditor.Show(stream!, this.EnvVariables);
         this.CanWrite = true;
     }
 
@@ -198,7 +198,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list);
+            this.ClientStreamEditor.Show(list, this.EnvVariables);
         }
     }
 
@@ -206,7 +206,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list);
+            this.ClientStreamEditor.Show(list, this.EnvVariables);
         }
     }
 }

@@ -2,6 +2,8 @@
 
 using System.Reflection;
 
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
@@ -58,7 +60,7 @@ public static class GrpcUiUtils {
         if (importResult.IsOk) {
             var methodParams = importResult.ResultValue.MethodParameters;
             requestEditor.Show(methodParams, envVariables, cg);
-            listEditor.Show(importResult.ResultValue.RequestStream);
+            listEditor.Show(importResult.ResultValue.RequestStream, envVariables);
         }
         else {
             io.Log.Error(importResult.ErrorValue);

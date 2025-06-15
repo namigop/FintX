@@ -8,6 +8,7 @@ using ReactiveUI;
 
 using Tefin.Core.Execution;
 using Tefin.Core.Interop;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -26,7 +27,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         this._clientGroup = cg;
         this.IsShowingResponseTreeEditor = true;
 
-        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo);
+        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo, cg);
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
         this._responseEditor = this._treeRespEditor;
         this.SubscribeTo(vm => ((StandardResponseViewModel)vm).IsShowingResponseTreeEditor,
@@ -42,14 +43,17 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-
+    public List<RequestVariable> EnvVariables { get; set; }
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         var response = await completeRead();
         responseType = response?.GetType() ?? responseType;
         await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response!));
     }
 
-    public void Init() => this.ResponseEditor.Init();
+    public void Init(List<RequestVariable> envVariables ) {
+        this.EnvVariables = envVariables;
+        this.ResponseEditor.Init();
+    }
 
     public abstract void Show(bool ok, object response, Context context);
 
@@ -72,7 +76,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         var (ok, resp) = this._treeRespEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this._treeRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.EnvVariables, this._treeRespEditor.ResponseType);
         }
     }
 
@@ -80,7 +84,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         var (ok, resp) = this._jsonRespEditor.GetResponse();
         this.ResponseEditor = this._treeRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this._jsonRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.EnvVariables, this._jsonRespEditor.ResponseType);
         }
     }
 

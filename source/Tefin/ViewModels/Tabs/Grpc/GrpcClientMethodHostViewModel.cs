@@ -63,12 +63,14 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
                 return;
             }
 
-            if (this.Io.File.Exists(this._importFile)) {
-                this.CallType.ImportRequest(this._importFile);
+            if (!this.Io.File.Exists(this._importFile)) {
+                this.CallType.Init();
+                var content = this.GetRequestContent();
+                this.Io.File.WriteAllText(this._importFile, content);
+                return;
             }
-            // else { //WHY IS THIS HERE???  This is likely causing the request file to be created with empty content
-            //     var content = this.GetRequestContent();
-            //     this.Io.File.WriteAllText(this._importFile, content);
-            // }
+            
+            this.CallType.ImportRequest(this._importFile);
+            
         });
 }

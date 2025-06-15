@@ -1,3 +1,5 @@
+using Tefin.ViewModels.Types;
+
 namespace Tefin.ViewModels.Tabs;
 
 public interface IListEditorViewModel {
@@ -11,7 +13,7 @@ public interface IListEditorViewModel {
 
     IEnumerable<object> GetListItems();
 
-    void Show(object listInstance);
+    void Show(object listInstance, List<RequestVariable> variables);
 
     void RemoveSelectedItem();
 }

@@ -42,8 +42,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._requestItemType);
 
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this._listType);
-        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this._listType);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this._listType, cg);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this._listType, cg);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
@@ -160,7 +160,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
         }
 
-        this._clientStreamEditor.Show(stream!);
+        this._clientStreamEditor.Show(stream!, this.EnvVariables);
         this.CanWrite = true;
     }
 
@@ -210,7 +210,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list);
+            this.ClientStreamEditor.Show(list, this.EnvVariables);
         }
     }
 
@@ -218,7 +218,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list);
+            this.ClientStreamEditor.Show(list, this.EnvVariables);
         }
     }
 }

@@ -20,7 +20,7 @@ public class ConfigMenuItemViewModel : MenuItemBaseViewModel, IMenuItemViewModel
 
     public override string ToolTip { get; } = "Edit app variables";
     public override string Name { get; } = "Variables";
-    public override string ShortName { get; } = "var";
+    public override string ShortName { get; } = "env";
     public override ISubMenusViewModel? SubMenus { get; } = null;
     public void Init(ProjectTypes.Project proj) {
         this.Project = proj;

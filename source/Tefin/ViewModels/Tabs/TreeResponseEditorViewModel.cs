@@ -6,6 +6,7 @@ using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 
+using Tefin.Core.Interop;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 
@@ -14,7 +15,11 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
-    public TreeResponseEditorViewModel(MethodInfo methodInfo) {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
+    private List<RequestVariable> _variables = [];
+
+    public TreeResponseEditorViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup) {
+        this._clientGroup = clientGroup;
         this.MethodInfo = methodInfo;
         this.ResponseTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
@@ -42,7 +47,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         try {
             this.ResponseType = responseType;
             var resp = await completeRead();
-            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null);
+            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null, this._variables, this._clientGroup.Path);
             node.Init();
             this.Items.Add(node);
         }
@@ -66,15 +71,16 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
 
     public void Init() => this.Items.Clear();
 
-    public void Show(object? resp, Type? responseType) {
+    public void Show(object? resp, List<RequestVariable> variables, Type? responseType) {
         this.Items.Clear();
         if (responseType == null) {
             return;
         }
 
         try {
+            this._variables = variables;
             this.ResponseType = responseType;
-            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null);
+            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._variables, this._clientGroup.Path);
             node.Init();
             this.Items.Add(node);
         }

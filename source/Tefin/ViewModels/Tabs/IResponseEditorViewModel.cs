@@ -2,6 +2,8 @@
 
 using System.Reflection;
 
+using Tefin.ViewModels.Types;
+
 #endregion
 
 namespace Tefin.ViewModels.Tabs;
@@ -17,5 +19,5 @@ public interface IResponseEditorViewModel {
 
     public void Init();
 
-    void Show(object? resp, Type? responseType);
+    void Show(object? resp, List<RequestVariable> variables, Type? responseType);
 }

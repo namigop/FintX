@@ -7,6 +7,7 @@ using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using Avalonia.Threading;
 
+using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
@@ -18,10 +19,12 @@ namespace Tefin.ViewModels.Tabs;
 public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     private readonly Type _listItemType;
     private readonly string _name;
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private object _listInstance;
 
-    public ListTreeEditorViewModel(string name, Type listType) {
+    public ListTreeEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup clientGroup) {
         this._name = name;
+        this._clientGroup = clientGroup;
         this.ListType = listType;
         this._listInstance = Activator.CreateInstance(listType)!;
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
@@ -97,14 +100,14 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         }
     }
 
-    public void Show(object listInstance) {
+    public void Show(object listInstance, List<RequestVariable> variables) {
         /*  Tree Structure is
             - ResponseStreamNode //List
                - DefaultNode //ListItem
          */
 
         this._listInstance = listInstance;
-        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null);
+        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null, variables, this._clientGroup.Path);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();

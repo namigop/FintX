@@ -113,7 +113,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private async Task OnStart() {
         this.IsBusy = true;
         try {
-            this.RespViewModel.Init();
+            this.RespViewModel.Init(this.ReqViewModel.EnvVariables);
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {

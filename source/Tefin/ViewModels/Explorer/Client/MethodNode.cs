@@ -66,7 +66,7 @@ public sealed class MethodNode : NodeBase {
     private void OnNewRequest() {
         var path = ClientStructure.getMethodPath(this.Client.Path, this.MethodInfo.Name);
         var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
-
+        
         var fn = new FileReqNode(file);
         this.AddItem(fn);
         this.IsExpanded = true;
