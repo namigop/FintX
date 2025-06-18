@@ -15,7 +15,7 @@ namespace Tefin.Features;
 public class ImportFeature(IOs io, string file, MethodInfo methodInfo, object? responseStream = null) {
     public FSharpResult<RequestImport, Exception> Run() {
         var respStream = responseStream == null ? Core.Utils.none<object>() : Core.Utils.some(responseStream);
-        var import = Export.importReq(io, new SerParam(methodInfo, [], [], respStream), file);
+        var import = Export.importReq(io, new SerParam(methodInfo, [], AllVariables.Empty(), respStream), file);
         
         return import;
     }

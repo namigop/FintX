@@ -21,6 +21,17 @@ type RequestEnvVar = {
     Scope: RequestEnvVarScope
 }
 
+type AllVariables  =
+    { RequestVariables : ResizeArray<RequestEnvVar>
+      ResponseVariables : ResizeArray<RequestEnvVar>
+      RequestStreamVariables: ResizeArray<RequestEnvVar>
+      ResponseStreamVariables: ResizeArray<RequestEnvVar> }
+    static member Empty() =
+        { RequestVariables = ResizeArray<RequestEnvVar>()
+          ResponseVariables = ResizeArray<RequestEnvVar>()
+          RequestStreamVariables = ResizeArray<RequestEnvVar>()
+          ResponseStreamVariables = ResizeArray<RequestEnvVar>() }
+    
 type EnvConfigData = {   
     Name: string    
     Description: string    

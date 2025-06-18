@@ -41,6 +41,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
             this.OnIsShowingServerStreamTreeChanged);
     }
 
+    public ListTreeEditorViewModel ServerStreamTreeEditor => this._serverStreamTreeEditor;
     public bool CanRead {
         get => this._canRead;
         private set => this.RaiseAndSetIfChanged(ref this._canRead, value);

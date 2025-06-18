@@ -53,6 +53,8 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
 
+    public ListTreeEditorViewModel ServerStreamTreeEditor => _serverStreamTreeEditor;
+
     public IListEditorViewModel ServerStreamEditor {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);

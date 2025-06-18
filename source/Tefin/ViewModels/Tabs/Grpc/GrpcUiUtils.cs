@@ -3,10 +3,13 @@
 using System.Reflection;
 
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.FSharp.Core;
 
 using Tefin.Core;
 using Tefin.Core.Interop;
+using Tefin.Core.Reflection;
 using Tefin.Features;
+using Tefin.Grpc;
 using Tefin.Utils;
 using Tefin.ViewModels.Types;
 
@@ -15,8 +18,24 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
-    public static async Task ExportRequest(object?[] mParams, List<RequestVariable> variables, object reqStream, MethodInfo methodInfo, IOs io) {
-        var feature = new ExportFeature(methodInfo, mParams, variables, reqStream);
+    public static async Task ExportRequest(object?[] mParams,
+        List<RequestVariable> requestVariables, 
+        List<RequestVariable> responseVariables,
+        List<RequestVariable> requestStreamVariables,
+        List<RequestVariable> responseStreamVariables,
+        object reqStream,
+        MethodInfo methodInfo,
+        IOs io) {
+        
+        var feature = new ExportFeature(
+            methodInfo,
+            mParams, 
+            requestVariables,
+            responseVariables,
+            requestStreamVariables,
+            responseStreamVariables, 
+            reqStream);
+        
         var exportReqJson = feature.Export();
         if (exportReqJson.IsOk) {
             var fileName = $"{methodInfo.Name}_req{Ext.requestFileExt}";
@@ -31,7 +50,7 @@ public static class GrpcUiUtils {
     public static async Task ImportRequest(
         IRequestEditorViewModel requestEditor,
         IListEditorViewModel listEditor,
-        List<RequestVariable> envVariables,
+        AllVariableDefinitions envVars,
         Type listType, 
         MethodInfo methodInfo,
         ProjectTypes.ClientGroup cg,
@@ -39,19 +58,28 @@ public static class GrpcUiUtils {
         var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
         var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
         if (ok) {
-            ImportRequest(requestEditor, listEditor, envVariables, listType, methodInfo, cg, files[0], io);
+            ImportRequest(requestEditor, listEditor, envVars, listType, methodInfo, cg, files[0], io);
         }
     }
 
     public static void ImportRequest(
         IRequestEditorViewModel requestEditor,
         IListEditorViewModel listEditor,
-        List<RequestVariable>envVariables,
+        AllVariableDefinitions envVars,
         Type listType, 
         MethodInfo methodInfo,
         ProjectTypes.ClientGroup cg,
         string file,
         IOs io) {
+
+        static List<RequestVariable> Convert(List<RequestEnvVar> requestEnvVars) {
+            return requestEnvVars.Select(t => new RequestVariable() {
+                    Tag = t.Tag,
+                    JsonPath = t.JsonPath,
+                    TypeName = SystemType.getActualType(t.Type), 
+                    Scope = t.Scope
+                }).ToList();
+        }
         var requestStream = Activator.CreateInstance(listType);
         var import = new ImportFeature(io, file, methodInfo, requestStream);
         //var (importReq, importReqStream) = import.Run();
@@ -59,8 +87,23 @@ public static class GrpcUiUtils {
         
         if (importResult.IsOk) {
             var methodParams = importResult.ResultValue.MethodParameters;
-            requestEditor.Show(methodParams, envVariables, cg);
-            listEditor.Show(importResult.ResultValue.RequestStream, envVariables);
+             
+            envVars.RequestVariables.Clear();
+            envVars.RequestVariables.AddRange(Convert(importResult.ResultValue.Variables.RequestVariables));
+            envVars.ResponseVariables.Clear();
+            envVars.ResponseVariables.AddRange(Convert(importResult.ResultValue.Variables.ResponseVariables));
+            envVars.RequestStreamVariables.Clear();
+            envVars.RequestStreamVariables.AddRange(Convert(importResult.ResultValue.Variables.RequestStreamVariables));
+            envVars.ResponseStreamVariables.Clear();
+            envVars.ResponseStreamVariables.AddRange(Convert(importResult.ResultValue.Variables.ResponseStreamVariables));
+            
+            requestEditor.Show(methodParams, envVars.RequestVariables, cg);
+            
+            if (FSharpOption<object>.get_IsSome(importResult.ResultValue.RequestStream)) {
+                requestStream = importResult.ResultValue.RequestStream.Value;
+            }
+            
+            listEditor.Show(requestStream!, envVars);
         }
         else {
             io.Log.Error(importResult.ErrorValue);

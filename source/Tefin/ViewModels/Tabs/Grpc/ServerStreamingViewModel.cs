@@ -1,13 +1,18 @@
 #region
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
+using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
+using Tefin.Utils;
+using Tefin.ViewModels.Types;
 
 using static Tefin.Core.Utils;
 
@@ -18,6 +23,7 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private bool _showTreeEditor;
     private string _statusText;
+    private AllVariableDefinitions _envVars = new();
 
     public ServerStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, cg, true);
@@ -63,22 +69,75 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override string GetRequestContent() => this.ReqViewModel.GetRequestContent();
+    public override string GetRequestContent() {
+        var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
+        if (ok) {
+            var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
+            var requestVariables = methodInfoNode.Variables;
 
-    public override void ImportRequest(string requestFile) => this.ReqViewModel.ImportRequestFile(requestFile);
+            var responseVariables = new List<RequestVariable>();
+            if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
+                responseVariables = respNode.Variables;
+            }
+
+            var responseStreamVariables = new List<RequestVariable>();
+            if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
+                responseStreamVariables = respStream.Variables;
+            }
+
+            var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [], responseStreamVariables);
+            var exportReqJson = feature.Export();
+            if (exportReqJson.IsOk) {
+                return exportReqJson.ResultValue;
+            }
+
+        }
+
+        return string.Empty;
+    }
+
+    public override void ImportRequest(string requestFile) {
+        this.ReqViewModel.IsLoaded = false;
+        var import = new ImportFeature(this.Io, requestFile, this.MethodInfo);
+        var importResult = import.Run();
+        if (importResult.IsOk) {
+            //1. Show the request
+            var methodParams = importResult.ResultValue.MethodParameters;
+            if (methodParams == null) {
+                Debugger.Break();
+            }
+
+            this.ReqViewModel.MethodParameterInstances = methodParams ?? [];
+
+            //these variables, which are stored in the request file, do not contain
+            //the current value.  Those are in the *.fxv file in client/var folder
+            this._envVars = AllVariableDefinitions.From(importResult.ResultValue.Variables);
+            this.ReqViewModel.Init();
+        }
+        else {
+            this.Io.Log.Error(importResult.ErrorValue);
+        }
+    }
 
     public override void Init() => this.ReqViewModel.Init();
 
     private void OnCanReadChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
 
-    private async Task OnExportRequest() => await this.ReqViewModel.ExportRequest();
+    private async Task OnExportRequest() {
+        var reqJson = this.GetRequestContent();
+        if (!string.IsNullOrWhiteSpace(reqJson)) {
+            var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+            await DialogUtils.SaveFile("Export request", fileName, reqJson, "FintX request",
+                $"*{Ext.requestFileExt}");
+        }
+    }
 
     private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
 
     private async Task OnStart() {
         this.IsBusy = true;
         try {
-            this.RespViewModel.Init(this.ReqViewModel.EnvVariables);
+            this.RespViewModel.Init(this._envVars);
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {

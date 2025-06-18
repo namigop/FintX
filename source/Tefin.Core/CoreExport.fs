@@ -9,7 +9,7 @@ type ReqExport =
     MethodType: string
     RequestType: string
     Request: obj
-    Variables: RequestEnvVar array
+    Variables: AllVariables
     RequestStream: obj option }
 
 module CoreExport =
@@ -33,7 +33,7 @@ module CoreExport =
 
   let streamingRequestPropInfos requestType requestStreamType =
     [| { IsMethod = false; Name = "RequestStream"; Type = requestStreamType }
-       { IsMethod = false; Name = "Variables"; Type = typeof<RequestEnvVar array> }  |]
+       { IsMethod = false; Name = "Variables"; Type = typeof<AllVariables> }  |]
     |> Array.append (singleReqPropInfos requestType)
 
   let emitRequestExportClass (requestStreamTypeOpt: Type option) (requestType: Type) : Type =
@@ -41,7 +41,7 @@ module CoreExport =
       match requestStreamTypeOpt with
       | Some requestStreamType -> streamingRequestPropInfos requestType requestStreamType
       | None ->
-        [| { IsMethod = false; Name = "Variables"; Type = typeof<RequestEnvVar array> } |]
+        [| { IsMethod = false; Name = "Variables"; Type = typeof<AllVariables> } |]
         |> Array.append(singleReqPropInfos requestType)
 
     let getClassName () = $"ImportExport_{requestType.Name}"
@@ -57,7 +57,7 @@ module CoreExport =
     let methodType = exportType.GetProperty("MethodType").GetValue(exportInstance) |> toString
     let requestType = exportType.GetProperty("RequestType").GetValue(exportInstance) |> toString
     let request = exportType.GetProperty("Request").GetValue(exportInstance)
-    let vars = exportType.GetProperty("Variables").GetValue(exportInstance) :?> RequestEnvVar array
+    let vars = exportType.GetProperty("Variables").GetValue(exportInstance) :?> AllVariables
     let requestStream =
       let prop = exportType.GetProperty("RequestStream")
       if prop = null then
@@ -70,5 +70,5 @@ module CoreExport =
       MethodType = methodType
       RequestType = requestType
       Request = request
-      Variables = if vars = null then Array.empty else vars
+      Variables = vars
       RequestStream = requestStream }

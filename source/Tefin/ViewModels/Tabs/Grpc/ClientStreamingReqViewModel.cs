@@ -19,13 +19,14 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
     private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
-    private readonly Type _listType;
+    public Type ListType { get; }
     private readonly Type _requestItemType;
     private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
+    private AllVariableDefinitions? _envVars;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, cg, generateFullTree, methodParameterInstances) {
@@ -40,10 +41,10 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._requestItemType = args[0];
         var listType = typeof(List<>);
-        this._listType = listType.MakeGenericType(this._requestItemType);
+        this.ListType = listType.MakeGenericType(this._requestItemType);
 
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this._listType, cg);
-        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this._listType, cg);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this.ListType, cg);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 
@@ -75,6 +76,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
+    public ListTreeEditorViewModel ClientStreamTreeEditor {
+        get => this._clientStreamTreeEditor;
+    }
 
     public ICommand EndWriteCommand {
         get;
@@ -91,76 +95,53 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     public ICommand AddListItemCommand { get; }
     public ICommand RemoveListItemCommand { get; }
+    
+    // public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(
+    //     this.RequestEditor,
+    //     this.ClientStreamEditor,
+    //     this.EnvVariables,
+    //     this.ListType,
+    //     this.MethodInfo, 
+    //     this._clientGroup, 
+    //     this.Io);
 
-    public override async Task ExportRequest() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
-            if (!isValid) {
-                this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
-            }
-            var methodInfoNode = (MethodInfoNode)this.TreeEditor.Items[0];
-            var variables = methodInfoNode.Variables;
-            await GrpcUiUtils.ExportRequest(mParams, variables, reqStream, this.MethodInfo, this.Io);
-        }
-    }
+    // public override void ImportRequestFile(string file) {
+    //     GrpcUiUtils.ImportRequest(
+    //         this.RequestEditor,
+    //         this.ClientStreamEditor,
+    //         this.EnvVariables,
+    //         this.ListType,
+    //         this.MethodInfo,
+    //         this._clientGroup,
+    //         file,
+    //         this.Io);
+    //     
+    //     //load variables
+    //     //these variables, which are stored in the request file, do not contain
+    //     //the current value.  Those are in the *.fxv file in client/var folder
+    //     
+    //     this.IsLoaded = true;
+    // }
 
-    public override string GetRequestContent() {
-        var (ok, mParams) = this.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ClientStreamEditor.GetList();
-            
-            if (isValid) {
-                var methodInfoNode = (MethodInfoNode)this.TreeEditor.Items[0];
-                var variables = methodInfoNode.Variables;
-                var feature = new ExportFeature(this.MethodInfo, mParams, variables, reqStream);
-                var exportReqJson = feature.Export();
-                if (exportReqJson.IsOk) {
-                    return exportReqJson.ResultValue;
-                }
-            }
-        }
-
-        return "";
-    }
-
-    public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(
-        this.RequestEditor,
-        this.ClientStreamEditor,
-        this.EnvVariables,
-        this._listType,
-        this.MethodInfo, 
-        this._clientGroup, 
-        this.Io);
-
-    public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(
-        this.RequestEditor,
-        this.ClientStreamEditor,
-        this.EnvVariables,
-        this._listType, 
-        this.MethodInfo,
-        this._clientGroup, 
-        file, 
-        this.Io);
-
-    public void SetupClientStream(ClientStreamingCallResponse response) {
+    public void SetupClientStream(ClientStreamingCallResponse response, AllVariableDefinitions envVars) {
         this._callResponse = response;
         if (this._clientStreamEditor.GetListItems().Any()) {
             this.CanWrite = true;
             return;
         }
 
-        var stream = Activator.CreateInstance(this._listType)!;
+        var stream = Activator.CreateInstance(this.ListType)!;
         var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
-            var add = this._listType.GetMethod("Add");
+            var add = this.ListType.GetMethod("Add");
             add!.Invoke(stream, [reqInstance]);
         }
         else {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
         }
 
-        this._clientStreamEditor.Show(stream!, this.EnvVariables);
+        this._envVars = envVars;
+        this._clientStreamEditor.Show(stream!, envVars);
         this.CanWrite = true;
     }
 
@@ -210,7 +191,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this.EnvVariables);
+            this.ClientStreamEditor.Show(list, this._envVars!);
         }
     }
 
@@ -218,7 +199,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this.EnvVariables);
+            this.ClientStreamEditor.Show(list, this._envVars!);
         }
     }
 }

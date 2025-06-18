@@ -19,5 +19,5 @@ public interface IResponseEditorViewModel {
 
     public void Init();
 
-    void Show(object? resp, List<RequestVariable> variables, Type? responseType);
+    void Show(object? resp, AllVariableDefinitions variables, Type? responseType);
 }

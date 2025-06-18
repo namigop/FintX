@@ -1,12 +1,17 @@
 #region
 
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
+using Tefin.Core.Reflection;
 using Tefin.Features;
+using Tefin.Utils;
+using Tefin.ViewModels.Types;
 
 using static Tefin.Core.Utils;
 
@@ -18,9 +23,9 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     private UnaryReqViewModel _reqViewModel;
     private bool _showTreeEditor;
     private string _statusText;
+    private AllVariableDefinitions _envVars = new();
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
-        
         this._reqViewModel = new UnaryReqViewModel(mi, cg, true);
         this.RespViewModel = new UnaryRespViewModel(mi, cg);
         this.StartCommand = this.CreateCommand(this.OnStart);
@@ -67,13 +72,64 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.RespViewModel.Dispose();
     }
 
-    public override string GetRequestContent() => this.ReqViewModel.GetRequestContent();
+    public override string GetRequestContent() {
+        var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
+        var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0]; 
+        var requestVariables = methodInfoNode.Variables;
+        
+        var responseVariables = new List<RequestVariable>();
+        if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
+            responseVariables = respNode.Variables;
+        }
+        
+        if (ok) {
+            var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [], []);
+            var exportReqJson = feature.Export();
+            if (!exportReqJson.IsOk) {
+                this.Io.Log.Error(exportReqJson.ErrorValue);
+            }
+            else {
+                return exportReqJson.ResultValue;
+            }
+        }
 
-    public override void ImportRequest(string requestFile) => this.ReqViewModel.ImportRequestFile(requestFile);
+        return string.Empty;
+    }
+
+    public override void ImportRequest(string requestFile) {
+        this.ReqViewModel.IsLoaded = false;
+        var import = new ImportFeature(this.Io, requestFile, this.MethodInfo);
+        var importResult = import.Run();
+        if (importResult.IsOk) {
+            //1. Show the request
+            var methodParams = importResult.ResultValue.MethodParameters;
+            if (methodParams == null) {
+                Debugger.Break();
+            }
+
+            this.ReqViewModel.MethodParameterInstances = methodParams ?? [];
+
+            //these variables, which are stored in the request file, do not contain
+            //the current value.  Those are in the *.fxv file in client/var folder
+            this._envVars = AllVariableDefinitions.From(importResult.ResultValue.Variables);
+            this.ReqViewModel.Init();
+        }
+        else {
+            this.Io.Log.Error(importResult.ErrorValue);
+        }
+    }
 
     public override void Init() => this.ReqViewModel.Init();
 
-    private async Task OnExportRequest() => await this.ReqViewModel.ExportRequest();
+    private async Task OnExportRequest() {
+        var reqJson = this.GetRequestContent();
+        if (!string.IsNullOrWhiteSpace(reqJson)) {
+            var fileName = $"{this.MethodInfo.Name}_req{Ext.requestFileExt}";
+            await DialogUtils.SaveFile("Export request", fileName, reqJson, "FintX request",
+                $"*{Ext.requestFileExt}");
+        }
+        //await this.ReqViewModel.ExportRequest();
+    }
 
     private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
 
@@ -86,7 +142,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
     private async Task OnStart() {
         this.IsBusy = true;
         try {
-            this.RespViewModel.Init(this._reqViewModel.EnvVariables);
+            this.RespViewModel.Init(this._envVars);
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {

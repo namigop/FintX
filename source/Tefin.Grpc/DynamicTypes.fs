@@ -10,15 +10,14 @@ open Tefin.Grpc
 type SerParam =
   { Method: MethodInfo
     RequestParams: obj array
-    EnvVariables : RequestEnvVar array
+    EnvVariables : AllVariables
     RequestStream: obj option }
 
   static member Create(m, r) =
     { Method = m
       RequestParams = r
-      EnvVariables = Array.empty
+      EnvVariables = AllVariables.Empty()
       RequestStream = None }
-
   static member WithStream (r: SerParam) list = { r with RequestStream = list }
 
 module DynamicTypes =

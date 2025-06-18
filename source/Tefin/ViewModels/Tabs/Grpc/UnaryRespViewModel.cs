@@ -16,7 +16,7 @@ public class UnaryRespViewModel : ViewModelBase {
     private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
     private readonly ProjectTypes.ClientGroup _clientGroup;
-    private readonly TreeResponseEditorViewModel _treeRespEditor;
+    
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
 
@@ -25,12 +25,14 @@ public class UnaryRespViewModel : ViewModelBase {
         this._clientGroup = clientGroup;
         this.IsShowingResponseTreeEditor = true;
 
-        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo, clientGroup);
+        this.TreeResponseEditor = new TreeResponseEditorViewModel(methodInfo, clientGroup);
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
-        this._responseEditor = this._treeRespEditor;
+        this._responseEditor = this.TreeResponseEditor;
         this.SubscribeTo(vm => ((UnaryRespViewModel)vm).IsShowingResponseTreeEditor,
             this.OnIsShowingResponseTreeEditor);
     }
+
+    public TreeResponseEditorViewModel TreeResponseEditor { get; private set; }
 
     public bool IsShowingResponseTreeEditor {
         get => this._isShowingResponseTreeEditor;
@@ -42,8 +44,8 @@ public class UnaryRespViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
     
-    public List<RequestVariable> EnvVariables { get; set; }
-    public void Init(List<RequestVariable> envVariables) {
+    public AllVariableDefinitions EnvVariables { get; set; }
+    public void Init(AllVariableDefinitions envVariables) {
         this.EnvVariables = envVariables;
         this.ResponseEditor.Init();
     }
@@ -67,16 +69,16 @@ public class UnaryRespViewModel : ViewModelBase {
     }
 
     private void ShowAsJson() {
-        var (ok, resp) = this._treeRespEditor.GetResponse();
+        var (ok, resp) = this.TreeResponseEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this.EnvVariables, this._treeRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.EnvVariables, this.TreeResponseEditor.ResponseType);
         }
     }
 
     private void ShowAsTree() {
         var (ok, resp) = this._jsonRespEditor.GetResponse();
-        this.ResponseEditor = this._treeRespEditor;
+        this.ResponseEditor = this.TreeResponseEditor;
         if (ok) {
             this.ResponseEditor.Show(resp, this.EnvVariables, this._jsonRespEditor.ResponseType);
         }

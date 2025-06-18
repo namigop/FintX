@@ -39,18 +39,19 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
     }
 
+    public TreeResponseEditorViewModel TreeResponseEditor => this._treeRespEditor;
     public IResponseEditorViewModel ResponseEditor {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-    public List<RequestVariable> EnvVariables { get; set; }
+    public AllVariableDefinitions EnvVariables { get; set; }
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         var response = await completeRead();
         responseType = response?.GetType() ?? responseType;
         await this.ResponseEditor.Complete(responseType, () => Task.FromResult(response!));
     }
 
-    public void Init(List<RequestVariable> envVariables ) {
+    public void Init( AllVariableDefinitions envVariables ) {
         this.EnvVariables = envVariables;
         this.ResponseEditor.Init();
     }

@@ -8,7 +8,7 @@ open Tefin.Grpc.Dynamic
 type RequestImport = {
   MethodParameters : obj array
   RequestStream : obj option
-  Variables : RequestEnvVar array
+  Variables : AllVariables
 }
 module Export =
 
@@ -29,7 +29,7 @@ module Export =
         let t = CoreExport.emitRequestExportClass None requestType
         false, t)
 
-  let private createExportInstance (methodInfo: MethodInfo) (requestStream: obj option) (reqInstance: obj) (vars : RequestEnvVar array) =
+  let private createExportInstance (methodInfo: MethodInfo) (requestStream: obj option) (reqInstance: obj) (vars : AllVariables) =
     requestToExportType methodInfo requestStream
     |> Res.map (fun (isStreaming, exportType) ->
       let exportInstance = Activator.CreateInstance exportType

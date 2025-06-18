@@ -100,14 +100,14 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         }
     }
 
-    public void Show(object listInstance, List<RequestVariable> variables) {
+    public void Show(object listInstance, AllVariableDefinitions envVars) {
         /*  Tree Structure is
             - ResponseStreamNode //List
                - DefaultNode //ListItem
          */
 
         this._listInstance = listInstance;
-        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null, variables, this._clientGroup.Path);
+        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null, envVars.ResponseStreamVariables, this._clientGroup.Path);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();
