@@ -70,6 +70,13 @@ let getAppDataPath () =
 
   get () |> (fun d -> Directory.CreateDirectory d) |> (fun d -> d.FullName)
 
+let openPath (path: string) =
+  if isWindows() then
+    Process.Start("explorer.exe", path)
+  elif isMac() then
+    Process.Start("open", path)
+  else
+    Process.Start("xdg-open", path)
 let getTempPath () =
   Path.Combine(getAppDataPath (), "Temp")
   |> fun d -> Directory.CreateDirectory d

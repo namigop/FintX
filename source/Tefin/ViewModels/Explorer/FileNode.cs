@@ -25,6 +25,7 @@ public class FileNode : NodeBase {
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.RenameCommand = this.CreateCommand(this.OnRename);
         this.OpenCommand = this.CreateCommand(this.OnOpen);
+        this.OpenFilePathCommand = this.CreateCommand(this.OnOpenFilePath);
         this.OpenMethodInWindowCommand = this.CreateCommand(this.OpenMethodInWindow);
         GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
@@ -43,6 +44,7 @@ public class FileNode : NodeBase {
     public bool IsManagedByGit => !this.GitFileStatus.IsNoRepository;
     public string GitFileIcon => this.GetGitFileIcon();
 
+    public ICommand OpenFilePathCommand { get; }
     public ICommand OpenMethodInWindowCommand { get; }
 
     public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
@@ -167,6 +169,10 @@ public class FileNode : NodeBase {
         // from the explorer tree
         this.Io.File.Delete(this.FullPath);
 
+    private void OnOpenFilePath() {
+        var dir = Path.GetDirectoryName(this.FullPath);
+        Core.Utils.openPath(dir);
+    }
     private void OnOpen() {
         var tab = TabFactory.From(this, this.Io);
         if (tab != null) {
