@@ -91,7 +91,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     public override void Show(bool ok, object response, Context context) {
         //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
-        this.ServerStreamEditor.Show(stream!, this.EnvVariables);
+        this.ServerStreamEditor.Show(stream!, this.EnvVariables.ResponseStreamVariables);
     }
 
     private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
@@ -108,7 +108,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list, this.EnvVariables);
+            this.ServerStreamEditor.Show(list, this.EnvVariables.ResponseStreamVariables);
         }
     }
 
@@ -116,7 +116,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamTreeEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list, this.EnvVariables);
+            this.ServerStreamEditor.Show(list, this.EnvVariables.ResponseStreamVariables);
         }
     }
 }

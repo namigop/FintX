@@ -107,41 +107,8 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             counter += 1;
         }
         
-
-        //----------------------------------
-        //setup the templated {{TAG}} nodes
-        //----------------------------------
-        var load = new LoadEnvVarsFeature();
-        var methodInfoNode = (MethodInfoNode)this.Items[0];
-        foreach (var reqVar in reqVars) {
-            var envVar = load.FindEnvVar(methodNode.ClientGroup.Path, Current.Env, reqVar.Tag, this.Io);
-            if (envVar is null)
-                continue;
-            
-            var node = methodInfoNode.FindChildNode(i => {
-                if (i is SystemNode sn) {
-                    var pathToRoot = sn.GetJsonPath();
-                    return pathToRoot == reqVar.JsonPath;
-                } 
-                
-                if (i is TimestampNode tn) {
-                    var pathToRoot = tn.GetJsonPath();
-                    return pathToRoot == reqVar.JsonPath;
-                }
-
-                return false;
-            });
-
-            if (node is SystemNode sysNode) {
-                sysNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath, envVar?.CurrentValue);
-            }
-            
-            if (node is TimestampNode tsNode) {
-                tsNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath);
-            }
-        }
-        
-        this.RaisePropertyChanged(nameof(this.Items));
+        this.Items[0].InitVariableNodes(reqVars, clientGroup.Path, this.Io);
+         this.RaisePropertyChanged(nameof(this.Items));
     }
 
     public void StartRequest() {

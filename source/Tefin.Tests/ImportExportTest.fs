@@ -53,7 +53,7 @@ let rec ``Can export gRPC DuplexStream`` () =
     headers.Add("key", "value")
     headers.Add("key2", "value2")
     let methodParams = [| (box <| headers); DateTime.MinValue ; CancellationToken.None  |]
-    let serParam = { Method = mi; RequestParams = methodParams ; EnvVariables= Array.empty; RequestStream = Some clientStream }
+    let serParam = { Method = mi; RequestParams = methodParams ; EnvVariables= AllVariables.Empty(); RequestStream = Some clientStream }
     let jsonRet = Export.requestToJson(serParam)
     Assert.True(Res.isOk jsonRet)
     
@@ -103,7 +103,7 @@ let ``Can export gRPC ClientStream`` () =
     let struct (_,test2) = buildType typeof<Test1>
     let clientStream = [| test1; test2 |]
     let methodParams = [| (box <| Metadata()); null; CancellationToken.None  |]
-    let serParam = { Method = mi; RequestParams = methodParams ; EnvVariables= Array.empty; RequestStream = Some clientStream }
+    let serParam = { Method = mi; RequestParams = methodParams ; EnvVariables= AllVariables.Empty(); RequestStream = Some clientStream }
     let jsonRet = Export.requestToJson(serParam)
     Assert.True(Res.isOk jsonRet)
     
@@ -155,7 +155,7 @@ let ``Can export gRPC UnaryAndServerStream`` () = //Both unary and server stream
     let doubleVal = 42.42
     
     let methodParams = [| box test1; intVal; stringVal; doubleVal |]
-    let serParam = { Method = mi; RequestParams = methodParams ;EnvVariables= Array.empty; RequestStream = None }
+    let serParam = { Method = mi; RequestParams = methodParams ;EnvVariables= AllVariables.Empty(); RequestStream = None }
     let jsonRet = Export.requestToJson(serParam)
     Assert.True(Res.isOk jsonRet)
     

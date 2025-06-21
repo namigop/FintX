@@ -59,7 +59,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
     public ICommand StopCommand { get; }
 
-    public AllVariableDefinitions EnvVariables { get; } = new();
+    private readonly AllVariableDefinitions _envVars = new();
     public override void Dispose() {
         base.Dispose();
         this.ReqViewModel.Dispose();
@@ -74,14 +74,20 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
                 var requestVariables = methodInfoNode.Variables;
 
-                var responseVariables = new List<RequestVariable>();
+                List<RequestVariable> responseVariables;
                 if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                     responseVariables = respNode.Variables;
                 }
+                else {
+                    responseVariables = this._envVars.ResponseVariables;
+                }
                
-                var requestStreamVariables = new List<RequestVariable>();
+                List<RequestVariable> requestStreamVariables;
                 if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                     requestStreamVariables = rs.Variables;
+                }
+                else {
+                    requestStreamVariables = this._envVars.RequestStreamVariables;
                 }
                 
                 var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, requestStreamVariables, [], reqStream);
@@ -95,11 +101,11 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         return string.Empty;
     }
 
-    public override void ImportRequest(string requestFile) {
+   public override void ImportRequest(string requestFile) {
         GrpcUiUtils.ImportRequest(
             this.ReqViewModel.RequestEditor,
             this.ReqViewModel.ClientStreamEditor,
-            this.EnvVariables,
+            this._envVars,
             this.ReqViewModel.ListType,
             this.MethodInfo,
             this.Client,
@@ -113,7 +119,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.IsLoaded = true;
     }
 
-    public override void Init() => this.ReqViewModel.Init();
+    public override void Init() => this.ReqViewModel.Init(this._envVars);
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
         var builder = new CompositeResponseFeature();
@@ -161,14 +167,20 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
             var requestVariables = methodInfoNode.Variables;
                
-            var responseVariables = new List<RequestVariable>();
+            List<RequestVariable> responseVariables;
             if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                 responseVariables = respNode.Variables;
             }
-               
-            var requestStreamVariables = new List<RequestVariable>();
+            else {
+                responseVariables = this._envVars.ResponseVariables;
+            }
+            
+            List<RequestVariable> requestStreamVariables;
             if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                 requestStreamVariables = rs.Variables;
+            }
+            else {
+                requestStreamVariables = this._envVars.RequestStreamVariables;
             }
 
             await GrpcUiUtils.ExportRequest(
@@ -187,7 +199,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         await GrpcUiUtils.ImportRequest(
             this.ReqViewModel.RequestEditor,
             this.ReqViewModel.ClientStreamEditor,
-            this.EnvVariables,
+            this._envVars,
             this.ReqViewModel.ListType,
             this.MethodInfo, 
             this.Client, 
@@ -197,7 +209,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private async Task OnStart() {
         this.IsBusy = true;
         try {
-            this.RespViewModel.Init(this.EnvVariables);
+            this.RespViewModel.Init(this._envVars);
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
@@ -206,7 +218,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok) {
-                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response, this.EnvVariables); //
+                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response, this._envVars); //
                 }
                 else {
                     this.EndStreaming((ClientStreamingCallResponse)response);

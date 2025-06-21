@@ -1,4 +1,8 @@
+using Tefin.Features;
+
 namespace Tefin.ViewModels.Types;
+
+
 
 
 public class ResponseStreamNode : ListNode {
@@ -18,4 +22,6 @@ public class ResponseStreamNode : ListNode {
     public List<RequestVariable> Variables => _variables;
 
     public string ClientPath => _clientPath;
+    
+     
 }

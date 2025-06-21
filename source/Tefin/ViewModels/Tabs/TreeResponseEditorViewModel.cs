@@ -82,6 +82,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
             this.ResponseType = responseType;
             var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._variables, this._clientGroup.Path);
             node.Init();
+            node.InitVariableNodes(this._variables, this._clientGroup.Path, this.Io);
             this.Items.Add(node);
         }
         catch (Exception ecx) {

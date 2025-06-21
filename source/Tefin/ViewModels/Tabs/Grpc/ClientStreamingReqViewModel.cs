@@ -141,7 +141,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
 
         this._envVars = envVars;
-        this._clientStreamEditor.Show(stream!, envVars);
+        this._clientStreamEditor.Show(stream!, envVars.RequestStreamVariables);
         this.CanWrite = true;
     }
 
@@ -191,7 +191,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars!);
+            this.ClientStreamEditor.Show(list, this._envVars!.RequestStreamVariables);
         }
     }
 
@@ -199,7 +199,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars!);
+            this.ClientStreamEditor.Show(list, this._envVars!.RequestStreamVariables);
         }
     }
 }

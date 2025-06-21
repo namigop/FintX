@@ -60,7 +60,7 @@ public class ListJsonEditorViewModel(string name, Type listType, ProjectTypes.Cl
         }
     }
 
-    public void Show(object listInstance, AllVariableDefinitions variables) {
+    public void Show(object listInstance, List<RequestVariable> variables) {
         try {
             this._listInstance = listInstance;
             var json = Instance.indirectSerialize(this.ListType, listInstance);

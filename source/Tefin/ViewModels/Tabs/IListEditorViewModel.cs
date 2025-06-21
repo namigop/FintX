@@ -13,7 +13,7 @@ public interface IListEditorViewModel {
 
     IEnumerable<object> GetListItems();
 
-    void Show(object listInstance, AllVariableDefinitions envVars);
+    void Show(object listInstance, List<RequestVariable> envVars);
 
     void RemoveSelectedItem();
 }

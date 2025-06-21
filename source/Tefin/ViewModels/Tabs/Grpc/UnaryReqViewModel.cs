@@ -23,7 +23,7 @@ public class UnaryReqViewModel : ViewModelBase {
     //private object?[] _methodParameterInstances;
     private IRequestEditorViewModel _requestEditor;
     private bool _showTreeEditor;
-    private List<RequestVariable> _envVariables = [];
+    private List<RequestVariable> _requestVariables = [];
 
     public UnaryReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._clientGroup = clientGroup;
@@ -60,22 +60,12 @@ public class UnaryReqViewModel : ViewModelBase {
     }
     
     public (bool, object?[]) GetMethodParameters() => this.RequestEditor.GetParameters();
+    
 
-    public virtual async Task ImportRequest() {
-        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
-        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
-        if (ok) {
-            this.ImportRequestFile(files[0]);
-        }
-    }
-
-    public virtual void ImportRequestFile(string file) {
-        throw new NotImplementedException();
-    }
-
-    public void Init() {
+    public void Init(AllVariableDefinitions allVars) {
+        this._requestVariables = allVars.RequestVariables;
         this.MethodParameterInstances = this.IsLoaded ? this.GetMethodParameters().Item2 : this.MethodParameterInstances;
-        this._requestEditor.Show(this.MethodParameterInstances, this._envVariables, this._clientGroup);
+        this._requestEditor.Show(this.MethodParameterInstances, this._requestVariables, this._clientGroup);
         this.IsLoaded = true;
     }
 
@@ -97,7 +87,7 @@ public class UnaryReqViewModel : ViewModelBase {
             //     .Select(t => new RequestVariable() { Tag = t.Tag, JsonPath = t.JsonPath, TypeName = t.TypeName})
             //     .ToArray();
             
-            this.RequestEditor.Show(parameters, this._envVariables, this._clientGroup);
+            this.RequestEditor.Show(parameters, this._requestVariables, this._clientGroup);
         }
     }
 
@@ -108,7 +98,7 @@ public class UnaryReqViewModel : ViewModelBase {
             // var reqVars = this._envVariables
             //     .Select(t => new RequestVariable() { Tag = t.Tag, JsonPath = t.JsonPath, TypeName = t.Type })
             //     .ToArray();
-            this.RequestEditor.Show(parameters, this._envVariables, this._clientGroup);
+            this.RequestEditor.Show(parameters, this._requestVariables, this._clientGroup);
         }
     }
 }

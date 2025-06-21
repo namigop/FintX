@@ -7,4 +7,5 @@ public class ResponseNode(string name, Type type, ITypeInfo? propInfo, object? i
     public List<RequestVariable> Variables => variables;
 
     public string ClientPath => clientPath;
+    
 }

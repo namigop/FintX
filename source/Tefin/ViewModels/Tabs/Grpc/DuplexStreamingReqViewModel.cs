@@ -94,10 +94,14 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this._clientStreamEditor.RemoveSelectedItem();
     }
     
-    public override async Task ImportRequest() {
-        throw new NotImplementedException();
-        // await GrpcUiUtils.ImportRequest(this.RequestEditor,
-        //     this.ClientStreamEditor, this.EnvVariables, this.ListType, this.MethodInfo, this._clientGroup, this.Io);
+    public async Task ImportRequest() {
+         await GrpcUiUtils.ImportRequest(this.RequestEditor,
+             this.ClientStreamEditor, 
+             this._envVars, 
+             this.ListType, 
+             this.MethodInfo,
+             this._clientGroup,
+             this.Io);
     }
 
     // public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
@@ -121,7 +125,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         }
 
         this._envVars = envVars;
-        this._clientStreamEditor.Show(stream!, this._envVars);
+        this._clientStreamEditor.Show(stream!, this._envVars.RequestStreamVariables);
         this.CanWrite = true;
     }
 
@@ -177,7 +181,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars);
+            this.ClientStreamEditor.Show(list, this._envVars.RequestStreamVariables);
         }
     }
 
@@ -185,7 +189,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars);
+            this.ClientStreamEditor.Show(list, this._envVars.RequestStreamVariables);
         }
     }
 }

@@ -77,9 +77,12 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0]; 
         var requestVariables = methodInfoNode.Variables;
         
-        var responseVariables = new List<RequestVariable>();
+        List<RequestVariable> responseVariables;
         if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
             responseVariables = respNode.Variables;
+        }
+        else {
+            responseVariables = this._envVars.ResponseVariables;
         }
         
         if (ok) {
@@ -112,14 +115,14 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             //these variables, which are stored in the request file, do not contain
             //the current value.  Those are in the *.fxv file in client/var folder
             this._envVars = AllVariableDefinitions.From(importResult.ResultValue.Variables);
-            this.ReqViewModel.Init();
+            this.ReqViewModel.Init(this._envVars);
         }
         else {
             this.Io.Log.Error(importResult.ErrorValue);
         }
     }
 
-    public override void Init() => this.ReqViewModel.Init();
+    public override void Init() => this.ReqViewModel.Init(this._envVars);
 
     private async Task OnExportRequest() {
         var reqJson = this.GetRequestContent();
@@ -131,8 +134,14 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         //await this.ReqViewModel.ExportRequest();
     }
 
-    private async Task OnImportRequest() => await this.ReqViewModel.ImportRequest();
-
+    private async Task OnImportRequest() {
+        var fileExtensions = new[] { $"*{Ext.requestFileExt}" };
+        var (ok, files) = await DialogUtils.OpenFile("Open request file", "FintX request", fileExtensions);
+        if (ok) {
+            this.ImportRequest(files[0]);
+        }
+    }
+ 
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         this.ReqViewModel = null!;
         this.ReqViewModel = (UnaryReqViewModel)obj;

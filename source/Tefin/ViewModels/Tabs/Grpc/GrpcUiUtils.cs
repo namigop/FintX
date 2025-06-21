@@ -103,7 +103,7 @@ public static class GrpcUiUtils {
                 requestStream = importResult.ResultValue.RequestStream.Value;
             }
             
-            listEditor.Show(requestStream!, envVars);
+            listEditor.Show(requestStream!, envVars.RequestStreamVariables);
         }
         else {
             io.Log.Error(importResult.ErrorValue);
