@@ -44,9 +44,9 @@ public class UnaryRespViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
     
-    public AllVariableDefinitions EnvVariables { get; set; }
+    public List<RequestVariable> ResponseVariables { get; set; }
     public void Init(AllVariableDefinitions envVariables) {
-        this.EnvVariables = envVariables;
+        this.ResponseVariables = envVariables.ResponseVariables;
         this.ResponseEditor.Init();
     }
 
@@ -72,7 +72,7 @@ public class UnaryRespViewModel : ViewModelBase {
         var (ok, resp) = this.TreeResponseEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this.EnvVariables, this.TreeResponseEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.ResponseVariables, this.TreeResponseEditor.ResponseType);
         }
     }
 
@@ -80,7 +80,7 @@ public class UnaryRespViewModel : ViewModelBase {
         var (ok, resp) = this._jsonRespEditor.GetResponse();
         this.ResponseEditor = this.TreeResponseEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this.EnvVariables, this._jsonRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.ResponseVariables, this._jsonRespEditor.ResponseType);
         }
     }
 }

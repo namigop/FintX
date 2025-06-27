@@ -53,7 +53,7 @@ public class LoadEnvVarsFeature {
 
     public EnvVar? FindEnvVar(string clientPath, string envName,  string tag, IOs io) {
         
-        //first check if  env variable is in the client cache
+        //check if env variable is in the client cache
         var clientVarFiles = VarsStructure.getVarFilesForClient(io, clientPath);
         foreach (var clientVarFile in clientVarFiles) {
             var key = new Env(clientVarFile, envName);
@@ -61,7 +61,7 @@ public class LoadEnvVarsFeature {
                 return cachedData.Variables.FirstOrDefault(t => t.Name == tag);
         }
         
-        //first check if  env variable is in the proj cache
+        //check if env variable is in the proj cache
         var projectVarFiles = VarsStructure.getVarFilesForProject(io, Path.GetDirectoryName(clientPath)!);
         foreach (var projVarFile in projectVarFiles) {
             var key = new Env(projVarFile, envName);

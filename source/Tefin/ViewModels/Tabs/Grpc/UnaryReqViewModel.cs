@@ -62,8 +62,8 @@ public class UnaryReqViewModel : ViewModelBase {
     public (bool, object?[]) GetMethodParameters() => this.RequestEditor.GetParameters();
     
 
-    public void Init(AllVariableDefinitions allVars) {
-        this._requestVariables = allVars.RequestVariables;
+    public void Init(List<RequestVariable> requestVariables) {
+        this._requestVariables = requestVariables;
         this.MethodParameterInstances = this.IsLoaded ? this.GetMethodParameters().Item2 : this.MethodParameterInstances;
         this._requestEditor.Show(this.MethodParameterInstances, this._requestVariables, this._clientGroup);
         this.IsLoaded = true;

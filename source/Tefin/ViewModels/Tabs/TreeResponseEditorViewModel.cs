@@ -71,14 +71,14 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
 
     public void Init() => this.Items.Clear();
 
-    public void Show(object? resp, AllVariableDefinitions envVars, Type? responseType) {
+    public void Show(object? resp, List<RequestVariable> variables, Type? responseType) {
         this.Items.Clear();
         if (responseType == null) {
             return;
         }
 
         try {
-            this._variables = envVars.ResponseVariables;
+            this._variables = variables;
             this.ResponseType = responseType;
             var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._variables, this._clientGroup.Path);
             node.Init();

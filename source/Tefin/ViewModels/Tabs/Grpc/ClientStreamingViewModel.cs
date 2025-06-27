@@ -112,14 +112,14 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             requestFile,
             this.Io);
         
-        //load variables
-        //these variables, which are stored in the request file, do not contain
-        //the current value.  Those are in the *.fxv file in client/var folder
-        
+        this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
+        this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
         this.ReqViewModel.IsLoaded = true;
     }
 
-    public override void Init() => this.ReqViewModel.Init(this._envVars);
+    public override void Init() {
+        this.ReqViewModel.Init(this._envVars.RequestVariables);
+    }
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
         var builder = new CompositeResponseFeature();
@@ -204,6 +204,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             this.MethodInfo, 
             this.Client, 
             this.Io);
+
+        this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
+        this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
+        this.ReqViewModel.IsLoaded = true;
     }
 
     private async Task OnStart() {
@@ -218,7 +222,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok) {
-                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response, this._envVars); //
+                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response, this._envVars.RequestStreamVariables); //
                 }
                 else {
                     this.EndStreaming((ClientStreamingCallResponse)response);

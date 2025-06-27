@@ -121,9 +121,12 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
               this.Client,
               requestFile,
               this.Io);
+      this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
+      this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
+      this.ReqViewModel.IsLoaded = true;
     } //this.ReqViewModel.ImportRequestFile(requestFile);
 
-    public override void Init() => this.ReqViewModel.Init(this._envVars);
+    public override void Init() => this.ReqViewModel.Init(this._envVars.RequestVariables);
 
     private void EndStreaming(DuplexStreamingCallResponse resp) {
         async Task<object> CompleteRead() {
@@ -220,7 +223,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             this.MethodInfo, 
             this.Client,
             this.Io);
-        //await this.ReqViewModel.ImportRequest();
+        
+        this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
+        this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
+        this.ReqViewModel.IsLoaded = true;
     }
 
     private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
@@ -237,7 +243,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok) {
-                    this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response, this._envVars);
+                    this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response, this._envVars.RequestStreamVariables);
                     this.RespViewModel.Show(ok, response, context);
                     _ = this.RespViewModel.SetupDuplexStreamNode(response);
                 }

@@ -9,6 +9,7 @@ using Tefin.Core.Execution;
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
+using Tefin.ViewModels.Types;
 
 #endregion
 
@@ -41,6 +42,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
             this.OnIsShowingServerStreamTreeChanged);
     }
 
+    public List<RequestVariable> ResponseStreamVariables { get; private set; }
     public ListTreeEditorViewModel ServerStreamTreeEditor => this._serverStreamTreeEditor;
     public bool CanRead {
         get => this._canRead;
@@ -76,10 +78,16 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         }
     }
 
+    public override void Init(AllVariableDefinitions envVariables) {
+        this.ResponseVariables = envVariables.ResponseVariables;
+        this.ResponseStreamVariables = envVariables.ResponseStreamVariables;
+        this.ResponseEditor.Init();
+    }
+
     public override void Show(bool ok, object response, Context context) {
         //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
-        this.ServerStreamEditor.Show(stream!, this.EnvVariables.ResponseStreamVariables);
+        this.ServerStreamEditor.Show(stream!, this.ResponseStreamVariables);
     }
 
     private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
@@ -96,7 +104,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list, this.EnvVariables.ResponseStreamVariables);
+            this.ServerStreamEditor.Show(list, this.ResponseStreamVariables);
         }
     }
 
@@ -104,7 +112,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamTreeEditor;
         if (ok) {
-            this.ServerStreamEditor.Show(list, this.EnvVariables.ResponseStreamVariables);
+            this.ServerStreamEditor.Show(list, this.ResponseStreamVariables);
         }
     }
 }

@@ -118,14 +118,14 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             //these variables, which are stored in the request file, do not contain
             //the current value.  Those are in the *.fxv file in client/var folder
             this._envVars = AllVariableDefinitions.From(importResult.ResultValue.Variables);
-            this.ReqViewModel.Init(this._envVars);
+            this.ReqViewModel.Init(this._envVars.RequestVariables);
         }
         else {
             this.Io.Log.Error(importResult.ErrorValue);
         }
     }
 
-    public override void Init() => this.ReqViewModel.Init(this._envVars);
+    public override void Init() => this.ReqViewModel.Init(this._envVars.RequestVariables);
 
     private void OnCanReadChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
 

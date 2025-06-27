@@ -26,7 +26,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
-    private AllVariableDefinitions? _envVars;
+    //private AllVariableDefinitions? _envVars;
 
     public ClientStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree, List<object?>? methodParameterInstances = null)
         : base(methodInfo, cg, generateFullTree, methodParameterInstances) {
@@ -35,14 +35,11 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.EndWriteCommand = this.CreateCommand(this.OnEndWrite);
         this.AddListItemCommand = this.CreateCommand(this.OnAddListItem);
         this.RemoveListItemCommand = this.CreateCommand(this.OnRemoveListItem);
-        
         this._callResponse = ClientStreamingCallResponse.Empty();
-
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._requestItemType = args[0];
         var listType = typeof(List<>);
         this.ListType = listType.MakeGenericType(this._requestItemType);
-
         this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg);
         this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this.ListType, cg);
         this._isShowingClientStreamTree = true;
@@ -72,6 +69,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
+    public List<RequestVariable> RequestVariables { get; set; }
+    public List<RequestVariable> RequestStreamVariables { get; set; }
     public IListEditorViewModel ClientStreamEditor {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
@@ -123,7 +122,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     //     this.IsLoaded = true;
     // }
 
-    public void SetupClientStream(ClientStreamingCallResponse response, AllVariableDefinitions envVars) {
+    public void SetupClientStream(ClientStreamingCallResponse response, List<RequestVariable> requestStreamVariables) {
         this._callResponse = response;
         if (this._clientStreamEditor.GetListItems().Any()) {
             this.CanWrite = true;
@@ -140,8 +139,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             this.Io.Log.Error($"Unable to create an instance for {this._requestItemType}");
         }
 
-        this._envVars = envVars;
-        this._clientStreamEditor.Show(stream!, envVars.RequestStreamVariables);
+        this.RequestStreamVariables = requestStreamVariables;
+        this._clientStreamEditor.Show(stream!, this.RequestStreamVariables);
         this.CanWrite = true;
     }
 
@@ -191,7 +190,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars!.RequestStreamVariables);
+            this.ClientStreamEditor.Show(list, this.RequestStreamVariables);
         }
     }
 
@@ -199,7 +198,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamTreeEditor;
         if (ok) {
-            this.ClientStreamEditor.Show(list, this._envVars!.RequestStreamVariables);
+            this.ClientStreamEditor.Show(list, this.RequestStreamVariables);
         }
     }
 }
