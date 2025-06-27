@@ -37,11 +37,4 @@ public partial class ClientExplorerView : UserControl {
             }
         }
     }
-
-    // private void TreeDgOnTapped(object? sender, TappedEventArgs e) {
-    //     var node = this.TreeDg.RowSelection?.SelectedItem;
-    //     if (node is IExplorerItem item) {
-    //         item.IsSelected = true;
-    //     }
-    // }
 }
