@@ -16,7 +16,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
     private readonly ProjectTypes.ClientGroup _clientGroup;
-    private List<RequestVariable> _variables = [];
+    private List<VarDefinition> _variables = [];
 
     public TreeResponseEditorViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup) {
         this._clientGroup = clientGroup;
@@ -71,7 +71,7 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
 
     public void Init() => this.Items.Clear();
 
-    public void Show(object? resp, List<RequestVariable> variables, Type? responseType) {
+    public void Show(object? resp, List<VarDefinition> variables, Type? responseType) {
         this.Items.Clear();
         if (responseType == null) {
             return;

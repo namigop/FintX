@@ -44,7 +44,7 @@ public class UnaryRespViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
     
-    public List<RequestVariable> ResponseVariables { get; set; }
+    public List<VarDefinition> ResponseVariables { get; set; }
     public void Init(AllVariableDefinitions envVariables) {
         this.ResponseVariables = envVariables.ResponseVariables;
         this.ResponseEditor.Init();

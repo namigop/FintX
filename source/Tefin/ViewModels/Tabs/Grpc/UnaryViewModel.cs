@@ -77,7 +77,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0]; 
         var requestVariables = methodInfoNode.Variables;
         
-        List<RequestVariable> responseVariables;
+        List<VarDefinition> responseVariables;
         if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
             responseVariables = respNode.Variables;
         }

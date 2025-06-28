@@ -74,7 +74,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
                 var requestVariables = methodInfoNode.Variables;
 
-                List<RequestVariable> responseVariables;
+                List<VarDefinition> responseVariables;
                 if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                     responseVariables = respNode.Variables;
                 }
@@ -82,7 +82,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                     responseVariables = this._envVars.ResponseVariables;
                 }
                
-                List<RequestVariable> requestStreamVariables;
+                List<VarDefinition> requestStreamVariables;
                 if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                     requestStreamVariables = rs.Variables;
                 }
@@ -167,7 +167,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
             var requestVariables = methodInfoNode.Variables;
                
-            List<RequestVariable> responseVariables;
+            List<VarDefinition> responseVariables;
             if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                 responseVariables = respNode.Variables;
             }
@@ -175,7 +175,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 responseVariables = this._envVars.ResponseVariables;
             }
             
-            List<RequestVariable> requestStreamVariables;
+            List<VarDefinition> requestStreamVariables;
             if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                 requestStreamVariables = rs.Variables;
             }

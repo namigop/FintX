@@ -5,7 +5,7 @@ namespace Tefin.Features;
 
 public class RemoveEnvVarsFeature() {
 
-    public void Remove(RequestVariable v, string clientPath, string currentEnv, IOs io) {
+    public void Remove(VarDefinition v, string clientPath, string currentEnv, IOs io) {
         var load = new LoadEnvVarsFeature();
         if (v.Scope == RequestEnvVarScope.Client) {
             var (envFile, envConfigData) = load.LoadClientEnvVarsForEnv(clientPath, io, currentEnv);

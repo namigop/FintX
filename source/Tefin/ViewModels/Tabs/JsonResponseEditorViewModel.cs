@@ -48,7 +48,7 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
 
     public void Init() => this.Json = "";
 
-    public void Show(object? resp, List<RequestVariable> variables, Type? responseType) {
+    public void Show(object? resp, List<VarDefinition> variables, Type? responseType) {
         if (responseType != null) {
             this.ResponseType = responseType;
             this.Json = Instance.indirectSerialize(this.ResponseType, resp);

@@ -42,7 +42,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
             this.OnIsShowingServerStreamTreeChanged);
     }
 
-    public List<RequestVariable> ResponseStreamVariables { get; private set; }
+    public List<VarDefinition> ResponseStreamVariables { get; private set; }
     public ListTreeEditorViewModel ServerStreamTreeEditor => this._serverStreamTreeEditor;
     public bool CanRead {
         get => this._canRead;

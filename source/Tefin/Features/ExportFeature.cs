@@ -16,13 +16,13 @@ using static Tefin.Core.Utils;
 namespace Tefin.Features;
 
 public class ExportFeature(MethodInfo methodInfo, object?[] methodsParams, 
-    List<RequestVariable> requestVariables,
-    List<RequestVariable> responseVariables,
-    List<RequestVariable> requestStreamVariables,
-    List<RequestVariable> responseStreamVariables,
+    List<VarDefinition> requestVariables,
+    List<VarDefinition> responseVariables,
+    List<VarDefinition> requestStreamVariables,
+    List<VarDefinition> responseStreamVariables,
     object? responseStream = null) {
     public FSharpResult<string, Exception> Export() {
-       static List<RequestEnvVar> Convert(List<RequestVariable> variables) {
+       static List<RequestEnvVar> Convert(List<VarDefinition> variables) {
             return variables
                 .DistinctBy(v => v.JsonPath)
                 .Select(v =>

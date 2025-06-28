@@ -23,7 +23,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
     private static Type[] ActualTypes = SystemType.getTypes().ToArray();
     
     private string _json = "";
-    private List<RequestVariable> _envVars = [];
+    private List<VarDefinition> _envVars = [];
 
     public string Json {
         get => this._json;
@@ -87,7 +87,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         return (false, []);
     }
 
-    public void Show(object?[] parameters, List<RequestVariable> envVars, ProjectTypes.ClientGroup clientGroup) {
+    public void Show(object?[] parameters, List<VarDefinition> envVars, ProjectTypes.ClientGroup clientGroup) {
         if (this._envVars.Count == 0)
             this._envVars = envVars;
 
@@ -100,7 +100,6 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
                 return inst;
             }).ToArray();
         }
-
       
         var json = DynamicTypes.toJsonRequest(SerParam.Create(this.MethodInfo, parameters));
         if (json.IsOk) {

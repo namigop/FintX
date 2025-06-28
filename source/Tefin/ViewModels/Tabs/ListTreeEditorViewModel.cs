@@ -94,13 +94,17 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     public (bool, object) GetList() => (true, this._listInstance);
 
     public IEnumerable<object> GetListItems() {
+        if (this.StreamItems.Count > 0 && this.StreamItems[0] is ResponseStreamNode rs) {
+            rs.TryUpdateTemplatedChildNodes(this.Io);
+        }
+        
         dynamic list = this._listInstance;
         foreach (var i in list) {
             yield return i;
         }
     }
 
-    public void Show(object listInstance, List<RequestVariable> streamVariables) {
+    public void Show(object listInstance, List<VarDefinition> streamVariables) {
         /*  Tree Structure is
             - ResponseStreamNode //List
                - DefaultNode //ListItem

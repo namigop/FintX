@@ -59,8 +59,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
-    public List<RequestVariable> RequestVariables { get; set; }
-    public List<RequestVariable> RequestStreamVariables { get; set; }
+    public List<VarDefinition> RequestVariables { get; set; }
+    public List<VarDefinition> RequestStreamVariables { get; set; }
     public bool CanWrite {
         get => this._canWrite;
         private set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
@@ -108,7 +108,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     // public override void ImportRequestFile(string file) => GrpcUiUtils.ImportRequest(this.RequestEditor,
     //     this.ClientStreamEditor, this.EnvVariables, this.ListType, this.MethodInfo, this._clientGroup, file, this.Io);
 
-    public void SetupDuplexStream(DuplexStreamingCallResponse response, List<RequestVariable> requestStreamVariables) {
+    public void SetupDuplexStream(DuplexStreamingCallResponse response, List<VarDefinition> requestStreamVariables) {
         this._callResponse = response;
         if (this._clientStreamEditor.GetListItems().Any()) {
             this.CanWrite = true;

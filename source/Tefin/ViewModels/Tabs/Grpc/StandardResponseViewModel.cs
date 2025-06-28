@@ -44,7 +44,7 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-    public List<RequestVariable> ResponseVariables { get; protected set; }
+    public List<VarDefinition> ResponseVariables { get; protected set; }
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         var response = await completeRead();
         responseType = response?.GetType() ?? responseType;

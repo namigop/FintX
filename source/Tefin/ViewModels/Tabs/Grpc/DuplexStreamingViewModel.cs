@@ -77,7 +77,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
                 var requestVariables = methodInfoNode.Variables;
                
-                List<RequestVariable> responseVariables;
+                List<VarDefinition> responseVariables;
                 if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                     responseVariables = respNode.Variables;
                 }
@@ -85,7 +85,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                     responseVariables = this._envVars.ResponseVariables;
                 }
                
-                List<RequestVariable> requestStreamVariables;
+                List<VarDefinition> requestStreamVariables;
                 if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                     requestStreamVariables = rs.Variables;
                 }
@@ -93,7 +93,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                     requestStreamVariables = this._envVars.RequestStreamVariables;
                 }
             
-                List<RequestVariable> responseStreamVariables;
+                List<VarDefinition> responseStreamVariables;
                 if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
                     responseStreamVariables = respStream.Variables;
                 }
@@ -177,7 +177,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
             var requestVariables = methodInfoNode.Variables;
   
-            List<RequestVariable> responseVariables;
+            List<VarDefinition> responseVariables;
             if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                 responseVariables = respNode.Variables;
             }
@@ -185,7 +185,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 responseVariables = this._envVars.ResponseVariables;
             }
                
-            List<RequestVariable> requestStreamVariables;
+            List<VarDefinition> requestStreamVariables;
             if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
                 requestStreamVariables = rs.Variables;
             }
@@ -193,7 +193,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 requestStreamVariables = this._envVars.RequestStreamVariables;
             }
             
-            List<RequestVariable> responseStreamVariables;
+            List<VarDefinition> responseStreamVariables;
             if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
                 responseStreamVariables = respStream.Variables;
             }

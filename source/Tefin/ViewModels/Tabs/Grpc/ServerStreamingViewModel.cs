@@ -75,7 +75,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
             var requestVariables = methodInfoNode.Variables;
 
-            List<RequestVariable> responseVariables;
+            List<VarDefinition> responseVariables;
             if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                 responseVariables = respNode.Variables;
             }
@@ -83,7 +83,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                 responseVariables = this._envVars.ResponseVariables;
             }
 
-            List<RequestVariable> responseStreamVariables;
+            List<VarDefinition> responseStreamVariables;
             if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
                 responseStreamVariables = respStream.Variables;
             }

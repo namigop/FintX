@@ -69,8 +69,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
-    public List<RequestVariable> RequestVariables { get; set; }
-    public List<RequestVariable> RequestStreamVariables { get; set; }
+    public List<VarDefinition> RequestVariables { get; set; }
+    public List<VarDefinition> RequestStreamVariables { get; set; }
     public IListEditorViewModel ClientStreamEditor {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
@@ -122,7 +122,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     //     this.IsLoaded = true;
     // }
 
-    public void SetupClientStream(ClientStreamingCallResponse response, List<RequestVariable> requestStreamVariables) {
+    public void SetupClientStream(ClientStreamingCallResponse response, List<VarDefinition> requestStreamVariables) {
         this._callResponse = response;
         if (this._clientStreamEditor.GetListItems().Any()) {
             this.CanWrite = true;

@@ -160,7 +160,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         if (!saveEnvVariable)
             return;
         
-        currentVar = new RequestVariable() {
+        currentVar = new VarDefinition() {
             Tag = envTag,
             TypeName = this._node.Type.FullName!,
             JsonPath = jsonPath,
@@ -173,6 +173,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         var load = new LoadEnvVarsFeature();
         var existing = load.FindEnvVar(nodeContainerVar.ClientPath, Current.Env, currentVar.Tag, this.Io);
         if (existing != null) {
+            //there is already an existing variable with this tag so don't create a new one
             var currentInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
             this._enVarValue = currentInst;
             return;
@@ -212,8 +213,8 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
 
 
-public class NodeContainerVar(List<RequestVariable> requestVariables, string clientPath) {
-    public List<RequestVariable> Variables { get; set; } = requestVariables;
+public class NodeContainerVar(List<VarDefinition> requestVariables, string clientPath) {
+    public List<VarDefinition> Variables { get; set; } = requestVariables;
     public string ClientPath { get; set; } = clientPath;
 
     public static NodeContainerVar FromMethodInfoNode(MethodInfoNode m) {

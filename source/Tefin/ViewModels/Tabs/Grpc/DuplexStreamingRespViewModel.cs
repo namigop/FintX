@@ -61,7 +61,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
 
-    public List<RequestVariable> ResponseStreamVariables { get; private set; }
+    public List<VarDefinition> ResponseStreamVariables { get; private set; } = [];
     public Task? ResponseCompletedTask { get; private set; }
 
     public override void Init(AllVariableDefinitions envVariables) {

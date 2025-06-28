@@ -1,13 +1,105 @@
 ﻿using Tefin.Core;
+using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Types;
 
 public static class NodeUtils {
-    public static void InitVariableNodes(this IExplorerItem root, List<RequestVariable> reqVars, string clientPath, IOs io) {
-        if (reqVars == null)
+
+    public static void TryUpdateTemplatedChildNodes(this MethodInfoNode root, IOs io) {
+        root.TryUpdateTemplatedChildNodes(root.ClientGroup.Path, root.Variables, io);
+    }
+    
+    public static void TryUpdateTemplatedChildNodes(this ResponseStreamNode root, IOs io) {
+        root.TryUpdateTemplatedChildNodes(root.ClientPath, root.Variables, io);
+    }
+    
+    public static void TryUpdateTemplatedChildNodes(this ResponseNode root, IOs io) {
+        root.TryUpdateTemplatedChildNodes(root.ClientPath, root.Variables, io);
+    }
+    
+    public static void TryUpdateTemplatedChildNodes(this IExplorerItem root, string clientPath, List<VarDefinition> variables, IOs io ) {
+        if (variables.Count == 0 )
             return;
+        var envFile = Current.EnvFilePath;
+        if (string.IsNullOrWhiteSpace(envFile))
+            return;
+        
+        var templatedNodes =
+            root.FindChildNodes(n => {
+                if (n is SystemNode sn) 
+                    return !string.IsNullOrWhiteSpace(sn.EnvVar.EnvVarTag);
+                if (n is TimestampNode tn) 
+                    return !string.IsNullOrWhiteSpace(tn.EnvVar.EnvVarTag);
+                return false;
+            })
+            .Select(n => new 
+            {   IsSystemNode = n is SystemNode, 
+                SystemNode = n as SystemNode,
+                TimestampNode = n as TimestampNode,
+                ((TypeBaseNode)n).Type
+            })
+            .ToArray();
+
+        var load = new LoadEnvVarsFeature();
+        foreach (var node in templatedNodes) {
+            var envVar = load.FindEnvVar(
+                clientPath,
+                Current.Env, 
+                node.IsSystemNode ? node!.SystemNode.EnvVar.EnvVarTag :  node.TimestampNode.EnvVar.EnvVarTag,
+                io);
+            if (envVar == null)
+                continue;
+            
+            var value = GetValueOrDefault(envVar.CurrentValue, envVar.DefaultValue, node.Type, io);
+            if (node.IsSystemNode)
+                node.SystemNode.Value = value;
+            else
+                node.TimestampNode.Value = value;
+        }
+        
+        //
+        //
+        // var envVars = VarsStructure.getVarsForProject(io, Current.ProjectPath);
+        // var current = envVars.Variables.FirstOrDefault(t => t.Item1 == Current.EnvFilePath);
+        // if (current == null)
+        //     return;
+        //
+        // foreach (var node in templatedNodes) {
+        //     foreach (var v in current.Item2.Variables) {
+        //         var tagName = v.Name;
+        //         if (node.EnvVar.EnvVarTag == tagName) {
+        //             var varValue = GetValueOrDefault(v.CurrentValue, v.DefaultValue, node.Type, io);
+        //             node.Value = varValue;
+        //             break;
+        //             //node.Value = v.Value;
+        //         }
+        //
+        //     }
+        // }
+
+        static object GetValueOrDefault(string vCurrentValue, string vDefaultValue, Type actualType, IOs io) {
+            try {
+                var cur = TypeHelper.indirectCast(vCurrentValue, actualType);
+                if (cur != null)
+                    return cur;
+
+                var def = TypeHelper.indirectCast(vDefaultValue, actualType);
+                if (def != null)
+                    return def;
+
+                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
+            }
+            catch (Exception exc) {
+                io.Log.Warn($"Unable get value for env variable. Exception: {exc}");
+                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
+            }
+
+        }
+    }
+    public static void InitVariableNodes(this IExplorerItem root, List<VarDefinition> reqVars, string clientPath, IOs io) {
+       
         
         //----------------------------------
         //setup the templated {{TAG}} nodes

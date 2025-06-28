@@ -23,7 +23,7 @@ public class UnaryReqViewModel : ViewModelBase {
     //private object?[] _methodParameterInstances;
     private IRequestEditorViewModel _requestEditor;
     private bool _showTreeEditor;
-    private List<RequestVariable> _requestVariables = [];
+    private List<VarDefinition> _requestVariables = [];
 
     public UnaryReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup, bool generateFullTree, List<object?>? methodParameterInstances = null) {
         this._clientGroup = clientGroup;
@@ -62,7 +62,7 @@ public class UnaryReqViewModel : ViewModelBase {
     public (bool, object?[]) GetMethodParameters() => this.RequestEditor.GetParameters();
     
 
-    public void Init(List<RequestVariable> requestVariables) {
+    public void Init(List<VarDefinition> requestVariables) {
         this._requestVariables = requestVariables;
         this.MethodParameterInstances = this.IsLoaded ? this.GetMethodParameters().Item2 : this.MethodParameterInstances;
         this._requestEditor.Show(this.MethodParameterInstances, this._requestVariables, this._clientGroup);

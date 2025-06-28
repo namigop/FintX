@@ -19,10 +19,10 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
     public static async Task ExportRequest(object?[] mParams,
-        List<RequestVariable> requestVariables, 
-        List<RequestVariable> responseVariables,
-        List<RequestVariable> requestStreamVariables,
-        List<RequestVariable> responseStreamVariables,
+        List<VarDefinition> requestVariables, 
+        List<VarDefinition> responseVariables,
+        List<VarDefinition> requestStreamVariables,
+        List<VarDefinition> responseStreamVariables,
         object reqStream,
         MethodInfo methodInfo,
         IOs io) {
@@ -72,8 +72,8 @@ public static class GrpcUiUtils {
         string file,
         IOs io) {
 
-        static List<RequestVariable> Convert(List<RequestEnvVar> requestEnvVars) {
-            return requestEnvVars.Select(t => new RequestVariable() {
+        static List<VarDefinition> Convert(List<RequestEnvVar> requestEnvVars) {
+            return requestEnvVars.Select(t => new VarDefinition() {
                     Tag = t.Tag,
                     JsonPath = t.JsonPath,
                     TypeName = SystemType.getActualType(t.Type), 

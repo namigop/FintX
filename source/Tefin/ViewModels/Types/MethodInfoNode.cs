@@ -14,7 +14,7 @@ namespace Tefin.ViewModels.Types;
 
 public sealed class MethodInfoNode : TypeRootNode {
    
-    public MethodInfoNode(MethodInfo mi, ProjectTypes.ClientGroup cg, List<RequestVariable> variables) : base(cg, variables){
+    public MethodInfoNode(MethodInfo mi, ProjectTypes.ClientGroup cg, List<VarDefinition> variables) : base(cg, variables){
         this.IsExpanded = true;
         this.CanOpen = true;
         this.Title = mi.Name;
@@ -24,53 +24,5 @@ public sealed class MethodInfoNode : TypeRootNode {
  
     public override void Init() {
     }
-    public void TryUpdateTemplatedChildNodes() {
-        if (this.Variables.Count == 0 )
-            return;
-        
-        var templatedNodes =
-            this.FindChildNodes(n => n is SystemNode sn && !string.IsNullOrWhiteSpace(sn.EnvVar.EnvVarTag))
-                .Cast<SystemNode>();
-
-        var envFile = Current.EnvFilePath;
-        if (string.IsNullOrWhiteSpace(envFile))
-            return;
-
-        var envVars = VarsStructure.getVarsForProject(this.Io, Current.ProjectPath);
-        var current = envVars.Variables.FirstOrDefault(t => t.Item1 == Current.EnvFilePath);
-        if (current == null)
-            return;
-
-        foreach (var node in templatedNodes) {
-            foreach (var v in current.Item2.Variables) {
-                var tagName = v.Name;
-                if (node.EnvVar.EnvVarTag == tagName) {
-                    var varValue = GetValueOrDefault2(v.CurrentValue, v.DefaultValue, node.Type, this.Io);
-                    node.Value = varValue;
-                    break;
-                    //node.Value = v.Value;
-                }
-
-            }
-        }
-
-        static object GetValueOrDefault2(string vCurrentValue, string vDefaultValue, Type actualType, IOs io) {
-            try {
-                var cur = TypeHelper.indirectCast(vCurrentValue, actualType);
-                if (cur != null)
-                    return cur;
-
-                var def = TypeHelper.indirectCast(vDefaultValue, actualType);
-                if (def != null)
-                    return def;
-
-                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
-            }
-            catch (Exception exc) {
-                io.Log.Warn($"Unable get value for env variable. Exception: {exc}");
-                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
-            }
-
-        }
-    }
+    
 }

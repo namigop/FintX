@@ -23,7 +23,7 @@ using TypeInfo = Tefin.ViewModels.Types.TypeInfo;
 namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
-    private List<RequestVariable> _reqVars = [];
+    private List<VarDefinition> _reqVars = [];
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -67,7 +67,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         /* check for nodes with env tag and update the value of
          *  the node with the env variable  */
         if (this.Items[0] is MethodInfoNode mn)
-            mn.TryUpdateTemplatedChildNodes();
+            mn.TryUpdateTemplatedChildNodes(this.Io);
         
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
@@ -83,7 +83,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         return (mParams.Any(), mParams);
     }
     
-    public void Show(object?[] parameters, List<RequestVariable> reqVars, ProjectTypes.ClientGroup clientGroup) {
+    public void Show(object?[] parameters, List<VarDefinition> reqVars, ProjectTypes.ClientGroup clientGroup) {
         if (this._reqVars.Count == 0)
             this._reqVars = reqVars;
         
