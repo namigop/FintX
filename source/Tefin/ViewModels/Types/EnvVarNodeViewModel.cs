@@ -121,13 +121,11 @@ public class EnvVarNodeViewModel : ViewModelBase {
             var parent = node.FindParentNode<NodeBase>(t => t.Parent == null);
             if (parent is MethodInfoNode m)
                 return NodeContainerVar.FromMethodInfoNode(m);
-            else if (parent is ResponseNode r)
+            if (parent is ResponseNode r)
                 return NodeContainerVar.FromResponseNode(r);
-            else if (parent is ResponseStreamNode rs)
+            if (parent is ResponseStreamNode rs)
                 return NodeContainerVar.FromResponseStreamNode(rs);
-            else {
-                throw new ArgumentException("Invalid parent node type");
-            }
+            throw new ArgumentException("Invalid parent node type");
 
         }
         
@@ -161,7 +159,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
         if (!saveEnvVariable)
             return;
-
+        
         currentVar = new RequestVariable() {
             Tag = envTag,
             TypeName = this._node.Type.FullName!,
@@ -172,6 +170,14 @@ public class EnvVarNodeViewModel : ViewModelBase {
         this.IsEnvVarTagCreated = true;
 
 
+        var load = new LoadEnvVarsFeature();
+        var existing = load.FindEnvVar(nodeContainerVar.ClientPath, Current.Env, currentVar.Tag, this.Io);
+        if (existing != null) {
+            var currentInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
+            this._enVarValue = currentInst;
+            return;
+        }
+        
         var saveEnv = new SaveEnvVarsFeature();
         var strValue = this._enVarValue?.ToString() ?? "";
         if (this._enVarValue is Timestamp timestamp) {

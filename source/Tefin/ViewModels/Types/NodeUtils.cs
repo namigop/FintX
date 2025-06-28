@@ -6,6 +6,9 @@ namespace Tefin.ViewModels.Types;
 
 public static class NodeUtils {
     public static void InitVariableNodes(this IExplorerItem root, List<RequestVariable> reqVars, string clientPath, IOs io) {
+        if (reqVars == null)
+            return;
+        
         //----------------------------------
         //setup the templated {{TAG}} nodes
         //----------------------------------

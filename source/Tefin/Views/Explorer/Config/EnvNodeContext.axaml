@@ -36,6 +36,14 @@
                 <TextBlock Text="Open in a window" />
             </StackPanel>
         </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenFilePathCommand}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                ToolTip.Tip="Open file location">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.FolderOpen}" />
+                <TextBlock Text="Open file location" />
+            </StackPanel>
+        </Button>
         <Separator Classes="Horizontal" Width="200" />
 
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding RenameCommand}"
