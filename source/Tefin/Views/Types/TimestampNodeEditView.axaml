@@ -28,6 +28,22 @@
                    Foreground="WhiteSmoke" />
         <TextBlock Text="{Binding FormattedTypeName}" Margin="6 0 0 0" Classes="SubTitle" />
 
-        <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" />
+        <!-- <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" /> -->
+        <!-- -->
+        
+        <Grid>
+            <SelectableTextBlock IsVisible="{Binding EnvVar.IsEnvVarTagVisible}"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding EnvVar.EnvVarTag}">
+            </SelectableTextBlock>
+
+            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" 
+                     IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}"
+                     />
+
+            
+        </Grid>
+        
+        
     </StackPanel>
 </UserControl>

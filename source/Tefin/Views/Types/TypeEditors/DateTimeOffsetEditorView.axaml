@@ -8,10 +8,10 @@
              x:Class="Tefin.Views.Types.TypeEditors.DateTimeOffsetEditorView">
     <Border x:Name="MainBorder">
         <Grid>
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+            <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
                      VerticalAlignment="Center"
                      Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </TextBox>
+            </SelectableTextBlock>
 
             <TextBox
                 IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}"

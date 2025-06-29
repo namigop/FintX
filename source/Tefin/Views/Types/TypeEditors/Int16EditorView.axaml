@@ -9,10 +9,10 @@
              x:Class="Tefin.Views.Types.TypeEditors.Int16EditorView">
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
-                     VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </TextBox>
+            <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
+            </SelectableTextBlock>
 
             <controls:Number Value="{Binding TempValue, Mode=TwoWay}"
                              IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}"

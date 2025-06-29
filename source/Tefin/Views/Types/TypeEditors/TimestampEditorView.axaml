@@ -21,10 +21,10 @@
     <!-- </Border> -->
     <Border x:Name="MainBorder" x:CompileBindings="False">
         <Grid>
-            <TextBox IsVisible="{Binding Node.EnvVar.IsEnvVarTagVisible}"
-                     VerticalAlignment="Center"
-                     Text="{Binding Node.EnvVar.EnvVarTag}">
-            </TextBox>
+            <SelectableTextBlock IsVisible="{Binding Node.EnvVar.IsEnvVarTagVisible}"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding Node.EnvVar.EnvVarTag}">
+            </SelectableTextBlock>
 
             <Grid IsVisible="{Binding !Node.EnvVar.IsEnvVarTagVisible}">
                 <TextBox Text="{Binding Node.DateTimeText}" x:Name="TextBox" />

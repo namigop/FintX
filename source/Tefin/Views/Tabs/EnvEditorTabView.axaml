@@ -53,26 +53,34 @@
                     <DataGridTemplateColumn Header="Current Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding CurrentValueEditor.FormattedValue}" Margin="8 6 8 6"></TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
                                 <ContentControl Content="{Binding CurrentValueEditor}" Margin="8 6 8 6">
                                     <ContentControl.DataTemplates>
                                         <viewModels:TypeEditorLocator />
                                     </ContentControl.DataTemplates>
                                 </ContentControl>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Default Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentControl Content="{Binding DefaultValueEditor}" 
-                                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch"
-                                                Margin="8 6 8 6">
+                                <TextBlock VerticalAlignment="Center" Text="{Binding DefaultValueEditor.FormattedValue}" Margin="8 6 8 6"></TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding DefaultValueEditor}" Margin="8 6 8 6">
                                     <ContentControl.DataTemplates>
                                         <viewModels:TypeEditorLocator />
                                     </ContentControl.DataTemplates>
                                 </ContentControl>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
                     
                     <DataGridTemplateColumn Header="Data Type">

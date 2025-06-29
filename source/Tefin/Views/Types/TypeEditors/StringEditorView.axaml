@@ -9,10 +9,10 @@
 
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
-                     VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </TextBox>
+            <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+                                 VerticalAlignment="Center"
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
+            </SelectableTextBlock>
 
             <Grid ColumnDefinitions="*,auto"  IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <TextBox x:Name="TextBox"
@@ -22,7 +22,9 @@
                          Text="{Binding TempValue}"
                          IsEnabled="{Binding !IsNull}"
                          x:CompileBindings="False" />
-                <CheckBox Grid.Column="1" Margin="6 0 0 0" IsChecked="{Binding IsNull}" Content="null" />
+                <CheckBox Grid.Column="1" Margin="6 0 0 0" IsChecked="{Binding IsNull}" 
+                          Foreground="{StaticResource Bym.Color.DefaultTextColor}"
+                          Content="null" />
             </Grid>
         </Grid>
     </Border>

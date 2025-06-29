@@ -8,10 +8,10 @@
              x:Class="Tefin.Views.Types.TypeEditors.BoolEditorView">
     <Border x:Name="MainBorder">
         <Grid>
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+            <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
                      VerticalAlignment="Center"
                      Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </TextBox>
+            </SelectableTextBlock>
 
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <ToggleSwitch IsChecked="{Binding TempValue, Mode=TwoWay}"

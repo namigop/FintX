@@ -8,20 +8,23 @@
              x:Class="Tefin.Views.Types.TypeEditors.NullableDateTimeEditorView">
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
-            <TextBox IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
+            <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
 
-                     VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </TextBox>
+                                 VerticalAlignment="Center"
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
+            </SelectableTextBlock>
 
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->
                 <!-- <TimePicker SelectedTime="{Binding TimeValue}"></TimePicker> -->
                 <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"
                          IsEnabled="{Binding !IsNull}" />
-                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}" Content="utc" />
-                <Border Width="2" Margin="6" Background="WhiteSmoke" />
+                <CheckBox Margin="6 0 0 0" IsChecked="{Binding IsUtc}"
+                          Foreground="{StaticResource Bym.Color.DefaultTextColor}"
+                          Content="utc" />
+                <Border Width="2" Margin="6" Background="{StaticResource Bym.Color.DefaultTextColor}" />
                 <CheckBox Margin="0 0 0 0" IsChecked="{Binding IsNull}" Content="null"
+                          Foreground="{StaticResource Bym.Color.DefaultTextColor}"
                           IsVisible="{Binding AcceptsNull}" />
             </StackPanel>
         </Grid>

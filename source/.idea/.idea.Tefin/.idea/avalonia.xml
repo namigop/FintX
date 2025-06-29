@@ -66,11 +66,13 @@
         <entry key="Tefin/Views/Tabs/TabHostView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TreeRequestEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/EnumNodeEditView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/EnumNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TimestampNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TimestampNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/BoolEditorView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/TypeEditors/CancellationTokenEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/DateTimeEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/DateTimeOffsetEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/TypeEditors/DecimalEditorView.axaml" value="Tefin/Tefin.csproj" />
