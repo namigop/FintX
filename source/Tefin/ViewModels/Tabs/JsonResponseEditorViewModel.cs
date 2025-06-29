@@ -13,6 +13,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase, IResponseEditorViewModel {
     private string _json = "";
+    private List<VarDefinition> _responseVariables = [];
 
     public string Json {
         get => this._json;
@@ -26,8 +27,9 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         private set;
     }
 
-    public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
+    public async Task Complete(Type responseType, Func<Task<object>> completeRead, List<VarDefinition> responseVariables) {
         try {
+            this._responseVariables = responseVariables;
             this.ResponseType = responseType;
             var resp = await completeRead();
             this.Json = Instance.indirectSerialize(responseType, resp);

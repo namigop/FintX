@@ -16,7 +16,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewModel {
     private readonly ProjectTypes.ClientGroup _clientGroup;
-    private List<VarDefinition> _variables = [];
+    private List<VarDefinition> _responseVariables = [];
 
     public TreeResponseEditorViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup clientGroup) {
         this._clientGroup = clientGroup;
@@ -42,13 +42,15 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         private set;
     }
 
-    public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
+    public async Task Complete(Type responseType, Func<Task<object>> completeRead, List<VarDefinition> responseVariables) {
         this.Items.Clear();
+        this._responseVariables = responseVariables;
         try {
             this.ResponseType = responseType;
             var resp = await completeRead();
-            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null, this._variables, this._clientGroup.Path);
+            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null, this._responseVariables, this._clientGroup.Path);
             node.Init();
+            node.InitVariableNodes(this._responseVariables, this._clientGroup.Path, this.Io);
             this.Items.Add(node);
         }
         catch (Exception ecx) {
@@ -78,11 +80,11 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         }
 
         try {
-            this._variables = variables;
+            this._responseVariables = variables;
             this.ResponseType = responseType;
-            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._variables, this._clientGroup.Path);
+            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._responseVariables, this._clientGroup.Path);
             node.Init();
-            node.InitVariableNodes(this._variables, this._clientGroup.Path, this.Io);
+            node.InitVariableNodes(this._responseVariables, this._clientGroup.Path, this.Io);
             this.Items.Add(node);
         }
         catch (Exception ecx) {

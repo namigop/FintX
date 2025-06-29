@@ -54,31 +54,11 @@ public static class NodeUtils {
             
             var value = GetValueOrDefault(envVar.CurrentValue, envVar.DefaultValue, node.Type, io);
             if (node.IsSystemNode)
-                node.SystemNode.Value = value;
+                node.SystemNode!.Value = value;
             else
                 node.TimestampNode.Value = value;
         }
         
-        //
-        //
-        // var envVars = VarsStructure.getVarsForProject(io, Current.ProjectPath);
-        // var current = envVars.Variables.FirstOrDefault(t => t.Item1 == Current.EnvFilePath);
-        // if (current == null)
-        //     return;
-        //
-        // foreach (var node in templatedNodes) {
-        //     foreach (var v in current.Item2.Variables) {
-        //         var tagName = v.Name;
-        //         if (node.EnvVar.EnvVarTag == tagName) {
-        //             var varValue = GetValueOrDefault(v.CurrentValue, v.DefaultValue, node.Type, io);
-        //             node.Value = varValue;
-        //             break;
-        //             //node.Value = v.Value;
-        //         }
-        //
-        //     }
-        // }
-
         static object GetValueOrDefault(string vCurrentValue, string vDefaultValue, Type actualType, IOs io) {
             try {
                 var cur = TypeHelper.indirectCast(vCurrentValue, actualType);
@@ -99,13 +79,11 @@ public static class NodeUtils {
         }
     }
     public static void InitVariableNodes(this IExplorerItem root, List<VarDefinition> reqVars, string clientPath, IOs io) {
-       
         
         //----------------------------------
         //setup the templated {{TAG}} nodes
         //----------------------------------
         var load = new LoadEnvVarsFeature();
-        //var methodInfoNode = (MethodInfoNode)this.Items[0];
         foreach (var reqVar in reqVars) {
             var envVar = load.FindEnvVar(clientPath, Current.Env, reqVar.Tag, io);
             if (envVar is null)
@@ -130,7 +108,7 @@ public static class NodeUtils {
             }
 
             if (node is TimestampNode tsNode) {
-                tsNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath);
+                tsNode.EnvVar.CreateEnvVariable(reqVar.Tag, reqVar.JsonPath, envVar?.CurrentValue);
             }
         }
     }

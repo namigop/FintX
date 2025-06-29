@@ -95,40 +95,38 @@ public class EnvVarNodeViewModel : ViewModelBase {
 
     private void OnCancelEnvVariable() {
         this.EnvVarTag = this._ogTag;
-    } 
-    
+    }
+
     private void OnRemoveEnvVariable() {
         this.EnvVarTag = "";
         this._ogTag = "";
-        var methodInfoNode = this._node.FindParentNode<MethodInfoNode>();
-        if (methodInfoNode != null) {
-            var jsonPath = this._node.GetJsonPath();
-            var removeEnv = new RemoveEnvVarsFeature();
-            var currentVar = methodInfoNode.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
-            if (currentVar != null) {
-                //remove from the variables. Auto-save will take care of saving the .fxrq file
-                methodInfoNode.Variables.Remove(currentVar);
-                //removeEnv.Remove(currentVar, methodInfoNode.ClientGroup.Path, Current.Env, this.Io);
-            }
+        var nodeContainerVar = GetNodeContainerVar(this._node);
+        var jsonPath = this._node.GetJsonPath();
+        var removeEnv = new RemoveEnvVarsFeature();
+        var currentVar = nodeContainerVar.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
+        if (currentVar != null) {
+            //remove from the variables. Auto-save will take care of saving the .fxrq file
+            nodeContainerVar.Variables.Remove(currentVar);
         }
+
+    }
+
+    private static NodeContainerVar GetNodeContainerVar(NodeBase node) {
+        var parent = node.FindParentNode<NodeBase>(t => t.Parent == null);
+        if (parent is MethodInfoNode m)
+            return NodeContainerVar.FromMethodInfoNode(m);
+        if (parent is ResponseNode r)
+            return NodeContainerVar.FromResponseNode(r);
+        if (parent is ResponseStreamNode rs)
+            return NodeContainerVar.FromResponseStreamNode(rs);
+        throw new ArgumentException("Invalid parent node type");
+
     }
 
     public void CreateEnvVariable(string tag, string jsonPath, string? currentValue = null) {
         ArgumentException.ThrowIfNullOrWhiteSpace(tag);
         ArgumentException.ThrowIfNullOrWhiteSpace(jsonPath);
-        
-        static NodeContainerVar GetNodeContainerVar(NodeBase node) {
-            var parent = node.FindParentNode<NodeBase>(t => t.Parent == null);
-            if (parent is MethodInfoNode m)
-                return NodeContainerVar.FromMethodInfoNode(m);
-            if (parent is ResponseNode r)
-                return NodeContainerVar.FromResponseNode(r);
-            if (parent is ResponseStreamNode rs)
-                return NodeContainerVar.FromResponseStreamNode(rs);
-            throw new ArgumentException("Invalid parent node type");
 
-        }
-        
         tag = tag.Replace("{", "").Replace("}", "");
         this.EnvVarTag = tag;
         this._ogTag = tag;
@@ -139,66 +137,49 @@ public class EnvVarNodeViewModel : ViewModelBase {
         var nodeContainerVar = GetNodeContainerVar(this._node); // this._node.FindParentNode<NodeBase>(t => t.Parent == null);  
         var envTag = this.EnvVarTag.ToUpperInvariant();
         var currentVar = nodeContainerVar.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
-        var saveEnvVariable = false;
-        if (currentVar != null) {
-            if (currentVar.Tag != envTag) {
-                //If a new tag is created with the same json path, we have to remove the old one
-                nodeContainerVar.Variables.Remove(currentVar);
-                var removeEnv = new RemoveEnvVarsFeature();
-                removeEnv.Remove(currentVar, nodeContainerVar.ClientPath, Current.Env, this.Io);
-                saveEnvVariable = true;
-            }
-            else {
-                saveEnvVariable = false;
-            }
+        if (currentVar != null && currentVar.Tag != envTag) {
+            //If a new tag is created with the same json path, we have to remove the old one
+            nodeContainerVar.Variables.Remove(currentVar);
+            var removeEnv = new RemoveEnvVarsFeature();
+            removeEnv.Remove(currentVar, nodeContainerVar.ClientPath, Current.Env, this.Io);
         }
-        else {
-            //New variable was created. save it
-            saveEnvVariable = true;
-        }
-
-        if (!saveEnvVariable)
-            return;
         
         currentVar = new VarDefinition() {
-            Tag = envTag,
-            TypeName = this._node.Type.FullName!,
-            JsonPath = jsonPath,
+            Tag = envTag, 
+            TypeName = this._node.Type.FullName!, 
+            JsonPath = jsonPath, 
             Scope = this.SelectedScope == ProjectScope ? RequestEnvVarScope.Project : RequestEnvVarScope.Client
         };
-        nodeContainerVar.Variables.Add(currentVar);
-        this.IsEnvVarTagCreated = true;
-
-
         var load = new LoadEnvVarsFeature();
-        var existing = load.FindEnvVar(nodeContainerVar.ClientPath, Current.Env, currentVar.Tag, this.Io);
+        var existing = load.FindEnvVar(nodeContainerVar.ClientPath, Current.Env, envTag, this.Io);
         if (existing != null) {
-            //there is already an existing variable with this tag so don't create a new one
-            var currentInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
-            this._enVarValue = currentInst;
-            return;
-        }
-        
-        var saveEnv = new SaveEnvVarsFeature();
-        var strValue = this._enVarValue?.ToString() ?? "";
-        if (this._enVarValue is Timestamp timestamp) {
-            strValue = timestamp.ToString().Trim('\"');
-        }
-
-        if (currentVar.Scope == RequestEnvVarScope.Client) {
-            saveEnv.Save(currentVar,
-                strValue,
-                nodeContainerVar.ClientPath,
-                Current.Env,
-                this.Io);
+            var existingInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
+            if (this._node.Value?.ToString() != existingInst?.ToString()) {
+                SaveEnvValue(currentVar, this._node.Value);
+            }
         }
         else {
-            saveEnv.Save(currentVar,
+            nodeContainerVar.Variables.Add(currentVar);
+            this.IsEnvVarTagCreated = true;
+            SaveEnvValue(currentVar, this._enVarValue);
+        }
+
+        return;
+
+        void SaveEnvValue(VarDefinition currentVar2, object? envVarValue) {
+            var saveEnv = new SaveEnvVarsFeature();
+            var strValue = envVarValue?.ToString() ?? "";
+            if (envVarValue is Timestamp timestamp) {
+                strValue = timestamp.ToString().Trim('\"');
+            }
+
+            saveEnv.Save(currentVar2,
                 strValue,
                 nodeContainerVar.ClientPath,
                 Current.Env,
                 this.Io);
         }
+           
     }
 
     public bool IsEnvVarTagCreated { get; private set; }
@@ -210,22 +191,3 @@ public class EnvVarNodeViewModel : ViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref _defaultValueEditor , value);
     }
 }
-
-
-
-public class NodeContainerVar(List<VarDefinition> requestVariables, string clientPath) {
-    public List<VarDefinition> Variables { get; set; } = requestVariables;
-    public string ClientPath { get; set; } = clientPath;
-
-    public static NodeContainerVar FromMethodInfoNode(MethodInfoNode m) {
-        return new NodeContainerVar(m.Variables, m.ClientGroup.Path);
-    }
-    public static NodeContainerVar FromResponseNode(ResponseNode m) {
-        return new NodeContainerVar(m.Variables, m.ClientPath);
-    }
-
-    public static NodeContainerVar FromResponseStreamNode(ResponseStreamNode rs) {
-        return new NodeContainerVar(rs.Variables, rs.ClientPath);
-    }
-}
-

@@ -13,7 +13,7 @@ public interface IResponseEditorViewModel {
 
     public Type? ResponseType { get; }
 
-    public Task Complete(Type responseType, Func<Task<object>> completeRead);
+    public Task Complete(Type responseType, Func<Task<object>> completeRead, List<VarDefinition> responseVariables);
 
     public (bool, object?) GetResponse();
 
