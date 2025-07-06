@@ -73,10 +73,12 @@ public static class GrpcUiUtils {
         IOs io) {
 
         static List<VarDefinition> Convert(List<RequestEnvVar> requestEnvVars) {
-            return requestEnvVars.Select(t => new VarDefinition() {
+            return requestEnvVars
+                .Where( t=> SystemType.getActualType(t.Type).Item1)
+                .Select(t => new VarDefinition() {
                     Tag = t.Tag,
                     JsonPath = t.JsonPath,
-                    TypeName = SystemType.getActualType(t.Type), 
+                    TypeName = SystemType.getActualType(t.Type).Item2, 
                     Scope = t.Scope
                 }).ToList();
         }

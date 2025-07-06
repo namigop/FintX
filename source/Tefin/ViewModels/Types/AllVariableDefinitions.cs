@@ -12,23 +12,31 @@ public class AllVariableDefinitions {
     public static AllVariableDefinitions From(AllVariables allVars) {
         var allVarDefs = new AllVariableDefinitions();
         allVarDefs.RequestVariables.AddRange(
-            allVars.RequestVariables.Select(v => new VarDefinition {
-                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type), JsonPath = v.JsonPath, Scope = v.Scope
+            allVars.RequestVariables
+                .Where( t => SystemType.getActualType(t.Type).Item1)
+                .Select(v => new VarDefinition {
+                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type).Item2, JsonPath = v.JsonPath, Scope = v.Scope
             }));
 
         allVarDefs.ResponseVariables.AddRange(
-            allVars.ResponseVariables.Select(v => new VarDefinition {
-                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type), JsonPath = v.JsonPath, Scope = v.Scope
+            allVars.ResponseVariables
+                .Where( t=> SystemType.getActualType(t.Type).Item1)
+                .Select(v => new VarDefinition {
+                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type).Item2, JsonPath = v.JsonPath, Scope = v.Scope
             }));
         
         allVarDefs.RequestStreamVariables.AddRange(
-            allVars.RequestStreamVariables.Select(v => new VarDefinition {
-                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type), JsonPath = v.JsonPath, Scope = v.Scope
+            allVars.RequestStreamVariables
+                .Where( t=> SystemType.getActualType(t.Type).Item1)
+                .Select(v => new VarDefinition {
+                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type).Item2, JsonPath = v.JsonPath, Scope = v.Scope
             }));
         
         allVarDefs.ResponseStreamVariables.AddRange(
-            allVars.ResponseStreamVariables.Select(v => new VarDefinition {
-                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type), JsonPath = v.JsonPath, Scope = v.Scope
+            allVars.ResponseStreamVariables
+                .Where( t=> SystemType.getActualType(t.Type).Item1)
+                .Select(v => new VarDefinition {
+                Tag = v.Tag, TypeName = SystemType.getActualType(v.Type).Item2, JsonPath = v.JsonPath, Scope = v.Scope
             }));
         
         return allVarDefs;

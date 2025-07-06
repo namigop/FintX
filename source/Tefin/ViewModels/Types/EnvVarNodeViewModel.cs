@@ -137,6 +137,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
         var nodeContainerVar = GetNodeContainerVar(this._node); // this._node.FindParentNode<NodeBase>(t => t.Parent == null);  
         var envTag = this.EnvVarTag.ToUpperInvariant();
         var currentVar = nodeContainerVar.Variables.FirstOrDefault(t => t.JsonPath == jsonPath);
+        bool isExistingNodeVar = currentVar != null;
         if (currentVar != null && currentVar.Tag != envTag) {
             //If a new tag is created with the same json path, we have to remove the old one
             nodeContainerVar.Variables.Remove(currentVar);
@@ -159,10 +160,12 @@ public class EnvVarNodeViewModel : ViewModelBase {
             }
         }
         else {
-            nodeContainerVar.Variables.Add(currentVar);
             this.IsEnvVarTagCreated = true;
             SaveEnvValue(currentVar, this._enVarValue);
         }
+        
+        if (!isExistingNodeVar)
+            nodeContainerVar.Variables.Add(currentVar);
 
         return;
 

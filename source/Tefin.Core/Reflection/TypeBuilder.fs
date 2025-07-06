@@ -4,11 +4,12 @@ open System
 open System.Collections.Generic
 open System.Reflection
 open System.Threading
+open System.Collections.Concurrent
 //open Google.Protobuf.WellKnownTypes
 open Microsoft.FSharp.Core
 
 module TypeBuilder =
-  let private handlers =
+  let private handlers =     
     ResizeArray(
       [| SystemType.getDefault
          ArrayType.getDefault
@@ -25,7 +26,6 @@ module TypeBuilder =
       |> Seq.fold
         (fun state handleFunc ->
           let struct (handled: bool, _) = state
-
           if handled then
             state
           else
@@ -110,14 +110,14 @@ module SystemType =
         let displayTypes = getTypesForDisplay()
         let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
         let index = Array.IndexOf(actualTypes, actualTypeFullName)
-        if index >= 0 then displayTypes.[index] else "not a system type"
+        if index >= 0 then (true, displayTypes.[index]) else (false, "not a system type")
     
   let getActualType  =
     fun (displayType:string) ->
         let displayTypes = getTypesForDisplay()
         let actualTypes = getTypes() |> Seq.map (fun t -> t.FullName) |> Seq.toArray
         let index = Array.IndexOf(displayTypes, displayType)
-        if index >= 0 then actualTypes.[index] else "not a system type"
+        if index >= 0 then (true, actualTypes.[index]) else (false,"not a system type")
            
   let isSystemType (thisType: Type) =
     if thisType = typeof<Google.Protobuf.WellKnownTypes.Timestamp> then

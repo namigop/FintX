@@ -68,7 +68,7 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
          *  the node with the env variable  */
         if (this.Items[0] is MethodInfoNode mn)
             mn.TryUpdateTemplatedChildNodes(this.Io);
-        
+        envfxvkeepsgettingupdated
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
        

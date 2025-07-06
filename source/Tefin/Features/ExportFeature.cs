@@ -25,11 +25,12 @@ public class ExportFeature(MethodInfo methodInfo, object?[] methodsParams,
        static List<RequestEnvVar> Convert(List<VarDefinition> variables) {
             return variables
                 .DistinctBy(v => v.JsonPath)
+                .Where(v => SystemType.getDisplayType(v.TypeName).Item1)
                 .Select(v =>
                     EnvConfig.createReqVar(
                         v.Tag,
                         v.JsonPath,
-                        SystemType.getDisplayType(v.TypeName),
+                        SystemType.getDisplayType(v.TypeName).Item2,
                         v.Scope
                     )).ToList();
         }

@@ -5,6 +5,7 @@ using ReactiveUI;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
@@ -12,23 +13,26 @@ using Tefin.ViewModels.Explorer.Config;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class EnvEditorTabViewModel(EnvNode item) : PersistedTabViewModel(item) {
+public class EnvEditorTabViewModel : PersistedTabViewModel {
     private const string _icon = "";
-    private EnvDataViewModel _envData = new(item.GetEnvData());
+    private EnvDataViewModel _envData;
     private bool _isEditing;
+    private readonly LoadEnvVarsFeature _loadEnv;
+    private readonly string _envFile;
 
-    //GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
+    public EnvEditorTabViewModel(EnvNode item) : base(item) {
+        this._envFile =  Path.GetFullPath(item.EnvFile);
+        this._envData = new EnvDataViewModel(item.GetEnvData());
+        GlobalHub.subscribe<FileChangeMessage>(OnFileChange);
+        _loadEnv = new LoadEnvVarsFeature();
+    }
 
-    // private void OnFileChanged(FileChangeMessage obj) {
-    //     Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
-    // }
-
-    // private void OnFileChangedInternal(FileChangeMessage fileChangeMessage) {
-    //     if (item.FullPath == fileChangeMessage.FullPath) {
-    //         var d = VarsStructure.getVarsFromFile(this.Io, fileChangeMessage.FullPath);
-    //         this.EnvData = new EnvDataViewModel(d);
-    //     }
-    // }
+    private void OnFileChange(FileChangeMessage msg) {
+        if (Path.GetFullPath(msg.FullPath) == this._envFile) {
+            this.EnvData = this._loadEnv.LoadEnvVarsFromFile(this._envFile)
+                .Then(t => new EnvDataViewModel(t));
+        }
+    }
 
     public EnvDataViewModel EnvData {
         get => this._envData;

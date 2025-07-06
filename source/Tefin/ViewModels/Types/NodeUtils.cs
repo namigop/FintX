@@ -47,7 +47,7 @@ public static class NodeUtils {
             var envVar = load.FindEnvVar(
                 clientPath,
                 Current.Env, 
-                node.IsSystemNode ? node!.SystemNode.EnvVar.EnvVarTag :  node.TimestampNode.EnvVar.EnvVarTag,
+                node.IsSystemNode ? node.SystemNode!.EnvVar.EnvVarTag :  node.TimestampNode.EnvVar.EnvVarTag,
                 io);
             if (envVar == null)
                 continue;
