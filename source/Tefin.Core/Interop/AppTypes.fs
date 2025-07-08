@@ -15,7 +15,17 @@ module AppTypes =
   type AppConfig =
     { AutoSaveFrequency: int }
 
-    static member Default() = { AutoSaveFrequency = 50 }
+    #if DEBUG
+    #endif
+    static member Default() = {
+       #if DEBUG
+       AutoSaveFrequency = 30
+       #endif
+       #if RELEASE
+       AutoSaveFrequency = 2
+       #endif
+      
+    }
     static member FileName = "app.config"
 
   type AppProject =

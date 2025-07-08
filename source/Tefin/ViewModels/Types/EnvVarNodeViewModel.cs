@@ -156,7 +156,8 @@ public class EnvVarNodeViewModel : ViewModelBase {
         if (existing != null) {
             var existingInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
             if (this._node.Value?.ToString() != existingInst?.ToString()) {
-                SaveEnvValue(currentVar, this._node.Value);
+                this._node.Value = existingInst;
+                //SaveEnvValue(currentVar, this._node.Value);
             }
         }
         else {
