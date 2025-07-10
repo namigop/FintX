@@ -33,8 +33,8 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._responseItemType);
 
-        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg);
-        this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType, cg);
+        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg, false);
+        this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType, cg, false);
         this._isShowingServerStreamTree = true;
         this._serverStreamEditor = this._serverStreamTreeEditor;
 

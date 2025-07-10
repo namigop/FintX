@@ -45,8 +45,8 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         var listType = typeof(List<>);
         this.ListType = listType.MakeGenericType(this._requestItemType);
 
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this.ListType, cg);
-        this._clientStreamJsonEditor = new ListJsonEditorViewModel("RequestStream", this.ListType, cg);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this.ListType, cg, true);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("RequestStream", this.ListType, cg, true);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 

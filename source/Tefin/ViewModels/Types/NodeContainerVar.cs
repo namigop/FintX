@@ -11,7 +11,7 @@ public class NodeContainerVar(List<VarDefinition> requestVariables, string clien
         return new NodeContainerVar(m.Variables, m.ClientPath);
     }
 
-    public static NodeContainerVar FromResponseStreamNode(ResponseStreamNode rs) {
+    public static NodeContainerVar FromResponseStreamNode(StreamNode rs) {
         return new NodeContainerVar(rs.Variables, rs.ClientPath);
     }
 }

@@ -117,7 +117,7 @@ public class EnvVarNodeViewModel : ViewModelBase {
             return NodeContainerVar.FromMethodInfoNode(m);
         if (parent is ResponseNode r)
             return NodeContainerVar.FromResponseNode(r);
-        if (parent is ResponseStreamNode rs)
+        if (parent is StreamNode rs)
             return NodeContainerVar.FromResponseStreamNode(rs);
         throw new ArgumentException("Invalid parent node type");
 
@@ -156,8 +156,14 @@ public class EnvVarNodeViewModel : ViewModelBase {
         if (existing != null) {
             var existingInst = TypeHelper.indirectCast(existing.CurrentValue, this._node.Type);
             if (this._node.Value?.ToString() != existingInst?.ToString()) {
-                this._node.Value = existingInst;
-                //SaveEnvValue(currentVar, this._node.Value);
+                
+                var root = this._node.FindParentNode<IExplorerItem>(t => t.Parent is null);
+                if (root is MethodInfoNode or StreamNode { IsRequest: true })
+                    this._node.Value = existingInst;
+                
+                //for responses we will allow overwrites of the corresponding env var
+                if (root is ResponseNode or StreamNode { IsRequest: false })
+                    SaveEnvValue(currentVar, this._node.Value);
             }
         }
         else {

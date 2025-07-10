@@ -20,11 +20,13 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     private readonly Type _listItemType;
     private readonly string _name;
     private readonly ProjectTypes.ClientGroup _clientGroup;
+    private readonly bool _isRequest;
     private object _listInstance;
 
-    public ListTreeEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup clientGroup) {
+    public ListTreeEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup clientGroup, bool isRequest) {
         this._name = name;
         this._clientGroup = clientGroup;
+        this._isRequest = isRequest;
         this.ListType = listType;
         this._listInstance = Activator.CreateInstance(listType)!;
         this.StreamTree = new HierarchicalTreeDataGridSource<IExplorerItem>(this.StreamItems) {
@@ -59,7 +61,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         if (this.StreamItems.Count <= 0)
             return;
         
-        var streamNode = (ResponseStreamNode)this.StreamItems[0];
+        var streamNode = (StreamNode)this.StreamItems[0];
         var selectedNode = streamNode.FindSelected();
         var listItemNode = selectedNode?.FindParentNode<IExplorerItem>(FindSelected);
 
@@ -70,7 +72,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         }
 
         bool FindSelected(IExplorerItem item) {
-            if (item.Parent != null && item.Parent is ResponseStreamNode) {
+            if (item.Parent != null && item.Parent is StreamNode) {
                 return true;
             }
 
@@ -82,7 +84,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
             if (this.StreamItems.Count == 0)
                 return;
             
-            var streamNode = (ResponseStreamNode)this.StreamItems[0];
+            var streamNode = (StreamNode)this.StreamItems[0];
             streamNode.AddItem(instance);
             if (streamNode.Items.Count == 1) {
                 streamNode.IsExpanded = true;
@@ -94,7 +96,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     public (bool, object) GetList() => (true, this._listInstance);
 
     public IEnumerable<object> GetListItems() {
-        if (this.StreamItems.Count > 0 && this.StreamItems[0] is ResponseStreamNode rs) {
+        if (this.StreamItems.Count > 0 && this.StreamItems[0] is StreamNode rs) {
             rs.TryUpdateTemplatedChildNodes(this.Io);
         }
         
@@ -111,7 +113,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
          */
 
         this._listInstance = listInstance;
-        var streamNode = new ResponseStreamNode(this._name, this.ListType, null, listInstance, null, streamVariables, this._clientGroup.Path);
+        var streamNode = new StreamNode(this._name, this.ListType, null, listInstance, null, streamVariables, this._clientGroup.Path, this._isRequest);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();

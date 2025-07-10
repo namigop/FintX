@@ -86,7 +86,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 }
                
                 List<VarDefinition> requestStreamVariables;
-                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
+                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
                     requestStreamVariables = rs.Variables;
                 }
                 else {
@@ -94,7 +94,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 }
             
                 List<VarDefinition> responseStreamVariables;
-                if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
+                if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode respStream) {
                     responseStreamVariables = respStream.Variables;
                 }
                 else {
@@ -186,7 +186,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             }
                
             List<VarDefinition> requestStreamVariables;
-            if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
+            if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
                 requestStreamVariables = rs.Variables;
             }
             else {
@@ -194,7 +194,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             }
             
             List<VarDefinition> responseStreamVariables;
-            if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
+            if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode respStream) {
                 responseStreamVariables = respStream.Variables;
             }
             else {

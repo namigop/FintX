@@ -11,7 +11,7 @@ public static class NodeUtils {
         root.TryUpdateTemplatedChildNodes(root.ClientGroup.Path, root.Variables, io);
     }
     
-    public static void TryUpdateTemplatedChildNodes(this ResponseStreamNode root, IOs io) {
+    public static void TryUpdateTemplatedChildNodes(this StreamNode root, IOs io) {
         root.TryUpdateTemplatedChildNodes(root.ClientPath, root.Variables, io);
     }
     

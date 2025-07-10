@@ -83,7 +83,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 }
                
                 List<VarDefinition> requestStreamVariables;
-                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
+                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
                     requestStreamVariables = rs.Variables;
                 }
                 else {
@@ -176,7 +176,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             }
             
             List<VarDefinition> requestStreamVariables;
-            if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode rs) {
+            if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
                 requestStreamVariables = rs.Variables;
             }
             else {

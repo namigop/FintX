@@ -40,8 +40,8 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this._requestItemType = args[0];
         var listType = typeof(List<>);
         this.ListType = listType.MakeGenericType(this._requestItemType);
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg);
-        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this.ListType, cg);
+        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg, true);
+        this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this.ListType, cg, true);
         this._isShowingClientStreamTree = true;
         this._clientStreamEditor = this._clientStreamTreeEditor;
 

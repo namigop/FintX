@@ -84,7 +84,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             }
 
             List<VarDefinition> responseStreamVariables;
-            if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is ResponseStreamNode respStream) {
+            if (this.RespViewModel.ServerStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode respStream) {
                 responseStreamVariables = respStream.Variables;
             }
             else {
