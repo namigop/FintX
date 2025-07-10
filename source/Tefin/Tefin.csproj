@@ -48,7 +48,7 @@
         <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
         <PackageReference Include="Google.Protobuf" Version="3.31.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc2" />
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
     </ItemGroup>
 
