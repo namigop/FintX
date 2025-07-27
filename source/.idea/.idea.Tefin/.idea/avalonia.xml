@@ -68,6 +68,7 @@
         <entry key="Tefin/Views/Types/EnumNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/EnumNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/ResponseStreamNodeEditView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Types/StreamNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/StreamNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeEditView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/SystemNodeView.axaml" value="Tefin/Tefin.csproj" />

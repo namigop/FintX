@@ -2,6 +2,7 @@ namespace Tefin.Grpc.Compiler
 
 open System
 open System.Collections.Generic
+open System.Text.RegularExpressions
 open System.IO
 //open Bym.Core.CS
 open Tefin.Core
@@ -154,10 +155,13 @@ module ProtocProcess =
           
           findFile (Path.GetDirectoryName basePath) filePart
           
+      let warningRegex = new Regex(@"warning:\s+.*")         
+      let isProtocError (line:string) = not (warningRegex.IsMatch(line))         
+          
       let rec generateFor (protoFile:string) (csFiles:ResizeArray<string>) =
         task {
           let args = getProtocArgs io grpcRoot csharpPlugin protoFile
-          let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly))
+          let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly)) isProtocError
           csFiles.AddRange files
           let basePath = Path.GetDirectoryName protoFile
           let imports = findImports protoFile        
