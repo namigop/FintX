@@ -24,7 +24,11 @@ public class NorthwindService2 : NorthwindServiceBase
         this._customers = new ConcurrentDictionary<int, Customer>();
 
         foreach (var i in Enumerable.Range(0, 50)) {
-            this._orders.TryAdd(i, new Order() { OrderId = i, CustomerId = i});
+            foreach (var j in Enumerable.Range(0, 50)) {
+                
+                this._orders.TryAdd(i, new Order() { OrderId = i, CustomerId = j});
+            }
+
         }
 
         foreach (var i in Enumerable.Range(0, 50)) {

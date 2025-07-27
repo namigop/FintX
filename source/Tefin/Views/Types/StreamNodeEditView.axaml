@@ -6,7 +6,7 @@
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="types:StreamNode"
-             x:Class="Tefin.Views.Types.ResponseStreamNodeEditView">
+             x:Class="Tefin.Views.Types.StreamNodeEditView">
     <UserControl.Styles>
         <StyleInclude Source="TypeItemStyles.axaml" />
     </UserControl.Styles>

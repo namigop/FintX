@@ -267,11 +267,11 @@
             <DependentUpon>ServerStreamingRespView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Types\ResponseStreamNodeView.axaml.cs">
+        <Compile Update="Views\Types\StreamNodeView.axaml.cs">
             <DependentUpon>ResponseStreamNodeView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Types\ResponseStreamNodeEditView.axaml.cs">
+        <Compile Update="Views\Types\StreamNodeEditView.axaml.cs">
             <DependentUpon>ResponseStreamNodeEditView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
