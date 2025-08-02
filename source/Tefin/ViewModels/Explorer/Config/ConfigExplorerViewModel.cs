@@ -85,7 +85,7 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
     }
 
     protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) {
-        return new ConfigGroupNode();
+        return new ConfigGroupNode(this.Project!.Path);
     }
 
     private void OnEdit() { }
@@ -94,19 +94,10 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
         if (this.Project is null)
             return;
         
-        //Load env files
-        var load = new LoadEnvVarsFeature();
-        var projectEnvData = load.LoadProjectEnvVars(this.Project.Path, this.Io);
-
         Dispatcher.UIThread.Invoke(() => {
-            var root = new ConfigGroupNode() { Title = "Project Variables", SubTitle = "All environment variables for this project"};
+            var root = new ConfigGroupNode(this.Project.Path) { Title = "Project Variables", SubTitle = "All environment variables for this project"};
             this.Items.Add(root);
-        
-            foreach (var (fullPath, env) in projectEnvData.Variables) {
-                var node = new EnvNode(fullPath) { SubTitle = env.Description};
-                root.Items.Add(node);
-            }
-
+            root.Init();
             root.IsExpanded = true;
         });
         

@@ -24,7 +24,11 @@ public class MainWindowViewModel : ViewModelBase {
         this.MainMenu = new MainMenuViewModel();
         var appState = Core.App.getAppState(this.Io);
         this.EnvMenuViewModel = new EnvMenuViewModel();
-        this.ProjectMenuViewModel = new ProjectMenuViewModel(this.MainMenu.ClientMenuItem.Explorer, this.EnvMenuViewModel, appState);
+        this.ProjectMenuViewModel = new ProjectMenuViewModel(
+            this.MainMenu.ClientMenuItem.Explorer,
+            this.MainMenu.ConfigMenuItem.Explorer, 
+            this.EnvMenuViewModel, 
+            appState);
     }
 
     public EnvMenuViewModel EnvMenuViewModel { get; set; }

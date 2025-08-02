@@ -1,16 +1,27 @@
 ﻿using Tefin.Core.Interop;
+using Tefin.Features;
 using Tefin.ViewModels.Explorer.Client;
 
 namespace Tefin.ViewModels.Explorer.Config;
 
 public class ConfigGroupNode : ExplorerRootNode {
-    public ConfigGroupNode(ProjectTypes.ClientGroup cg, Type? clientType) : base(cg, clientType) {
-        throw new NotImplementedException();
-    }
-    public ConfigGroupNode() : base() {
+    private readonly string _projectPath;
+    
+    public ConfigGroupNode(string projectPath) : base() {
+        this._projectPath = projectPath;
     }
 
- 
 
-    public override void Init() { }
+
+    public override void Init() {
+        //Load env files
+        var load = new LoadEnvVarsFeature();
+        var projectEnvData = load.LoadProjectEnvVars(this._projectPath, this.Io);
+        
+        foreach (var (fullPath, env) in projectEnvData.Variables) {
+            var node = new EnvNode(fullPath) { SubTitle = env.Description};
+            this.Items.Add(node);
+        }
+
+    }
 }

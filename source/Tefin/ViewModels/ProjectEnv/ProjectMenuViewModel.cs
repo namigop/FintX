@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -8,17 +9,20 @@ using Tefin.Core.Interop;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Explorer.Config;
 using Tefin.ViewModels.Overlay;
 
 namespace Tefin.ViewModels.ProjectEnv;
 
 public class ProjectMenuViewModel : ViewModelBase {
-    private readonly ClientExplorerViewModel _explorerViewModel;
+    private readonly ClientExplorerViewModel _clientExplorer;
+    private readonly ConfigExplorerViewModel _configExplorer;
     private readonly EnvMenuViewModel _envMenu;
     private ProjectSelection _selectedProject;
 
-    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel, EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
-        this._explorerViewModel = explorerViewModel;
+    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel,ConfigExplorerViewModel configExplorer,  EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
+        this._clientExplorer = explorerViewModel;
+        this._configExplorer = configExplorer;
         this._envMenu = envMenu;
         this.NewProjectCommand = this.CreateCommand(this.OnNewProject);
         this.OpenProjectCommand = this.CreateCommand(this.OnOpenProject);
@@ -83,7 +87,7 @@ public class ProjectMenuViewModel : ViewModelBase {
 
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) =>
         this.Exec(() => {
-            this._explorerViewModel.LoadProject(obj.ProjectPath);
+            this.ResetExplorers(obj.ProjectPath);
             if (!this.RecentProjects.Contains(i => i.Path == obj.ProjectPath)) {
                 var projSelection = new ProjectSelection(obj.Package, obj.ProjectPath);
                 this.RecentProjects.Add(projSelection);
@@ -95,12 +99,19 @@ public class ProjectMenuViewModel : ViewModelBase {
         var projectPath = await DialogUtils.SelectFolder();
         this.OpenProject(projectPath);
     }
+    private void ResetExplorers(string projectPath) {
+        this._clientExplorer.LoadProject(projectPath);
+        this._configExplorer.Project = this._clientExplorer.Project;
+        this._configExplorer.Clear();
+        this._configExplorer.Init();
+        
+    }
 
     private void OpenProject(string projectPath) {
-        this._explorerViewModel.LoadProject(projectPath);
-        if (!this.RecentProjects.Contains(i => i.Path == this._explorerViewModel.Project!.Path)) {
-            var pack = this._explorerViewModel.Project!.Package;
-            var path = this._explorerViewModel.Project!.Path;
+        this.ResetExplorers(projectPath);
+        if (!this.RecentProjects.Contains(i => i.Path == this._clientExplorer.Project!.Path)) {
+            var pack = this._clientExplorer.Project!.Package;
+            var path = this._clientExplorer.Project!.Path;
             var projSelection = new ProjectSelection(pack, path);
             this.RecentProjects.Add(projSelection);
             this.SelectedProject = projSelection;
@@ -108,7 +119,7 @@ public class ProjectMenuViewModel : ViewModelBase {
     }
 
     private void OnNewProject() {
-        var pack = this._explorerViewModel.Project?.Package ?? Core.App.defaultPackage;
+        var pack = this._clientExplorer.Project?.Package ?? Core.App.defaultPackage;
         var vm = new AddNewProjectOverlayViewModel(pack);
         GlobalHub.publish(new OpenOverlayMessage(vm));
     }
