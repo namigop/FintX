@@ -88,14 +88,7 @@ module Hub =
           else
             failwith $"actor not found for request type {reqType.Name}"
 
-        member x.Register(reqType, childActor) =
-          // let ok, actors = sub.TryGetValue reqType
-          //
-          // if (not ok) then
-          //   sub.Add(reqType, ResizeArray([| childActor |]))
-          // else
-          //   sub[reqType].Add childActor
-            
+        member x.Register(reqType, childActor) =  
           let subscribers = sub.GetOrAdd(reqType, fun _ -> ResizeArray([| |]))
           subscribers.Add childActor
           createDisposable childActor reqType sub

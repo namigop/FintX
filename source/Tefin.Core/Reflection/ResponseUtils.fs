@@ -1,5 +1,6 @@
 namespace Tefin.Core.Reflection
 
+open System.Collections.Concurrent
 open System.Collections.Generic
 open Grpc.Core
 open Tefin.Core.Reflection
@@ -22,82 +23,57 @@ module ResponseUtils =
            Type = typeof<ErrorResponse> } |]
 
   let emitStandardResponse =
-    let generatedTypes = Dictionary<TypeKey, Type>()
+    let generatedTypes = ConcurrentDictionary<TypeKey, Type>()
 
     fun (methodInfo: MethodInfo) (properties: PropInfo array) isContainerForError className ->
-      let ok, v =
-        generatedTypes.TryGetValue(
-          { ClassName = className
-            IsErrorContainer = isContainerForError }
-        )
-
-      if ok then
-        v
-      else
-        let moduleName = className
-        let assemblyName = $"Tefin{className}"
-
-        let type2 =
-          if isContainerForError then
-            emitErrorType assemblyName moduleName className
-          else
-            ClassGen.create assemblyName moduleName className properties
-
-        generatedTypes.Add(
-          { ClassName = className
-            IsErrorContainer = isContainerForError },
+      let key = { ClassName = className; IsErrorContainer = isContainerForError }
+      let genType = generatedTypes.GetOrAdd(key, fun _ ->
+          let moduleName = className
+          let assemblyName = $"Tefin{className}"
+          let type2 =
+            if isContainerForError then
+              emitErrorType assemblyName moduleName className
+            else
+              ClassGen.create assemblyName moduleName className properties
           type2
         )
-
-        type2
+      genType
 
   let emitCompositeResponse prefix (getResponseType: MethodInfo -> Type) =
-    let generatedTypes = Dictionary<TypeKey, Type>()
+    let generatedTypes = ConcurrentDictionary<TypeKey, Type>()
 
     fun (methodInfo: MethodInfo) isContainerForError ->
       let className =
         $"{prefix}_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
 
-      let ok, v =
-        generatedTypes.TryGetValue(
-          { ClassName = className
-            IsErrorContainer = isContainerForError }
+      let key =  { ClassName = className; IsErrorContainer = isContainerForError }
+      let genType = generatedTypes.GetOrAdd(key, fun _ ->
+          let moduleName = className
+          let assemblyName = $"Tefin{className}"
+
+          let responseType =
+            if isContainerForError then
+              typeof<ErrorResponse>
+            else
+              getResponseType methodInfo
+
+          let propInfos =
+            [| { IsMethod = false
+                 Name = "Response"
+                 Type = responseType }
+               { IsMethod = false
+                 Name = "Headers"
+                 Type = typeof<Metadata> }
+               { IsMethod = false
+                 Name = "Trailers"
+                 Type = typeof<Metadata> }
+               { IsMethod = false
+                 Name = "Status"
+                 Type = typeof<Status> } |]
+
+          ClassGen.create assemblyName moduleName className propInfos
         )
-
-      if ok then
-        v
-      else
-        let moduleName = className
-        let assemblyName = $"Tefin{className}"
-
-        let responseType =
-          if isContainerForError then
-            typeof<ErrorResponse>
-          else
-            getResponseType methodInfo
-
-        let propInfos =
-          [| { IsMethod = false
-               Name = "Response"
-               Type = responseType }
-             { IsMethod = false
-               Name = "Headers"
-               Type = typeof<Metadata> }
-             { IsMethod = false
-               Name = "Trailers"
-               Type = typeof<Metadata> }
-             { IsMethod = false
-               Name = "Status"
-               Type = typeof<Status> } |]
-
-        let genType = ClassGen.create assemblyName moduleName className propInfos
-
-        let key =
-          { ClassName = className
-            IsErrorContainer = isContainerForError }
-
-        generatedTypes.Add(key, genType)
-        genType
+      genType       
 
   let emitClientStreamResponse =
     let getReturnType (methodInfo: MethodInfo) =
@@ -114,53 +90,27 @@ module ResponseUtils =
       else
         methodInfo.ReturnType
 
-    let generatedTypes = Dictionary<TypeKey, Type>()
+    let generatedTypes = ConcurrentDictionary<TypeKey, Type>()
 
     fun (methodInfo: MethodInfo) (isAsync: bool) isContainerForError ->
       if isAsync then
         let builder = emitCompositeResponse "GrpcUnaryResponse" getReturnType
         builder methodInfo isContainerForError
       else
-        let className =
-          $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
-
+        let className = $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
         let moduleName = className
         let assemblyName = $"Tefin{className}"
-
-        let ok, v =
-          generatedTypes.TryGetValue(
-            { ClassName = className
-              IsErrorContainer = isContainerForError }
+        let key = { ClassName = className; IsErrorContainer = isContainerForError }
+        let genType = generatedTypes.GetOrAdd(key, fun _ ->
+            let respType =
+              if isContainerForError then
+                typeof<ErrorResponse>
+              else
+                getReturnType methodInfo
+            ClassGen.create  assemblyName moduleName className  [| { IsMethod = false; Name = "Response"; Type = respType } |]
           )
-
-        if ok then
-          v
-
-        else
-          let respType =
-            if isContainerForError then
-              typeof<ErrorResponse>
-            else
-              getReturnType methodInfo
-
-          let genType =
-            ClassGen.create
-              assemblyName
-              moduleName
-              className
-              [| { IsMethod = false
-                   Name = "Response"
-                   Type = respType } |]
-
-          let key =
-            { ClassName = className
-              IsErrorContainer = isContainerForError }
-
-          generatedTypes.Add(key, genType)
-          genType
-
-
-
+        genType
+ 
 //
 //
 // let className = $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"

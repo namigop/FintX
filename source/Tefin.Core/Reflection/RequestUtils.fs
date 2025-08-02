@@ -1,5 +1,6 @@
 namespace Tefin.Core.Reflection
 
+open System.Collections.Concurrent
 open System.Collections.Generic
 open Tefin.Core.Reflection
 open System
@@ -7,20 +8,18 @@ open System.Reflection
 
 module RequestUtils =
   let emitRequest =
-    let generatedTypes = Dictionary<string, Type>()
+    let generatedTypes = ConcurrentDictionary<string, Type>()
 
     fun (getClassName: unit -> string) (getProperties: unit -> PropInfo array) ->
       let className = getClassName ()
-      let ok, v = generatedTypes.TryGetValue(className)
-
-      if ok then
-        v
-      else
-        let moduleName = className
-        let assemblyName = $"Tefin{className}"
-        let genType = ClassGen.create assemblyName moduleName className (getProperties ())
-        generatedTypes.Add(className, genType)
-        genType
+      let genType = generatedTypes.GetOrAdd(className, fun _ ->
+          let moduleName = className
+          let assemblyName = $"Tefin{className}"
+          let genType = ClassGen.create assemblyName moduleName className (getProperties ())
+          //generatedTypes.Add(className, genType)
+          genType
+        )
+      genType      
 
   let emitRequestClass (prefix: string) (methodInfo: MethodInfo) =
     let getClassName () =
