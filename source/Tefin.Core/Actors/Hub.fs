@@ -1,6 +1,7 @@
 namespace Tefin.Core.Infra.Actors
 
 open System
+open System.Collections.Concurrent
 open System.Threading.Tasks
 open Tefin.Core.Infra.Actors
 
@@ -38,13 +39,12 @@ module Hub =
 
   let createHub () =
     let hubActor, sub =
-      let registrations = Dictionary<Type, ResizeArray<IActor>>()
+      let registrations = ConcurrentDictionary<Type, ResizeArray<IActor>>()
 
       let handleSystem (m: SystemType) =
         async {
           for a in registrations do
             let s = createSys m
-
             for actor in a.Value do
               actor.Actor.Post s
 
@@ -58,7 +58,6 @@ module Hub =
 
           if ok then
             let s = createReq m.Req
-
             for actor in agents do
               actor.Actor.Post s
 
@@ -69,13 +68,12 @@ module Hub =
 
     let h2 = HubActor(hubActor)
 
-    let createDisposable (actor:IActor) (reqType:Type) ( sub:Dictionary<Type, ResizeArray<IActor>>)=
+    let createDisposable (actor:IActor) (reqType:Type) ( sub:ConcurrentDictionary<Type, ResizeArray<IActor>>)=
       { new IDisposable with
           member x.Dispose() =
-            let ok, subscribers = sub.TryGetValue(reqType)
-            if ok then
-              subscribers.Remove actor
-              |> ignore        
+            let ok, subscribers = sub.TryRemove(reqType)
+            if not ok then
+               System.Diagnostics.Debug.WriteLine("no subscribers found")     
       }
     
     //object-expression that implements IHub
@@ -91,13 +89,15 @@ module Hub =
             failwith $"actor not found for request type {reqType.Name}"
 
         member x.Register(reqType, childActor) =
-          let ok, actors = sub.TryGetValue reqType
-
-          if (not ok) then
-            sub.Add(reqType, ResizeArray([| childActor |]))
-          else
-            sub[reqType].Add childActor
+          // let ok, actors = sub.TryGetValue reqType
+          //
+          // if (not ok) then
+          //   sub.Add(reqType, ResizeArray([| childActor |]))
+          // else
+          //   sub[reqType].Add childActor
             
+          let subscribers = sub.GetOrAdd(reqType, fun _ -> ResizeArray([| |]))
+          subscribers.Add childActor
           createDisposable childActor reqType sub
 
         member x.Publish(m) = hubActor.Post m
