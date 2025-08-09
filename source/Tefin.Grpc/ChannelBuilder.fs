@@ -123,8 +123,8 @@ module ChannelBuilder =
       new SocketsHttpHandler(
         EnableMultipleHttp2Connections = true,
         PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-        KeepAlivePingDelay = TimeSpan.FromSeconds(60),
-        KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
+        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
         SslOptions = SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks)
       )
 
@@ -136,8 +136,8 @@ module ChannelBuilder =
     let handler =
       new SocketsHttpHandler(
         EnableMultipleHttp2Connections = true,
-        KeepAlivePingDelay = TimeSpan.FromSeconds(60),
-        KeepAlivePingTimeout = TimeSpan.FromSeconds(30),
+        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
+        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
         PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan
       )
 
@@ -152,8 +152,8 @@ module ChannelBuilder =
       m.RetryPolicy <-
         RetryPolicy(
           MaxAttempts = 5,
-          InitialBackoff = TimeSpan.FromSeconds 1,
-          MaxBackoff = TimeSpan.FromSeconds 5,
+          InitialBackoff = TimeSpan.FromSeconds 1L,
+          MaxBackoff = TimeSpan.FromSeconds 5L,
           BackoffMultiplier = 1.5
         )
 

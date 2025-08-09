@@ -9,7 +9,7 @@
         <AssemblyName>FintX</AssemblyName>
         <AssemblyVersion>2.2.0</AssemblyVersion>
         <FileVersion>2.2.0</FileVersion>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
     </PropertyGroup>
     <PropertyGroup>
         <CFBundleName>FintX</CFBundleName> <!-- Also defines .app file name -->

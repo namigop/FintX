@@ -3,6 +3,8 @@
 using System.Collections.ObjectModel;
 using System.Text;
 
+using Avalonia.Threading;
+
 using ReactiveUI;
 
 #endregion
@@ -164,10 +166,14 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
         }
     }
 
+
     public void RemoveItem(NodeBase item) {
-        this.Items.Remove(item);
-        item.Dispose();
+        Dispatcher.UIThread.Invoke(() => {
+            this.Items.Remove(item);
+            item.Dispose();
+        });
     }
+
 
     public override void Dispose() {
         base.Dispose();

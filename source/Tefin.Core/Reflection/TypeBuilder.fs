@@ -65,7 +65,7 @@ module SystemType =
     temp.Add(typeof<DateTime>, ((fun () -> DateTime.Now.AddDays 1), "dateTime"))
     temp.Add(typeof<DateTimeOffset>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset"))
     temp.Add(typeof<Guid>, ((fun () -> Guid.NewGuid()), "guid"))
-    temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1), "timespan"))
+    temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1L), "timespan"))
     //temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
     temp.Add(typeof<CancellationToken>, ((fun () -> markerToken), "token"))
     temp.Add(typeof<string>, ((fun () -> ""), "string"))
@@ -86,7 +86,7 @@ module SystemType =
     temp.Add(typeof<Nullable<DateTime>>, ((fun () -> DateTime.Now.AddDays 1), "dateTime?"))
     //temp.Add(typeof<Nullable<DateTime>>, ((fun () -> null), "dateTime?"))
     temp.Add(typeof<Nullable<DateTimeOffset>>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset?"))
-    temp.Add(typeof<Nullable<TimeSpan>>, ((fun () -> TimeSpan.FromSeconds 1), "timespan?"))
+    temp.Add(typeof<Nullable<TimeSpan>>, ((fun () -> TimeSpan.FromSeconds 1L), "timespan?"))
     temp.Add(typeof<Nullable<char>>, ((fun () -> 'c'), "char?"))
     temp.Add(typeof<Google.Protobuf.WellKnownTypes.Timestamp>, ((fun () -> Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(DateTime.UtcNow)), "timestamp"))   
     temp
