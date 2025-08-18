@@ -165,16 +165,14 @@ public abstract class NodeBase : ViewModelBase, IExplorerItem {
             this.RemoveItem((NodeBase)item);
         }
     }
-
-
+    
     public void RemoveItem(NodeBase item) {
         Dispatcher.UIThread.Invoke(() => {
             this.Items.Remove(item);
             item.Dispose();
         });
     }
-
-
+    
     public override void Dispose() {
         base.Dispose();
         foreach (var explorerItem in this.Items) {

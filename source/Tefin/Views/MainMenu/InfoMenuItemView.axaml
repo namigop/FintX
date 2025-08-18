@@ -10,12 +10,39 @@
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
         <controls:IconControl Icon="{StaticResource Icon.AppLarge}" HorizontalAlignment="Left" Height="64" Width="64" />
         <TextBlock Text="{Binding AppInfo}" FontSize="20" Margin="0 10 0 10" />
-        <Button Padding="0" Command="{Binding OpenBrowserCommand}" Background="Transparent">
+        <Button Padding="0" Command="{Binding OpenGithubCommand}" Background="Transparent">
             <TextBlock Text="{Binding GitHubUrl}" Foreground="CornflowerBlue" VerticalAlignment="Stretch" />
         </Button>
 
-        <TextBlock Text="{Binding License}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
+        <TextBlock Text="{Binding OpenSourceLicense}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
         <TextBlock Text="{Binding Copyright}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
-         
+    
+        <StackPanel Margin="0 20 0 10">
+            <StackPanel.Styles>
+                <Style Selector="HyperlinkButton">
+                    <Setter Property="Padding" Value="2" />
+                </Style>
+            </StackPanel.Styles>
+            <TextBlock  Text="Tutorials" FontSize="20"  />
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?p=345">
+                <TextBlock Text="Quickstart Guide" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?p=287">
+                <TextBlock Text="Test Unary Methods" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?p=284">
+                <TextBlock Text="Test Server Streaming Methods" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?page_id=270">
+                <TextBlock Text="Test Client Streaming Methods" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?p=273">
+                <TextBlock Text="Test Duplex Streaming Methods" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+            <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?page_id=362">
+                <TextBlock Text="Other Tutorials" Foreground="CornflowerBlue" />
+            </HyperlinkButton>
+        </StackPanel>
     </StackPanel>
+    
 </UserControl>

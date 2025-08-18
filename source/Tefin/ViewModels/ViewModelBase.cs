@@ -44,10 +44,35 @@ public class ViewModelBase : ReactiveObject, IDisposable {
             }
         });
 
+    
+    protected ICommand CreateCommand<T>(Func<T, Task> doThis) =>
+        ReactiveCommand.CreateFromTask<T>(async (arg) => {
+            try {
+                this.IsBusy = true;
+                await doThis(arg);
+            }
+            catch (Exception exc) {
+                this.Io.Log.Error(exc);
+            }
+            finally {
+                this.IsBusy = false;
+            }
+        });
+
     protected ICommand CreateCommand(Action doThis) =>
         ReactiveCommand.Create(() => {
             try {
                 doThis();
+            }
+            catch (Exception exc) {
+                this.Io.Log.Error(exc);
+            }
+        });
+
+    protected ICommand CreateCommand<T>(Action<T> doThis) =>
+        ReactiveCommand.Create<T>((arg) => {
+            try {
+                doThis(arg);
             }
             catch (Exception exc) {
                 this.Io.Log.Error(exc);
