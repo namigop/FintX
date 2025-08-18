@@ -34,18 +34,19 @@ public class TabHostViewModel : ViewModelBase {
         GlobalHub.subscribeTask<RemoveTabMessage>(this.OnReceiveRemoveTabMessage)
             .Then(this.MarkForCleanup);
 
-        this.SendEmailRequestCommand = this.CreateCommand(() => {
-            var email = "erik.araojo@wcfstorm.com";
-            var subject = "Hey, can I try FintX Pro?";
-            var body = "I am interested in the Pro version.  Do you mind sending over the download link%3f";
-            var arg = $"mailto:{email}?Subject={subject}&Body={body}";
-            //var arg = $"mailto:{email}?subject=sdfsdf";
-            var pi = new ProcessStartInfo(arg) { UseShellExecute = true };
-            Process.Start(pi);
+        this.OpenWebSiteCommand = this.CreateCommand(() => {
+            Core.Utils.openBrowser("https://fintx.dev");
+            // var email = "erik.araojo@wcfstorm.com";
+            // var subject = "Hey, can I try FintX Pro?";
+            // var body = "I am interested in the Pro version.  Do you mind sending over the download link%3f";
+            // var arg = $"mailto:{email}?Subject={subject}&Body={body}";
+            // //var arg = $"mailto:{email}?subject=sdfsdf";
+            // var pi = new ProcessStartInfo(arg) { UseShellExecute = true };
+            // Process.Start(pi);
         });
     }
 
-    public ICommand SendEmailRequestCommand { get; }
+    public ICommand OpenWebSiteCommand { get; }
 
     public ObservableCollection<ITabViewModel> Items { get; } = new();
 

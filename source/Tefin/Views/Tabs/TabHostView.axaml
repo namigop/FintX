@@ -135,12 +135,13 @@
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Looking for more features?" FontSize="20" VerticalAlignment="Stretch"
                                Margin="0 20 0 10 " />
+                    
                     <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding SendEmailRequestCommand}">
-                            <TextBlock Text="Send an email" />
+                        <Button Command="{Binding OpenWebSiteCommand}">
+                            <TextBlock Text="Download the PRO version" />
                         </Button>
                         <SelectableTextBlock VerticalAlignment="Center" Background="Transparent"
-                                             Text=" to erik.araojo@wcfstorm.com to try out these features" />
+                                             Text=" and get access to the following features" />
                     </StackPanel>
 
                     <SelectableTextBlock Text="1. Creation of functional tests" Margin="0 8 0 0" />
