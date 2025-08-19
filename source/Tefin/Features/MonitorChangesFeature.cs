@@ -9,19 +9,24 @@ namespace Tefin.Features;
 
 public class MonitorChangesFeature(IOs io) {
     private static FileSystemWatcher? _watcher;
+    private static object _lock = new();
     private Dictionary<string, Timer?> _changedFiles = new();
     public void Run(ProjectTypes.Project project) {
-        //Whenever Run is called we dispose of the old one -essentially
-        //just monitoring one folder at a time.
-        _watcher?.Dispose();
-        _watcher = new FileSystemWatcher(project.Path);
-        _watcher.IncludeSubdirectories = true;
-        _watcher.EnableRaisingEvents = true;
-        _watcher.Error += this.OnError;
-        _watcher.Renamed += this.OnRenamed;
-        _watcher.Deleted += this.OnDeleted;
-        _watcher.Created += this.OnCreated;
-        _watcher.Changed += this.OnChanged;
+        lock (_lock) {
+            //Whenever Run is called, we dispose of the old one, essentially
+            //just monitoring one folder at a time.
+            _watcher?.Dispose();
+            var watcher = new FileSystemWatcher(project.Path);
+            watcher.IncludeSubdirectories = true;
+            watcher.EnableRaisingEvents = true;
+            watcher.Error += this.OnError;
+            watcher.Renamed += this.OnRenamed;
+            watcher.Deleted += this.OnDeleted;
+            watcher.Created += this.OnCreated;
+            watcher.Changed += this.OnChanged;
+
+            _watcher = watcher;
+        }
     }
 
     private void OnChanged(object sender, FileSystemEventArgs e) {

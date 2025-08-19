@@ -21,4 +21,6 @@ public class ShowClientMessage(
     public CompileOutput Output { get; } = output;
     public string ProtoFilesOrUrl { get; } = protoFilesOrUrl;
     public string? SelectedDiscoveredService { get; } = selectedDiscoveredService;
+
+    public required bool Reset { get; init; } = false;
 }

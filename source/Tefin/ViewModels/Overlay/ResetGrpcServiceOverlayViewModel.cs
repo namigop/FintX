@@ -16,27 +16,28 @@ using Tefin.ViewModels.Validations;
 
 #endregion
 
-//using Tefin.Core.ServiceClient;
-
 namespace Tefin.ViewModels.Overlay;
 
-public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
-    private readonly ProjectTypes.Project _project;
+public class ResetGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
+    private readonly ProjectTypes.ClientConfig _clientConfig;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
+    private readonly string _clientPath;
 
-    public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
-        this._project = project;
+    public ResetGrpcServiceOverlayViewModel(string clientConfigFile) {
+        this._clientConfig = new ReadClientConfigFeature(clientConfigFile, this.Io).Read();
+        this._clientPath = Path.GetDirectoryName(clientConfigFile)!;
         this.CancelCommand = this.CreateCommand(this.Close);
         this.DiscoverCommand = this.CreateCommand(this.OnDiscover);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
-        this.ReflectionUrl = "http://localhost:5000";
-        this.Title = "Add a client";
-        this.Description = string.Empty;
+        this.ReflectionUrl = this._clientConfig.Url;
+        this.Title = "Reset gRPC client";
+        this.ClientName = this._clientConfig.Name;
+        this.Description = this._clientConfig.Description;
     }
 
     [IsHttp]
@@ -82,15 +83,17 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         get => this._selectedDiscoveredService;
         set {
             this.RaiseAndSetIfChanged(ref this._selectedDiscoveredService, value);
-            if (!string.IsNullOrWhiteSpace(this._selectedDiscoveredService)) {
-                if (string.IsNullOrWhiteSpace(this.ClientName)) {
-                    var name = this._selectedDiscoveredService.Split(".").Last();
-                    this.ClientName = $"{name}Client";
-                }
+            if (string.IsNullOrWhiteSpace(this._selectedDiscoveredService)) {
+                return;
+            }
 
-                if (string.IsNullOrWhiteSpace(this.Address)) {
-                    this.Address = "http://";
-                }
+            if (string.IsNullOrWhiteSpace(this.ClientName)) {
+                var name = this._selectedDiscoveredService.Split(".").Last();
+                this.ClientName = $"{name}Client";
+            }
+
+            if (string.IsNullOrWhiteSpace(this.Address)) {
+                this.Address = "http://";
             }
         }
     }
@@ -148,19 +151,20 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
             return;
         }
 
-        if (this._project.Clients.FirstOrDefault(t => t.Name == this.ClientName) != null) {
-            this.Io.Log.Error("Client already exists.  Enter a new name");
-            return;
-        }
-
         this.Close();
 
         var protoFiles = this.IsDiscoveringUsingProto
             ? new[] { this.ProtoFile }
             : Array.Empty<string>();
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
-        var (ok2, _) = await disco.Discover(this.Io);
-        if (ok2) {
+        var (serviceFound, _) = await disco.Discover(this.Io);
+        if (serviceFound) {
+            var cfgGroup = new LoadClientFeature(this.Io, this._clientPath).Run();
+            
+            // remove old *.cs and *.dll files
+            foreach (var f in cfgGroup.CodeFiles)
+                this.Io.File.Delete(f);
+            
             var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {
@@ -168,14 +172,14 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
                 var address = this.IsDiscoveringUsingProto ? this.Address : this.ReflectionUrl;
 
                 address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
-                var msg = new ShowClientMessage(
-                    output,
+                var msg = new ShowClientMessage(output, 
                     address,
                     this.ClientName, 
                     this.SelectedDiscoveredService,
                     this.Description,
                     csFiles,
-                    output.Input.Value.ModuleFile) {Reset = false};
+                    output.Input.Value.ModuleFile) { Reset = true };
+                
                 GlobalHub.publish(msg);
             }
         }

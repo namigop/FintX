@@ -68,10 +68,22 @@
     <system:String x:Key="Icon.Error32">Icon.Error32</system:String>
     <system:String x:Key="Icon.Warn32">Icon.Warn32</system:String>
     <system:String x:Key="Icon.Question32">Icon.Question32</system:String>
+    <system:String x:Key="Icon.Refresh">Icon.Refresh</system:String>
     
     <resources:IconTemplate x:Key="Icons">
-        <DataTemplate x:Key="{StaticResource Icon.Question32}">
+        <DataTemplate x:Key="{StaticResource Icon.Refresh}">
+            <Viewbox  Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M15.443,0.2v5.255h-0.742M10.079,5.455h4.622M14.843,5.023c-1.2,-2.474,-3.936,-4.297,-6.918,-4.297C3.797,0.727,0.55,3.905,0.55,7.95M6,10.55H1.235H0.55V16M1.193,11.021c1.2,2.474,3.95,4.352,6.932,4.352c4.128,0,7.325,-3.279,7.325,-7.323"
+                              Stroke="#228BCB" StrokeThickness="1.1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
 
+        </DataTemplate>
+        
+        <DataTemplate x:Key="{StaticResource Icon.Question32}">
             <Viewbox Stretch="Uniform">
                 <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>

@@ -174,7 +174,6 @@ module ProtocProcess =
       do! generateFor protosFiles[0] csFiles
 
       let generatedCsFiles = csFiles |> Seq.distinct |> Seq.toArray
-
       if (generatedCsFiles.Length > 0) then
         //If we have generated new *.cs files, delete any dll lying around
         let dlls = io.Dir.GetFiles(System.IO.Path.GetDirectoryName(generatedCsFiles[0]), "*.dll", System.IO.SearchOption.TopDirectoryOnly)

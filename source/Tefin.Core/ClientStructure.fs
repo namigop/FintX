@@ -60,13 +60,20 @@ module ClientStructure =
     let config = Instance.jsonDeserialize<ClientConfig> (readAllText configFile)
 
     let codePath = Path.Combine(clientPath, "code")
-    let files = getFiles (codePath, "*.*", SearchOption.TopDirectoryOnly)
+    let files =
+      getFiles (codePath, "*.cs", SearchOption.TopDirectoryOnly)
+      |> Array.append (getFiles (codePath, "*.dll", SearchOption.TopDirectoryOnly))
+    
 
     { ConfigFile = configFile
       Config = Some config
       CodeFiles = files
       Methods = _loadMethods clientPath createDirectory getDirectories getFiles
-
+      SubPath = { Code = codePath
+                  Collections = Path.Combine(clientPath, "collections")
+                  Methods = Path.Combine(clientPath, "methods")
+                  Perf= Path.Combine(clientPath, "perf")
+                  Tests = Path.Combine(clientPath, "tests") }
       Name = config.Name
       Path = clientPath }
 
@@ -156,9 +163,7 @@ module ClientStructure =
       let clientPath = Path.Combine(project.Path, clientName)
       createDirectory clientPath
 
-      let config =
-        ClientConfig(Description = description, ServiceName = serviceName, Url = protoOrUrl, Name = clientName)
-
+      let config = ClientConfig(Description = description, ServiceName = serviceName, Url = protoOrUrl, Name = clientName)
       let clientConfigFile = Path.Combine(clientPath, ClientGroup.ConfigFilename)
 
       //2. Copy the C# files and *Client.dll file

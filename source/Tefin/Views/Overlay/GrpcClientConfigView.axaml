@@ -83,6 +83,15 @@
                 </StackPanel>
 
             </StackPanel>
+            <StackPanel Grid.Row="1" HorizontalAlignment="Left"  Margin="0 24 0 0">
+                <Button Command="{Binding ResetCommand}" MinWidth="70">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:IconControl Icon="{StaticResource Icon.Refresh}" VerticalAlignment="Center"
+                                              Width="16" Height="16" Margin="0 0 4 0"></controls:IconControl>
+                        <TextBlock Text="Reset" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 24 0 0">
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">

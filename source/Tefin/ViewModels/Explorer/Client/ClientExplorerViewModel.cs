@@ -318,10 +318,14 @@ public class ClientExplorerViewModel : ViewModelBase {
             
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
-                var feature = new AddClientFeature(this.Project,
-                    obj.ClientName, obj.SelectedDiscoveredService!,
-                    obj.ProtoFilesOrUrl, obj.Description, obj.CsFiles, obj.Dll,
-                    //type,
+                var feature = new AddClientFeature(
+                    this.Project,
+                    obj.ClientName,
+                    obj.SelectedDiscoveredService!,
+                    obj.ProtoFilesOrUrl,
+                    obj.Description,
+                    obj.CsFiles,
+                    obj.Dll,
                     this.Io);
                 await feature.Add();
 
@@ -331,6 +335,12 @@ public class ClientExplorerViewModel : ViewModelBase {
                 this.Project = proj;
 
                 var client = proj.Clients.First(t => t.Name == obj.ClientName);
+                if (obj.Reset && 
+                    this.GetClientNodes().FirstOrDefault(t => t.Client.Path == client.Path) is { } cn) {
+                    this.Items.Remove(cn);
+                }
+                 
+                
                 this.AddClientNode(client, type);
             }
         }

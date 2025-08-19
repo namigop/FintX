@@ -26,12 +26,19 @@ module ProjectTypes =
         Path = ""
         RequestFiles = Array.empty }
 
+  type SubPath =
+    { Code:string
+      Collections:string
+      Perf:string
+      Tests:string
+      Methods : string }
   type ClientGroup =
     { Name: string
       CodeFiles: string array
       ConfigFile: string
       Config: ClientConfig option
       Methods: MethodGroup array
+      SubPath : SubPath
       Path: string }
 
     static member ConfigFilename = "config.json"
@@ -41,6 +48,7 @@ module ProjectTypes =
         ConfigFile = ""
         Path = ""
         Methods = Array.empty
+        SubPath = { Code = ""; Collections = ""; Methods = ""; Perf= ""; Tests = "" }
         Config = None }
 
   type Project =

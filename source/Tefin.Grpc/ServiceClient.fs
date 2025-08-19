@@ -55,13 +55,7 @@ module ServiceClient =
 
   let generateSourceFiles (io: IOs) (compileParams: CompileParameters) =
     task {
-
-      let check () = ()
-
-      let grpcParams =
-        { compileParams with
-            Config = GrpcPackage.grpcConfigValues }
-
+      let grpcParams = { compileParams with Config = GrpcPackage.grpcConfigValues }
       let locations = grpcParams.ProtoFiles
       let address = grpcParams.ReflectionServiceUrl.Trim()
 
@@ -74,8 +68,8 @@ module ServiceClient =
             Config = grpcParams.Config }
 
         io.Log.Info $"Generating client code from {address}"
-        let! cs = ServerReflectionDiscoveryClient.generateSource io dp
-        return cs
+        let! csFilesRet = ServerReflectionDiscoveryClient.generateSource io dp
+        return csFilesRet
       else
         let dp: ProtoDiscoverParameters =
           { ProtoFiles = locations
@@ -107,9 +101,7 @@ module ServiceClient =
       io.Log.Info($"Compiling : {msg}")
       let tempFile = Path.GetTempFileName()
       io.File.Delete(tempFile)
-
-      let grpcClientFileOpt =
-        grpcParams.CsFiles |> Array.tryFind (fun f -> f.EndsWith("Grpc.cs"))
+      let grpcClientFileOpt = grpcParams.CsFiles |> Array.tryFind (fun f -> f.EndsWith("Grpc.cs"))
 
       match grpcClientFileOpt with
       | None -> return Ret.Error(Exception("Unable to generate the source code of the service client. Missing *Grpc.cs file"))

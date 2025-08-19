@@ -36,6 +36,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.CancelCommand = this.CreateCommand(this.Close);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
         this.OpenCertFileCommand = this.CreateCommand(this.OnOpenCertFile);
+        this.ResetCommand = this.CreateCommand(this.OnReset);
         this.LoadStoreCertificatesCommand = this.CreateCommand(this.OnLoadStoreCertificates);
         this.CertStoreLocations.Add(StoreLocation.CurrentUser);
         this.CertStoreLocations.Add(StoreLocation.LocalMachine);
@@ -82,6 +83,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public ICommand OkayCommand { get; }
 
+    public ICommand ResetCommand { get; }
     public ICommand OpenCertFileCommand { get; }
 
     public StoreLocation SelectedCertStoreLocation {
@@ -132,7 +134,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         }
         else {
             this.SelectedCertStoreLocation =
-                (StoreLocation)Enum.Parse(typeof(StoreLocation), this._clientConfig.CertStoreLocation);
+                Enum.Parse<StoreLocation>(this._clientConfig.CertStoreLocation);
         }
 
         this.Thumbprint = this._clientConfig.CertThumbprint;
@@ -177,6 +179,15 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Io.Log.Error(new NotImplementedException()); //TODO
         return Task.CompletedTask;
     }
+    
+    private Task OnReset() {
+        GlobalHub.publish(new CloseOverlayMessage(this));
+        var vm = new ResetGrpcServiceOverlayViewModel(this._clientConfigFile);
+        GlobalHub.publish(new OpenOverlayMessage(vm));
+        
+        return Task.CompletedTask;
+    }
+
 
     public class StoreCertSelection(string subject, string thumbprint) {
         public string Subject => subject;

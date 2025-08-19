@@ -53,8 +53,7 @@ public class CompileFeature(
         try {
             GlobalHub.publish(new ClientCompileMessage(true));
             var csFiles = Array.Empty<string>();
-            var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles,
-                reflectionUrl, null);
+            var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles, reflectionUrl, null);
             var csFilesRet = await ServiceClient.generateSourceFiles(io, cParams);
             var com = await ServiceClient.compile(Resolver.value, csFilesRet.ResultValue, cParams);
             if (com.IsOk) {
