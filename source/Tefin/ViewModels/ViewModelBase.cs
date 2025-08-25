@@ -34,6 +34,11 @@ public class ViewModelBase : ReactiveObject, IDisposable {
         this.Subscribe(b.Member.Name, onChanged).Then(this.MarkForCleanup);
     }
 
+    public void SubscribeTo<R,V>(Expression<Func<V, R>> prop, Action<V> onChanged) where V : ViewModelBase {
+        var b = (MemberExpression)prop.Body;
+        this.Subscribe(b.Member.Name, vb => onChanged((V)vb)).Then(this.MarkForCleanup);
+    }
+
     protected ICommand CreateCommand(Func<Task> doThis) =>
         ReactiveCommand.Create(async () => {
             try {

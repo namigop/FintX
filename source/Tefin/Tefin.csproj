@@ -54,8 +54,11 @@
 
 
     <ItemGroup>
+        <ProjectReference Include="..\Tefin.Grpc.Sample\Tefin.Grpc.Sample.csproj" />
         <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
         <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0" />
     </ItemGroup>
 
 

@@ -1,0 +1,48 @@
+using System.Net;
+using System.Threading;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Tefin.Grpc.Sample.Services;
+
+namespace Tefin.Features;
+
+public class StartDemoGrpcServiceFeature {
+    public static string Url = "http://localhost:54321";
+    private const string _clientName = "NorthwindServiceClient";
+    private CancellationTokenSource? _cs;
+    private WebApplication? _app;
+
+    public string GetClientName() {
+        return _clientName + "-" + Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+    }
+    public async Task Stop() {
+        if (this._cs == null) return;
+        await this._app!.StopAsync(this._cs.Token);;
+        this._cs.Dispose();
+        this._cs = null;
+        this._app = null;
+        this.IsStarted = false;
+    }
+    public async Task Start() {
+        this._cs = new CancellationTokenSource();
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.ConfigureKestrel(options => options.Listen(IPAddress.Loopback, 54321));
+        builder.Services.AddGrpc();
+        builder.Services.AddGrpcReflection();
+
+        this._app = builder.Build();
+        this._app.MapGrpcService<NorthwindService2>();
+        this._app.MapGrpcReflectionService();
+        this._app.MapGet("/",
+            () =>
+                "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+
+        await this._app.StartAsync(this._cs.Token);
+        this.IsStarted = true;
+
+    }
+
+    public bool IsStarted { get; private set; }
+}

@@ -2,6 +2,7 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -28,15 +29,62 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
+    private string _startStopDemoGrpcServiceText;
+    private static StartDemoGrpcServiceFeature? _startGrpcFeature;
 
     public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
         this.DiscoverCommand = this.CreateCommand(this.OnDiscover);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
-        this.ReflectionUrl = "http://localhost:5000";
+        this.StartStopDemoGrpcServiceCommand = this.CreateCommand(this.OnStartStopDemoGrpcService);
+        this.ReflectionUrl = StartDemoGrpcServiceFeature.Url;
         this.Title = "Add a client";
         this.Description = string.Empty;
+
+        _startGrpcFeature ??= new StartDemoGrpcServiceFeature();
+        this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
+        
+        this.SubscribeTo<string, AddGrpcServiceOverlayViewModel>(
+            x => x.ReflectionUrl,
+            vm => {
+                vm.RaisePropertyChanged(nameof(vm.StartStopDemoGrpcServiceText));
+                vm.RaisePropertyChanged(nameof(vm.CanStartDemoGrpcService));
+            });
+    }
+
+    public ICommand StartStopDemoGrpcServiceCommand { get; }
+
+    public bool CanStartDemoGrpcService => this.ReflectionUrl == StartDemoGrpcServiceFeature.Url;
+
+    public string StartStopDemoGrpcServiceText {
+        get => this._startStopDemoGrpcServiceText;
+        set => this.RaiseAndSetIfChanged(ref _startStopDemoGrpcServiceText, value);
+    }
+ 
+    private async Task OnStartStopDemoGrpcService() {
+        if (!_startGrpcFeature!.IsStarted) {
+            this.Description = "Demo gRPC service for testing";
+            await _startGrpcFeature.Start();
+            await this.OnDiscover();
+            this.ClientName = _startGrpcFeature.GetClientName();
+            await Task.Delay(1000);
+            await this.OnOkay();
+
+            this.Io.Log.Info("***************************");
+            this.Io.Log.Info("Demo gRPC service started");
+            this.Io.Log.Info("***************************");
+            
+            this.StartStopDemoGrpcServiceText = "Stop Demo gRPC Service";
+        }
+        else {
+            await _startGrpcFeature.Stop();
+            this.Io.Log.Info("***************************");
+            this.Io.Log.Info("Demo gRPC service stooped");
+            this.Io.Log.Info("***************************");
+            
+            this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
+        }
     }
 
     [IsHttp]
@@ -123,7 +171,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
         if (res.IsOk) {
             var services = res.ResultValue;
-            if (services.Any()) {
+            if (services.Length != 0) {
                 this.DiscoveredServices.Clear();
                 foreach (var s in services) {
                     this.DiscoveredServices.Add(s);
@@ -155,12 +203,10 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
         this.Close();
 
-        var protoFiles = this.IsDiscoveringUsingProto
-            ? new[] { this.ProtoFile }
-            : Array.Empty<string>();
+        var protoFiles = this.IsDiscoveringUsingProto ? new[] { this.ProtoFile } : Array.Empty<string>();
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
-        var (ok2, _) = await disco.Discover(this.Io);
-        if (ok2) {
+        var (success, _) = await disco.Discover(this.Io);
+        if (success) {
             var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run();
             if (ok) {

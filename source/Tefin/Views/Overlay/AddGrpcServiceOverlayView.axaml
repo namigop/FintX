@@ -64,7 +64,20 @@
                 <TextBox Grid.Row="9" HorizontalAlignment="Stretch" MinHeight="100" />
 
             </Grid>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 15 0 0">
+            
+            <Grid ColumnDefinitions="*, Auto" Margin="0 15 0 0">
+                
+                <StackPanel Grid.Column="0">
+                    <Button Command="{Binding StartStopDemoGrpcServiceCommand}"
+                            IsVisible="{Binding CanStartDemoGrpcService}"
+                            MinWidth="70">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding StartStopDemoGrpcServiceText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    
+                </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" >
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
@@ -78,6 +91,9 @@
                     <TextBlock Text="Cancel" HorizontalAlignment="Center" />
                 </Button>
             </StackPanel>
+            </Grid>
         </StackPanel>
+       
+        
     </Border>
 </UserControl>
