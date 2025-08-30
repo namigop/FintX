@@ -6,21 +6,59 @@ Extremely honored to have FintX featured in the Avalonia App Showcase https://av
 <img src="https://github.com/namigop/FintX/blob/main/docs/ServerStreaming.png" style="width: 80%; height: 80%" />
 
 ## Looking for Advanced Features?
-If you need to do
-- Performance/Load Testing with real-time results
-- Functional Testing (Test cases with req / resp comparison)
-- Funcitonal Test Collections
-- and more..
 
 Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
+
+| **GRPC Service Discovery**                                               | Community | Enterprise |
+|--------------------------------------------------------------------------|-----------|-----------|
+| Discovery using *.proto file                                             | ☑         | ☑ |
+| Discovery using server reflection                                        | ☑         | ☑ |
+| Generates both synchronous and asynchronous method                       | ☑         | ☑ |
+|                                                                          |           |  |
+| **GRPC Service Method Testing**                                          | Community | Enterprise |
+| Support for Unary                                                        | ☑         | ☑ |
+| Support for Server Streaming                                             | ☑         | ☑ |
+| Support for Client Streaming                                             | ☑         | ☑ |
+| Support for Bi-directional (Duplex) Streaming                            | ☑         | ☑ |
+| Automatic generation of requests                                         | ☑         | ☑ |
+| Provides an easy-to-use object editor for editing requests               | ☑         | ☑ |
+| Support for call credentials                                             | ☑         | ☑ |
+| Support for certificates                                                 | ☑         | ☑ |
+| Support for cancelling long-running streaming calls                      | ☑         | ☑ |
+|                                                                          |           |  |
+| **Request Data Management**                                              | Community | Enterprise |
+| Import and export of individual requests                                 | ☑         | ☑ |
+| Create new requests and save into a project                              | ☑         | ☑ |
+| Auto-save of open tabs                                                   | ☑         | ☑ |
+| Reopens the previous session                                             | ☑         | ☑ |
+| Git-aware. Files can be tracked in git                                   | ☑         | ☑ |
+|                                                                          |           |  |
+| **Functional Testing**                                                   | Community | Enterprise |
+| Create and manage functional tests                                       | -         | ☑ |
+| Show visual diff of expected vs actual responses                         | -         | ☑ |
+| Supports functional tests for Unary, Client, Server and Duplex streaming | -         | ☑ |
+| Generate functional test reports (in markdown)                           | -         | ☑ |
+| Auto-save of functional tests                                            | -         | ☑ |
+| Edit test reports                                                        | -         | ☑ |
+|                                                                          | -         |  |
+| **Test Collections**                                                     | Community | Enterprise |
+| Create and manage test collections                                       | -         | ☑ |
+| Execute tests in sequence or in parallel                                 | -         | ☑ |
+| Generate test collection reports (in markdown)                           | -         | ☑ |
+| Edit test reports                                                        | -         | ☑ |
+|                                                                          |           |  |
+| **Performance Testing**                                                  | Community | Enterprise |
+| Create and manage performance tests                                      | -         | ☑ |
+| Supports varius load types (Incremental, Burst, etc,)                    | -         | ☑ |
+| Real-time view of performance metrics                                    | -         | ☑ |
+
+
 
 ## Installation
 1. Windows : `winget install FintX`
 2. MacOS   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide)
 3. Linux   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide) 
 
-## List of Features
-Please see the [feature list](https://github.com/namigop/FintX/wiki/List-of-Features)
 
 ## Quickstart
 1. Add a client

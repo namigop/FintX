@@ -54,7 +54,7 @@ let ``Can set default values in class instance`` () =
     Assert.Equal(DateTime.Now.AddDays(1).Date, test1Instance.DateTimeType.Date)
     Assert.NotEqual(test1.DateTimeType, test1Instance.DateTimeType)
     
-    Assert.Equal(TimeSpan.FromSeconds 1, test1Instance.TimeSpanType)
+    Assert.Equal(TimeSpan.FromSeconds 1L, test1Instance.TimeSpanType)
     Assert.NotEqual(test1.TimeSpanType, test1Instance.TimeSpanType)
     
     Assert.NotEqual(test1.DateTimeOffsetType, test1Instance.DateTimeOffsetType)
