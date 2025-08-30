@@ -53,11 +53,13 @@ Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
 | Real-time view of performance metrics                                    | -         | ☑ |
 
 
+## Download FintX Enterprise
 
-## Installation
-1. Windows : `winget install FintX`
-2. MacOS   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide)
-3. Linux   : Please see [Installation Guide](https://github.com/namigop/FintX/wiki/Installation-Guide) 
+FintX Enterprise reverts to the Community Edition once the trial period is over.  FintX Community is free forever
+
+Download for windows ([Windows Store](https://apps.microsoft.com/detail/9nz2g6flp92q?hl=en-US&gl=US))
+Download for macos ([Apple Silicon](https://github.com/namigop/fintx-arm64/releases/download/arm64-v3.0.7/FintX-osx-Setup.pkg))
+Download for [linux x64](https://github.com/namigop/fintx-linux/releases/download/linux-v3.0.7/FintX.AppImage)
 
 
 ## Quickstart
@@ -80,11 +82,3 @@ Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
 
    <img src="https://github.com/namigop/FintX/blob/main/docs/RequestResponse.png" style="width: 70%; height: 70%">
 
-
-
-#### Special Thanks
-
-Special thanks to [JetBrains for supporting open source development](https://jb.gg/OpenSourceSupport) and sponsoring a Rider license!  JetBrains is awesome. If you are doing cross-platform development
-for .NET, nothing beats JetBrains Rider
-
-<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/Rider_icon.png" alt="JetBrains Rider" width="96px"/>
