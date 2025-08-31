@@ -5,3 +5,5 @@ module Ext =
   let responseFileExt = ".fxrs"
   let zipExt = ".zip"
   let envExt = ".fxv"
+  let cerExt = ".cer"
+  let pfxExt = ".pfx"

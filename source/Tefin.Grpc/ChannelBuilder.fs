@@ -32,8 +32,8 @@ type CallConfig =
       if cfg.IsUsingSSL then
         if cfg.IsCertFromFile then
           Cert.FromFile
-            { File = "TODO file"
-              Password = "TODO pw" }
+            { File = cfg.CertFile
+              Password =  Utils.decrypt cfg.CertFilePassword (System.IO.Path.GetFileName cfg.CertFile )  }
           |> Some
 
         else
@@ -65,15 +65,9 @@ module ChannelBuilder =
 
   let private getCert (cert: Cert) =
     match cert with
-    | FromFile fileCert ->
-      if String.IsNullOrWhiteSpace fileCert.Password then
-        new X509Certificate2(fileCert.File)
-      else
-        new X509Certificate2(fileCert.File, fileCert.Password)
+    | FromFile fileCert -> CertUtils.createFromFile fileCert.File fileCert.Password       
     | FromStore storeCert ->
-      let location =
-        Enum.Parse(typeof<StoreLocation>, storeCert.Location) :?> StoreLocation
-
+      let location = Enum.Parse(typeof<StoreLocation>, storeCert.Location) :?> StoreLocation
       CertUtils.findByThumbprint storeCert.Thumbprint location
 
   let getJWTCredentials (cfg: CallConfig) =

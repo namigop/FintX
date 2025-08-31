@@ -15,6 +15,8 @@ module ProjectTypes =
     member val IsCertFromFile = false with get, set
     member val CertStoreLocation = "" with get, set
     member val CertThumbprint = "" with get, set
+    member val CertFile = "" with get, set
+    member val CertFilePassword = "" with get, set
 
   type MethodGroup =
     { Name: string

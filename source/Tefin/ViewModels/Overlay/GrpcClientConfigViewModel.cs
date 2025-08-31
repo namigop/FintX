@@ -6,10 +6,12 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Messages;
+using Tefin.Utils;
 
 #endregion
 
@@ -19,12 +21,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _clientConfigFile;
     private readonly Action _onClientNameChanged;
     private string _certFile = "";
+    private string _certFilePassword = "";
     private ProjectTypes.ClientConfig _clientConfig = null!;
     private string _clientName = "";
     private string _description = "";
     private bool _isCertFromFile;
     private bool _isUsingSsl;
     private string _jwt = "";
+    private bool _requiresPassword;
     private StoreLocation _selectedCertStoreLocation;
     private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
@@ -50,6 +54,11 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public string CertFile {
         get => this._certFile;
         set => this.RaiseAndSetIfChanged(ref this._certFile, value);
+    }
+
+    public string CertFilePassword {
+        get => this._certFilePassword;
+        set => this.RaiseAndSetIfChanged(ref this._certFilePassword, value);
     }
 
     public List<StoreLocation> CertStoreLocations { get; } = new();
@@ -114,6 +123,11 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
+    public bool RequiresPassword {
+        get => this._requiresPassword;
+        private set => this.RaiseAndSetIfChanged(ref this._requiresPassword, value);
+    }
+
     public string Title {
         get;
     } = "Client Configuration";
@@ -124,17 +138,22 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig = new ReadClientConfigFeature(clientConfigFile, this.Io).Read();
         this.ClientName = this._clientConfig.Name;
         this.Url = this._clientConfig.Url;
-        this.IsUsingSsl = this._clientConfig.IsUsingSSL;
-
-        this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Jwt = this._clientConfig.Jwt;
+        this.IsUsingSsl = this._clientConfig.IsUsingSSL;
+        this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Description = this._clientConfig.Description;
-        if (string.IsNullOrWhiteSpace(this._clientConfig.CertStoreLocation)) {
-            this.SelectedCertStoreLocation = StoreLocation.LocalMachine;
+
+        if (this.IsCertFromFile) {
+            this.CertFile = this._clientConfig.CertFile;
+            this.CertFilePassword = Core.Utils.decrypt(
+                this._clientConfig.CertFilePassword,
+                Path.GetFileName(this._clientConfig.CertFile));
+            ;
         }
         else {
-            this.SelectedCertStoreLocation =
-                Enum.Parse<StoreLocation>(this._clientConfig.CertStoreLocation);
+            this.SelectedCertStoreLocation = string.IsNullOrWhiteSpace(this._clientConfig.CertStoreLocation)
+                ? StoreLocation.LocalMachine
+                : Enum.Parse<StoreLocation>(this._clientConfig.CertStoreLocation);
         }
 
         this.Thumbprint = this._clientConfig.CertThumbprint;
@@ -165,6 +184,16 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.Description = this.Description;
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;
+        this._clientConfig.CertFile = this.CertFile;
+        if (this._isCertFromFile) {
+            if (this.RequiresPassword) {
+                this._clientConfig.CertFilePassword = Core.Utils.encrypt(this.CertFilePassword, Path.GetFileName(this.CertFile));
+            }
+            
+            var x509 = CertUtils.createFromFile(this.CertFile, this.CertFilePassword);
+            this.Thumbprint = x509.Thumbprint;
+            this._clientConfig.CertThumbprint = x509.Thumbprint;
+        }
 
         var feature = new SaveClientConfigFeature(this._clientConfigFile, this._clientConfig, this.Io);
         await feature.Save();
@@ -175,19 +204,33 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Close();
     }
 
-    private Task OnOpenCertFile() {
-        this.Io.Log.Error(new NotImplementedException()); //TODO
-        return Task.CompletedTask;
+    private async Task OnOpenCertFile() {
+        var fileExtensions = new[] { $"*{Ext.cerExt}", $"*{Ext.pfxExt}" };
+        var fileTitle = "Certificate files (*.cer, *.pfx)";
+        var (ok, files) = await DialogUtils.OpenFile("Open certificate file", fileTitle, fileExtensions);
+        if (ok) {
+            try {
+                var certFile = files[0];
+                this.CertFile = certFile;
+                this.IsCertFromFile = true;
+                this.IsUsingSsl = true;
+                this.SelectedCertStoreLocation = StoreLocation.CurrentUser;
+                this.SelectedStoreCertificate = null;
+                this.RequiresPassword = Path.GetExtension(certFile).ToLower() == Ext.pfxExt;
+            }
+            catch (Exception ex) {
+                this.Io.Log.Error($"Failed to load certificate: {ex.Message}");
+            }
+        }
     }
-    
+
     private Task OnReset() {
         GlobalHub.publish(new CloseOverlayMessage(this));
         var vm = new ResetGrpcServiceOverlayViewModel(this._clientConfigFile);
         GlobalHub.publish(new OpenOverlayMessage(vm));
-        
+
         return Task.CompletedTask;
     }
-
 
     public class StoreCertSelection(string subject, string thumbprint) {
         public string Subject => subject;

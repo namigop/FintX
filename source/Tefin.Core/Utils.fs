@@ -8,6 +8,7 @@ open System.Reflection
 open System.Runtime.InteropServices
 open System.IO
 open System.Text
+open System.Security.Cryptography
 open Newtonsoft.Json.Linq
 
 let appName = "FintX"
@@ -26,6 +27,32 @@ let getCultures () =
   |> Seq.map (fun x -> CultureInfo.GetCultureInfo(x).Name)
   |> Seq.toArray
 
+let private deriveKeyAndIV (password: string) =
+    use deriveBytes = new Rfc2898DeriveBytes(password, 16, 1000, HashAlgorithmName.SHA256)
+    (deriveBytes.GetBytes(32), deriveBytes.GetBytes(16))
+
+let encrypt (text: string) (password: string) =
+    let bytes = Encoding.UTF8.GetBytes(text)
+    let (key, iv) = deriveKeyAndIV password
+    use aes = Aes.Create()
+    use encryptor = aes.CreateEncryptor(key, iv)
+    use msEncrypt = new MemoryStream()
+    use csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)
+    csEncrypt.Write(bytes, 0, bytes.Length)
+    csEncrypt.FlushFinalBlock()
+    Convert.ToBase64String(msEncrypt.ToArray())
+
+let decrypt (encryptedText: string) (password: string) =
+    let bytes = Convert.FromBase64String(encryptedText)
+    let (key, iv) = deriveKeyAndIV password
+    use aes = Aes.Create()
+    use decryptor = aes.CreateDecryptor(key, iv)
+    use msDecrypt = new MemoryStream(bytes)
+    use csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read)
+    use msResult = new MemoryStream()
+    csDecrypt.CopyTo(msResult)
+    Encoding.UTF8.GetString(msResult.ToArray())
+  
 let getCompareOptions () =
   let names = Enum.GetNames(typeof<CompareOptions>)
   [| "" |] |> Array.append names

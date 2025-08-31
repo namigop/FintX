@@ -1,6 +1,7 @@
 module Tefin.Core.CertUtils
 
 open System.Security.Cryptography.X509Certificates
+open System
 
 let getCertificates (location: StoreLocation) : X509Certificate2Collection =
   // Get the certificate store for the current user.
@@ -36,3 +37,12 @@ let findByThumbprint (thumbprint: string) (location: StoreLocation) : X509Certif
     Unchecked.defaultof<X509Certificate2>
   else
     signingCert[0]
+    
+let createFromFile (file:string) (password:string) =
+  if String.IsNullOrWhiteSpace password then
+    X509CertificateLoader.LoadCertificateFromFile(file)
+  else
+    let bytes = IO.File.ReadAllBytes file
+    let x509 = X509CertificateLoader.LoadPkcs12(bytes, password)
+    x509
+        

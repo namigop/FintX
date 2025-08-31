@@ -42,12 +42,22 @@
                             <RadioButton Content="Store" Margin="6" IsChecked="{Binding !IsCertFromFile}" />
                         </StackPanel>
                         <Grid Grid.Row="1">
-                            <DockPanel IsVisible="{Binding IsCertFromFile}">
-                                <Button Margin="6 0 0 0" DockPanel.Dock="Right" Command="{Binding OpenCertFileCommand}">
-                                    <TextBlock Text="..." />
-                                </Button>
-                                <TextBox Text="{Binding CertFile}" Watermark="Open certificate file" />
-                            </DockPanel>
+                            <Grid IsVisible="{Binding IsCertFromFile}" RowDefinitions="Auto, Auto">
+                                <DockPanel Grid.Row="0">
+                                    <Button Margin="6 0 0 0"  DockPanel.Dock ="Right" Command="{Binding OpenCertFileCommand}">
+                                        <TextBlock Text="..." />
+                                    </Button>
+                                    <TextBox  x:Name="CertFileTextBox" Text="{Binding CertFile}"  Watermark="Open certificate file" />
+                                </DockPanel>
+                                
+                                <TextBox Grid.Row="1" Text="{Binding CertFilePassword}" 
+                                         HorizontalAlignment="Left"
+                                         PasswordChar="*"
+                                         Margin="0 8 0 0"
+                                         Width="{Binding Path=#CertFileTextBox.Bounds.Width} "
+                                         Watermark="Certificate password" 
+                                         IsVisible="{Binding RequiresPassword}" />
+                            </Grid>
                             <DockPanel IsVisible="{Binding !IsCertFromFile}">
                                 <ComboBox ItemsSource="{Binding CertStoreLocations}"
                                           DockPanel.Dock="Left"
