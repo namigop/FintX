@@ -27,27 +27,40 @@ let getCultures () =
   |> Seq.map (fun x -> CultureInfo.GetCultureInfo(x).Name)
   |> Seq.toArray
 
-let private deriveKeyAndIV (password: string) =
-    use deriveBytes = new Rfc2898DeriveBytes(password, 16, 1000, HashAlgorithmName.SHA256)
+let private deriveKeyAndIV (password: string) (salt: byte[]) =
+    use deriveBytes = new Rfc2898DeriveBytes(password, salt, 1000, HashAlgorithmName.SHA256)
     (deriveBytes.GetBytes(32), deriveBytes.GetBytes(16))
 
 let encrypt (text: string) (password: string) =
     let bytes = Encoding.UTF8.GetBytes(text)
-    let (key, iv) = deriveKeyAndIV password
+    let salt = Array.zeroCreate<byte> 16
+    use rng = RandomNumberGenerator.Create()
+    rng.GetBytes(salt)
+    
+    let (key, iv) = deriveKeyAndIV password salt
     use aes = Aes.Create()
     use encryptor = aes.CreateEncryptor(key, iv)
     use msEncrypt = new MemoryStream()
     use csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write)
     csEncrypt.Write(bytes, 0, bytes.Length)
     csEncrypt.FlushFinalBlock()
-    Convert.ToBase64String(msEncrypt.ToArray())
+    
+    // Prepend salt to encrypted data
+    let encryptedBytes = msEncrypt.ToArray()
+    let result = Array.concat [salt; encryptedBytes]
+    Convert.ToBase64String(result)
 
 let decrypt (encryptedText: string) (password: string) =
-    let bytes = Convert.FromBase64String(encryptedText)
-    let (key, iv) = deriveKeyAndIV password
+    let allBytes = Convert.FromBase64String(encryptedText)
+    
+    // Extract salt (first 16 bytes) and encrypted data
+    let salt = allBytes.[0..15]
+    let encryptedBytes = allBytes.[16..]
+    
+    let (key, iv) = deriveKeyAndIV password salt
     use aes = Aes.Create()
     use decryptor = aes.CreateDecryptor(key, iv)
-    use msDecrypt = new MemoryStream(bytes)
+    use msDecrypt = new MemoryStream(encryptedBytes)
     use csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read)
     use msResult = new MemoryStream()
     csDecrypt.CopyTo(msResult)

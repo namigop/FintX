@@ -12,6 +12,7 @@ using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
+using Tefin.ViewModels.Validations;
 
 #endregion
 
@@ -51,9 +52,13 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public ICommand CancelCommand { get; }
 
+    [FileExists]
     public string CertFile {
         get => this._certFile;
-        set => this.RaiseAndSetIfChanged(ref this._certFile, value);
+        set {
+            this.RaiseAndSetIfChanged(ref this._certFile, value);
+            this.RequiresPassword = Path.GetExtension(value).ToLower() == Ext.pfxExt;
+        }
     }
 
     public string CertFilePassword {
@@ -128,9 +133,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         private set => this.RaiseAndSetIfChanged(ref this._requiresPassword, value);
     }
 
-    public string Title {
-        get;
-    } = "Client Configuration";
+    public string Title { get; } = "Client Configuration";
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
@@ -216,7 +219,6 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
                 this.IsUsingSsl = true;
                 this.SelectedCertStoreLocation = StoreLocation.CurrentUser;
                 this.SelectedStoreCertificate = null;
-                this.RequiresPassword = Path.GetExtension(certFile).ToLower() == Ext.pfxExt;
             }
             catch (Exception ex) {
                 this.Io.Log.Error($"Failed to load certificate: {ex.Message}");

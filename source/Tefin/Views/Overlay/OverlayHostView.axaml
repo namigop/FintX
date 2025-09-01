@@ -18,13 +18,14 @@
                         <TextBlock Text="{Binding Content.Title}" FontSize="18" VerticalAlignment="Center"
                                    Margin="16" HorizontalAlignment="Center" />
 
+                        <Border Height="1" HorizontalAlignment="Stretch" Background="{StaticResource Bym.Color.Gray}" ></Border>
                         <ScrollViewer>
-                            <ContentControl Content="{Binding Content}" MinWidth="450" />
+                            <ContentControl Content="{Binding Content}" MinWidth="450" Padding="0 0 0 12" />
                         </ScrollViewer>
                     </StackPanel>
                 </Grid>
             </Grid>
-            <Grid Opacity="0.5" Grid.Row="2" Background="{StaticResource Bym.Color.DefaultControlBackground}" />
+            <Grid Opacity="0.7" Grid.Row="2" Background="{StaticResource Bym.Color.DefaultControlBackground}" />
         </Grid>
     </Border>
 </UserControl>
