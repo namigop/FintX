@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+import "bye.proto";
+import "wassup.proto";
+
+//import "bye.proto";
+//import "wassup.proto";
+
+option csharp_namespace = "Tefin.Grpc.Sample2";
+
+package greet2;
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc SayBye (ByeRequest) returns (ByeReply);
+  rpc SayWassup (WassupRequest) returns (WassupReply);
+  rpc SayEnum (EnumRequest) returns (EnumResponse);
+  rpc Duplex (stream ByeRequest) returns (stream EnumResponse);
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+// The response message containing the greetings.
+message HelloReply {
+  string message = 1;
+}
+
+enum SampleEnum {
+  A = 0;
+  B = 1;
+}
+
+message EnumMsg {
+  repeated SampleEnum someEnums = 1;
+}
+
+
+message EnumRequest {
+  SampleEnum sample = 1;
+}
+
+message EnumResponse {
+  EnumMsg response = 1;
+}
+

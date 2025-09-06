@@ -24,12 +24,7 @@ type CompileParameters =
     ReflectionServiceUrl: string
     Config: ReadOnlyDictionary<string, string> }
 
-
-
 module ServiceClient =
-
-
-
   let findClientType (types: Type array) =
     let rec check (t: Type) =
       if not (t.BaseType = null) then
@@ -127,6 +122,7 @@ module ServiceClient =
 
         let services =
           lines
+          |> Array.filter (fun l -> not (l.TrimStart().StartsWith("//")))
           |> Array.map (fun l -> Regex.Match(l, regex))
           |> Array.filter (fun g -> g.Success)
           |> Array.map (fun m -> m.Groups["ServiceName"].Value)

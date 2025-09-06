@@ -19,7 +19,3 @@ public class AddClientFeature(
     public async Task Add() =>
         await ClientStructure.addClient(io, project, clientName, serviceName, protoOrUrl, description, csFiles, dll);
 }
-
-public class LoadClientFeature(IOs io, string clientPath) {
-    public ProjectTypes.ClientGroup Run() => ClientStructure.loadClient(io, clientPath);
-}

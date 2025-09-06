@@ -38,6 +38,7 @@ let findByThumbprint (thumbprint: string) (location: StoreLocation) : X509Certif
   else
     signingCert[0]
     
+    
 let createFromFile (file:string) (password:string) =
   if String.IsNullOrWhiteSpace password then
     X509CertificateLoader.LoadCertificateFromFile(file)

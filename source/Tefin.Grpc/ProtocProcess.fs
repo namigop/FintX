@@ -22,34 +22,26 @@ module ProtocProcess =
     for cs in io.Dir.GetFiles(protosPath, "*.cs", SearchOption.AllDirectories) do
       io.File.Delete(cs)
 
-  let private getProtocArgs (io: IOs) (grpcRoot: string) (csharpPlugin: string) (protoFile: string) =
-    let googlePath = Path.Combine(grpcRoot, "google", "protobuf")
+  let private getProtocArgs (io: IOs) (grpcRoot: string) (csharpPlugin: string) (protoFile: string) (protoPathsFromImport: string array) (iter:int)=    
     let sourceProtoPath = Path.GetDirectoryName(protoFile)
 
-    // let args =
-    //   $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\" --proto_path=\"{googlePath}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
-
+    let ext = $".g{iter}.cs" 
     let oneLevelup = Path.GetDirectoryName(sourceProtoPath);
-    let args =
-      $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\"   --proto_path=\"{oneLevelup}\" --csharp_out=protos --csharp_opt=file_extension=.g.cs --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
-
-    $"{args} \"{protoFile}\""
-    // if (protoFiles.Length = 1) then
-    //   //$"{args} {Path.GetFileName(protoFiles[0])}"
-    //   $"{args} \"{protoFiles[0]}\""
-    // else
-    //   let names = protoFiles |> Array.map (fun f -> Path.GetFileName(f))
-    //   let files = String.Join(" ", names)
-    //   $"{args} {files}"
-
-  let extractExecutablesAndGoogleProtos
-    (io: IOs)
-    (grpcRootPath: string)
-    (protocExe: string)
-    (csharpPluginExe: string)
-    =
+    if protoPathsFromImport.Length = 0 then    
+      let args = $"--proto_path=\"{grpcRoot}\" --proto_path=\"{sourceProtoPath}\" --proto_path=\"{oneLevelup}\" --csharp_out=protos --csharp_opt=file_extension={ext} --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
+      $"{args} \"{protoFile}\""
+    else
+      let protoPaths =
+        protoPathsFromImport        
+        |> Array.append [| grpcRoot; sourceProtoPath;  |]
+        |> Array.distinct
+        |> Array.map (fun r ->  "--proto_path=" + "\"" + Path.Combine (sourceProtoPath, r) + "\"")
+      let protoPathArgs = String.Join(" ", protoPaths)
+      let args = $"{protoPathArgs} --csharp_out=protos --csharp_opt=file_extension={ext} --plugin=protoc-gen-grpc={csharpPlugin} --grpc_out=protos "
+      $"{args} \"{protoFile}\""
+      
+  let extractExecutablesAndGoogleProtos (io: IOs) (grpcRootPath: string) (protocExe: string) (csharpPluginExe: string)=
     task {
-
       let toolsPath = Path.Combine(grpcRootPath, "tools")
       let protocPath = Path.Combine(toolsPath, "protoc")
       let zip = Path.Combine(grpcRootPath, "protoc.zip")
@@ -136,7 +128,8 @@ module ProtocProcess =
         lines
         |> Array.filter (fun line -> line.Trim().StartsWith("import"))
         |> Array.map (fun line -> line.Substring(line.IndexOf("\"")).Replace("\"", "").Replace(";", ""))
-        |> Array.filter (fun line -> not <| line.StartsWith("google/protobuf"))
+        //do not include the google/protobuf imports
+        |> Array.filter (fun line -> not <| line.StartsWith("google/protobuf")) 
         
       let rec findFile (basePath:string) (filePart:string) =
         let file = Path.Combine(basePath, filePart)
@@ -155,25 +148,42 @@ module ProtocProcess =
           
           findFile (Path.GetDirectoryName basePath) filePart
           
+      let rec findBaseProtoPath (basePath:string) (importStatement:string) =
+        if (String.IsNullOrEmpty basePath) then
+          failwith "Unable to find the correct path argument to \"--proto-path\""
+          
+        let file = Path.Combine(basePath, importStatement)
+        if File.Exists file then
+          basePath
+        else
+          let upOneLevel = Path.GetDirectoryName basePath
+          findBaseProtoPath upOneLevel importStatement
+        
       let warningRegex = new Regex(@"warning:\s+.*")         
       let isProtocError (line:string) = not (warningRegex.IsMatch(line))         
           
-      let rec generateFor (protoFile:string) (csFiles:ResizeArray<string>) =
+      
+      let rec generateFor (protoFile:string) (csFiles:ResizeArray<string>) (iter:int) =
         task {
-          let args = getProtocArgs io grpcRoot csharpPlugin protoFile
-          let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly)) isProtocError
-          csFiles.AddRange files
           let basePath = Path.GetDirectoryName protoFile
-          let imports = findImports protoFile        
-          let importFiles = imports |> Array.map (fun p -> findFile basePath p)
-          for i in importFiles do
-            do! generateFor i csFiles
+          let imports = findImports protoFile
+          let importsFrom = imports |> Array.map (fun i -> findBaseProtoPath basePath i )
+          let args = getProtocArgs io grpcRoot csharpPlugin protoFile importsFrom iter
+          let! files = Proc.run protoc args (fun () -> io.Dir.GetFiles(protosPath, "*.cs", SearchOption.TopDirectoryOnly)) isProtocError
+          csFiles.AddRange files            
+          let importFiles = imports |> Array.map (fun p -> findFile basePath p)         
+          for i in importFiles do            
+            do! generateFor i csFiles (iter + 1)
          }
          
       let csFiles = ResizeArray<string>()
-      do! generateFor protosFiles[0] csFiles
+      do! generateFor protosFiles[0] csFiles 0
 
-      let generatedCsFiles = csFiles |> Seq.distinct |> Seq.toArray
+      
+      let generatedCsFiles =
+        csFiles
+        |> Seq.distinctBy (fun csFile -> Utils.getMD5Hash csFile)
+        |> Seq.toArray
       if (generatedCsFiles.Length > 0) then
         //If we have generated new *.cs files, delete any dll lying around
         let dlls = io.Dir.GetFiles(System.IO.Path.GetDirectoryName(generatedCsFiles[0]), "*.dll", System.IO.SearchOption.TopDirectoryOnly)

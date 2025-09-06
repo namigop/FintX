@@ -31,6 +31,12 @@ let private deriveKeyAndIV (password: string) (salt: byte[]) =
     use deriveBytes = new Rfc2898DeriveBytes(password, salt, 1000, HashAlgorithmName.SHA256)
     (deriveBytes.GetBytes(32), deriveBytes.GetBytes(16))
 
+let getMD5Hash (file:string) =
+    use md5 = MD5.Create()
+    use stream = File.OpenRead(file)
+    let hash = md5.ComputeHash(stream)
+    BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant()
+  
 let encrypt (text: string) (password: string) =
     let bytes = Encoding.UTF8.GetBytes(text)
     let salt = Array.zeroCreate<byte> 16

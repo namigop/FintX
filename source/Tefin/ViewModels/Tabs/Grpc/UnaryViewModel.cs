@@ -74,25 +74,27 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
 
     public override string GetRequestContent() {
         var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
-        var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0]; 
-        var requestVariables = methodInfoNode.Variables;
-        
-        List<VarDefinition> responseVariables;
-        if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
-            responseVariables = respNode.Variables;
-        }
-        else {
-            responseVariables = this._envVars.ResponseVariables;
-        }
-        
-        if (ok) {
-            var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [], []);
-            var exportReqJson = feature.Export();
-            if (!exportReqJson.IsOk) {
-                this.Io.Log.Error(exportReqJson.ErrorValue);
+        if (this.ReqViewModel.TreeEditor.Items[0] is MethodInfoNode methodInfoNode) {
+            //var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0]; 
+            var requestVariables = methodInfoNode.Variables;
+
+            List<VarDefinition> responseVariables;
+            if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
+                responseVariables = respNode.Variables;
             }
             else {
-                return exportReqJson.ResultValue;
+                responseVariables = this._envVars.ResponseVariables;
+            }
+
+            if (ok) {
+                var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [], []);
+                var exportReqJson = feature.Export();
+                if (!exportReqJson.IsOk) {
+                    this.Io.Log.Error(exportReqJson.ErrorValue);
+                }
+                else {
+                    return exportReqJson.ResultValue;
+                }
             }
         }
 
