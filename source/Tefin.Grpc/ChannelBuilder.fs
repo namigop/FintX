@@ -119,7 +119,8 @@ module ChannelBuilder =
         PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
         KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
         KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
-        SslOptions = SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks)
+        SslOptions = SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
+                                                    ClientCertificates =   new X509Certificate2Collection())
       )
 
     let _ = handler.SslOptions.ClientCertificates.Add(x509)
