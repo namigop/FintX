@@ -10,6 +10,7 @@
 
     <ItemGroup>
         <Compile Include="TestInputTypes.fs" />
+        <Compile Include="ScriptingTests.fs" />
         <Compile Include="IoMock.fs" />
         <Compile Include="ClassTypeTests.fs" />
         <Compile Include="ProjectTests.fs" />

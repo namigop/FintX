@@ -17,14 +17,14 @@
             <Generator>MSBuild:Compile</Generator>
         </Protobuf>
         <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
-        <Protobuf Include="Protos\greet2.proto">
+        <None Include="Protos\greet2.proto">
           <GrpcServices>Server</GrpcServices>
           <Access>Public</Access>
           <ProtoCompile>True</ProtoCompile>
           <CompileOutputs>True</CompileOutputs>
           <OutputDir>obj\Debug/net9.0/</OutputDir>
           <Generator>MSBuild:Compile</Generator>
-        </Protobuf>
+        </None>
         <Protobuf Include="Protos\wassup.proto">
             <GrpcServices>Server</GrpcServices>
             <Access>Public</Access>

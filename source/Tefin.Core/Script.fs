@@ -5,12 +5,14 @@ open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Security.Cryptography
 open System.Text
+open System.Threading.Tasks
 open Microsoft.CodeAnalysis.CSharp.Scripting
 open System.Runtime.Loader
 open Microsoft.CodeAnalysis
 open Microsoft.CodeAnalysis.CSharp
 open Microsoft.CodeAnalysis.CSharp.Scripting
 open Microsoft.CodeAnalysis.Scripting
+open Tefin.Core.Reflection
 open Tefin.Core.Utils;
 
 type ScriptGlobals(id:string) =
@@ -25,7 +27,6 @@ type ScriptEngine =
          member x.Dispose() =
            x.Runners.Clear()
            x.Globals.Shared.Clear()
-
 
 module Script =    
     let private getScriptHash (code:string) =
@@ -57,7 +58,7 @@ module Script =
         let runner = script.CreateDelegate()
         runner
     
-    let compile code =
+    let private compile code =
         try
             let runner = compileCsScript code
             Res.ok runner
@@ -69,15 +70,38 @@ module Script =
           Runners = new ConcurrentDictionary<string, ScriptRunner<obj>>()
           Globals = ScriptGlobals(id)}
     
-    let run (engine:ScriptEngine) code =
-        let hash = getMD5Hash code
+    let dispose (engine: ScriptEngine) =
+       engine :> IDisposable
+       |> _.Dispose()
+       
+    let private _run (engine:ScriptEngine) code =
+      task {
+        let hash = getScriptHash code
         let runner = engine.Runners.GetOrAdd (hash, fun _ ->
             let res = compile code            
             if (res.IsError) then
                 let exc = Res.getError res
-                raise exc
-                
+                raise exc               
             Res.getValue res )
-        continue.
-        ()
         
+        let! scriptResult = runner.Invoke(engine.Globals)
+        let stringResult =
+            task {
+                if scriptResult = null then
+                    return "<null>"
+                else if (TypeHelper.isOfType (scriptResult.GetType()) (typeof<Task>)) then
+                    let t = scriptResult :?> Task
+                    do! t
+                    return 
+                        t.GetType().GetProperty "Result"
+                        |> fun prop -> prop.GetValue t
+                        |> fun x -> if (x = null) then "<null>" else x.ToString()
+                else
+                    return scriptResult.ToString()
+             }
+        return! stringResult                
+     }
+    
+    let run (engine:ScriptEngine) code =
+        Res.execTask (fun () -> _run engine code)
+        |> Res.mapTask (fun t -> Task.FromResult (Ret.Ok t))
