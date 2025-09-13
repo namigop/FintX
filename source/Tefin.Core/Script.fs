@@ -1,4 +1,4 @@
-namespace Tefin.Core
+namespace Tefin.Core.Scripting
 
 open System
 open System.Collections.Concurrent
@@ -13,10 +13,10 @@ open Microsoft.CodeAnalysis.CSharp
 open Microsoft.CodeAnalysis.CSharp.Scripting
 open Microsoft.CodeAnalysis.Scripting
 open Tefin.Core.Reflection
-open Tefin.Core.Utils;
+open Tefin.Core;
 
 type ScriptGlobals(id:string) =
-    member _.Shared =  Dictionary<string, obj>()  
+    member _.Context =  Dictionary<string, obj>()  
     member _.Id = id
     
 type ScriptEngine =
@@ -26,7 +26,7 @@ type ScriptEngine =
       interface IDisposable with
          member x.Dispose() =
            x.Runners.Clear()
-           x.Globals.Shared.Clear()
+           x.Globals.Context.Clear()
 
 module Script =    
     let private getScriptHash (code:string) =
@@ -34,6 +34,19 @@ module Script =
         let bytes = md5.ComputeHash (Encoding.UTF8.GetBytes code)
         Convert.ToBase64String bytes
         
+    /// Compiles a given C# script into a ScriptRunner delegate for execution.
+    ///
+    /// Parameters:
+    ///   code: The C# code to be compiled as a script.
+    ///
+    /// Returns:
+    ///   A delegate that can be invoked to execute the compiled script logic.
+    ///
+    /// Remarks:
+    ///   The compilation uses Microsoft.CodeAnalysis.CSharp.Scripting to create a script execution environment.
+    ///   The script is compiled with default options that include assemblies and namespaces commonly used
+    ///   in .NET programming. For example, `System`, `System.Text`, `System.Linq` etc., are automatically
+    ///   imported. It is designed to support scenarios where dynamic scripting based on C# code may be required.
     let private compileCsScript (code:string) =        
         let scriptOptions =
             ScriptOptions.Default.WithReferences(
@@ -51,6 +64,7 @@ module Script =
                 "System.Text",
                 "System.Threading.Tasks",
                 "System.Text.Json",
+                "System.IO",
                 "System.Text.RegularExpressions"
             )
                 

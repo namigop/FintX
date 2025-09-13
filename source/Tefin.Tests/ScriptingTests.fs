@@ -1,7 +1,107 @@
 module Tefin.Tests.ScriptingTests
 open System
+open Tefin.Core.Scripting
 open Tefin.Core
 open Xunit
+
+
+[<Fact>]
+let ``Can parse script with raw text`` () =
+    let script =
+        """
+           {
+            "Api": "grpc",
+            "Method": "ReportScenario",
+            "MethodType": "Unary",
+            "ClientType": "Grpc.Testing.ReportQpsScenarioService+ReportQpsScenarioServiceClient",
+            "RequestType": "Grpc.Testing.ScenarioResult",
+            "Variables": {
+                "RequestVariables": [],
+                "ResponseVariables": [],
+                "RequestStreamVariables": [],
+                "ResponseStreamVariables": []
+            }
+          }
+        """
+    let res = ScriptParser.parse script "" ""
+    Assert.Equal(true, res.IsOk)
+    let lines = Res.getValue res
+    Assert.Equal(15, lines.Length)
+    for l in lines do
+      Assert.Equal(l.LineStart, l.LineEnd)
+      Assert.Equal(false, l.IsComment)    
+   
+
+[<Fact>]
+let ``Can parse script with raw one liners`` () =
+    let script =
+        """
+           {
+            "Api": "$<<DateTine.Now.ToString()>>",
+            "Method": "ReportScenario",
+            "MethodType": "Unary",
+            "ClientType": "Grpc.Testing.ReportQpsScenarioService+ReportQpsScenarioServiceClient",
+            "RequestType": "$<<return 42;>>",
+            "Variables": {
+                "RequestVariables": [],
+                "ResponseVariables": [],
+                "RequestStreamVariables": [],
+                "ResponseStreamVariables": []
+            }
+          }
+        """
+    let res = ScriptParser.parse script "" ""
+    Assert.Equal(true, res.IsOk)
+    let lines = Res.getValue res
+    Assert.Equal(15, lines.Length)
+    for l in lines do
+      Assert.Equal(l.LineStart, l.LineEnd)
+      Assert.Equal(false, l.IsComment)
+    
+    let oneliners = lines |> Array.filter (fun l -> l.ContainsScript)
+    Assert.Equal(2, oneliners.Length)
+    Assert.True(oneliners[0].Raw.Contains("$<<DateTine.Now.ToString()>>"))
+    Assert.True(oneliners[1].Raw.Contains("$<<return 42;>>"))
+
+
+
+[<Fact>]
+let ``Can parse script with raw multi liners`` () =
+    let script =
+        """
+           {
+            "Api": "$<<DateTine.Now.ToString()>>",
+            "Method": "ReportScenario",
+            "MethodType": "Unary",
+            "ClientType": "Grpc.Testing.ReportQpsScenarioService+ReportQpsScenarioServiceClient",
+            "RequestType": "$<<
+               int GetAnswerToTheQuestionOfLife() {
+                    return 42;
+               }
+               return GetAnswerToTheQuestionOfLife();
+               >>",
+            "Variables": {
+                "RequestVariables": []                  
+                "ResponseVariables": [],
+                "RequestStreamVariables": [],
+                "ResponseStreamVariables": []
+            }
+          }
+        """
+    let res = ScriptParser.parse script "" ""
+    Assert.Equal(true, res.IsOk)
+    let lines = Res.getValue res
+    Assert.Equal(15, lines.Length)
+    for l in lines do
+      Assert.Equal(l.LineStart, l.LineEnd)
+      Assert.Equal(false, l.IsComment)
+    
+    let oneliners = lines |> Array.filter (fun l -> l.ContainsScript)
+    Assert.Equal(2, oneliners.Length)
+    Assert.True(oneliners[0].Raw.Contains("$<<DateTine.Now.ToString()>>"))
+    Assert.True(oneliners[1].Raw.Contains("$<<return 42;>>"))
+
+
 
 [<Fact>]
 let ``Can execute script`` () =

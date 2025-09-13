@@ -60,6 +60,8 @@
         <Compile Include="Share.fs" />
         <Compile Include="Git.fs" />
         <Compile Include="Script.fs" />
+        <Compile Include="ScriptLine.fs" />
+        <Compile Include="ScriptParser.fs" />
 
     </ItemGroup>
 
