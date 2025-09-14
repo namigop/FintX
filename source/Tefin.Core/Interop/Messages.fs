@@ -16,3 +16,9 @@ module MessageProject =
     member x.Client = client
     member x.PreviousPath = previousPath
     member x.Path = folderPath
+    
+  type MsgServiceMockUpdated(client: ServiceMockGroup, folderPath: string, previousPath: string) =
+    inherit MsgBase($"ServiceMock@{folderPath}")
+    member x.Client = client
+    member x.PreviousPath = previousPath
+    member x.Path = folderPath

@@ -3,7 +3,7 @@
 namespace Tefin.ViewModels.Explorer;
 
 /// <summary>
-///     Multiple selection allowed only for the types of nodes
+///     Multiple selection allowed only for the same types of nodes
 /// </summary>
 /// <param name="explorerViewModel"></param>
 public class SameNodeTypeStrategy<T>(IExplorerTree<T> explorerViewModel) : IExplorerNodeSelectionStrategy where T : NodeBase {

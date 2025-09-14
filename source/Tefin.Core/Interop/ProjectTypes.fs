@@ -42,7 +42,6 @@ module ProjectTypes =
       Methods: MethodGroup array
       SubPath : SubPath
       Path: string }
-
     static member ConfigFilename = "config.json"
     static member Empty() =
       { Name = ""
@@ -53,6 +52,26 @@ module ProjectTypes =
         SubPath = { Code = ""; Collections = ""; Methods = ""; Perf= ""; Tests = "" }
         Config = None }
 
+  type ServiceMockSubPath =
+    { Code:string      
+      Methods : string }
+  type ServiceMockGroup =
+    { Name: string
+      CodeFiles: string array
+      ConfigFile: string
+      Config: ClientConfig option
+      Methods: MethodGroup array
+      SubFolders : ServiceMockSubPath
+      Path: string }
+    static member ConfigFilename = "config.json"
+    static member Empty() =
+      { Name = ""
+        CodeFiles = Array.empty
+        ConfigFile = ""
+        Path = ""
+        Methods = Array.empty
+        SubFolders = { Code = ""; Methods = "" }
+        Config = None }
   type Project =
     { Clients: ClientGroup array
       ConfigFile: string

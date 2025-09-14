@@ -12,7 +12,7 @@ public class MainMenuViewModel : ViewModelBase {
     public MainMenuViewModel() {
         this.ClientMenuItem = new ClientMenuItemViewModel(this);
         this.InfoMenuItem = new InfoMenuItemViewModel(this);
-        this.ServerMenuItem = new ServerMenuItemViewModel(this);
+        this.ServerMenuItem = new ServiceMockMenuItemViewModel(this);
         this.ConfigMenuItem = new ConfigMenuItemViewModel(this);
         this.SelectedMenu = new SelectedMenuViewModel();
     }
@@ -36,5 +36,5 @@ public class MainMenuViewModel : ViewModelBase {
         }
     }
 
-    public ServerMenuItemViewModel ServerMenuItem { get; }
+    public ServiceMockMenuItemViewModel ServerMenuItem { get; }
 }

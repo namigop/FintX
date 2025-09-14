@@ -21,7 +21,7 @@ using Tefin.ViewModels.Validations;
 
 namespace Tefin.ViewModels.Overlay;
 
-public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
+public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
@@ -29,62 +29,15 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
-    private string _startStopDemoGrpcServiceText = "";
-    private static StartDemoGrpcServiceFeature? _startGrpcFeature;
-
-    public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
+    
+    public AddGrpcMockOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
         this.DiscoverCommand = this.CreateCommand(this.OnDiscover);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
-        this.StartStopDemoGrpcServiceCommand = this.CreateCommand(this.OnStartStopDemoGrpcService);
         this.ReflectionUrl = StartDemoGrpcServiceFeature.Url;
-        this.Title = "Add a client";
+        this.Title = "Create a mock gRPC service";
         this.Description = string.Empty;
-
-        _startGrpcFeature ??= new StartDemoGrpcServiceFeature();
-        this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
-        
-        this.SubscribeTo<string, AddGrpcServiceOverlayViewModel>(
-            x => x.ReflectionUrl,
-            vm => {
-                vm.RaisePropertyChanged(nameof(vm.StartStopDemoGrpcServiceText));
-                vm.RaisePropertyChanged(nameof(vm.CanStartDemoGrpcService));
-            });
-    }
-
-    public ICommand StartStopDemoGrpcServiceCommand { get; }
-
-    public bool CanStartDemoGrpcService => this.ReflectionUrl == StartDemoGrpcServiceFeature.Url;
-
-    public string StartStopDemoGrpcServiceText {
-        get => this._startStopDemoGrpcServiceText;
-        set => this.RaiseAndSetIfChanged(ref _startStopDemoGrpcServiceText, value);
-    }
- 
-    private async Task OnStartStopDemoGrpcService() {
-        if (!_startGrpcFeature!.IsStarted) {
-            this.Description = "Demo gRPC service for testing";
-            await _startGrpcFeature.Start();
-            await this.OnDiscover();
-            this.ClientName = _startGrpcFeature.GetClientName();
-            await Task.Delay(1000);
-            await this.OnOkay();
-
-            this.Io.Log.Info("***************************");
-            this.Io.Log.Info("Demo gRPC service started");
-            this.Io.Log.Info("***************************");
-            
-            this.StartStopDemoGrpcServiceText = "Stop Demo gRPC Service";
-        }
-        else {
-            await _startGrpcFeature.Stop();
-            this.Io.Log.Info("***************************");
-            this.Io.Log.Info("Demo gRPC service stooped");
-            this.Io.Log.Info("***************************");
-            
-            this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
-        }
     }
 
     [IsHttp]
@@ -187,7 +140,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     private async Task OnOkay() {
         if (string.IsNullOrWhiteSpace(this.ClientName)) {
-            this.Io.Log.Error("Client name is empty.  Enter a valid name");
+            this.Io.Log.Error("Service name is empty.  Enter a valid name");
             return;
         }
 
@@ -197,7 +150,7 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         }
 
         if (this._project.Clients.FirstOrDefault(t => t.Name == this.ClientName) != null) {
-            this.Io.Log.Error("Client already exists.  Enter a new name");
+            this.Io.Log.Error("Mock service already exists.  Enter a new name");
             return;
         }
 
