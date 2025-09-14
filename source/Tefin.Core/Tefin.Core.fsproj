@@ -62,6 +62,7 @@
         <Compile Include="Script.fs" />
         <Compile Include="ScriptLine.fs" />
         <Compile Include="ScriptParser.fs" />
+        <Compile Include="ScriptExec.fs" />
 
     </ItemGroup>
 

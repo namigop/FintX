@@ -28,7 +28,11 @@ type ScriptEngine =
            x.Runners.Clear()
            x.Globals.Context.Clear()
 
-module Script =    
+module Script =
+    type T =
+        { Full : string
+          Runnable : string}
+        
     let private getScriptHash (code:string) =
         let md5 = MD5.Create()
         let bytes = md5.ComputeHash (Encoding.UTF8.GetBytes code)
@@ -88,7 +92,7 @@ module Script =
        engine :> IDisposable
        |> _.Dispose()
        
-    let private _run (engine:ScriptEngine) code =
+    let private runInternal (io:IOs) (engine:ScriptEngine) code =
       task {
         let hash = getScriptHash code
         let runner = engine.Runners.GetOrAdd (hash, fun _ ->
@@ -97,9 +101,9 @@ module Script =
                 let exc = Res.getError res
                 raise exc               
             Res.getValue res )
-        
+
         let! scriptResult = runner.Invoke(engine.Globals)
-        let stringResult =
+        let! stringResult =
             task {
                 if scriptResult = null then
                     return "<null>"
@@ -113,9 +117,12 @@ module Script =
                 else
                     return scriptResult.ToString()
              }
-        return! stringResult                
+            
+        io.Log.Info($"Executing {code} ==> {stringResult}")
+        return stringResult                
      }
     
-    let run (engine:ScriptEngine) code =
-        Res.execTask (fun () -> _run engine code)
+    let run (io:IOs) (engine:ScriptEngine) code =        
+        Res.execTask (fun () -> runInternal io engine code)
         |> Res.mapTask (fun t -> Task.FromResult (Ret.Ok t))
+    

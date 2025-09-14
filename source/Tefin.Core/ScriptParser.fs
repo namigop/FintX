@@ -4,6 +4,7 @@ open System
 open System.IO
 open Tefin.Core
 open System.Text
+open Script
 
 module ScriptParser =
     type MultiLineParseState =
@@ -14,7 +15,16 @@ module ScriptParser =
     let defaultExpressionStart = "$<<"
     let defaultExpressionEnd = ">>"
     
-    let parse (text:string) (exprStart : string) (exprEnd : string) =
+    let extractScriptWithExpr (exprStart : string) (exprEnd : string) (raw:string) = 
+        let startPos = raw.IndexOf(exprStart, StringComparison.Ordinal)
+        let endPos = raw.IndexOf(exprEnd, StringComparison.Ordinal)
+        let script = raw.Substring(startPos + exprStart.Length, endPos - startPos - exprStart.Length)
+        let full = raw.Substring(startPos, endPos - startPos + exprEnd.Length)
+        { Full = full; Runnable = script }
+    
+    let extract = extractScriptWithExpr defaultExpressionStart defaultExpressionEnd
+        
+    let parseWithExpr (exprStart : string) (exprEnd : string) (text:string)  =
         let expressionStart =
             if (String.IsNullOrWhiteSpace exprStart) then
                 defaultExpressionStart
@@ -73,6 +83,7 @@ module ScriptParser =
                     (scr, (lineNumber + 1, None))
                 ) (0, None))
         |> Res.map (fun (scrLines, _) -> scrLines |> Array.filter (fun l -> l.LineEnd > -1))
-        
+    
+    let parse = parseWithExpr defaultExpressionStart defaultExpressionEnd
             
            

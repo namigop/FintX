@@ -99,6 +99,18 @@ module Res =
         return (failed exc)
     }
 
+  let unwrapTask (res:Ret<Task<'a>>) =
+    task {
+      if res.IsOk then
+        try
+          let! output = (getValue res)
+          return (ok output)
+        with exc ->
+          return (failed exc)
+      else
+        return failed (getError res)
+    }
+    
   let stop mapFn (res: Ret<'a>) = ignore (map mapFn res)
 
   let log = intercept

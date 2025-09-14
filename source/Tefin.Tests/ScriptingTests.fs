@@ -4,6 +4,7 @@ open Tefin.Core.Scripting
 open Tefin.Core
 open Xunit
 
+let io = Resolver.value
 
 [<Fact>]
 let ``Can parse script with raw text`` () =
@@ -23,7 +24,7 @@ let ``Can parse script with raw text`` () =
             }
           }
         """
-    let res = ScriptParser.parse script "" ""
+    let res = ScriptParser.parse script
     Assert.Equal(true, res.IsOk)
     let lines = Res.getValue res
     Assert.Equal(15, lines.Length)
@@ -50,7 +51,7 @@ let ``Can parse script with raw one liners`` () =
             }
           }
         """
-    let res = ScriptParser.parse script "" ""
+    let res = ScriptParser.parse script
     Assert.Equal(true, res.IsOk)
     let lines = Res.getValue res
     Assert.Equal(15, lines.Length)
@@ -66,7 +67,7 @@ let ``Can parse script with raw one liners`` () =
 
 
 [<Fact>]
-let ``Can parse script with raw multi liners`` () =
+let ``Can parse script with multi liners`` () =
     let script =
         """
            {
@@ -88,18 +89,70 @@ let ``Can parse script with raw multi liners`` () =
             }
           }
         """
-    let res = ScriptParser.parse script "" ""
+    let res = ScriptParser.parse script
     Assert.Equal(true, res.IsOk)
-    let lines = Res.getValue res
-    Assert.Equal(15, lines.Length)
-    for l in lines do
-      Assert.Equal(l.LineStart, l.LineEnd)
-      Assert.Equal(false, l.IsComment)
-    
-    let oneliners = lines |> Array.filter (fun l -> l.ContainsScript)
-    Assert.Equal(2, oneliners.Length)
-    Assert.True(oneliners[0].Raw.Contains("$<<DateTine.Now.ToString()>>"))
-    Assert.True(oneliners[1].Raw.Contains("$<<return 42;>>"))
+    let lines = Res.getValue res    
+    let multiLine = lines |> Array.filter (fun l -> l.ContainsScript && not(l.LineEnd = l.LineStart))
+    Assert.Equal(1, multiLine.Length)
+    Assert.True(multiLine[0].Raw.Contains("GetAnswerToTheQuestionOfLife"))
+   
+[<Fact>]
+let ``Can run script with multi liners`` () =
+    task
+        {
+            let script =
+                """
+                   {
+                    "Api": "$<<DateTime.Now.ToString("yyy-MM-dd HHmmss")>>",
+                    "Method": "ReportScenario",
+                    "MethodType": "Unary",
+                    "ClientType": "Grpc.Testing.ReportQpsScenarioService+ReportQpsScenarioServiceClient",
+                    "RequestType": "$<<
+                       int GetAnswerToTheQuestionOfLife() {
+                            return 42;
+                       }
+                       return GetAnswerToTheQuestionOfLife();
+                       >>",
+                    "Variables": {
+                        "RequestVariables": []                  
+                        "ResponseVariables": [],
+                        "RequestStreamVariables": [],
+                        "ResponseStreamVariables": []
+                    }
+                  }
+                """
+        
+            let! res =  ScriptExec.start io script ""
+            Assert.Equal(true, res.IsOk)
+            let output = Res.getValue res
+            Assert.Contains("\"RequestType\": \"42\"", output)             
+        }
+   
+   
+[<Fact>]
+let ``Can run pure script`` () =
+    task
+        {
+            let script =
+                """
+                   $<<
+                       int GetAnswerToTheQuestionOfLife() {
+                            return 42;
+                       }
+                       string Json() {
+                           return $"{{ \"life\": \"{GetAnswerToTheQuestionOfLife()}\" }}";
+                       }
+                        
+                       return Json();
+                       >>,                    
+                """
+        
+            let! res =  ScriptExec.start io script ""
+            Assert.Equal(true, res.IsOk)
+            let output = Res.getValue res
+            Assert.Contains("\"life\": \"42\"", output)             
+        }     
+   
 
 
 
@@ -108,7 +161,7 @@ let ``Can execute script`` () =
     task {
         let cs = "2 + 3"
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal("5", Res.getValue res)
     }
 
@@ -120,8 +173,8 @@ let ``Can execute multiple scripts`` () =
         let today =  DateTime.Today.ToString("yyyy-MM-dd HHmmss")
         
         let engine = Script.createEngine "someId"
-        let! res1 = Script.run engine cs1
-        let! res2 = Script.run engine cs2
+        let! res1 = Script.run io engine cs1
+        let! res2 = Script.run io engine cs2
         Assert.Equal("5", Res.getValue res1)
         Assert.Equal(today, Res.getValue res2)
         
@@ -134,7 +187,7 @@ let ``Can execute handle null return`` () =
     task {
         let cs = "return null;"
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal("<null>", Res.getValue res)
     }
         
@@ -150,7 +203,7 @@ let ``Can execute script with function`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal("abcde", Res.getValue res)
     }
     
@@ -166,7 +219,7 @@ let ``Can handle exception`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal(true, res.IsError)
         let err = Res.getError res
         Assert.Equal("Some script exception", err.Message)
@@ -183,7 +236,7 @@ let ``Can run linq`` () =
                .Sum()            
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal( (2 * (2 + 4 + 6 + 8 + 10)).ToString() , Res.getValue res)        
     }
     
@@ -199,7 +252,7 @@ let ``Can execute async script`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run engine cs
+        let! res = Script.run io engine cs
         Assert.Equal("abcde", Res.getValue res)
     }
           
