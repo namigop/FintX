@@ -169,4 +169,5 @@ public class ServiceMockRootNode : NodeBase {
     public string ServicePath { get; private set; }
     public string ServiceName { get; private set; }
     public uint Port { get; private set; }
+    public ICommand OpenServiceMockConfigCommand { get; }
 }

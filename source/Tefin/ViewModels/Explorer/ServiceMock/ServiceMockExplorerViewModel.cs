@@ -81,18 +81,18 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     public IExplorerItem? SelectedItem { get; set; }
     public ICommand DeleteCommand { get; }
 
-    public ClientRootNode AddClientNode(ClientGroup cg, Type? type = null) {
+    public ServiceMockRootNode AddRootNode(ServiceMockGroup cg, Type? type = null) {
         var c = Dispatcher.UIThread.Invoke(() => {
             var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == cg.Path);
             if (n == null) {
-                var clientNode = new ClientRootNode(cg, type);
+                var clientNode = new ServiceMockRootNode(cg, type);
                 clientNode.Init();
                 this.Items.Add(clientNode);
                 this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
                 return clientNode;
             }
 
-            return (ClientRootNode)n;
+            return (ServiceMockRootNode)n;
         });
         return c;
     }
@@ -108,42 +108,42 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     public ClientRootNode[] GetClientNodes() =>
         this.Items.Where(c => c is ClientRootNode).Cast<ClientRootNode>().ToArray();
 
-    public void LoadProject(string path) {
-        if (string.IsNullOrWhiteSpace(path)) {
-            return;
-        }
-
-        if (!Directory.Exists(path)) {
-            return;
-        }
-
-        if (path == this.Project?.Path) {
-            return;
-        }
-
-        var stateFile = Path.Combine(path, ProjectSaveState.FileName);
-        if (!this.Io.File.Exists(stateFile)) {
-            this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
-            return;
-        }
-
-        //Close all existing tabs
-        GlobalHub.publish(new CloseAllTabsMessage());
-
-        var load = new LoadProjectFeature(this.Io, path);
-        this.Project = load.Run();
-
-        this.Items.Clear();
-        foreach (var client in this.Project.Clients) {
-            this.AddClientNode(client);
-        }
-
-        //if there are no clients, show the add dialog
-        if (!this.Project.Clients.Any()) {
-            var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
-            GlobalHub.publish(new OpenOverlayMessage(overlay));
-        }
-    }
+    // public void LoadProject(string path) {
+    //     if (string.IsNullOrWhiteSpace(path)) {
+    //         return;
+    //     }
+    //
+    //     if (!Directory.Exists(path)) {
+    //         return;
+    //     }
+    //
+    //     if (path == this.Project?.Path) {
+    //         return;
+    //     }
+    //
+    //     var stateFile = Path.Combine(path, ProjectSaveState.FileName);
+    //     if (!this.Io.File.Exists(stateFile)) {
+    //         this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
+    //         return;
+    //     }
+    //
+    //     //Close all existing tabs
+    //     GlobalHub.publish(new CloseAllTabsMessage());
+    //
+    //     var load = new LoadProjectFeature(this.Io, path);
+    //     this.Project = load.Run();
+    //
+    //     this.Items.Clear();
+    //     foreach (var client in this.Project.Clients) {
+    //         this.AddRootNode(client);
+    //     }
+    //
+    //     //if there are no clients, show the add dialog
+    //     if (!this.Project.Clients.Any()) {
+    //         var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
+    //         GlobalHub.publish(new OpenOverlayMessage(overlay));
+    //     }
+    // }
 
     private void OnClientCompile(ClientCompileMessage message) => this.IsBusy = message.InProgress;
 
@@ -334,7 +334,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                 var proj = loadProj.Run();
                 this.Project = proj;
 
-                var client = proj.Clients.First(t => t.Name == obj.ClientName);
+                var client = proj.Mocks.First(t => t.Name == obj.ClientName);
                 if (obj.Reset) //&& this.GetClientNodes().FirstOrDefault(t => t.Mock.Path == client.Path) is { } cn ) 
                 {
                     throw new NotImplementedException();
@@ -342,7 +342,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                 }
                  
                 
-                this.AddClientNode(client, type);
+                this.AddRootNode(client, type);
             }
         }
 

@@ -58,10 +58,13 @@ module ProjectStructure =
       clientPaths
       |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
 
+    let mocks =
+        Array.empty //TODO
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
     { Name = projectName
       Package = projSaveState.Package
+      Mocks = mocks
       Clients = clients
       ConfigFile = config
       Path = projectPath }

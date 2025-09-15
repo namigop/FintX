@@ -358,6 +358,26 @@
           <DependentUpon>ResetGrpcServiceOverlayView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\MainMenu\ServiceMockSubMenuView.axaml.cs">
+          <DependentUpon>ServiceMockSubMenuView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\ServiceMockExplorerView.axaml.cs">
+          <DependentUpon>ClientExplorerView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeActionView.axaml.cs">
+          <DependentUpon>ClientRootNodeActionView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeContext.axaml.cs">
+          <DependentUpon>ClientRootNodeContext.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeView.axaml.cs">
+          <DependentUpon>ClientRootNodeView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

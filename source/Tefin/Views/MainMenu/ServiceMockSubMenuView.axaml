@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mainMenu="clr-namespace:Tefin.ViewModels.MainMenu"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="mainMenu:ServiceMockSubMenuViewModel"
+             x:Class="Tefin.Views.MainMenu.ServiceMockSubMenuView">
+    <StackPanel Orientation="Horizontal">
+        <StackPanel.Styles>
+            <Style Selector="Button > StackPanel > TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="6 0 0 0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="Foreground" Value="LightSlateGray" />
+            </Style>
+        </StackPanel.Styles>
+        <Button Command="{Binding AddServiceMockCommand}" Classes="MenuButton" ToolTip.Tip="Create a new gRPC mock server">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Plus}" />
+                <TextBlock Text="mock gRPC" />
+            </StackPanel>
+        </Button>
+         
+    </StackPanel>
+</UserControl>

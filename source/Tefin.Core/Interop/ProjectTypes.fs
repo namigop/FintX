@@ -74,6 +74,7 @@ module ProjectTypes =
         Config = None }
   type Project =
     { Clients: ClientGroup array
+      Mocks : ServiceMockGroup array
       ConfigFile: string
       Name: string
       Package: string
@@ -84,6 +85,7 @@ module ProjectTypes =
 
     static member Empty() =
       { Clients = Array.empty
+        Mocks = Array.empty
         ConfigFile = ""
         Package = ""
         Name = ""

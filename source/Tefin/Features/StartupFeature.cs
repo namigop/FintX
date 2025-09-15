@@ -13,11 +13,7 @@ namespace Tefin.Features;
 
 public class StartupFeature {
     public void Init() {
-        // foreach (Environment.SpecialFolder sf in Enum.GetValues(typeof(Environment.SpecialFolder))) {
-        //     Console.WriteLine($"{sf} : {Environment.GetFolderPath(sf)}");
-        // }
-
-        //var fo = VarsStructure.demo();
+        GenericServiceImplementationGenerator.Test();
 
         Startup.init();
         Current.Init();

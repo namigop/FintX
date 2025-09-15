@@ -9,6 +9,7 @@ using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Explorer.ServiceMock;
 using Tefin.ViewModels.Overlay;
 
 #endregion
@@ -16,9 +17,9 @@ using Tefin.ViewModels.Overlay;
 namespace Tefin.ViewModels.MainMenu;
 
 public class ServiceMockSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
-    private readonly ClientExplorerViewModel _explorerViewModel;
+    private readonly ServiceMockExplorerViewModel _explorerViewModel;
 
-    public ServiceMockSubMenuViewModel(ClientExplorerViewModel explorerViewModel) {
+    public ServiceMockSubMenuViewModel(ServiceMockExplorerViewModel explorerViewModel) {
         this._explorerViewModel = explorerViewModel;
         this.AddServiceMockCommand = this.CreateCommand(this.OnAddServiceMock);
     }

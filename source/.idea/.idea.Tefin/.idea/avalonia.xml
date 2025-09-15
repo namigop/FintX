@@ -32,6 +32,10 @@
         <entry key="Tefin/Views/Explorer/MethodNodeContext.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/MultiNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/ClientExplorerView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/ClientRootNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/ClientRootNodeContext.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/ClientRootNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Footer/FooterView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ClientSubMenuView.axaml" value="Tefin/Tefin.csproj" />
@@ -41,6 +45,8 @@
         <entry key="Tefin/Views/MainMenu/PerfTestMenuItemView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/SelectedMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainMenu/ServerMenuItemView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ServiceMockMenuItemView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/MainMenu/ServiceMockSubMenuView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/MainWindow.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Misc/MiscView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Misc/OutputMiscView.axaml" value="Tefin/Tefin.csproj" />

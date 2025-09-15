@@ -3,12 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:mainMenu="clr-namespace:Tefin.ViewModels.MainMenu"
+             xmlns:explorer="clr-namespace:Tefin.Views.Explorer.ServiceMock"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="mainMenu:ServiceMockMenuItemViewModel"
              x:Class="Tefin.Views.MainMenu.ServiceMockMenuItemView">
-    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-        <TextBlock Text="This is not yet implemented." />
-        <TextBlock Text="Here you can host a gRPC service and get automatic tracing of messages"
-                   VerticalAlignment="Stretch" />
-    </StackPanel>
+    <Border>
+        <Grid RowDefinitions="*, Auto">
+            <explorer:ServiceMockExplorerView DataContext="{Binding Explorer}" />
+        </Grid>
+    </Border>
 </UserControl>
