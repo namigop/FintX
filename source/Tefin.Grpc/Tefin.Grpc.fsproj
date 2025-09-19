@@ -36,11 +36,14 @@
         <Compile Include="DynamicTypes.fs"/>
         <Compile Include="Export.fs"/>
         <Compile Include="Startup.fs"/>
+        <Compile Include="ServiceMock.fs" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1"/>
         <PackageReference Include="Google.Protobuf" Version="3.31.0" />
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0" />
         <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
         <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
         <PackageReference Include="Grpc.Reflection" Version="2.71.0" />

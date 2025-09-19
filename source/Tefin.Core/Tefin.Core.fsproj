@@ -49,6 +49,7 @@
         <Compile Include="CancellationTokenConverter.fs"/>
         <Compile Include="Instance.fs"/>
         <Compile Include="ClientStructure.fs" />
+        <Compile Include="ServiceMockStructure.fs" />
         <Compile Include="ProjectStructure.fs" />
         <Compile Include="VarsStructure.fs" />
         <Compile Include="ClientCompiler.fs"/>

@@ -10,6 +10,7 @@ using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Explorer.Config;
+using Tefin.ViewModels.Explorer.ServiceMock;
 using Tefin.ViewModels.Overlay;
 
 namespace Tefin.ViewModels.ProjectEnv;
@@ -17,12 +18,18 @@ namespace Tefin.ViewModels.ProjectEnv;
 public class ProjectMenuViewModel : ViewModelBase {
     private readonly ClientExplorerViewModel _clientExplorer;
     private readonly ConfigExplorerViewModel _configExplorer;
+    private readonly ServiceMockExplorerViewModel _serviceMockExplorer;
     private readonly EnvMenuViewModel _envMenu;
     private ProjectSelection _selectedProject;
 
-    public ProjectMenuViewModel(ClientExplorerViewModel explorerViewModel,ConfigExplorerViewModel configExplorer,  EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
+    public ProjectMenuViewModel(
+        ClientExplorerViewModel explorerViewModel,
+        ConfigExplorerViewModel configExplorer, 
+        ServiceMockExplorerViewModel serviceMockExplorer,
+        EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
         this._clientExplorer = explorerViewModel;
         this._configExplorer = configExplorer;
+        this._serviceMockExplorer = serviceMockExplorer;
         this._envMenu = envMenu;
         this.NewProjectCommand = this.CreateCommand(this.OnNewProject);
         this.OpenProjectCommand = this.CreateCommand(this.OnOpenProject);
@@ -101,6 +108,7 @@ public class ProjectMenuViewModel : ViewModelBase {
     }
     private void ResetExplorers(string projectPath) {
         this._clientExplorer.LoadProject(projectPath);
+        this._serviceMockExplorer.Project = this._clientExplorer.Project;
         this._configExplorer.Project = this._clientExplorer.Project;
         this._configExplorer.Clear();
         this._configExplorer.Init();

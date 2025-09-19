@@ -28,7 +28,7 @@ public class ServiceMockSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
     
 
     private void OnAddServiceMock() {
-        AddGrpcServiceOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);
+        AddGrpcMockOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);
         OpenOverlayMessage msg = new(overlayVm);
         GlobalHub.publish(msg);
     }

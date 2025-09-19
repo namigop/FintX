@@ -27,6 +27,7 @@ public class MainWindowViewModel : ViewModelBase {
         this.ProjectMenuViewModel = new ProjectMenuViewModel(
             this.MainMenu.ClientMenuItem.Explorer,
             this.MainMenu.ConfigMenuItem.Explorer, 
+            this.MainMenu.ServiceMockMenuItem.Explorer,
             this.EnvMenuViewModel, 
             appState);
     }
@@ -58,9 +59,9 @@ public class MainWindowViewModel : ViewModelBase {
 
         //var package = this.Root.Packages.First(t => t.Name == packageName);
         this.MainMenu.ClientMenuItem.Init(project);
-        this.MainMenu.ServerMenuItem.Init();
         this.MainMenu.ConfigMenuItem.Init(project);
         this.MainMenu.InfoMenuItem.Init();
+        this.MainMenu.ServiceMockMenuItem.Init(project);
         this.MainMenu.ClientMenuItem.SelectItemCommand.Execute(Unit.Default);
 
         var hasClients = this.MainMenu.ClientMenuItem.Project.Clients.Any();

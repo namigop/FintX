@@ -25,6 +25,7 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
+    private string _port = "50051";
     private bool _isDiscoveringUsingProto;
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
@@ -40,19 +41,20 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = string.Empty;
     }
 
-    [IsHttp]
-    public string Address {
-        get => this._address;
-        set => this.RaiseAndSetIfChanged(ref this._address, value);
-    }
-
     public ICommand CancelCommand { get; }
 
     [Required(ErrorMessage = "Enter a unique name")]
     [IsValidFolderName]
-    public string ClientName {
+    public string ServiceName {
         get => this._clientName;
         set => this.RaiseAndSetIfChanged(ref this._clientName, value);
+    }
+    
+    [Required(ErrorMessage = "Enter a port number")]
+    [IsValidPortNumber]
+    public string Port {
+        get => this._port;
+        set => this.RaiseAndSetIfChanged(ref this._port, value);
     }
 
     public string Description { get; set; }
@@ -84,13 +86,9 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         set {
             this.RaiseAndSetIfChanged(ref this._selectedDiscoveredService, value);
             if (!string.IsNullOrWhiteSpace(this._selectedDiscoveredService)) {
-                if (string.IsNullOrWhiteSpace(this.ClientName)) {
+                if (string.IsNullOrWhiteSpace(this.ServiceName)) {
                     var name = this._selectedDiscoveredService.Split(".").Last();
-                    this.ClientName = $"{name}Client";
-                }
-
-                if (string.IsNullOrWhiteSpace(this.Address)) {
-                    this.Address = "http://";
+                    this.ServiceName = $"{name}Mock";
                 }
             }
         }
@@ -139,7 +137,7 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     private async Task OnOkay() {
-        if (string.IsNullOrWhiteSpace(this.ClientName)) {
+        if (string.IsNullOrWhiteSpace(this.ServiceName)) {
             this.Io.Log.Error("Service name is empty.  Enter a valid name");
             return;
         }
@@ -149,7 +147,7 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
             return;
         }
 
-        if (this._project.Clients.FirstOrDefault(t => t.Name == this.ClientName) != null) {
+        if (this._project.Mocks.FirstOrDefault(t => t.Name == this.ServiceName) != null) {
             this.Io.Log.Error("Mock service already exists.  Enter a new name");
             return;
         }
@@ -164,16 +162,14 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
             var (ok, output) = await cmd.Run();
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
-                var address = this.IsDiscoveringUsingProto ? this.Address : this.ReflectionUrl;
-
-                address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
-                var msg = new ShowClientMessage(
+                var msg = new ShowServiceMockMessage(
                     output,
-                    address,
-                    this.ClientName, 
+                    this.IsDiscoveringUsingProto  ? protoFiles[0] : this.ReflectionUrl,
+                    this.ServiceName, 
                     this.SelectedDiscoveredService,
                     this.Description,
                     csFiles,
+                    Convert.ToUInt32(this.Port),
                     output.Input.Value.ModuleFile) {Reset = false};
                 GlobalHub.publish(msg);
             }

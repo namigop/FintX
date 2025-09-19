@@ -12,7 +12,7 @@ public class MainMenuViewModel : ViewModelBase {
     public MainMenuViewModel() {
         this.ClientMenuItem = new ClientMenuItemViewModel(this);
         this.InfoMenuItem = new InfoMenuItemViewModel(this);
-        this.ServerMenuItem = new ServiceMockMenuItemViewModel(this);
+        this.ServiceMockMenuItem = new ServiceMockMenuItemViewModel(this);
         this.ConfigMenuItem = new ConfigMenuItemViewModel(this);
         this.SelectedMenu = new SelectedMenuViewModel();
     }
@@ -29,12 +29,12 @@ public class MainMenuViewModel : ViewModelBase {
             this.SelectedMenu.MenuItem = this._selectedMenuItem;
 
             foreach (var s in new IMenuItemViewModel[] {
-                         this.ClientMenuItem, this.ServerMenuItem, this.ConfigMenuItem, this.InfoMenuItem
+                         this.ClientMenuItem, this.ServiceMockMenuItem, this.ConfigMenuItem, this.InfoMenuItem
                      }) {
                 s.IsSelected = s == this._selectedMenuItem;
             }
         }
     }
 
-    public ServiceMockMenuItemViewModel ServerMenuItem { get; }
+    public ServiceMockMenuItemViewModel ServiceMockMenuItem { get; }
 }

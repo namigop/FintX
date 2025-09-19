@@ -82,9 +82,9 @@
                     <TextBlock Text="{Binding ClientMenuItem.ShortName}" />
                 </StackPanel>
             </ToggleButton>
-            <ToggleButton x:Name="ButtonServer" Command="{Binding ServerMenuItem.SelectItemCommand}"
-                          ToolTip.Tip="{Binding ServerMenuItem.ToolTip}"
-                          IsChecked="{Binding ServerMenuItem.IsSelected}">
+            <ToggleButton x:Name="ButtonServer" Command="{Binding ServiceMockMenuItem.SelectItemCommand}"
+                          ToolTip.Tip="{Binding ServiceMockMenuItem.ToolTip}"
+                          IsChecked="{Binding ServiceMockMenuItem.IsSelected}">
                 <StackPanel>
 
                     <Viewbox Stretch="Uniform">
@@ -103,7 +103,7 @@
                             </Canvas>
                         </Canvas>
                     </Viewbox>
-                    <TextBlock Text="{Binding ServerMenuItem.ShortName}" />
+                    <TextBlock Text="{Binding ServiceMockMenuItem.ShortName}" />
                 </StackPanel>
             </ToggleButton>
             <ToggleButton x:Name="ButtonConfig" Command="{Binding ConfigMenuItem.SelectItemCommand}"

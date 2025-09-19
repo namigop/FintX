@@ -150,10 +150,10 @@ public class ServiceMockRootNode : NodeBase {
         this.CanOpen = true;
         this.ServicePath = cg.Path;
         this.ServiceName = cg.Config.Value.ServiceName;
-        this.Url = cg.Config.Value.Url;
-        this.Title = cg.Config.Value.Name;
-        this.SubTitle = cg.Config.Value.Description;
-        this.Desc = cg.Config.Value.Description;
+        // this.Url = cg.Config.Value.Url;
+         this.Title = cg.Config.Value.ServiceName;
+        // this.SubTitle = cg.Config.Value.Description;
+        // this.Desc = cg.Config.Value.Description;
         this.ServiceConfigFile = cg.ConfigFile;
  
     }

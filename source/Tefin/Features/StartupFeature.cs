@@ -13,7 +13,7 @@ namespace Tefin.Features;
 
 public class StartupFeature {
     public void Init() {
-        GenericServiceImplementationGenerator.Test();
+        //GenericServiceImplementationGenerator.Test();
 
         Startup.init();
         Current.Init();

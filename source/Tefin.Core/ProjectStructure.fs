@@ -58,18 +58,24 @@ module ProjectStructure =
       clientPaths
       |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
 
-    let mocks =
-        Array.empty //TODO
+    
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
     { Name = projectName
       Package = projSaveState.Package
-      Mocks = mocks
+      Mocks = Array.empty
       Clients = clients
       ConfigFile = config
       Path = projectPath }
 
   let loadProject (io: IOs) (projectPath: string) =
-    _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.File.Exists
+    let lp = _loadProject projectPath io.Dir.GetFiles io.File.ReadAllText io.Dir.CreateDirectory io.Dir.GetDirectories io.File.Exists
+    let mocks =
+      io.Dir.GetFiles (projectPath, ServiceMockGroup.ConfigFilename, SearchOption.AllDirectories)
+      |> Array.map Path.GetDirectoryName
+      |> Array.map (fun path -> ServiceMockStructure.loadServiceMock io path)
+
+    { lp with Mocks = mocks }
+    
 
    

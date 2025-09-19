@@ -19,7 +19,7 @@
         <Button Command="{Binding AddServiceMockCommand}" Classes="MenuButton" ToolTip.Tip="Create a new gRPC mock server">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.Plus}" />
-                <TextBlock Text="mock gRPC" />
+                <TextBlock Text="Create a mock gRPC" />
             </StackPanel>
         </Button>
          

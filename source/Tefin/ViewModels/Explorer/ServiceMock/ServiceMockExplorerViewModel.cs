@@ -53,9 +53,9 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         this.ExplorerTree.RowSelection!.SingleSelect = false;
         this.ExplorerTree.RowSelection!.SelectionChanged += this.RowSelectionChanged;
         GlobalHub.subscribeTask<ShowServiceMockMessage>(this.OnShowServiceMock).Then(this.MarkForCleanup);
-        GlobalHub.subscribe<ClientDeletedMessage>(this.OnClientDeleted).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ServiceMockDeletedMessage>(this.OnServiceMockDeleted).Then(this.MarkForCleanup);
         GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
-        GlobalHub.subscribe<ClientCompileMessage>(this.OnClientCompile).Then(this.MarkForCleanup);
+        GlobalHub.subscribe<ServiceMockCompileMessage>(this.OnServiceMockCompile).Then(this.MarkForCleanup);
 
         this.CopyCommand = this.CreateCommand(this.OnCopy);
         this.PasteCommand = this.CreateCommand(this.OnPaste);
@@ -105,8 +105,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         }
     }
 
-    public ClientRootNode[] GetClientNodes() =>
-        this.Items.Where(c => c is ClientRootNode).Cast<ClientRootNode>().ToArray();
+    public ServiceMockRootNode[] GetServiceMockNodes() =>
+        this.Items.Where(c => c is ServiceMockRootNode).Cast<ServiceMockRootNode>().ToArray();
 
     // public void LoadProject(string path) {
     //     if (string.IsNullOrWhiteSpace(path)) {
@@ -145,10 +145,11 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     //     }
     // }
 
-    private void OnClientCompile(ClientCompileMessage message) => this.IsBusy = message.InProgress;
+    private void OnServiceMockCompile(ServiceMockCompileMessage message) => this.IsBusy = message.InProgress;
 
-    private void OnClientDeleted(ClientDeletedMessage obj) {
-        var target = this.Items.FirstOrDefault(t => t is ClientRootNode cn && cn.ClientPath == obj.Client.Path);
+    private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
+        var target = this.Items.FirstOrDefault(
+            t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
         if (target != null) {
             this.Items.Remove(target);
         }
@@ -188,8 +189,9 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     fn.IsEditing = true;
                     break;
 
-                case ClientRootNode cn:
-                    cn.OpenClientConfigCommand.Execute(Unit.Default);
+                case ServiceMockRootNode cn:
+                    throw new NotImplementedException("//TODO");
+                    //cn.OpenClientConfigCommand.Execute(Unit.Default);
                     break;
             }
         }
@@ -256,7 +258,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
 
             var node = (MethodNode)item;
             var dir = Path.GetDirectoryName(msg.FullPath);
-            var methodPath = ClientStructure.getMethodPath(node.Client.Path, node.MethodInfo.Name);
+            var methodPath = ServiceMockStructure.getMethodPath(node.Client.Path, node.MethodInfo.Name);
             if (dir == methodPath) {
                 var existing = node.Items.Cast<FileReqNode>().FirstOrDefault(t => t.FullPath == msg.FullPath);
                 if (existing == null) {
@@ -310,31 +312,31 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         async Task Show() {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-            var clientTypes = ServiceClient.findClientType(types);
-            var type = clientTypes.First(t => {
+            var serviceBaseTypes = ServiceClient.findServiceType(types);
+            var type = serviceBaseTypes.First(t => {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
             });
             
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
-                var feature = new AddClientFeature(
+                var feature = new AddServiceMockFeature(
                     this.Project,
-                    obj.ClientName,
-                    obj.SelectedDiscoveredService!,
-                    obj.ProtoFilesOrUrl,
+                    obj.ServiceName,
+                    obj.ProtoFileOrUrl,
                     obj.Description,
                     obj.CsFiles,
                     obj.Dll,
                     this.Io);
-                await feature.Add();
+                feature.Add();
 
                 //reload the project to take in the newly added client
                 var loadProj = new LoadProjectFeature(this.Io, this.Project.Path);
                 var proj = loadProj.Run();
+                //Current.ProjectPath
                 this.Project = proj;
 
-                var client = proj.Mocks.First(t => t.Name == obj.ClientName);
+                var client = proj.Mocks.First(t => t.Name == obj.ServiceName);
                 if (obj.Reset) //&& this.GetClientNodes().FirstOrDefault(t => t.Mock.Path == client.Path) is { } cn ) 
                 {
                     throw new NotImplementedException();
@@ -357,7 +359,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
 
             this._nodeSelectionStrategy.Apply(e);
 
-            var selectedNodes = this.GetClientNodes().SelectMany(c => c.FindChildNodes(d => d.IsSelected)).ToArray();
+            var selectedNodes = this.GetServiceMockNodes().SelectMany(c => c.FindChildNodes(d => d.IsSelected)).ToArray();
             if (selectedNodes.Length == 0) {
                 this.SelectedItem = null;
             }
@@ -373,5 +375,25 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     private class CopyPasteArg(IExplorerItem? container, string fileToCopy) {
         public IExplorerItem? Container { get; } = container;
         public string FileToCopy { get; } = fileToCopy;
+    }
+
+    public void Init() {
+       
+    }
+
+    public ServiceMockRootNode AddMockNode(ServiceMockGroup mockGroup, Type? type = null) {
+        var c = Dispatcher.UIThread.Invoke(() => {
+            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == mockGroup.Path);
+            if (n == null) {
+                var mockNode = new ServiceMockRootNode(mockGroup, type);
+                mockNode.Init();
+                this.Items.Add(mockNode);
+                this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
+                return mockNode;
+            }
+
+            return (ServiceMockRootNode)n;
+        });
+        return c;
     }
 }

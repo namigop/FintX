@@ -102,9 +102,7 @@ module ClientStructure =
         let nameChanged = not (oldDirName = currentName)
 
         if nameChanged then
-          let newClientPath =
-            Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
-
+          let newClientPath = Path.GetDirectoryName oldClientPath |> fun p -> Path.Combine(p, currentName)
           moveDirectory oldClientPath newClientPath
 
           let newConfigFile = Path.Combine(newClientPath, fileName)

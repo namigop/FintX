@@ -2,6 +2,7 @@
 
 #endregion
 
+using Tefin.Core.Interop;
 using Tefin.ViewModels.Explorer.ServiceMock;
 
 namespace Tefin.ViewModels.MainMenu;
@@ -18,6 +19,10 @@ public class ServiceMockMenuItemViewModel : MenuItemBaseViewModel, IMenuItemView
     public override string ShortName { get; } = "mocks";
     public override ISubMenusViewModel? SubMenus { get; } = null;
 
-    public void Init() {
+    public void Init(ProjectTypes.Project project) {
+        this.Explorer.Project = project;
+        foreach (var mock in project.Mocks) {
+            this.Explorer.AddMockNode(mock);
+        }
     }
 }

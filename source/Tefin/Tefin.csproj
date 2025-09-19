@@ -378,6 +378,10 @@
           <DependentUpon>ClientRootNodeView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Overlay\AddGrpcMockOverlayView.axaml.cs">
+          <DependentUpon>AddGrpcMockOverlayView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

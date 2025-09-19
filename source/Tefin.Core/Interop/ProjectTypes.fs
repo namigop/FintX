@@ -3,7 +3,10 @@ namespace Tefin.Core.Interop
 
 [<AutoOpen>]
 module ProjectTypes =
-
+  
+  type ServiceMockConfig() =
+    member val ServiceName = "" with get, set
+  
   //Use a class instead of an F# record to easily serialize to json
   type ClientConfig() =
     member val Name = "" with get, set
@@ -59,11 +62,11 @@ module ProjectTypes =
     { Name: string
       CodeFiles: string array
       ConfigFile: string
-      Config: ClientConfig option
+      Config: ServiceMockConfig option
       Methods: MethodGroup array
       SubFolders : ServiceMockSubPath
       Path: string }
-    static member ConfigFilename = "config.json"
+    static member ConfigFilename = "mockconfig.json"
     static member Empty() =
       { Name = ""
         CodeFiles = Array.empty
