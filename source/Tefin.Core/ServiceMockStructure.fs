@@ -1,5 +1,6 @@
 namespace Tefin.Core
 
+open System.Reflection
 open Tefin.Core.Interop
 open System.IO
 open System
@@ -19,17 +20,16 @@ module ServiceMockStructure =
     let loadMethods (io:IOs) (mockPath: string) =
       let methodPath = getMethodsPath mockPath
       io.Dir.CreateDirectory methodPath
-      let methodDirs = io.Dir.GetDirectories methodPath //"*.*" SearchOption.TopDirectoryOnly)
+      let methodDirs = io.Dir.GetDirectories methodPath //"*.*" SearchOption.TopDirectoryOnly
 
       methodDirs
       |> Array.map (fun m ->
         let methodName = Path.GetFileName m
-
         let scriptFiles =
           io.Dir.GetFiles (m, "*" + Ext.mockScriptExt, SearchOption.AllDirectories)
           |> Array.filter (fun fp -> not <| fp.Contains(AutoSaveFolderName)) //ignore auto-saved files
 
-        { RequestFiles = scriptFiles
+        { ScriptFile = if scriptFiles.Length > 0 then scriptFiles[0] else "" 
           Name = methodName
           Path = m })
     
@@ -50,11 +50,26 @@ module ServiceMockStructure =
         SubFolders = { Code = codePath; Methods = Path.Combine(mockPath, "methods") }        
         Path = mockPath }
     
-    let addMock (io: IOs) (project: Project) (serviceName:string) (protoOrUrl:string) description (csFiles: string array) (dll:string) =        
+    let addMethod (io:IOs) (methodsPath:string) (method:MethodInfo) =
+      let path = Path.Combine(methodsPath, method.Name)
+      io.Dir.CreateDirectory path
+      let scriptFile = Path.Combine(path, $"{method.Name}_script{Ext.mockScriptExt}")
+      io.File.WriteAllText scriptFile "<empty>"
+      
+    let addServiceMock
+        (io: IOs)
+        (project: Project)
+        (serviceName:string)        
+        description
+        (csFiles: string array)
+        (dll:string)
+        (port:uint)
+        (methods:MethodInfo array) =
+          
         let mockPath = Path.Combine(project.Path, "mocks", Utils.makeValidFileName serviceName)
         io.Dir.CreateDirectory mockPath
         
-        let mockConfig = ServiceMockConfig( ServiceName = serviceName)
+        let mockConfig = ServiceMockConfig( ServiceName = serviceName, Port = port, Desc = description)
         let mockConfigFile = Path.Combine(mockPath, ServiceMockGroup.ConfigFilename)
         let json = Instance.jsonSerialize mockConfig
         io.File.WriteAllText mockConfigFile json
@@ -65,6 +80,9 @@ module ServiceMockStructure =
         let dllName = Path.GetFileName dll
         let dlLTarget = Path.Combine(codePath, dllName)
         io.File.Copy(dll, dlLTarget, true)
+                
+        for m in methods do          
+          addMethod io (getMethodsPath mockPath) m
         
         for source in csFiles do
             let name = Path.GetFileName source

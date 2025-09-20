@@ -6,6 +6,8 @@ module ProjectTypes =
   
   type ServiceMockConfig() =
     member val ServiceName = "" with get, set
+    member val Port = 0u with get, set
+    member val Desc = "" with get,set
   
   //Use a class instead of an F# record to easily serialize to json
   type ClientConfig() =
@@ -30,6 +32,15 @@ module ProjectTypes =
       { Name = ""
         Path = ""
         RequestFiles = Array.empty }
+  type ServiceMockMethodGroup =
+    { Name: string
+      Path: string
+      ScriptFile: string  }
+
+    static member Empty() =
+      { Name = ""
+        Path = ""
+        ScriptFile = "" }    
 
   type SubPath =
     { Code:string
@@ -63,10 +74,10 @@ module ProjectTypes =
       CodeFiles: string array
       ConfigFile: string
       Config: ServiceMockConfig option
-      Methods: MethodGroup array
+      Methods: ServiceMockMethodGroup array
       SubFolders : ServiceMockSubPath
       Path: string }
-    static member ConfigFilename = "mockconfig.json"
+    static member ConfigFilename = "mockConfig.json"
     static member Empty() =
       { Name = ""
         CodeFiles = Array.empty

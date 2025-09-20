@@ -35,7 +35,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     private Project? _project;
 
     public ServiceMockExplorerViewModel() {
-        //this._nodeSelectionStrategy = new FileOnlyStrategy(this);
+        this._nodeSelectionStrategy = new FileOnlyStrategy(this);
         var temp = new HierarchicalTreeDataGridSource<IExplorerItem>(this.Items) {
             Columns = {
                 new HierarchicalExpanderColumn<IExplorerItem>(new TemplateColumn<IExplorerItem>("", "CellTemplate",
@@ -85,11 +85,11 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         var c = Dispatcher.UIThread.Invoke(() => {
             var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == cg.Path);
             if (n == null) {
-                var clientNode = new ServiceMockRootNode(cg, type);
-                clientNode.Init();
-                this.Items.Add(clientNode);
+                var rootNode = new ServiceMockRootNode(cg, type);
+                rootNode.Init();
+                this.Items.Add(rootNode);
                 this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
-                return clientNode;
+                return rootNode;
             }
 
             return (ServiceMockRootNode)n;
@@ -313,12 +313,13 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
             var serviceBaseTypes = ServiceClient.findServiceType(types);
-            var type = serviceBaseTypes.First(t => {
+            var serviceBaseType = serviceBaseTypes.First(t => {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
             });
             
-            if (type != null && this.Project != null) {
+            if (serviceBaseType != null && this.Project != null) {
+                var methods = ServiceClient.findMethods(serviceBaseType);
                 //Update the currently loaded project
                 var feature = new AddServiceMockFeature(
                     this.Project,
@@ -327,13 +328,14 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     obj.Description,
                     obj.CsFiles,
                     obj.Dll,
+                    obj.Port,
+                    methods,
                     this.Io);
                 feature.Add();
 
                 //reload the project to take in the newly added client
                 var loadProj = new LoadProjectFeature(this.Io, this.Project.Path);
                 var proj = loadProj.Run();
-                //Current.ProjectPath
                 this.Project = proj;
 
                 var client = proj.Mocks.First(t => t.Name == obj.ServiceName);
@@ -344,7 +346,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                 }
                  
                 
-                this.AddRootNode(client, type);
+                this.AddRootNode(client, serviceBaseType);
             }
         }
 

@@ -10,6 +10,8 @@ using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
 using Tefin.ViewModels.Tabs.Grpc;
 
+using File = System.IO.File;
+
 namespace Tefin.ViewModels.Explorer.Client;
 
 public sealed class MockMethodNode : NodeBase {
@@ -54,12 +56,12 @@ public sealed class MockMethodNode : NodeBase {
         ClientStructure.getMethodPath(this.ServiceMock.Path, this.MethodInfo.Name).Then(d => this.Io.Dir.CreateDirectory(d));
 
         var method = this.ServiceMock.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
-        if (method != null) {
-            foreach (var file in method.RequestFiles.OrderBy(f => f)) {
-                var fn = new FileReqNode(file);
+        if (method != null && File.Exists(method.ScriptFile)) {
+            //foreach (var file in method.ScriptFile.OrderBy(f => f)) {
+                var fn = new FileReqNode(method.ScriptFile);
                 fn.Init();
                 this.AddItem(fn);
-            }
+           // }
         }
     }
 

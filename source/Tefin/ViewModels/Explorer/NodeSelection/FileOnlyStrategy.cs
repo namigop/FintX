@@ -2,16 +2,53 @@
 using Avalonia.Controls.Selection;
 
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Explorer.ServiceMock;
 
 namespace Tefin.ViewModels.Explorer;
 
 /// <summary>
 ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
 /// </summary>
-/// <param name="explorerViewModel"></param>
-public class FileOnlyStrategy(ClientExplorerViewModel explorerViewModel) : IExplorerNodeSelectionStrategy {
+public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
+    //private readonly ClientExplorerViewModel _explorerViewModel;
+    private readonly Func<IExplorerItem?> _getSelected;
+
+    /// <summary>
+    ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
+    /// </summary>
+    /// <param name="explorerViewModel"></param>
+    public FileOnlyStrategy(ClientExplorerViewModel explorerViewModel) {
+        //this._explorerViewModel = explorerViewModel;
+        this.ExplorerTree = explorerViewModel.ExplorerTree;
+        Func<IExplorerItem?> getSelected =
+            () => explorerViewModel.GetClientNodes()
+                .Select(c => c.FindSelected())
+                .FirstOrDefault(m => m != null);
+
+        this._getSelected = getSelected;
+        
+    }
+
+    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; private set; }
+
+    /// <summary>
+    ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
+    /// </summary>
+    /// <param name="explorerViewModel"></param>
+    public FileOnlyStrategy(ServiceMockExplorerViewModel explorerViewModel) {
+        this.ExplorerTree = explorerViewModel.ExplorerTree;
+        var getSelected =
+            () => explorerViewModel.GetServiceMockNodes()
+                .Select(c => c.FindSelected())
+                .FirstOrDefault(m => m != null);
+
+        this._getSelected = getSelected;
+        
+        
+    }
+
     public void Apply(TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
-        var selected = explorerViewModel.GetClientNodes().Select(c => c.FindSelected()).FirstOrDefault(m => m != null);
+        var selected = this._getSelected();
 
         List<IExplorerItem?> selectedItems = [];
         for (var i = 0; i < e.SelectedItems.Count; i++) {
@@ -51,7 +88,7 @@ public class FileOnlyStrategy(ClientExplorerViewModel explorerViewModel) : IExpl
             }
 
             var d = selectedIndexes[index];
-            explorerViewModel.ExplorerTree.RowSelection!.Deselect(d);
+            this.ExplorerTree.RowSelection!.Deselect(d);
         }
     }
 }

@@ -339,7 +339,6 @@ public class ClientExplorerViewModel : ViewModelBase {
                     this.GetClientNodes().FirstOrDefault(t => t.Client.Path == client.Path) is { } cn) {
                     this.Items.Remove(cn);
                 }
-                 
                 
                 this.AddClientNode(client, type);
             }
