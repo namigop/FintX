@@ -21,7 +21,7 @@ public class ServiceMockRootNode : NodeBase {
     private bool _compileInProgress;
     private bool _sessionLoaded;
     
-    public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? clientType) {
+    public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
         // this.Mock = ProjectTypes.ClientGroup.Empty();
         // this.CanOpen = true;
         // this.ClientType = clientType;
@@ -30,6 +30,7 @@ public class ServiceMockRootNode : NodeBase {
         // this.ClientPath = "";
         // this.ServiceName = "";
 
+        this.ServiceType = serviceBaseType;
         this.Update(cg);
 
         this.IsExpanded = true;

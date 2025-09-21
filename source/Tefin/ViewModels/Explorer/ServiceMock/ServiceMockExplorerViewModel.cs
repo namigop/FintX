@@ -148,8 +148,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     private void OnServiceMockCompile(ServiceMockCompileMessage message) => this.IsBusy = message.InProgress;
 
     private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
-        var target = this.Items.FirstOrDefault(
-            t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
+        var target =
+            this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
         if (target != null) {
             this.Items.Remove(target);
         }
@@ -159,13 +159,15 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         var header = "Please confirm";
         switch (this.SelectedItem) {
             case FileNode fn: {
-                var dialog = new YesNoOverlayViewModel(header, $"Delete {fn.Title} file. Are you sure?", fn.DeleteCommand, EmptyCommand);
+                var dialog = new YesNoOverlayViewModel(header, $"Delete {fn.Title} file. Are you sure?",
+                    fn.DeleteCommand, EmptyCommand);
                 GlobalHub.publish(new OpenOverlayMessage(dialog));
                 break;
             }
 
             case MultiNodeFile mFilesNode: {
-                var dialog = new YesNoOverlayViewModel(header, $"Delete {mFilesNode.Items.Count} files. Are you sure?", mFilesNode.DeleteCommand, EmptyCommand);
+                var dialog = new YesNoOverlayViewModel(header, $"Delete {mFilesNode.Items.Count} files. Are you sure?",
+                    mFilesNode.DeleteCommand, EmptyCommand);
                 GlobalHub.publish(new OpenOverlayMessage(dialog));
                 break;
             }
@@ -197,10 +199,12 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         }
     }
 
-    private void OnFileChanged(FileChangeMessage obj) => Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
+    private void OnFileChanged(FileChangeMessage obj) =>
+        Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
 
     private void OnFileChangedInternal(FileChangeMessage obj) {
-        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction, Func<IExplorerItem, bool> check) {
+        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction,
+            Func<IExplorerItem, bool> check) {
             lock (this) {
                 var item = items.FirstOrDefault();
                 if (item == null) {
@@ -293,7 +297,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         this.Exec(() => {
             foreach (var item in this.Items) {
                 var selected = item.FindSelected();
-                if (selected != null && (selected == this._copyPastePending.Container || selected.Parent == this._copyPastePending.Container)) {
+                if (selected != null && (selected == this._copyPastePending.Container ||
+                                         selected.Parent == this._copyPastePending.Container)) {
                     var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
                     if (path != null) {
                         var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
@@ -317,7 +322,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
             });
-            
+
             if (serviceBaseType != null && this.Project != null) {
                 var methods = ServiceClient.findMethods(serviceBaseType);
                 //Update the currently loaded project
@@ -344,8 +349,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     throw new NotImplementedException();
                     //this.Items.Remove(cn);
                 }
-                 
-                
+
+
                 this.AddRootNode(client, serviceBaseType);
             }
         }
@@ -360,8 +365,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
             }
 
             this._nodeSelectionStrategy.Apply(e);
-
-            var selectedNodes = this.GetServiceMockNodes().SelectMany(c => c.FindChildNodes(d => d.IsSelected)).ToArray();
+            var selectedNodes = this.GetServiceMockNodes().SelectMany(c => c.FindChildNodes(d => d.IsSelected))
+                .ToArray();
             if (selectedNodes.Length == 0) {
                 this.SelectedItem = null;
             }
@@ -380,7 +385,6 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     }
 
     public void Init() {
-       
     }
 
     public ServiceMockRootNode AddMockNode(ServiceMockGroup mockGroup, Type? type = null) {

@@ -12,6 +12,7 @@ namespace Tefin.ViewModels.Explorer;
 public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
     //private readonly ClientExplorerViewModel _explorerViewModel;
     private readonly Func<IExplorerItem?> _getSelected;
+    private readonly Func<IExplorerItem, NodeBase?> _findParentNode;
 
     /// <summary>
     ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
@@ -26,6 +27,7 @@ public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
                 .FirstOrDefault(m => m != null);
 
         this._getSelected = getSelected;
+        this._findParentNode = (i) => i.FindParentNode<ClientRootNode>();
         
     }
 
@@ -43,7 +45,7 @@ public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
                 .FirstOrDefault(m => m != null);
 
         this._getSelected = getSelected;
-        
+        this._findParentNode = (i) => i.FindParentNode<ServiceMockRootNode>();
         
     }
 
@@ -76,8 +78,8 @@ public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
             }
 
             if (selected is FileNode && item is FileNode fn) {
-                var p1 = selected.FindParentNode<ClientRootNode>();
-                var p2 = item.FindParentNode<ClientRootNode>();
+                var p1 = this._findParentNode(selected); //FindParentNode<ClientRootNode>();
+                var p2 = this._findParentNode(item); //.FindParentNode<ClientRootNode>();
 
                 //allow selection only if the nodes have the same parent client node 
                 if (p1 == p2) {

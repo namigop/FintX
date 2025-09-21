@@ -382,6 +382,22 @@
           <DependentUpon>AddGrpcMockOverlayView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeActionView.axaml.cs">
+          <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeContext.axaml.cs">
+          <DependentUpon>MethodNodeContext.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeView.axaml.cs">
+          <DependentUpon>MethodNodeView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Explorer\ServiceMock\MockMethodScriptNodeView.axaml.cs">
+          <DependentUpon>FileReqNodeView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

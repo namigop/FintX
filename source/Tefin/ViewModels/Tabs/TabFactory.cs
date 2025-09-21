@@ -4,14 +4,17 @@ using Tefin.Core;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Explorer.Config;
+using Tefin.ViewModels.Explorer.ServiceMock;
 
 #endregion
 
 namespace Tefin.ViewModels.Tabs;
 
 public static class TabFactory {
-    public static ITabViewModel? From(IExplorerItem item, IOs io, string requestFile = "") {
+    public static ITabViewModel? From(IExplorerItem item, IOs io, string file = "") {
         switch (item) {
+            case MockMethodNode m:
+                return new MockMethodTabViewModel(m, file);
             case FilePerfNode p:
                 return new FilePerfTabViewModel(p);
 
@@ -22,7 +25,7 @@ public static class TabFactory {
                 return new FileReqTabViewModel(p3);
 
             case MethodNode p4:
-                return new MethodTabViewModel(p4, requestFile);
+                return new MethodTabViewModel(p4, file);
             
             case EnvNode e2:
                 return new EnvEditorTabViewModel(e2);

@@ -1,0 +1,27 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer.ServiceMock"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="explorer:MockMethodScriptNode"
+             x:Class="Tefin.Views.Explorer.ServiceMock.MockMethodScriptNodeView">
+    <StackPanel Orientation="Horizontal">
+        <StackPanel Orientation="Horizontal">
+            <controls:IconControl IsVisible="{Binding IsManagedByGit}" Icon="{Binding GitFileIcon}" Height="12" Width="16" />
+            <Border>
+                <controls:IconControl Icon="{StaticResource Icon.Grpc2}" Height="12" Width="16" />
+            </Border>
+        </StackPanel>
+
+        <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
+                   IsVisible="{Binding !IsEditing}"
+                   Background="Transparent"
+                   
+                   VerticalAlignment="Center" />
+
+        <TextBox Text="{Binding TempTitle}" x:Name="tbEditor" IsVisible="{Binding IsEditing}"
+                 Margin="6 0 0 0" />
+    </StackPanel>
+</UserControl>

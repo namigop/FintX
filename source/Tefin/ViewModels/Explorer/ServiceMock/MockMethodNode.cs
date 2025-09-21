@@ -12,7 +12,7 @@ using Tefin.ViewModels.Tabs.Grpc;
 
 using File = System.IO.File;
 
-namespace Tefin.ViewModels.Explorer.Client;
+namespace Tefin.ViewModels.Explorer.ServiceMock;
 
 public sealed class MockMethodNode : NodeBase {
     public MockMethodNode(MethodInfo methodInfo, ProjectTypes.ServiceMockGroup cg) {
@@ -53,12 +53,13 @@ public sealed class MockMethodNode : NodeBase {
         new GrpcMockMethodHostViewModel(this.MethodInfo, this.ServiceMock);
 
     public override void Init() {
-        ClientStructure.getMethodPath(this.ServiceMock.Path, this.MethodInfo.Name).Then(d => this.Io.Dir.CreateDirectory(d));
+        ServiceMockStructure.getMethodPath(this.ServiceMock.Path, this.MethodInfo.Name)
+            .Then(d => this.Io.Dir.CreateDirectory(d));
 
         var method = this.ServiceMock.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
         if (method != null && File.Exists(method.ScriptFile)) {
             //foreach (var file in method.ScriptFile.OrderBy(f => f)) {
-                var fn = new FileReqNode(method.ScriptFile);
+                var fn = new MockMethodScriptNode(method.ScriptFile);
                 fn.Init();
                 this.AddItem(fn);
            // }

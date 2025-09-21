@@ -167,6 +167,19 @@ module AutoSave =
       io.File.WriteAllText fullPath ""
 
     fullPath
+  
+  let getMockAutoSaveLocation (io: IOs) (methodInfo: MethodInfo) (mockPath: string) =
+    let methodName = methodInfo.Name
+    let autoSavePath = ServiceMockStructure.getAutoSavePath (mockPath) methodName
+
+    io.Dir.CreateDirectory autoSavePath
+    let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt
+    let fullPath = Path.Combine(autoSavePath, fileName)
+
+    if not (io.File.Exists fullPath) then
+      io.File.WriteAllText fullPath ""
+
+    fullPath
 
   let private saveClientParam (clientParams : ClientParam array) =
     let io = Resolver.value

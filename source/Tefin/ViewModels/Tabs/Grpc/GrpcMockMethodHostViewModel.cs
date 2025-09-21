@@ -13,65 +13,67 @@ using Tefin.ViewModels.Explorer;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 
-public class GrpcMockMethodHostViewModel { //: ClientMethodViewModelBase {
+public class GrpcMockMethodHostViewModel : MockMethodViewModelBase {
     private string _importFile = "";
 
-    public GrpcMockMethodHostViewModel(MethodInfo mi, ProjectTypes.ServiceMockGroup cg) { //: base(mi) {
-        throw new NotImplementedException();
-        // var type = GrpcMethod.getMethodType(mi);
-        // if (type == MethodType.Unary) {
-        //     this.CallType = new UnaryViewModel(mi, cg);
-        // }
-        // else if (type == MethodType.ServerStreaming) {
-        //     this.CallType = new ServerStreamingViewModel(mi, cg);
-        // }
-        // else if (type == MethodType.ClientStreaming) {
-        //     this.CallType = new ClientStreamingViewModel(mi, cg);
-        // }
-        // else {
-        //     this.CallType = new DuplexStreamingViewModel(mi, cg);
-        // }
-        //
-        // this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
-        // GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
-        //     .Then(this.MarkForCleanup);
+    public GrpcMockMethodHostViewModel(MethodInfo mi, ProjectTypes.ServiceMockGroup cg) : base(mi) {
+        var type = GrpcMethod.getMethodType(mi);
+        if (type == MethodType.Unary) {
+            this.CallType = new MockUnaryViewModel(mi, cg);
+        }
+        else if (type == MethodType.ServerStreaming) {
+            throw new NotFiniteNumberException("ServerStreamingViewModel mock todo");
+            //this.CallType = new ServerStreamingViewModel(mi, cg);
+        }
+        else if (type == MethodType.ClientStreaming) {
+            throw new NotFiniteNumberException("ClientStreamingViewModel mock todo");
+            //this.CallType = new ClientStreamingViewModel(mi, cg);
+        }
+        else {
+            throw new NotFiniteNumberException("DuplexStreamingViewModel mock todo");
+            //this.CallType = new DuplexStreamingViewModel(mi, cg);
+        }
+
+        this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
+        GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
+            .Then(this.MarkForCleanup);
     }
 
-    // private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
-    //     //update in case the Url and ClientName has been changed
-    //     if (!string.IsNullOrEmpty(this._importFile) && this._importFile.StartsWith(obj.PreviousPath)) {
-    //         this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
-    //     }
-    // }
-    // public override bool IsLoaded => this.CallType.IsLoaded;
-    // public override string ApiType { get; } = GrpcPackage.packageName;
-    // public GrpCallTypeViewModelBase CallType { get; }
-    //
-    // public override void Dispose() {
-    //     base.Dispose();
-    //     this.CallType.Dispose();
-    // }
-    //
-    // public override string GetRequestContent() => this.CallType.GetRequestContent();
-    //
-    // public override void ImportRequestFile(string requestFile) => this._importFile = requestFile;
-    //
-    // public void Init() =>
-    //     this.Exec(() => {
-    //        
-    //         if (string.IsNullOrEmpty(this._importFile)) {
-    //             this.CallType.Init();
-    //             return;
-    //         }
-    //
-    //         if (!this.Io.File.Exists(this._importFile)) {
-    //             this.CallType.Init();
-    //             var content = this.GetRequestContent();
-    //             this.Io.File.WriteAllText(this._importFile, content);
-    //             return;
-    //         }
-    //         
-    //         this.CallType.ImportRequest(this._importFile);
-    //         
-    //     });
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (!string.IsNullOrEmpty(this._importFile) && this._importFile.StartsWith(obj.PreviousPath)) {
+            this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
+        }
+    }
+    public override bool IsLoaded => this.CallType.IsLoaded;
+    public override string ApiType { get; } = GrpcPackage.packageName;
+    public GrpMockCallTypeViewModelBase CallType { get; }
+
+    public override void Dispose() {
+        base.Dispose();
+        this.CallType.Dispose();
+    }
+
+    public override string GetScriptContent() => this.CallType.GetRequestContent();
+
+    public override void ImportScript(string scrptFile) => this._importFile = scrptFile;
+
+    public void Init() =>
+        this.Exec(() => {
+           
+            if (string.IsNullOrEmpty(this._importFile)) {
+                this.CallType.Init();
+                return;
+            }
+
+            if (!this.Io.File.Exists(this._importFile)) {
+                this.CallType.Init();
+                var content = this.GetScriptContent();
+                this.Io.File.WriteAllText(this._importFile, content);
+                return;
+            }
+            
+            //this.CallType.ImportRequest(this._importFile);
+            
+        });
 }
