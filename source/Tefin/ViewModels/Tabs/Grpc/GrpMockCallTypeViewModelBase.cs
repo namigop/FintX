@@ -16,7 +16,7 @@ public abstract class GrpMockCallTypeViewModelBase : ViewModelBase {
     public ProjectTypes.ServiceMockGroup ServiceMock { get; private set; }
     public MethodInfo MethodInfo { get; }
     public abstract bool IsLoaded { get; }
-    public abstract string GetRequestContent();
+    public abstract string GetScriptContent();
 
     public abstract void Init();
 

@@ -22,14 +22,7 @@ public class ServiceMockRootNode : NodeBase {
     private bool _sessionLoaded;
     
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
-        // this.Mock = ProjectTypes.ClientGroup.Empty();
-        // this.CanOpen = true;
-        // this.ClientType = clientType;
-        // this.ClientName = "";
-        // this.ClientConfigFile = "";
-        // this.ClientPath = "";
-        // this.ServiceName = "";
-
+       
         this.ServiceType = serviceBaseType;
         this.Update(cg);
 
@@ -106,21 +99,21 @@ public class ServiceMockRootNode : NodeBase {
         try {
             this._compileInProgress = true;
             var protoFiles = Array.Empty<string>();
-            var compile = new CompileFeature(this.ServiceName, this.ServiceName, this.Desc, protoFiles, this.Url,
+            var compile = new CompileFeature(this.ServiceName, $"{this.ServiceName}DummyClient", this.Desc, protoFiles, this.Url,
                 this.Io);
             var csFiles = this.ServiceMockGroup.CodeFiles;
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-                var clientTypes = ServiceClient.findClientType(types);
-                if (clientTypes.Length == 0) {
+                var serviceBaseTypes = ServiceClient.findServiceType(types);
+                if (serviceBaseTypes.Length == 0) {
                     throw new Exception("No client types found");
                 }
-                if (clientTypes.Length == 1) {
-                    this.ServiceType = clientTypes[0];
+                if (serviceBaseTypes.Length == 1) {
+                    this.ServiceType = serviceBaseTypes[0];
                 }
                 else {
-                    this.ServiceType = clientTypes.First(c => {
+                    this.ServiceType = serviceBaseTypes.First(c => {
                         var svc = c.DeclaringType!.FullName!.ToUpperInvariant();
                         return svc.EndsWith(this.ServiceName.ToUpperInvariant());
                     });

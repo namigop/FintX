@@ -76,11 +76,14 @@
         <entry key="Tefin/Views/Tabs/Grpc/ClientStreamingView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/DuplexStreamingReqView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/DuplexStreamingView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/GrpcMockMethodHostView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/Grpc/MockUnaryView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/ServerStreamingReqView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/ServerStreamingView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/UnaryReqView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/Grpc/UnaryView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/MethodTabView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Tabs/MockMethodTabView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TabHostView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Tabs/TreeRequestEditorView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Types/EnumNodeEditView.axaml" value="Tefin/Tefin.csproj" />

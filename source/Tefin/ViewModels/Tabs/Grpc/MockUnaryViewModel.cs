@@ -10,7 +10,7 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
     }
 
     public override bool IsLoaded { get; }
-    public override string GetRequestContent() => throw new NotImplementedException();
+    public override string GetScriptContent() => "<script>";
 
-    public override void Init() => throw new NotImplementedException();
+    public override void Init() {}
 }

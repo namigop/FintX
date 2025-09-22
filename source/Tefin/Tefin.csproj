@@ -398,6 +398,14 @@
           <DependentUpon>FileReqNodeView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Tabs\MockMethodTabView.axaml.cs">
+          <DependentUpon>MockMethodTabView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="Views\Tabs\Grpc\GrpcMockMethodHostView.axaml.cs">
+          <DependentUpon>GrpcMockMethodHostView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

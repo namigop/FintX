@@ -54,7 +54,7 @@ public class GrpcMockMethodHostViewModel : MockMethodViewModelBase {
         this.CallType.Dispose();
     }
 
-    public override string GetScriptContent() => this.CallType.GetRequestContent();
+    public override string GetScriptContent() => this.CallType.GetScriptContent();
 
     public override void ImportScript(string scrptFile) => this._importFile = scrptFile;
 
