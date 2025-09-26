@@ -13,8 +13,7 @@ namespace Tefin.Features;
 
 public class StartupFeature {
     public void Init() {
-        //GenericServiceImplementationGenerator.Test();
-
+        ServiceMock.genService(@"/Users/erikaraojo/.local/share/FintX/packages/grpc/projects/_default/mocks/BenchmarkServiceMock/code/BenchmarkServiceGrpc.cs");
         Startup.init();
         Current.Init();
         LiveCharts.Configure(config => {

@@ -86,7 +86,7 @@ module ServiceClient =
       let! services = GrpcReflectionClient.getServices io discoParams.ReflectionUri.AbsoluteUri
       return services
     }
-
+ 
   let compile (io: IOs) (sourceFiles: string array) (compileParams: CompileParameters) =
     task {      
       let grpcParams =
@@ -104,6 +104,7 @@ module ServiceClient =
       match grpcClientFileOpt with
       | None -> return Ret.Error(Exception("Unable to generate the source code of the service client. Missing *Grpc.cs file"))
       | Some grpcClientFile ->
+        
         let rootPath = grpcParams.Config["RootPath"]
         let name = Path.GetFileNameWithoutExtension(grpcClientFile)
         let assemblyName = $"{name}_{Path.GetFileNameWithoutExtension(tempFile)}"

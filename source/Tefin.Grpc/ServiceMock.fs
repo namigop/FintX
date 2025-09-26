@@ -2,7 +2,10 @@ namespace Tefin.Grpc
 
 open System.Reflection
 open System.Reflection.Emit
+open System.Text
+open System.Text.RegularExpressions
 open System.Threading.Tasks
+open Google.Protobuf.WellKnownTypes
 open Microsoft.Extensions.DependencyInjection
 open System
 open Tefin.Core
@@ -116,5 +119,110 @@ module ServiceMock =
             createMethod typeBuilder method
                 
         typeBuilder.CreateType()
+        
+    let unaryRegex = @"public\s+virtual.*Task<(?<ResponseType>\S+)>\s+(?<MethodName>\w+)\(\S+\s\w+,\s\S+\s\w+\)"    
+    let methodSigRegex = @"public\s+virtual.+Task.*\(.*\)"
+    let serviceBaseRegex = @"public\s+abstract\s+partial\s+class\s+(?<ServiceName>\S+)ServiceBase"
+    let nsRegex = @"namespace\s(?<Namespace>\S+)\s+.*"
+        
+    let containsServiceBase (io:IOs) (csFile:string) =        
+        let mutable found = false
+        for l in io.File.ReadAllLines csFile do
+            if (Regex.IsMatch(l, serviceBaseRegex)) then
+              found <- true
+        found
+    
+    let genService (csFile:string) =        
+        let isDuplex (line:string) =
+            line.Contains("IAsyncStreamReader") && line.Contains("IServerStreamWriter")
+        let isServerStreaming (line:string) =
+            line.Contains("IServerStreamWriter")
+        let isClientStreaming (line:string) =
+            line.Contains("IAsyncStreamReader")
+        
+        
+        let mutable braceCounter = 0
+        let mutable serviceName = ""
+        let mutable canCopy = false
+        let mutable lineNumber = 0        
+        let mutable methodName = ""
+        let mutable methodType = MethodType.Unary
+        let mutable responseType = ""
+        let mutable methodLine = ""
+        
+        let unaryTemplate =
+            """            
+            var resp = global::Tefin.Features.ServerHandler.RunUnary("{{SERVICE_NAME}}", "{{METHOD_NAME}}", request, context);
+            return System.Threading.Tasks.Task.FromResult(({{RESPONSE_TYPE}}) resp);
+            """
+        let getTemplate (l:string) =
+            if (isDuplex l) then
+                """ throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, "")); """
+            elif (isServerStreaming l) then
+                """ throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, "")); """
+            elif (isClientStreaming l) then
+                """ throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, "")); """
+            else
+                let um = Regex.Match(l, unaryRegex)
+                let methodName = um.Groups["MethodName"].Value                            
+                let responseType = um.Groups["ResponseType"].Value
+                unaryTemplate
+                    .Replace("{{SERVICE_NAME}}", serviceName)
+                    .Replace("{{METHOD_NAME}}", methodName)
+                    .Replace("{{RESPONSE_TYPE}}", responseType)                             
+        
+        let lines = File.fileIO.ReadAllLines csFile        
+        let sb = StringBuilder()        
+        let mutable endPos = 0
+        for l in lines do
+            lineNumber <- lineNumber + 1
+            if l.Contains('{') then
+                braceCounter <- braceCounter + 1
+            if l.Contains('}') then
+                braceCounter <- braceCounter - 1
+          
+            if canCopy && (braceCounter = 0) then
+                canCopy <- false
+                ignore (sb.AppendLine "}")
+                endPos <- lineNumber
+                
+            let m = Regex.Match(l, serviceBaseRegex)
+            if  m.Success then
+                braceCounter <- 0                
+                let baseName = m.Groups["ServiceName"].Value
+                serviceName <- "TefinImpl" + baseName + "Service"
+                sb.AppendLine($"public class {serviceName} : {baseName}ServiceBase") |> ignore
+                canCopy <- true
+            else
+                if (canCopy) then
+                    let mr = Regex.Match(l, methodSigRegex)
+                    if (mr.Success) then
+                        methodLine <- l
+                            
+                    if l.Contains("StatusCode.Unimplemented") then                        
+                        ignore (sb.AppendLine (getTemplate methodLine) )
+                    else
+                        ignore (sb.AppendLine l)
+
+        (serviceName, sb.ToString(), endPos)
+    
+    let insertService (io:IOs) (csFile:string) =
+        let lines = io.File.ReadAllLines csFile
+        let serviceName, code, lineNumber = genService csFile
+        
+        match lines |> Array.tryFind (fun l -> l.Contains(serviceName)) with
+        | None ->        
+            let sb = StringBuilder()
+            let mutable ln = 0
+            for l in lines do
+                ln <- ln + 1
+                ignore(sb.AppendLine l)
+                if ln = lineNumber then
+                    sb.AppendLine().AppendLine(code).AppendLine()
+                    |> ignore            
+            io.File.WriteAllTextAsync csFile (sb.ToString())
+        | Some _ -> Task.CompletedTask
+        
+            
     
 

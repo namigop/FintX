@@ -159,7 +159,7 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         var (success, _) = await disco.Discover(this.Io);
         if (success) {
             var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
-            var (ok, output) = await cmd.Run();
+            var (ok, output) = await cmd.Run(createMockService:true);
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
                 var msg = new ShowServiceMockMessage(

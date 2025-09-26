@@ -27,18 +27,12 @@ public class CompileFeature(
             }
 
             GlobalHub.publish(new ClientCompileMessage(true));
-            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [],
-                reflectionUrl, null);
+            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl, null);
+          
             var com = await ServiceClient.compile(io, codeFiles, cParams);
             if (com.IsOk) {
                 CompilationCache.Add(key, com.ResultValue);
                 return (true, com.ResultValue);
-            }
-
-            var output = com.ResultValue;
-            if (!output.Success) {
-                var err = String.Join(Environment.NewLine, output.CompilationErrors);
-                io.Log.Error(err);
             }
 
             io.Log.Error(com.ErrorValue);
@@ -49,12 +43,22 @@ public class CompileFeature(
         }
     }
 
-    public async Task<(bool, CompileOutput)> Run() {
+    public async Task<(bool, CompileOutput)> Run(bool createMockService) {
         try {
             GlobalHub.publish(new ClientCompileMessage(true));
             var csFiles = Array.Empty<string>();
             var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles, reflectionUrl, null);
             var csFilesRet = await ServiceClient.generateSourceFiles(io, cParams);
+            if (!csFilesRet.IsOk) {
+                io.Log.Error(csFilesRet.ErrorValue);
+                return (false, null!);           
+            }
+
+            if (createMockService) {
+                var grpcFile = csFilesRet.ResultValue.First(t => ServiceMock.containsServiceBase(io, t));
+                await ServiceMock.insertService(io, grpcFile);
+            }
+
             var com = await ServiceClient.compile(Resolver.value, csFilesRet.ResultValue, cParams);
             if (com.IsOk) {
                 var key = string.Join("-", csFilesRet.ResultValue);

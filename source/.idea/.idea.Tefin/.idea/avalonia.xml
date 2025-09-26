@@ -41,7 +41,10 @@
         <entry key="Tefin/Views/Explorer/ServiceMock/MethodNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/MethodNodeContext.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/MethodNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/MockMethodNodeActionView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/MockMethodNodeContext.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/MockMethodNodeView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Explorer/ServiceMock/MockMethodScriptNodeView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/ServiceMockExplorerView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/ServiceMockRootNodeActionView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Explorer/ServiceMock/ServiceMockRootNodeContext.axaml" value="Tefin/Tefin.csproj" />

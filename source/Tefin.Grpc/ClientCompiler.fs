@@ -8,9 +8,9 @@ open Tefin.Core.Build
 open Tefin.Core.Res
 
 module ClientCompiler =
-
+  let exepath = AppContext.BaseDirectory
   let private getGrpcReferencedFiles (io: IOs) =
-    let exepath = AppContext.BaseDirectory // Path.GetDirectoryName(Environment.ProcessPath); //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+     // Path.GetDirectoryName(Environment.ProcessPath); //Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
     let grpcFiles =
       io.Dir.GetFiles(exepath, "Grpc.*.dll")
@@ -21,18 +21,21 @@ module ClientCompiler =
     else
       Ret.Error(failwith "Missing Grpc.* dll references")
 
+  let private mainDll = Path.Combine(exepath, "FintX.dll")
+  
   let compile (io: IOs) (assemblyFile: string) (sourceFiles: string array) =
      task {
         return!
             System.Threading.Tasks.Task.FromResult(getGrpcReferencedFiles io)
             |> mapTask (fun grpcDlls ->
               task {
+                  let refdlls = grpcDlls |> Array.append [| mainDll |]
                   let cIn: CompileInput =
                     { ModuleFile = assemblyFile
                       SourceFiles = sourceFiles
-                      ReferencedFiles = grpcDlls
+                      ReferencedFiles = refdlls
                       TargetOutput = OutputKind.DynamicallyLinkedLibrary
-                      AdditionalReferences = grpcDlls |> Array.map (fun f -> MetadataReference.CreateFromFile f) }
+                      AdditionalReferences = refdlls |> Array.map (fun f -> MetadataReference.CreateFromFile f) }
 
                   let! output = ClientCompiler.compile io cIn
                   if (output.Success) then
