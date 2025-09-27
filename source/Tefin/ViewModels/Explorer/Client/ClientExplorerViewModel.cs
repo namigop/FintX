@@ -152,6 +152,10 @@ public class ClientExplorerViewModel : ViewModelBase {
         if (target != null) {
             this.Items.Remove(target);
         }
+        
+        var client = this._project?.Clients.FirstOrDefault(m => m.Path == obj.Client.Path);
+        if (client != null)
+            this._project?.Clients.Remove(client); 
     }
 
     private void OnDelete() {

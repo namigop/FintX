@@ -57,13 +57,14 @@ module ProjectStructure =
     let clients =
       clientPaths
       |> Array.map (fun path -> _loadClient path readAllText createDirectory getDirectories getFiles)
+      |> fun c -> ResizeArray(c)
 
     
     let config = Path.Combine(projectPath, Project.ProjectConfigFileName)
 
     { Name = projectName
       Package = projSaveState.Package
-      Mocks = Array.empty
+      Mocks = ResizeArray<ServiceMockGroup>()
       Clients = clients
       ConfigFile = config
       Path = projectPath }
@@ -74,7 +75,8 @@ module ProjectStructure =
       io.Dir.GetFiles (projectPath, ServiceMockGroup.ConfigFilename, SearchOption.AllDirectories)
       |> Array.map Path.GetDirectoryName
       |> Array.map (fun path -> ServiceMockStructure.loadServiceMock io path)
-
+      |> fun c -> ResizeArray(c)
+    
     { lp with Mocks = mocks }
     
 

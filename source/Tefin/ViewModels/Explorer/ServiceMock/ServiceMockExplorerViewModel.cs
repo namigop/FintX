@@ -148,11 +148,14 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     private void OnServiceMockCompile(ServiceMockCompileMessage message) => this.IsBusy = message.InProgress;
 
     private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
-        var target =
-            this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
-        if (target != null) {
+        var target = this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
+        if (target != null) 
             this.Items.Remove(target);
-        }
+        
+        var projMock = this._project?.Mocks.FirstOrDefault(m => m.Path == obj.ServiceMock.Path);
+        if (projMock != null)
+            this._project?.Mocks.Remove(projMock); 
+
     }
 
     private void OnDelete() {

@@ -88,7 +88,10 @@ module ServiceMockStructure =
             let name = Path.GetFileName source
             let target = Path.Combine(codePath, name)
             io.File.Copy(source, target, true)
-        
+    
+    let deleteMock (io: IOs)  (mock: ServiceMockGroup) =
+      io.Dir.Delete mock.Path true //deletes everything
+      io.Log.Info $"Deleted {mock.Name}"  
         
   
 

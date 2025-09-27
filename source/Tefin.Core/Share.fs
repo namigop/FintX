@@ -209,7 +209,7 @@ module Share =
     use reader = new StreamReader(info.Open())
     let i = reader.ReadToEnd() |> Instance.jsonDeserialize<ShareInfo>
     let clientName = i.ClientName
-    let clientOpt = project.Clients |> Array.tryFind (fun c -> c.Name = clientName)
+    let clientOpt = project.Clients |> Seq.tryFind (fun c -> c.Name = clientName)
     let mutable updated = false
 
     match clientOpt with

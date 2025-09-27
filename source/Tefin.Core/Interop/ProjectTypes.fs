@@ -1,5 +1,7 @@
 namespace Tefin.Core.Interop
 
+open System.Collections.Generic
+
 
 [<AutoOpen>]
 module ProjectTypes =
@@ -87,8 +89,8 @@ module ProjectTypes =
         SubFolders = { Code = ""; Methods = "" }
         Config = None }
   type Project =
-    { Clients: ClientGroup array
-      Mocks : ServiceMockGroup array
+    { Clients: ResizeArray<ClientGroup>
+      Mocks : ResizeArray<ServiceMockGroup>
       ConfigFile: string
       Name: string
       Package: string
@@ -98,8 +100,8 @@ module ProjectTypes =
     static member DefaultName = "_default"
 
     static member Empty() =
-      { Clients = Array.empty
-        Mocks = Array.empty
+      { Clients = ResizeArray<ClientGroup>()
+        Mocks = ResizeArray<ServiceMockGroup>()
         ConfigFile = ""
         Package = ""
         Name = ""

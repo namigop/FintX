@@ -3,6 +3,6 @@ using Tefin.Core.Interop;
 
 namespace Tefin.Features;
 
-public class DeleteServiceMockFeature(ProjectTypes.ServiceMockGroup client, IOs io) {
-    public void Delete() => throw new NotImplementedException(); //ClientStructure.deleteClient(client, io);
+public class DeleteServiceMockFeature(ProjectTypes.ServiceMockGroup mock, IOs io) {
+    public void Delete() => ServiceMockStructure.deleteMock(io, mock);
 }
