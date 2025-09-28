@@ -11,11 +11,11 @@ public static class ServerHandler {
         throw new NotImplementedException();
     }
 
-    public static Task<object> RunServerStream(string concreteService, string methodName, object request, object responseStream, ServerCallContext context) {
+    public static Task RunServerStream(string concreteService, string methodName, object request, object responseStream, ServerCallContext context) {
         throw new NotImplementedException();
     }
 
-    public static Task<object> RunDuplex(string concreteService, string methodName, object requestStream, object responseStream, ServerCallContext context) {
+    public static Task RunDuplex(string concreteService, string methodName, object requestStream, object responseStream, ServerCallContext context) {
         throw new NotImplementedException();
     }
 }
