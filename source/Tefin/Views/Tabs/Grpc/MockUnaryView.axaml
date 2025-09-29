@@ -3,8 +3,49 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:grpc="clr-namespace:Tefin.ViewModels.Tabs.Grpc"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="grpc:MockUnaryViewModel"
              x:Class="Tefin.Views.Tabs.Grpc.MockUnaryView">
-    Welcome to Avalonia!
+    <Grid RowDefinitions="Auto, *">
+        <StackPanel Grid.Row="0">
+            <Button Command="{Binding AddScriptCommand}">
+                <TextBlock Text="[ + ] code"></TextBlock>
+            </Button>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1">
+        <ItemsControl ItemsSource="{Binding Scripts}" >
+            <ItemsControl.Styles>
+                <Style Selector="Border:selected">
+                    <Setter Property="Background" Value="#1F7A7574"></Setter>
+                </Style>
+                <Style Selector="Border:hover">
+                    <Setter Property="Background" Value="Orange"></Setter>
+                </Style>
+            </ItemsControl.Styles>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border BorderBrush="LightSeaGreen" BorderThickness="3 0 0 0"
+                            CornerRadius="4" Margin="8">
+                        <Grid RowDefinitions="Auto, *">
+                            <StackPanel Orientation="Horizontal">
+                                <SelectableTextBlock  Text="{Binding Header}" FontSize="16" Margin="6"></SelectableTextBlock>
+                                <Button Margin="8 0 0 0">
+                                    <controls:IconControl Icon="{StaticResource Icon.EditType}" VerticalAlignment="Center"></controls:IconControl>
+                                </Button>
+                            </StackPanel>
+                    
+                            <controls:JsonEditor Grid.Row="1" Text="{Binding ScriptText}" CornerRadius="6" 
+                                                 Padding="4" BorderBrush="LightSlateGray" />
+                        </Grid>
+                    </Border>
+                    
+                
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+    
+    
 </UserControl>

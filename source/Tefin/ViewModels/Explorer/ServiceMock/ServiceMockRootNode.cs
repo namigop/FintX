@@ -105,7 +105,7 @@ public class ServiceMockRootNode : NodeBase {
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-                var serviceBaseTypes = ServiceClient.findServiceType(types);
+                var serviceBaseTypes = ServiceClient.findConcreteServiceTypes(types);
                 if (serviceBaseTypes.Length == 0) {
                     throw new Exception("No client types found");
                 }

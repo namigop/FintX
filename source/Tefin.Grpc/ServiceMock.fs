@@ -97,7 +97,7 @@ module ServiceMock =
             if  m.Success then
                 braceCounter <- 0                
                 let baseName = m.Groups["ServiceName"].Value
-                serviceName <- "TefinImpl" + baseName + "Service"
+                serviceName <- "FintXImpl" + baseName + "Service"
                 sb.AppendLine($"public class {serviceName} : {baseName}ServiceBase") |> ignore
                 canCopy <- true
             else
@@ -105,7 +105,7 @@ module ServiceMock =
                     let mr = Regex.Match(l, methodSigRegex)
                     if (mr.Success) then
                         methodLine <- l
-                        let newSign = l.Replace("public virtual", "public virtual async")
+                        let newSign = l.Replace("public virtual", "public override async")
                         ignore (sb.AppendLine newSign)    
                     else if l.Contains("StatusCode.Unimplemented") then                        
                         ignore (sb.AppendLine (getTemplate methodLine serviceName) )

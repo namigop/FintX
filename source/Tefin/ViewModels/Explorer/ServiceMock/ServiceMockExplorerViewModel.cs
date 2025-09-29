@@ -320,7 +320,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         async Task Show() {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-            var serviceBaseTypes = ServiceClient.findServiceType(types);
+            var serviceBaseTypes = ServiceClient.findServiceBaseTypes(types);
             var serviceBaseType = serviceBaseTypes.First(t => {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
