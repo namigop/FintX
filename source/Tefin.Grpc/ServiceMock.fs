@@ -14,27 +14,35 @@ module ServiceMock =
     //public virtual global::System.Threading.Tasks.Task StreamingCall(grpc::IAsyncStreamReader<global::Grpc.Testing.SimpleRequest> requestStream, grpc::IServerStreamWriter<global::Grpc.Testing.SimpleResponse> responseStream, grpc::ServerCallContext context)
     let private duplexMethodRegex = @"public\s+virtual.*Task\s+(?<MethodName>\w+)\(.*IAsyncStreamReader.*IServerStreamWriter.*\)"
     let private methodSigRegex = @"public\s+virtual.+Task.*\(.*\)"
-    let private serviceBaseRegex = @"public\s+abstract\s+partial\s+class\s+(?<ServiceName>\S+)ServiceBase"
+    let private serviceBaseRegex = @"public\s+abstract\s+partial\s+class\s+(?<ServiceName>\S+)Base"
     let private nsRegex = @"namespace\s(?<Namespace>\S+)\s+.*"
     
+    let private constr = """
+      public string ServiceName { get; private set;}
+      public {{SERVICE_NAME}}(string serviceName)
+      {
+          this.ServiceName = serviceName;
+      }
+
+"""
     let private unaryTemplate =
         """            
-        var resp = await global::Tefin.Features.ServerHandler.RunUnary("{{SERVICE_NAME}}", "{{METHOD_NAME}}", request, context);
+        var resp = await global::Tefin.Features.ServerHandler.RunUnary(this.ServiceName, "{{METHOD_NAME}}", request, context);
         return ({{RESPONSE_TYPE}})resp;
         """
     let private clientStreamTemplate =
         """            
-        var resp = await global::Tefin.Features.ServerHandler.RunClientStream("{{SERVICE_NAME}}", "{{METHOD_NAME}}", requestStream, context);
+        var resp = await global::Tefin.Features.ServerHandler.RunClientStream(this.ServiceName, "{{METHOD_NAME}}", requestStream, context);
         return ({{RESPONSE_TYPE}})resp;
         """
     let private serverStreamTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.RunServerStream("{{SERVICE_NAME}}", "{{METHOD_NAME}}", request, responseStream, context);
+        var task = global::Tefin.Features.ServerHandler.RunServerStream(this.ServiceName, "{{METHOD_NAME}}", request, responseStream, context);
         await task;
         """
     let private duplexTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.RunDuplex("{{SERVICE_NAME}}", "{{METHOD_NAME}}", requestStream, responseStream, context);
+        var task = global::Tefin.Features.ServerHandler.RunDuplex(this.ServiceName, "{{METHOD_NAME}}", requestStream, responseStream, context);
         await task;
         """
             
@@ -77,12 +85,14 @@ module ServiceMock =
         let mutable canCopy = false
         let mutable lineNumber = 0        
         let mutable methodLine = ""
+        let mutable canWriteConstructor = true
               
         let lines = File.fileIO.ReadAllLines csFile        
         let sb = StringBuilder()        
         let mutable endPos = 0
         for l in lines do
             lineNumber <- lineNumber + 1
+           
             if l.Contains('{') then
                 braceCounter <- braceCounter + 1
             if l.Contains('}') then
@@ -98,10 +108,10 @@ module ServiceMock =
                 braceCounter <- 0                
                 let baseName = m.Groups["ServiceName"].Value
                 serviceName <- "FintXImpl" + baseName + "Service"
-                sb.AppendLine($"public class {serviceName} : {baseName}ServiceBase") |> ignore
+                sb.AppendLine($"public class {serviceName} : {baseName}Base") |> ignore
                 canCopy <- true
             else
-                if (canCopy) then
+                if (canCopy) then                    
                     let mr = Regex.Match(l, methodSigRegex)
                     if (mr.Success) then
                         methodLine <- l
@@ -111,6 +121,13 @@ module ServiceMock =
                         ignore (sb.AppendLine (getTemplate methodLine serviceName) )
                     else
                         ignore (sb.AppendLine l)
+                                                
+                    if canWriteConstructor && (braceCounter = 1) then
+                        canWriteConstructor <- false
+                        sb.AppendLine() |> ignore
+                        sb.AppendLine (constr.Replace("{{SERVICE_NAME}}", serviceName))
+                        |> ignore
+                    
 
         (serviceName, sb.ToString(), endPos)
     

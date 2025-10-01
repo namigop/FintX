@@ -12,8 +12,8 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
 
     public MockUnaryViewModel(MethodInfo mi, ProjectTypes.ServiceMockGroup cg) : base(mi, cg) {
         this._mi = mi;
-        var scm = new ScriptViewModel(mi);
         this.Scripts = new ObservableCollection<ScriptViewModel>();
+        var scm = new ScriptViewModel(mi, cg.Name) { Scripts = this.Scripts};
         this.Scripts.Add(scm);
 
         this.AddScriptCommand = CreateCommand(OnAddScript);
@@ -22,7 +22,7 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
     public ICommand AddScriptCommand { get; }
 
     private void OnAddScript() {
-        this.Scripts.Add(new ScriptViewModel(_mi));
+        this.Scripts.Add(new ScriptViewModel(this._mi, this.ServiceMock.Name){ Scripts = this.Scripts});
     }
 
     public ObservableCollection<ScriptViewModel> Scripts { get; }

@@ -14,31 +14,35 @@
             </Button>
         </StackPanel>
         <ScrollViewer Grid.Row="1">
-        <ItemsControl ItemsSource="{Binding Scripts}" >
-            <ItemsControl.Styles>
-                <Style Selector="Border:selected">
-                    <Setter Property="Background" Value="#1F7A7574"></Setter>
-                </Style>
-                <Style Selector="Border:hover">
-                    <Setter Property="Background" Value="Orange"></Setter>
-                </Style>
-            </ItemsControl.Styles>
+        <ItemsControl ItemsSource="{Binding Scripts}" Background="Transparent">
+            <!-- <ItemsControl.Styles> -->
+            <!--     <Style Selector="ListBoxItem:selected /template/ ContentPresenter"> -->
+            <!--         <Setter Property="Background" Value="#1F7A7574" />  -->
+            <!--          -->
+            <!--     </Style> -->
+            <!--     <Style Selector="ListBoxItem:selected /template/ ContentPresenter Grid Border"> -->
+            <!--         <Setter Property="BorderThickness" Value="3 1 1 1" /> -->
+            <!--     </Style> -->
+            <!--     <Style Selector="ListBoxItem:pointerover"> -->
+            <!--         <Setter Property="Background" Value="Yellow" /> -->
+            <!--     </Style> -->
+            <!-- </ItemsControl.Styles> -->
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Border BorderBrush="LightSeaGreen" BorderThickness="3 0 0 0"
-                            CornerRadius="4" Margin="8">
-                        <Grid RowDefinitions="Auto, *">
+                        <Grid RowDefinitions="Auto, *" Margin="8 16 8 8">
                             <StackPanel Orientation="Horizontal">
-                                <SelectableTextBlock  Text="{Binding Header}" FontSize="16" Margin="6"></SelectableTextBlock>
+                                <SelectableTextBlock  Text="{Binding Header}" FontSize="18" Margin="6"></SelectableTextBlock>
                                 <Button Margin="8 0 0 0">
                                     <controls:IconControl Icon="{StaticResource Icon.EditType}" VerticalAlignment="Center"></controls:IconControl>
                                 </Button>
+                                <ToggleSwitch OnContent="Active script" IsChecked="{Binding IsSelected}"></ToggleSwitch>
                             </StackPanel>
-                    
-                            <controls:JsonEditor Grid.Row="1" Text="{Binding ScriptText}" CornerRadius="6" 
+                            <Border BorderBrush="{Binding SelectedColor}" BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="4" >
+                            <controls:JsonEditor  Text="{Binding ScriptText}" CornerRadius="4" 
                                                  Padding="4" BorderBrush="LightSlateGray" />
+                            </Border>
                         </Grid>
-                    </Border>
+                    
                     
                 
                 </DataTemplate>

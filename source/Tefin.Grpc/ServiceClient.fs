@@ -36,7 +36,7 @@ module ServiceClient =
     types |> Array.filter (fun t -> check t)
   
   let findServiceBaseTypes (types: Type array) =  
-    types |> Array.filter (fun t -> t.IsAbstract && t.FullName.EndsWith "ServiceBase")
+    types |> Array.filter (fun t -> t.IsAbstract && t.FullName.EndsWith "Base")
     
   let findConcreteServiceTypes (types: Type array) =
     types |> Array.filter (fun t -> t.Name.StartsWith("FintXImpl") && t.Name.EndsWith "Service")
