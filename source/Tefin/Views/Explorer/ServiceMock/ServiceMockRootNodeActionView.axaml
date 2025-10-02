@@ -38,11 +38,25 @@
                     </Style.Animations>
                 </Style>
             </StackPanel.Styles>
+            
+            <Button Classes="ClearButtonStyle"
+                    IsVisible="{Binding IsLoaded}"
+                    Command="{Binding StartServerCommand}" ToolTip.Tip="Start the mock server">
+                <controls:IconControl Icon="{StaticResource Icon.Start}" />
+            </Button>  
+            
+            <Button Classes="ClearButtonStyle"
+                    IsVisible="{Binding IsLoaded}"
+                    Command="{Binding StopServerCommand}" ToolTip.Tip="Stop the mock server">
+                <controls:IconControl Icon="{StaticResource Icon.StopWrite}" />
+            </Button>
+            
             <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle"
                     IsVisible="{Binding !IsLoaded}"
                     Command="{Binding CompileCommand}" ToolTip.Tip="Recompile the client">
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
             </Button>
+            
             <Button Classes="ClearButtonStyle" Command="{Binding OpenServiceMockConfigCommand}"
                     IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="open client config">

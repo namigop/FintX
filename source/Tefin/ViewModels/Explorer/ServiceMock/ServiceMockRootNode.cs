@@ -2,6 +2,8 @@
 
 using Avalonia.Threading;
 
+using Microsoft.AspNetCore.Builder;
+
 using ReactiveUI;
 
 using Tefin.Core;
@@ -20,7 +22,8 @@ namespace Tefin.ViewModels.Explorer.ServiceMock;
 public class ServiceMockRootNode : NodeBase {
     private bool _compileInProgress;
     private bool _sessionLoaded;
-    
+    private ServerHost? _host;
+
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
        
         this.ServiceType = serviceBaseType;
@@ -29,13 +32,28 @@ public class ServiceMockRootNode : NodeBase {
         this.IsExpanded = true;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
+        this.StartServerCommand = this.CreateCommand(this.OnStartServer);
+        this.StopServerCommand = this.CreateCommand(this.OnStopServer);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
         //this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MessageProject.MsgServiceMockUpdated>(this.OnServiceMockUpdated)
             .Then(this.MarkForCleanup);
     }
 
-    
+    public ICommand StopServerCommand { get; }
+
+    public ICommand StartServerCommand { get; }
+
+    private async Task OnStopServer() {
+        await this._host?.Stop()!;
+    }
+
+    private async Task OnStartServer() {
+        this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
+        await _host.Start();
+    }
+
+
     public ICommand CompileCommand { get; }
 
     public ICommand DeleteCommand { get; }
@@ -105,15 +123,15 @@ public class ServiceMockRootNode : NodeBase {
             var (ok, compileOutput) = await compile.CompileExisting(csFiles);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-                var serviceBaseTypes = ServiceClient.findConcreteServiceTypes(types);
-                if (serviceBaseTypes.Length == 0) {
+                var serviceImplTypes = ServiceClient.findConcreteServiceTypes(types);
+                if (serviceImplTypes.Length == 0) {
                     throw new Exception("No client types found");
                 }
-                if (serviceBaseTypes.Length == 1) {
-                    this.ServiceType = serviceBaseTypes[0];
+                if (serviceImplTypes.Length == 1) {
+                    this.ServiceType = serviceImplTypes[0];
                 }
                 else {
-                    this.ServiceType = serviceBaseTypes.First(c => {
+                    this.ServiceType = serviceImplTypes.First(c => {
                         var svc = c.DeclaringType!.FullName!.ToUpperInvariant();
                         return svc.EndsWith(this.ServiceName.ToUpperInvariant());
                     });
@@ -144,6 +162,7 @@ public class ServiceMockRootNode : NodeBase {
         this.CanOpen = true;
         this.ServicePath = cg.Path;
         this.ServiceName = cg.Config.Value.ServiceName;
+        this.Port = cg.Config.Value.Port;
         // this.Url = cg.Config.Value.Url;
          this.Title = cg.Config.Value.ServiceName;
         // this.SubTitle = cg.Config.Value.Description;

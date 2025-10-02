@@ -2,12 +2,27 @@ using System.Reflection;
 
 using Grpc.Core;
 
+using Tefin.Core;
+using Tefin.Grpc.Sample.Services;
+
 namespace Tefin.Features;
 
 public static class ServerHandler {
     private static Dictionary<string, List<TargetMethod>> _methods = new();
-    public static Task<object> RunUnary(string concreteService, string methodName, object request, ServerCallContext context) {
-        throw new NotImplementedException();
+    public static async Task<object> RunUnary(string concreteService, string methodName, object request, ServerCallContext context) {
+        await Task.CompletedTask;
+        if (_methods.TryGetValue(concreteService, out var methods)) {
+            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == methodName);
+            if (tm != null) {
+                var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
+                return Instance.indirectDeserialize(responseType, tm.ScriptText);
+            }
+
+            throw new RpcException(new Status(StatusCode.NotFound, $"Method {methodName} not found"));
+        }
+
+        throw new RpcException(new Status(StatusCode.NotFound, $"Service not found"));
+
     }
     
     public static Task<object> RunClientStream(string concreteService, string methodName, object requestStream , ServerCallContext context) {
