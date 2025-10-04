@@ -2,6 +2,7 @@ module Tefin.Tests.ScriptingTests
 open System
 open Tefin.Core.Scripting
 open Tefin.Core
+open Tefin.Features
 open Xunit
 
 let io = Resolver.value
@@ -121,8 +122,9 @@ let ``Can run script with multi liners`` () =
                     }
                   }
                 """
-        
-            let! res =  ScriptExec.start io script ""
+            let engine = Script.createEngine ""
+            let scriptGlobal = ""
+            let! res =  ScriptExec.start io engine script scriptGlobal ""
             Assert.Equal(true, res.IsOk)
             let output = Res.getValue res
             Assert.Contains("\"RequestType\": \"42\"", output)             
@@ -146,8 +148,9 @@ let ``Can run pure script`` () =
                        return Json();
                        >>,                    
                 """
-        
-            let! res =  ScriptExec.start io script ""
+            let engine = Script.createEngine ""
+            let scriptGlobal = ""
+            let! res =  ScriptExec.start io engine script scriptGlobal ""
             Assert.Equal(true, res.IsOk)
             let output = Res.getValue res
             Assert.Contains("\"life\": \"42\"", output)             
@@ -161,7 +164,9 @@ let ``Can execute script`` () =
     task {
         let cs = "2 + 3"
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal("5", Res.getValue res)
     }
 
@@ -173,8 +178,9 @@ let ``Can execute multiple scripts`` () =
         let today =  DateTime.Today.ToString("yyyy-MM-dd HHmmss")
         
         let engine = Script.createEngine "someId"
-        let! res1 = Script.run io engine cs1
-        let! res2 = Script.run io engine cs2
+        let scriptGlobal = ""
+        let! res1 = Script.run io engine scriptGlobal cs1
+        let! res2 = Script.run io engine scriptGlobal cs2
         Assert.Equal("5", Res.getValue res1)
         Assert.Equal(today, Res.getValue res2)
         
@@ -187,7 +193,8 @@ let ``Can execute handle null return`` () =
     task {
         let cs = "return null;"
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal("<null>", Res.getValue res)
     }
         
@@ -203,7 +210,8 @@ let ``Can execute script with function`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal("abcde", Res.getValue res)
     }
     
@@ -219,7 +227,8 @@ let ``Can handle exception`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal(true, res.IsError)
         let err = Res.getError res
         Assert.Equal("Some script exception", err.Message)
@@ -236,7 +245,8 @@ let ``Can run linq`` () =
                .Sum()            
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal( (2 * (2 + 4 + 6 + 8 + 10)).ToString() , Res.getValue res)        
     }
     
@@ -252,7 +262,8 @@ let ``Can execute async script`` () =
                 return Get();   
             """
         let engine = Script.createEngine "someId"
-        let! res = Script.run io engine cs
+        let scriptGlobal = ""
+        let! res = Script.run io engine scriptGlobal cs
         Assert.Equal("abcde", Res.getValue res)
     }
           

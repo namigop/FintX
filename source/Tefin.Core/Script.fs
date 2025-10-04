@@ -6,6 +6,7 @@ open System.Collections.Generic
 open System.Security.Cryptography
 open System.Text
 open System.Threading.Tasks
+open Grpc.Core
 open Microsoft.CodeAnalysis.CSharp.Scripting
 open System.Runtime.Loader
 open Microsoft.CodeAnalysis
@@ -15,18 +16,21 @@ open Microsoft.CodeAnalysis.Scripting
 open Tefin.Core.Reflection
 open Tefin.Core;
 
-type ScriptGlobals(id:string) =
-    member _.Context =  Dictionary<string, obj>()  
-    member _.Id = id
+// type ScriptGlobals(id:string, io:IOs, request:obj option, requestStream: obj option, responseStream:obj option, context:ServerCallContext) =
+//     member _.Vars =  Dictionary<string, obj>()  
+//     member _.Id = id
+//     member x.Log = io.Log
+//     member x.Sleep(msec) =  Task.Delay(TimeSpan.FromMilliseconds msec)
+//    
+//     
     
 type ScriptEngine =
     { Id : string
-      Runners  : ConcurrentDictionary<string, ScriptRunner<obj>>
-      Globals : ScriptGlobals }
+      Runners  : ConcurrentDictionary<string, ScriptRunner<obj>> }
       interface IDisposable with
          member x.Dispose() =
            x.Runners.Clear()
-           x.Globals.Context.Clear()
+           
 
 module Script =
     type T =
@@ -51,7 +55,7 @@ module Script =
     ///   The script is compiled with default options that include assemblies and namespaces commonly used
     ///   in .NET programming. For example, `System`, `System.Text`, `System.Linq` etc., are automatically
     ///   imported. It is designed to support scenarios where dynamic scripting based on C# code may be required.
-    let private compileCsScript (code:string) =        
+    let private compileCsScript (code:string) globalsType =        
         let scriptOptions =
             ScriptOptions.Default.WithReferences(
                 typeof<obj>.Assembly, // mscorlib
@@ -72,37 +76,35 @@ module Script =
                 "System.Text.RegularExpressions"
             )
                 
-        let script = CSharpScript.Create(code, scriptOptions, globalsType=typeof<ScriptGlobals>)       
+        let script = CSharpScript.Create(code, scriptOptions, globalsType)       
         let runner = script.CreateDelegate()
         runner
     
-    let private compile code =
+    let private compile code globalsType =
         try
-            let runner = compileCsScript code
+            let runner = compileCsScript code globalsType
             Res.ok runner
         with
         | exc -> Res.failed exc
      
     let createEngine (id) =
         { Id = id
-          Runners = new ConcurrentDictionary<string, ScriptRunner<obj>>()
-          Globals = ScriptGlobals(id)}
-    
+          Runners = new ConcurrentDictionary<string, ScriptRunner<obj>>() }
     let dispose (engine: ScriptEngine) =
        engine :> IDisposable
        |> _.Dispose()
        
-    let private runInternal (io:IOs) (engine:ScriptEngine) code =
+    let private runInternal (io:IOs) (engine:ScriptEngine) (scriptGlobal:obj) code =
       task {
         let hash = getScriptHash code
         let runner = engine.Runners.GetOrAdd (hash, fun _ ->
-            let res = compile code            
+            let res = compile code (scriptGlobal.GetType())           
             if (res.IsError) then
                 let exc = Res.getError res
                 raise exc               
             Res.getValue res )
 
-        let! scriptResult = runner.Invoke(engine.Globals)
+        let! scriptResult = runner.Invoke(scriptGlobal)
         let! stringResult =
             task {
                 if scriptResult = null then
@@ -122,7 +124,7 @@ module Script =
         return stringResult                
      }
     
-    let run (io:IOs) (engine:ScriptEngine) code =        
-        Res.execTask (fun () -> runInternal io engine code)
+    let run (io:IOs) (engine:ScriptEngine) scriptGlobals code =        
+        Res.execTask (fun () -> runInternal io engine scriptGlobals code)
         |> Res.mapTask (fun t -> Task.FromResult (Ret.Ok t))
     

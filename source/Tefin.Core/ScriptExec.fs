@@ -6,17 +6,17 @@ open System.Text
 open Tefin.Core
 module ScriptExec =
     
-    let start (io:IOs) (scriptText : string) id=
+    let start (io:IOs) engine (scriptText : string) (scriptGlobal: obj) id =
         io.Log.Debug($"Parsing script: {scriptText}")
         ScriptParser.parse scriptText
         |> Res.map (fun parsedLines ->
             task {
                 let sb = StringBuilder()
-                let engine = Script.createEngine id
+                //let engine = Script.createEngine id
                 for line in parsedLines do
                     if line.ContainsScript then
                         let script = ScriptParser.extract line.Raw
-                        let! result = Script.run io engine script.Runnable
+                        let! result = Script.run io engine scriptGlobal script.Runnable
                         if result.IsError then
                             raise (Res.getError result)
                             

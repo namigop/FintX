@@ -305,7 +305,7 @@ let ``Can load valid project`` () =
     ProjectStructure._loadProject projPath io.GetFiles io.ReadAllText io.CreateDirectory io.GetDirectories io.FileExists
 
   Assert.Equal(testProjectName, proj.Name)
-  Assert.Equal(1, proj.Clients.Length)
+  Assert.Equal(1, proj.Clients.Count)
 
   let client = proj.Clients[0]
   Assert.Equal(testClientName, client.Name)

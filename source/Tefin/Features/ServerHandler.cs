@@ -3,19 +3,38 @@ using System.Reflection;
 using Grpc.Core;
 
 using Tefin.Core;
+using Tefin.Core.Scripting;
 using Tefin.Grpc.Sample.Services;
 
 namespace Tefin.Features;
 
+public class ServerGlobals(object? request, object? requestStream, object? responseStream, ServerCallContext context, IOs io) {
+    public ServerCallContext Context => context;
+
+    public Log.ILog Log => io.Log;
+
+    public Task Sleep(int ms) => Task.Delay(ms);
+    public async  IAsyncEnumerable<string> ReadStream() {
+        var mi = requestStream.GetType().GetMethod("MoveNext");
+        var pi = requestStream.GetType().GetProperty("Current");
+        var ok = mi.Invoke(requestStream, []) as Task<bool>;
+        
+        while (await (mi.Invoke(requestStream, []) as Task<bool>)) {
+            var value = Instance.jsonSerialize(pi.GetValue(requestStream)); 
+            yield return value;
+        }
+    }
+}
 public static class ServerHandler {
-    private static Dictionary<string, List<TargetMethod>> _methods = new();
+    
+    private static Dictionary<string, List<ScriptEnv>> _env = new();
     public static async Task<object> RunUnary(string concreteService, string methodName, object request, ServerCallContext context) {
         await Task.CompletedTask;
-        if (_methods.TryGetValue(concreteService, out var methods)) {
-            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == methodName);
+        if (_env.TryGetValue(concreteService, out var envs)) {
+            var tm = envs.FirstOrDefault(m => m.ServiceName == concreteService);
             if (tm != null) {
-                var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
-                return Instance.indirectDeserialize(responseType, tm.ScriptText);
+                var (json, responseType) = await tm.RunUnary(methodName, request, context);
+                return Instance.indirectDeserialize(responseType, json);
             }
 
             throw new RpcException(new Status(StatusCode.NotFound, $"Method {methodName} not found"));
@@ -38,24 +57,64 @@ public static class ServerHandler {
     }
 
     public static void Register(string serviceName, MethodInfo methodInfo, string scriptText) {
-        var tm = new TargetMethod(methodInfo, scriptText);
-        if (!_methods.ContainsKey(serviceName)) {
-            _methods[serviceName] = [];
+        if (!_env.TryGetValue(serviceName, out var value)) {
+            value = ([]);
+            _env[serviceName] = value;
+        }
+
+        var env = value.FirstOrDefault(t => t.ServiceName == serviceName);
+        if (env == null) {
+            env = new ScriptEnv(serviceName, Script.createEngine(serviceName), new List<TargetMethod>());
+            value.Add(env);
         }
         
-        if (!_methods[serviceName].Contains(tm))
-            _methods[serviceName].Add(tm);
+        env.TryAddMethod(methodInfo, scriptText);;
     }
-    
-    public static void UnRegister(string serviceName, MethodInfo methodInfo, string scriptText) {
-        var tm = new TargetMethod(methodInfo, scriptText);
-        if (!_methods.ContainsKey(serviceName)) {
-            _methods[serviceName] = [];
+
+    public static void UnRegister(string serviceName, MethodInfo methodInfo) {
+        if (!_env.TryGetValue(serviceName, out var value)) {
+            value = ([]);
+            _env[serviceName] = value;
         }
-        
-        if (_methods[serviceName].Contains(tm))
-            _methods[serviceName].Remove(tm);
+
+        var env = value.FirstOrDefault(t => t.ServiceName == serviceName);
+        env?.TryRemoveMethod(methodInfo);
+
     }
 
     public record TargetMethod(MethodInfo MethodInfo, string ScriptText);
+
+    public record ScriptEnv(string ServiceName, ScriptEngine Engine, List<TargetMethod> Methods) {
+        public async Task<(string, Type)> RunUnary(string method, object request, ServerCallContext context) {
+            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == method);
+            if (tm != null) {
+                var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
+                var gl = new ServerGlobals(request, null, null, context, Resolver.value);
+                var res = await ScriptExec.start(Resolver.value, this.Engine, tm.ScriptText, gl, $"{ServiceName}-{method}");
+                if (res.IsOk) {
+                    return (res.ResultValue, responseType);
+                }
+
+                return (res.ErrorValue.ToString(), responseType);
+
+            }
+
+            throw new RpcException(new Status(StatusCode.NotFound, $"Method {method} not found"));
+        }
+
+        public void TryAddMethod(MethodInfo methodInfo, string scriptText) {
+            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
+            if (tm == null) {
+                Methods.Add(new TargetMethod(methodInfo, scriptText));
+            }
+        }
+
+        public void TryRemoveMethod(MethodInfo methodInfo) {
+            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
+            if (tm != null) {
+                Methods.Remove(tm);
+            }
+        }
+    }
+    
 }

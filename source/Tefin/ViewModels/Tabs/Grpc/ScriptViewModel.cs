@@ -59,7 +59,7 @@ public class ScriptViewModel : ViewModelBase {
         }
         else {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
-            ServerHandler.UnRegister(obj._serviceName, obj._methodInfo, obj._scriptText);
+            ServerHandler.UnRegister(obj._serviceName, obj._methodInfo);
         }
     }
 
