@@ -320,14 +320,14 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         async Task Show() {
             var compileOutput = obj.Output;
             var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-            var serviceBaseTypes = ServiceClient.findServiceBaseTypes(types);
-            var serviceBaseType = serviceBaseTypes.First(t => {
+            var serviceImplTypes = ServiceClient.findConcreteServiceTypes(types);
+            var serviceImplType = serviceImplTypes.First(t => {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
             });
 
-            if (serviceBaseType != null && this.Project != null) {
-                var methods = ServiceClient.findMethods(serviceBaseType);
+            if (serviceImplType != null && this.Project != null) {
+                var methods = ServiceClient.findMethods(serviceImplType);
                 //Update the currently loaded project
                 var feature = new AddServiceMockFeature(
                     this.Project,
@@ -354,7 +354,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                 }
 
 
-                this.AddRootNode(client, serviceBaseType);
+                this.AddRootNode(client, serviceImplType);
             }
         }
 

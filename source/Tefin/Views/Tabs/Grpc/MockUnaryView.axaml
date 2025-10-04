@@ -35,12 +35,26 @@
                                 <Button Margin="8 0 0 0">
                                     <controls:IconControl Icon="{StaticResource Icon.EditType}" VerticalAlignment="Center"></controls:IconControl>
                                 </Button>
-                                <ToggleSwitch OnContent="Active script" IsChecked="{Binding IsSelected}"></ToggleSwitch>
                             </StackPanel>
-                            <Border BorderBrush="{Binding SelectedColor}" BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="4" >
-                            <controls:JsonEditor  Text="{Binding ScriptText}" CornerRadius="4" 
-                                                 Padding="4" BorderBrush="LightSlateGray" />
+                            
+                            <Border BorderBrush="{Binding SelectedColor}" BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="6" >
+                                <controls:JsonEditor  Text="{Binding ScriptText}" Padding="4"  />
                             </Border>
+                            
+                            <Border ZIndex="100" Background="#1E1F22" Grid.Row="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 -18 50 0"
+                                    BorderThickness="1"
+                                    BorderBrush="{Binding SelectedColor}" CornerRadius="6">
+                                <StackPanel Orientation="Horizontal" Margin="8 2 8 2"> 
+                                    <ToggleSwitch OnContent="Active" OffContent="Inactive" IsChecked="{Binding IsSelected}"></ToggleSwitch>    
+                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0">
+                                        <controls:IconControl Icon="{StaticResource Icon.Build}"></controls:IconControl>
+                                    </Button>
+                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0">
+                                        <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                            
                         </Grid>
                     
                     

@@ -105,23 +105,28 @@ module Script =
             Res.getValue res )
 
         let! scriptResult = runner.Invoke(scriptGlobal)
+        let nullMarker = "<null>"
         let! stringResult =
-            task {
+            task {                
                 if scriptResult = null then
-                    return "<null>"
+                    return nullMarker
                 else if (TypeHelper.isOfType (scriptResult.GetType()) (typeof<Task>)) then
                     let t = scriptResult :?> Task
                     do! t
                     return 
                         t.GetType().GetProperty "Result"
                         |> fun prop -> prop.GetValue t
-                        |> fun x -> if (x = null) then "<null>" else x.ToString()
+                        |> fun x -> if (x = null) then nullMarker else x.ToString()
                 else
                     return scriptResult.ToString()
              }
             
-        io.Log.Info($"Executing {code} ==> {stringResult}")
-        return stringResult                
+        io.Log.Info($"Executing {code} ==> {stringResult}")        
+        if (stringResult = nullMarker) then
+            io.Log.Warn($"Script returned {nullMarker}! Will be ignored")
+            return ""
+        else
+            return stringResult                               
      }
     
     let run (io:IOs) (engine:ScriptEngine) scriptGlobals code =        

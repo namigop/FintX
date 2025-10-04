@@ -40,7 +40,6 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
 
     public override void Dispose() {
         base.Dispose();
-        this.ClientMethod.Dispose();
     }
 
     public override string GenerateFileContent() => this.MockMethod.GetScriptContent();

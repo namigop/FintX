@@ -23,6 +23,7 @@ public class ServiceMockRootNode : NodeBase {
     private bool _compileInProgress;
     private bool _sessionLoaded;
     private ServerHost? _host;
+    private string _url;
 
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
        
@@ -82,7 +83,6 @@ public class ServiceMockRootNode : NodeBase {
         }
 
         this.IsExpanded = true;
-
         var loadSessionFeature =
             new LoadSessionFeature(
                 this.ServiceMockGroup.Path,
@@ -96,7 +96,7 @@ public class ServiceMockRootNode : NodeBase {
         DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
     }
 
-    public Type ServiceType { get; private set; }
+    public Type? ServiceType { get; private set; }
 
     private void OnClientNameChanged() {
     }
@@ -177,7 +177,10 @@ public class ServiceMockRootNode : NodeBase {
 
     public string ServiceConfigFile { get; private set; }
 
-    public string Url { get; private set; }
+    public string Url {
+        get => this._url;
+        private set => this._url = value;
+    }
 
     public string ServicePath { get; private set; }
     public string ServiceName { get; private set; }

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Text;
 using System.Windows.Input;
 
 using Avalonia;
@@ -32,26 +33,54 @@ public class ScriptViewModel : ViewModelBase {
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this._serviceType = mi.DeclaringType;
 
-        var (created, resp) = TypeBuilder.getDefault(GetReturnType(mi.ReturnType), true, FSharpOption<object>.None, 0);
-        var json = Instance.indirectSerialize(GetReturnType(mi.ReturnType), resp);
-        this._scriptText = json;
+        this.GenerateDefaultScriptText(mi);
         this._header = "New Script";
 
         this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
+
+        this.SubscribeTo( (ScriptViewModel x) => x.IsSelected, OnSelectedScriptChanged);
+    }
+
+    private void GenerateDefaultScriptText(MethodInfo mi) {
+        var (created, resp) = TypeBuilder.getDefault(GetReturnType(mi.ReturnType), true, FSharpOption<object>.None, 0);
+        var json = Instance.indirectSerialize(GetReturnType(mi.ReturnType), resp);
+
+        StringReader sr = new(json);
+        var l = sr.ReadLine();
+        var sampleLine = "";
+        while (l != null) {
+            if (l.Contains(": \"\"")) {
+                sampleLine = l;
+                break;
+            }
+
+            l = sr.ReadLine();
+        }
+
+        var sb = new StringBuilder("// Add C# snippets to the json below to make more dynamic");
+        sb.AppendLine();
+        if (!string.IsNullOrWhiteSpace(sampleLine)) {
+            sampleLine = sampleLine.Trim().Replace("\"\"", "\"$<<DateTime.Now.ToString(\"yyyy-MM-dd HH:mm:ss.fff\")>>\"");
+            sb.AppendLine($"// For example: {sampleLine}");
+            sb.AppendLine();
+        }
+
+        sb.AppendLine(json);
+        this._scriptText = sb.ToString();
+
         Type GetReturnType(Type retType) {
             if (retType.IsGenericType && retType.GetGenericTypeDefinition() == typeof(Task<>)) {
                 return retType.GetGenericArguments()[0];
             }
+
             return retType;
         }
-        
-        this.SubscribeTo( (ScriptViewModel x) => x.IsSelected, OnSelectedScriptChanged);
     }
 
     private void OnSelectedScriptChanged(ScriptViewModel obj) {
         if (obj._isSelected) {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSeaGreen"));
-            ServerHandler.Register(obj._serviceName, obj._methodInfo, obj._scriptText);
+            ServerHandler.Register(obj._serviceName, obj._methodInfo, () => obj._scriptText);
             foreach (var s in Scripts) {
                 if (s != obj)
                     s.IsSelected = false;

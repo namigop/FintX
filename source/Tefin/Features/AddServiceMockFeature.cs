@@ -2,7 +2,6 @@ using System.Reflection;
 
 using Tefin.Core;
 using Tefin.Core.Interop;
-using Tefin.Grpc;
 
 namespace Tefin.Features;
 

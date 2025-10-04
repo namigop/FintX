@@ -70,6 +70,7 @@ public class CompileFeature(
             return (false, com.ResultValue);
         }
         finally {
+            if (createMockService)
             GlobalHub.publish(new ClientCompileMessage(false));
         }
     }
