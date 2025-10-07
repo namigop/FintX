@@ -21,7 +21,7 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
         GlobalHub.subscribe<MessageProject.MsgServiceMockUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
     }
-
+    
     public GrpcMockMethodHostViewModel MockMethod { get; private set; }
 
     private void OnClientUpdated(MessageProject.MsgServiceMockUpdated obj) {
@@ -39,6 +39,7 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
     public override string Icon { get; } = "Icon.Method";
 
     public override void Dispose() {
+        this.MockMethod.Dispose();
         base.Dispose();
     }
 

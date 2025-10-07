@@ -2,16 +2,14 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text;
 using System.Windows.Input;
-
 using Avalonia;
 using Avalonia.Media;
 
 using Microsoft.FSharp.Core;
-
 using ReactiveUI;
-
 using Tefin.Core;
 using Tefin.Core.Reflection;
+using Tefin.Core.Scripting;
 using Tefin.Features;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
@@ -20,6 +18,7 @@ public class ScriptViewModel : ViewModelBase {
     private readonly MethodInfo _methodInfo;
     private string _scriptText = "";
     private string _header = "";
+    private string _headerTemp = "";
     private bool _isSelected;
     private readonly Type? _serviceType;
     private readonly string _serviceName;
@@ -29,16 +28,22 @@ public class ScriptViewModel : ViewModelBase {
     public ScriptViewModel(MethodInfo mi, string cgName) {
         this._serviceName = cgName;
         this._methodInfo = mi;
-        
         this.CompileCommand = this.CreateCommand(this.OnCompile);
+        this.RemoveCommand = this.CreateCommand(this.OnRemove);
         this._serviceType = mi.DeclaringType;
 
         this.GenerateDefaultScriptText(mi);
-        this._header = "New Script";
-
+        this.Header = "New Script";
         this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
-
         this.SubscribeTo( (ScriptViewModel x) => x.IsSelected, OnSelectedScriptChanged);
+    }
+
+    public ICommand CompileCommand { get; }
+
+    public ICommand RemoveCommand { get; }
+
+    private void OnRemove() {
+        this.Scripts.Remove(this);
     }
 
     private void GenerateDefaultScriptText(MethodInfo mi) {
@@ -92,12 +97,24 @@ public class ScriptViewModel : ViewModelBase {
         }
     }
 
-    public ICommand CompileCommand { get; }
-
-    private Task OnCompile() {
-        throw new NotImplementedException();
+    private void OnCompile() {
+        var parseResult = ScriptParser.parse.Invoke(this._scriptText);
+        if (parseResult.IsOk) {
+            var env = ServerHandler.GetOrAddScriptEnv(this._serviceName);
+            foreach (var line in parseResult.ResultValue) {
+                if (line.ContainsScript) {
+                    var code = ScriptParser.extract.Invoke(line.Raw);
+                    Io.Log.Info($"Compiling script: {code.Runnable}");
+                    Script.getOrAddRunner(env.Engine, code.Runnable, typeof(ServerGlobals));
+                    Io.Log.Info($"Done. all good.");
+                }
+            }
+        }
+        else {
+            Io.Log.Error(parseResult.ErrorValue);
+        }
+        
     }
-    
 
     public bool IsSelected {
         get => this._isSelected;
@@ -112,6 +129,10 @@ public class ScriptViewModel : ViewModelBase {
     public string Header {
         get => this._header;
         set => this.RaiseAndSetIfChanged(ref this._header, value);
+    }
+    public string HeaderTemp {
+        get => this._headerTemp;
+        set => this.RaiseAndSetIfChanged(ref this._headerTemp, value);
     }
 
     public Thickness Margin {

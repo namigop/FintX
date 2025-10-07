@@ -1,0 +1,40 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:Tefin.Views.Controls">
+    <Design.PreviewWith>
+        <controls:TextEditControl />
+    </Design.PreviewWith>
+
+    <Style Selector="controls|TextEditControl">
+        <!-- Set Defaults -->
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border>
+                    <Grid ColumnDefinitions="Auto, Auto">
+                        <SelectableTextBlock Grid.Column="0" 
+                                             
+                                             FontSize="18"
+                                             Text="{TemplateBinding TextToEdit}" 
+                                             VerticalAlignment="Center"></SelectableTextBlock> 
+                       
+                        <StackPanel Orientation="Horizontal" Grid.Column="1">
+                            <TextBox Text="{TemplateBinding TempTextToEdit}" Grid.Column="0" FontSize="18"
+                                     ></TextBox>
+                            <Button Classes="ClearButtonStyle"  Command="{TemplateBinding EditCommand}">
+                                <controls:IconControl Icon="{StaticResource Icon.EditType}"></controls:IconControl>
+                            </Button>
+                            <Button Classes="ClearButtonStyle" Height="30" IsVisible="{TemplateBinding CanStopEdit}"
+                                    Command="{TemplateBinding CommitEditCommand}">
+                                <controls:IconControl Icon="{StaticResource Icon.Check}"></controls:IconControl>
+                            </Button>
+                            <Button Classes="ClearButtonStyle" IsVisible="{TemplateBinding CanStopEdit}" Margin="8 0 0 0">
+                                <controls:IconControl Icon="{StaticResource Icon.Cancel}"></controls:IconControl>
+                            </Button>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+            </ControlTemplate>
+        </Setter>
+    </Style>
+</Styles>

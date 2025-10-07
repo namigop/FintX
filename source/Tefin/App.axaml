@@ -40,6 +40,7 @@
             <Setter Property="Height" Value="16" />
             <Setter Property="Width" Value="16" />
         </Style>
+     
         <FluentTheme />
         <!-- <StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" /> -->
         <!-- <StyleInclude Source="avares://Semi.Avalonia.ColorPicker/Index.axaml" /> -->
@@ -49,6 +50,7 @@
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.axaml" />
         <StyleInclude Source="avares://Tefin.Resources/FintStyles.Button.axaml" />
         <StyleInclude Source="/Views/Controls/IconControl.axaml" />
+        <StyleInclude Source="/Views/Controls/TextEditControl.axaml" />
         <StyleInclude Source="avares://AvaloniaEdit/Themes/Fluent/AvaloniaEdit.xaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
     </Application.Styles>

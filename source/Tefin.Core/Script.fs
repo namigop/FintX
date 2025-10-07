@@ -16,14 +16,6 @@ open Microsoft.CodeAnalysis.Scripting
 open Tefin.Core.Reflection
 open Tefin.Core;
 
-// type ScriptGlobals(id:string, io:IOs, request:obj option, requestStream: obj option, responseStream:obj option, context:ServerCallContext) =
-//     member _.Vars =  Dictionary<string, obj>()  
-//     member _.Id = id
-//     member x.Log = io.Log
-//     member x.Sleep(msec) =  Task.Delay(TimeSpan.FromMilliseconds msec)
-//    
-//     
-    
 type ScriptEngine =
     { Id : string
       Runners  : ConcurrentDictionary<string, ScriptRunner<obj>> }
@@ -80,7 +72,7 @@ module Script =
         let runner = script.CreateDelegate()
         runner
     
-    let private compile code globalsType =
+    let compile code globalsType =
         try
             let runner = compileCsScript code globalsType
             Res.ok runner
@@ -94,16 +86,18 @@ module Script =
        engine :> IDisposable
        |> _.Dispose()
        
-    let private runInternal (io:IOs) (engine:ScriptEngine) (scriptGlobal:obj) code =
-      task {
+    let getOrAddRunner (engine:ScriptEngine) (code:string) globalsType =
         let hash = getScriptHash code
         let runner = engine.Runners.GetOrAdd (hash, fun _ ->
-            let res = compile code (scriptGlobal.GetType())           
+            let res = compile code globalsType        
             if (res.IsError) then
                 let exc = Res.getError res
                 raise exc               
             Res.getValue res )
-
+        runner
+    let private runInternal (io:IOs) (engine:ScriptEngine) (scriptGlobal:obj) code =
+      task {        
+        let runner = getOrAddRunner engine code (scriptGlobal.GetType())
         let! scriptResult = runner.Invoke(scriptGlobal)
         let nullMarker = "<null>"
         let! stringResult =

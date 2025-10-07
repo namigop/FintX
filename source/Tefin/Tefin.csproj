@@ -406,6 +406,10 @@
           <DependentUpon>GrpcMockMethodHostView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Controls\TextEditControl.axaml.cs">
+          <DependentUpon>TextEditControl.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

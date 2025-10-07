@@ -39,6 +39,15 @@ public static class ServerHandler {
         env.TryAddMethod(methodInfo, getScriptText);;
     }
 
+    public static ScriptEnv GetOrAddScriptEnv(string serviceName) {
+        if (!_env.TryGetValue(serviceName, out var env)) {
+            env = new ScriptEnv(serviceName, Script.createEngine(serviceName), []);
+            _env[serviceName] = env;
+        }
+        
+        return env;
+    }
+    
     public static void UnRegister(string serviceName, MethodInfo methodInfo) {
         if (!_env.TryGetValue(serviceName, out var env)) {
             env = new ScriptEnv(serviceName, Script.createEngine(serviceName), []);
@@ -48,8 +57,16 @@ public static class ServerHandler {
         env?.TryRemoveMethod(methodInfo);
     }
 
-    public record TargetMethod(MethodInfo MethodInfo, Func<string> GetScriptText);
-
+    public static void Dispose(string serviceName) {
+        if (_env.TryGetValue(serviceName, out var env)) {
+            Script.dispose(env.Engine);
+            env.Methods.Clear();
+            _env.Remove(serviceName);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+    }
+    
     public record ScriptEnv(string ServiceName, ScriptEngine Engine, List<TargetMethod> Methods) {
         public async Task<(string, Type)> RunUnary(string method, object request, ServerCallContext context) {
             var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == method);
@@ -63,7 +80,6 @@ public static class ServerHandler {
                 }
 
                 return (res.ErrorValue.ToString(), responseType);
-
             }
 
             throw new RpcException(new Status(StatusCode.NotFound, $"Method {method} not found"));
@@ -84,4 +100,6 @@ public static class ServerHandler {
         }
     }
     
+    public record TargetMethod(MethodInfo MethodInfo, Func<string> GetScriptText);
+
 }

@@ -15,27 +15,18 @@
         </StackPanel>
         <ScrollViewer Grid.Row="1">
         <ItemsControl ItemsSource="{Binding Scripts}" Background="Transparent">
-            <!-- <ItemsControl.Styles> -->
-            <!--     <Style Selector="ListBoxItem:selected /template/ ContentPresenter"> -->
-            <!--         <Setter Property="Background" Value="#1F7A7574" />  -->
-            <!--          -->
-            <!--     </Style> -->
-            <!--     <Style Selector="ListBoxItem:selected /template/ ContentPresenter Grid Border"> -->
-            <!--         <Setter Property="BorderThickness" Value="3 1 1 1" /> -->
-            <!--     </Style> -->
-            <!--     <Style Selector="ListBoxItem:pointerover"> -->
-            <!--         <Setter Property="Background" Value="Yellow" /> -->
-            <!--     </Style> -->
-            <!-- </ItemsControl.Styles> -->
+           
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                         <Grid RowDefinitions="Auto, *" Margin="8 16 8 8">
-                            <StackPanel Orientation="Horizontal">
-                                <SelectableTextBlock  Text="{Binding Header}" FontSize="18" Margin="6"></SelectableTextBlock>
-                                <Button Margin="8 0 0 0">
-                                    <controls:IconControl Icon="{StaticResource Icon.EditType}" VerticalAlignment="Center"></controls:IconControl>
-                                </Button>
-                            </StackPanel>
+                            
+                            <Panel Grid.Row="0"  Height="20"></Panel>
+                                <!-- <controls:TextEditControl Grid.Row="0" TextToEdit="{Binding Header}" -->
+                                <!--                           TempTextToEdit="{Binding HeaderTemp}" -->
+                                <!--                           FontSize="16" ></controls:TextEditControl> -->
+                                <!-- <Button Margin="8 0 0 0"> -->
+                                <!--     <controls:IconControl Icon="{StaticResource Icon.EditType}" VerticalAlignment="Center"></controls:IconControl> -->
+                                <!-- </Button> -->
                             
                             <Border BorderBrush="{Binding SelectedColor}" BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="6" >
                                 <controls:JsonEditor  Text="{Binding ScriptText}" Padding="4"  />
@@ -46,11 +37,32 @@
                                     BorderBrush="{Binding SelectedColor}" CornerRadius="6">
                                 <StackPanel Orientation="Horizontal" Margin="8 2 8 2"> 
                                     <ToggleSwitch OnContent="Active" OffContent="Inactive" IsChecked="{Binding IsSelected}"></ToggleSwitch>    
-                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0">
+                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0" 
+                                             ToolTip.Tip="Compile any C# expressions found in the script"
+                                             Command="{Binding CompileCommand}">
                                         <controls:IconControl Icon="{StaticResource Icon.Build}"></controls:IconControl>
                                     </Button>
-                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0">
+                                    <Button  Classes="ClearButtonStyle" Margin="8 0 0 0" ToolTip.Tip="Remove this script">
                                         <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
+                                        <Button.Flyout>
+                                            <Flyout Placement="BottomEdgeAlignedLeft">
+                                                <Grid RowDefinitions="*, Auto" Height="100">
+                                                    <TextBlock Text="Are you sure?" VerticalAlignment="Center"
+                                                               HorizontalAlignment="Center" />
+
+                                                    <Border BorderBrush="DimGray" BorderThickness="0 1 0 0" Grid.Row="1" Margin="0 10 0 0">
+                                                        <StackPanel Orientation="Horizontal" Margin="0 12 0 0" HorizontalAlignment="Right">
+                                                            <Button Click="DeleteButtonClick">
+                                                                <TextBlock Text="Yes, delete it" />
+                                                            </Button>
+                                                            <Button Click="CancelButtonClick" Margin="6 6 6 6">
+                                                                <TextBlock Text="Cancel" />
+                                                            </Button>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </Grid>
+                                            </Flyout>
+                                        </Button.Flyout>
                                     </Button>
                                 </StackPanel>
                             </Border>
