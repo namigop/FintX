@@ -10,7 +10,11 @@
     <Grid RowDefinitions="Auto, *">
         <StackPanel Grid.Row="0">
             <Button Command="{Binding AddScriptCommand}">
-                <TextBlock Text="[ + ] code"></TextBlock>
+                <StackPanel Orientation="Horizontal">
+                    <controls:IconControl Icon="{StaticResource Icon.Script}"></controls:IconControl>
+                    <TextBlock VerticalAlignment="Center" Text=" + script"></TextBlock>
+                </StackPanel>
+                
             </Button>
         </StackPanel>
         <ScrollViewer Grid.Row="1">

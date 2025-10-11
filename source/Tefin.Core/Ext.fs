@@ -1,7 +1,7 @@
 namespace Tefin.Core
 
 module Ext =
-  let mockScriptExt = ".jsonx"
+  let mockScriptExt = ".fjnx"
   let requestFileExt = ".fxrq"
   let responseFileExt = ".fxrs"
   let zipExt = ".zip"

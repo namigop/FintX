@@ -110,13 +110,18 @@ module ProjectTypes =
   type ClientSaveState =
     { Name: string
       OpenFiles: string array }
+  type ServiceMockSaveState =
+    { Name: string
+      OpenScripts: string array }
 
   type ProjectSaveState =
     { Package: string
-      ClientState: ClientSaveState array }
+      ClientState: ClientSaveState array
+      MockState: ServiceMockSaveState array }
 
     static member FileName = "projectState.json"
 
     static member Empty(package) =
       { Package = package
-        ClientState = Array.empty }
+        ClientState = Array.empty
+        MockState = Array.empty }

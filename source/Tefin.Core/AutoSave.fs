@@ -44,22 +44,36 @@ module AutoSave =
     { Project: Project
       Client: ClientGroup
       Methods: MethodParam array }
-
     static member Empty() =
       { Project = Unchecked.defaultof<Project>
         Client = Unchecked.defaultof<ClientGroup>
         Methods = Array.empty }
-
     member x.WithProject p = { x with Project = p }
     member x.WithClient c = { x with Client = c }
     member x.WithMethods m = { x with Methods = m }
+    
+  type ServiceMockParam =
+    { Project: Project
+      Mock: ServiceMockGroup
+      Methods: MethodParam array }
+
+    static member Empty() =
+      { Project = Unchecked.defaultof<Project>
+        Mock = Unchecked.defaultof<ServiceMockGroup>
+        Methods = Array.empty }
+
+    member x.WithProject p = { x with Project = p }
+    member x.WithMock c = { x with Mock = c }
+    member x.WithMethods m = { x with Methods = m }
 
   type AutoSaveParam =
+    | MockParams of ServiceMockParam array
     | ClientParams of ClientParam array
     | FileParams of FileParam array 
     with
        static member AsClientParams p =  ClientParams p
        static member AsFileParams p =  FileParams p
+       static member AsMockParams p =  MockParams p
   type Writer =
     { Write: IOs -> string -> string -> unit
       Remove: string -> unit }
@@ -135,7 +149,19 @@ module AutoSave =
 
     { method with Files = autoSavedFiles }
 
+  let private saveMockMethod (io: IOs) (mockPath: string) (method: MethodParam) (writer: Writer) =
+    let autoSavePath = ServiceMockStructure.getAutoSavePath mockPath method.Name
+    io.Dir.CreateDirectory autoSavePath
 
+    let autoSavedFiles =
+      method.Files
+      |> Array.map (fun fileParam -> saveFile io autoSavePath fileParam writer Ext.mockScriptExt)
+
+    //removes any old autosaved files
+    syncAutoSavedFiles io (autoSavedFiles |> Array.map (fun p -> p.FullPath.Value)) autoSavePath
+
+    { method with Files = autoSavedFiles }
+    
   let getAutoSavedFiles (io: IOs) (clientPath: string) =
     ClientStructure.getMethodsPath clientPath
     |> fun path -> io.Dir.GetFiles(path, "*" + Ext.requestFileExt, SearchOption.AllDirectories)
@@ -154,7 +180,19 @@ module AutoSave =
       { clientParam with Methods = methods }
     else
       clientParam
+  let rec private saveMock (io: IOs) (mockParam: ServiceMockParam) (writer: Writer) =
+    if (Directory.Exists mockParam.Mock.Path) then
+      if (mockParam.Methods.Length = 0) then
+        getAutoSavedFiles io mockParam.Mock.Path |> Array.iter File.Delete
 
+      let methods =
+        mockParam.Methods
+        |> Array.map (fun m -> saveMockMethod io mockParam.Mock.Path m writer)
+
+      { mockParam with Methods = methods }
+    else
+      mockParam
+      
   let getAutoSaveLocation (io: IOs) (methodInfo: MethodInfo) (clientPath: string) =
     let methodName = methodInfo.Name
     let autoSavePath = ClientStructure.getAutoSavePath (clientPath) methodName
@@ -173,7 +211,7 @@ module AutoSave =
     let autoSavePath = ServiceMockStructure.getAutoSavePath (mockPath) methodName
 
     io.Dir.CreateDirectory autoSavePath
-    let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.requestFileExt
+    let fileName = Utils.getAvailableFileName autoSavePath methodName Ext.mockScriptExt
     let fullPath = Path.Combine(autoSavePath, fileName)
 
     if not (io.File.Exists fullPath) then
@@ -185,7 +223,7 @@ module AutoSave =
     let io = Resolver.value
     let w = writer
     let updatedClientParams = clientParams |> Array.map (fun clientParam -> saveClient io clientParam w)
-
+    
     //create save state
     let projects = updatedClientParams |> Array.map (fun p -> p.Project)
     for p in projects do
@@ -201,17 +239,65 @@ module AutoSave =
             |> Array.map (fun f -> f.Value)
           clientName, savedFiles)
 
-      let saveState =
-        { Package = p.Package
-          ClientState =
-            files
+      let scriptFiles = clients |> Array.map (fun c ->
+          let clientName = c.Client.Name
+          let savedFiles =
+            c.Methods
+            |> Array.collect (fun m -> m.Files)
+            |> Array.map (fun f -> f.FullPath)
+            |> Array.filter (fun f -> f.IsSome)
+            |> Array.map (fun f -> f.Value)
+          clientName, savedFiles)
+      
+      let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
+      let clientState =
+        files
             |> Array.map (fun (clientName, openFiles) ->
               { Name = clientName
-                OpenFiles = openFiles }) }
+                OpenFiles = openFiles }) 
+      let saveState =
+        io.File.ReadAllText stateFile
+        |> Instance.jsonDeserialize<ProjectSaveState>
+        |> fun s -> { s with Package = p.Package; ClientState = clientState }
+            
 
-      let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
+      
       io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
+  
+  let private saveMockParam (mockParams : ServiceMockParam array) =
+    let io = Resolver.value
+    let w = writer    
+    let updatedMockParams = mockParams |> Array.map (fun mockParam -> saveMock io mockParam w)
 
+    //create save state
+    let projects = updatedMockParams |> Array.map (fun p -> p.Project)
+    for p in projects do
+      let mocks = mockParams |> Array.filter (fun c -> c.Project.Path = p.Path)
+
+      let files = mocks |> Array.map (fun c ->
+          let clientName = c.Mock.Name
+          let savedFiles =
+            c.Methods
+            |> Array.collect (fun m -> m.Files)
+            |> Array.map (fun f -> f.FullPath)
+            |> Array.filter (fun f -> f.IsSome)
+            |> Array.map (fun f -> f.Value)
+          clientName, savedFiles)
+      
+      let mockState =
+          files
+          |> Array.map (fun (clientName, openFiles) ->
+              { Name = clientName
+                OpenScripts = openFiles })
+          
+      let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
+      let saveState =
+        io.File.ReadAllText stateFile
+        |> Instance.jsonDeserialize<ProjectSaveState>
+        |> fun s -> { s with Package = p.Package; MockState = mockState }
+               
+      io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
+      
   let saveFileParams (filesToSave : FileParam array) =
     let io = Resolver.value  
     for fileParam in filesToSave do
@@ -225,7 +311,7 @@ module AutoSave =
     let timer = new System.Timers.Timer()
     timer.AutoReset <- true
     timer.Interval <- App.getAppConfig().AutoSaveFrequency * 1000 |> System.Convert.ToDouble
-
+    
     fun (getParam: System.Func<AutoSaveParam[]>) ->
       if not timer.Enabled then
         timer.Enabled <- true
@@ -235,6 +321,7 @@ module AutoSave =
           let autoSaveParams = getParam.Invoke()
           for autoSaveParam in autoSaveParams do
             match autoSaveParam with
+            | MockParams m -> saveMockParam m
             | ClientParams clientParams -> saveClientParam clientParams
             | FileParams fileParams ->saveFileParams fileParams
         )

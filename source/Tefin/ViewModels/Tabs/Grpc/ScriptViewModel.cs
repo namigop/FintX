@@ -146,4 +146,8 @@ public class ScriptViewModel : ViewModelBase {
         get => this._selectedColor;
         private set => this.RaiseAndSetIfChanged(ref _selectedColor, value);
     }
+
+    public SingleScript ToScriptFileContent() {
+        return new SingleScript(this.IsSelected, this.ScriptText);
+    }
 }

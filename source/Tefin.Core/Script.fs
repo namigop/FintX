@@ -16,6 +16,14 @@ open Microsoft.CodeAnalysis.Scripting
 open Tefin.Core.Reflection
 open Tefin.Core;
 
+type SingleScript = {
+    IsSelected : bool
+    Content : string
+}
+type ScriptFile = {
+    Scripts : SingleScript array
+}
+
 type ScriptEngine =
     { Id : string
       Runners  : ConcurrentDictionary<string, ScriptRunner<obj>> }

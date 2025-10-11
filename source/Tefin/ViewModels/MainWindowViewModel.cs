@@ -3,6 +3,8 @@
 using System.Reactive;
 using System.Windows.Input;
 
+using DynamicData;
+
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
@@ -120,24 +122,66 @@ public class MainWindowViewModel : ViewModelBase {
             return clientParams.ToArray();
         }
 
-        AutoSave.FileParam[] GetEnvConfigParam(PersistedTabViewModel[] nonMethodTabs) {
+        AutoSave.FileParam[] GetEnvConfigParam(List<PersistedTabViewModel> nonMethodTabs) {
             return nonMethodTabs.Select(t => t.GetFileParam())
                 .Where(t => t.CanSave)
                 .ToArray();
+        }
+        AutoSave.ServiceMockParam[] GetServiceMockParam(List<MockMethodTabViewModel> mockTabs) {
+            var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
+            var loadedMocks = this.MainMenu.ServiceMockMenuItem.Explorer.GetServiceMockNodes()
+                .Where(c => c.IsLoaded)
+                .Select(c => c.ServiceMockGroup); //methodTabs.Select(m => m.Client).DistinctBy(c => c.Name).ToArray();
+
+            var clientParams = new List<AutoSave.ServiceMockParam>();
+            foreach (var mock in loadedMocks) {
+                var methodsOfClient = mockTabs.Where(m => m.ServiceMock.Name == mock.Name).ToArray();
+                var uniqueMethods = methodsOfClient.DistinctBy(m => m.MockMethod.MethodInfo.Name);
+                var methodParams = new List<AutoSave.MethodParam>();
+                foreach (var method in uniqueMethods) {
+                    var tabsForMethod = methodsOfClient.Where(m =>
+                        m.MockMethod.MethodInfo.Name == method.MockMethod.MethodInfo.Name);
+                    var fileParams = new List<AutoSave.FileParam>();
+                    foreach (var tab in tabsForMethod.Where(t => t.MockMethod.IsLoaded)) {
+                        var fp = tab.GetFileParam();
+                        if (fp.CanSave)
+                            fileParams.Add(fp);
+                    }
+
+                    var methodParam = AutoSave.MethodParam.Empty()
+                        .WithName(method.MockMethod.MethodInfo.Name)
+                        .WithFiles(fileParams.ToArray());
+                    methodParams.Add(methodParam);
+                }
+
+                var clientParam =
+                    AutoSave.ServiceMockParam.Empty()
+                        .WithProject(loadedProject)
+                        .WithMock(mock)
+                        .WithMethods(methodParams.ToArray());
+                clientParams.Add(clientParam);
+            }
+
+            return clientParams.ToArray();
         }
         
         AutoSave.AutoSaveParam[] Get() {
             var persistableTabs = this.TabHost.Items.Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>().ToList();
             var openWindows = this.WindowHost.Items.Select(f => f.Value.Content).Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>();
             persistableTabs.AddRange(openWindows);
-            var nonMethodTabs = persistableTabs.Where(t => t.Client.Methods.Length == 0).ToArray();
-
+            var nonMethodTabs = persistableTabs.Where(t => t.Client.Methods.Length == 0).ToList();
+            persistableTabs.RemoveMany(nonMethodTabs);
+            
+            var mockTabs = nonMethodTabs.Where(t => t is MockMethodTabViewModel).Cast<MockMethodTabViewModel>().ToList();
+            nonMethodTabs.RemoveMany(mockTabs);
             var clientParams = GetClientParam(persistableTabs);
             var fileParams = GetEnvConfigParam(nonMethodTabs);
+            var scriptParams = GetServiceMockParam(mockTabs);
             //return clientParams.ToArray();
             return [
                 AutoSave.AutoSaveParam.AsClientParams(clientParams),
                 AutoSave.AutoSaveParam.AsFileParams(fileParams),
+                AutoSave.AutoSaveParam.AsMockParams(scriptParams)
             ];
         }
 

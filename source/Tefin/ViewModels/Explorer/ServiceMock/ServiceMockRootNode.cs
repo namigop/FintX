@@ -21,7 +21,6 @@ namespace Tefin.ViewModels.Explorer.ServiceMock;
 
 public class ServiceMockRootNode : NodeBase {
     private bool _compileInProgress;
-    private bool _sessionLoaded;
     private ServerHost? _host;
     private string _url;
 
@@ -59,7 +58,7 @@ public class ServiceMockRootNode : NodeBase {
 
     public ICommand DeleteCommand { get; }
 
-    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
+    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode;
 
      
     public override void Init() {
@@ -83,17 +82,6 @@ public class ServiceMockRootNode : NodeBase {
         }
 
         this.IsExpanded = true;
-        var loadSessionFeature =
-            new LoadSessionFeature(
-                this.ServiceMockGroup.Path,
-                this.Items.Cast<MethodNode>(),
-                this.Io,
-                loaded => {
-                    this._sessionLoaded = loaded;
-                    this.RaisePropertyChanged(nameof(this.IsLoaded));
-                });
-
-        DispatcherTimer.RunOnce(loadSessionFeature.Run, TimeSpan.FromMilliseconds(100));
     }
 
     public Type? ServiceType { get; private set; }
@@ -120,7 +108,7 @@ public class ServiceMockRootNode : NodeBase {
             var compile = new CompileFeature(this.ServiceName, $"{this.ServiceName}DummyClient", this.Desc, protoFiles, this.Url,
                 this.Io);
             var csFiles = this.ServiceMockGroup.CodeFiles;
-            var (ok, compileOutput) = await compile.CompileExisting(csFiles);
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles, true);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 var serviceImplTypes = ServiceClient.findConcreteServiceTypes(types);

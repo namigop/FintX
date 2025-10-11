@@ -19,14 +19,20 @@ public class CompileFeature(
     IOs io) {
     private static readonly Dictionary<string, CompileOutput> CompilationCache = new();
 
-    public async Task<(bool, CompileOutput)> CompileExisting(string[] codeFiles) {
+    public async Task<(bool, CompileOutput)> CompileExisting(string[] codeFiles, bool createMockService) {
         try {
             var key = string.Join("-", codeFiles);
             if (CompilationCache.TryGetValue(key, out var cOutput)) {
                 return (true, cOutput);
             }
 
-            GlobalHub.publish(new ClientCompileMessage(true));
+            if (createMockService) {
+                GlobalHub.publish(new ServiceMockCompileMessage(true));   
+            }
+            else {
+                GlobalHub.publish(new ClientCompileMessage(true));
+            }
+
             CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl, null);
           
             var com = await ServiceClient.compile(io, codeFiles, cParams);
@@ -39,7 +45,13 @@ public class CompileFeature(
             return (false, com.ResultValue);
         }
         finally {
-            GlobalHub.publish(new ClientCompileMessage(false));
+            if (createMockService) {
+                GlobalHub.publish(new ServiceMockCompileMessage(false));   
+            }
+            else {
+                GlobalHub.publish(new ClientCompileMessage(false));
+            }
+
         }
     }
 
@@ -70,8 +82,8 @@ public class CompileFeature(
             return (false, com.ResultValue);
         }
         finally {
-            if (createMockService)
-            GlobalHub.publish(new ClientCompileMessage(false));
+            if (!createMockService)
+                GlobalHub.publish(new ClientCompileMessage(false));
         }
     }
 }

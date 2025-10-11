@@ -13,7 +13,8 @@ module ProjectStructure =
   let _createSaveState package (projectPath: string) (writeAllText: string -> string -> unit) =
     let state =
       { Package = package
-        ClientState = Array.empty }
+        ClientState = Array.empty
+        MockState = Array.empty }
 
     let file = Path.Combine(projectPath, ProjectSaveState.FileName)
     let content = Instance.jsonSerialize state

@@ -68,4 +68,9 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
     }
 
     private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
+
+    public AutoSave.ServiceMockParam GetServiceMockParam() {
+        return AutoSave.ServiceMockParam.Empty().WithMock(this.ServiceMock);
+
+    }
 }

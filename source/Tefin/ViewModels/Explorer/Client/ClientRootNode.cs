@@ -121,7 +121,7 @@ public class ClientRootNode : ExplorerRootNode {
             var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
                 this.Io);
             var csFiles = this.Client.CodeFiles;
-            var (ok, compileOutput) = await compile.CompileExisting(csFiles);
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles, false);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 var clientTypes = ServiceClient.findClientType(types);

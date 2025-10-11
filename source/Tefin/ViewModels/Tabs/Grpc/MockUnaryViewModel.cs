@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows.Input;
 
+using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Features;
 
@@ -16,6 +17,7 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
         this._mi = mi;
         this.Scripts = new ObservableCollection<ScriptViewModel>();
         var scm = new ScriptViewModel(mi, cg.Name) { Scripts = this.Scripts };
+        scm.IsSelected = true;
         this.Scripts.Add(scm);
         this.AddScriptCommand = this.CreateCommand(this.OnAddScript);
     }
@@ -30,7 +32,10 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
         this.Scripts.Add(new ScriptViewModel(this._mi, this.ServiceMock.Name) { Scripts = this.Scripts });
 
 
-    public override string GetScriptContent() => "<script>";
+    public override string GetScriptContent() {
+        var contents = this.Scripts.Select(v => v.ToScriptFileContent()).ToArray();
+        return Instance.jsonSerialize(contents);
+    }
 
     public override void Init() {
     }

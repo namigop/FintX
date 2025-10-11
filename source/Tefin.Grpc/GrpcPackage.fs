@@ -63,7 +63,8 @@ module GrpcPackage =
               let content =
                 Instance.jsonSerialize
                   { Package = packageName
-                    ClientState = Array.empty }
+                    ClientState = Array.empty
+                    MockState = Array.empty }
 
               do! io.File.WriteAllTextAsync stateFile content
         }
