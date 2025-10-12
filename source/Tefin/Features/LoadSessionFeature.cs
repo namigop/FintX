@@ -69,7 +69,7 @@ public class LoadSessionFeature(
                 onLoaded(true);
                 return false;
             },
-            TimeSpan.FromMilliseconds(50));
+            TimeSpan.FromMilliseconds(100));
     }
 
     public void Run() {

@@ -4,7 +4,10 @@ using System.Windows.Input;
 
 using Tefin.Core;
 using Tefin.Core.Interop;
+using Tefin.Core.Scripting;
 using Tefin.Features;
+
+using File = System.IO.File;
 
 //using System.Reflection.Emit;
 
@@ -34,13 +37,31 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
 
     public override string GetScriptContent() {
         var contents = this.Scripts.Select(v => v.ToScriptFileContent()).ToArray();
-        return Instance.jsonSerialize(contents);
+        var m = new ScriptFile(this._mi.DeclaringType!.Name, this._mi.Name, contents);
+        return Instance.jsonSerialize(m);
     }
 
+    
     public override void Init() {
     }
 
     public override void Dispose() {
         ServerHandler.Dispose(this.ServiceMock.Name);
+    }
+
+    public override void ImportScript(string scriptFile) {
+        if (!File.Exists(scriptFile)) {
+            return;
+        }
+        
+        var content = Io.File.ReadAllText(scriptFile);
+        var m = Instance.jsonDeserialize<ScriptFile>(content);
+        this.Scripts.Clear();
+        foreach (var s in m.Scripts) {
+            var scm = new ScriptViewModel(this._mi, this.ServiceMock.Name) { Scripts = this.Scripts };
+            scm.ScriptText = s.Content;
+            scm.IsSelected = s.IsSelected;
+            this.Scripts.Add(scm);
+        }
     }
 }

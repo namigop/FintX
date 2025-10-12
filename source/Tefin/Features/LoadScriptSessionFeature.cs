@@ -20,7 +20,7 @@ public class LoadScriptSessionFeature(
     Action<bool> onLoaded) {
     private bool IsAutoSaveFile(string scriptFile) {
         var dir = Path.GetDirectoryName(scriptFile);
-        return dir != null && dir.EndsWith(ClientStructure.AutoSaveFolderName);
+        return dir != null && dir.EndsWith(ServiceMockStructure.AutoSaveFolderName);
     }
 
     private void LoadOne(string json, string scriptFile) {
@@ -74,9 +74,11 @@ public class LoadScriptSessionFeature(
     }
 
     public void Run() {
-        var projectPath = Path.GetDirectoryName(mockPath);
+        var projectPath = Path.GetDirectoryName(mockPath)
+                .Then(p => Path.Combine(p, "../"))
+                .Then(Path.GetFullPath);
         var state = ProjectStructure.getSaveState(io, projectPath);
-        var openFiles = state.ClientState.SelectMany(c => c.OpenFiles)
+        var openFiles = state.MockState.SelectMany(c => c.OpenScripts)
             .Where(io.File.Exists)
             .OrderBy(c => c)
             .ToArray();

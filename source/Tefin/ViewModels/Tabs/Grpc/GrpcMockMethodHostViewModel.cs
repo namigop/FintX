@@ -73,7 +73,7 @@ public class GrpcMockMethodHostViewModel : MockMethodViewModelBase {
                 return;
             }
             
-            //this.CallType.ImportRequest(this._importFile);
+            this.CallType.ImportScript(this._importFile);
             
         });
 }

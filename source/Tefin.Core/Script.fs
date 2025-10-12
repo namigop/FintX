@@ -21,6 +21,8 @@ type SingleScript = {
     Content : string
 }
 type ScriptFile = {
+    ServiceType : string
+    Method : string
     Scripts : SingleScript array
 }
 

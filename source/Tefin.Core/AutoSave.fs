@@ -238,16 +238,6 @@ module AutoSave =
             |> Array.filter (fun f -> f.IsSome)
             |> Array.map (fun f -> f.Value)
           clientName, savedFiles)
-
-      let scriptFiles = clients |> Array.map (fun c ->
-          let clientName = c.Client.Name
-          let savedFiles =
-            c.Methods
-            |> Array.collect (fun m -> m.Files)
-            |> Array.map (fun f -> f.FullPath)
-            |> Array.filter (fun f -> f.IsSome)
-            |> Array.map (fun f -> f.Value)
-          clientName, savedFiles)
       
       let stateFile = Path.Combine(p.Path, ProjectSaveState.FileName)
       let clientState =
@@ -258,8 +248,8 @@ module AutoSave =
       let saveState =
         io.File.ReadAllText stateFile
         |> Instance.jsonDeserialize<ProjectSaveState>
-        |> fun s -> { s with Package = p.Package; ClientState = clientState }
-            
+        |> fun s -> { s with ClientState = clientState }
+         
 
       
       io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
@@ -294,7 +284,7 @@ module AutoSave =
       let saveState =
         io.File.ReadAllText stateFile
         |> Instance.jsonDeserialize<ProjectSaveState>
-        |> fun s -> { s with Package = p.Package; MockState = mockState }
+        |> fun s -> { s with MockState = mockState }
                
       io.File.WriteAllText stateFile (Instance.jsonSerialize saveState)
       

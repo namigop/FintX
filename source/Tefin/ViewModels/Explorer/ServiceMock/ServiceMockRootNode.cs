@@ -23,6 +23,7 @@ public class ServiceMockRootNode : NodeBase {
     private bool _compileInProgress;
     private ServerHost? _host;
     private string _url;
+    private bool _sessionLoaded;
 
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
        
@@ -82,6 +83,16 @@ public class ServiceMockRootNode : NodeBase {
         }
 
         this.IsExpanded = true;
+        var loadSessionFeature =
+            new LoadScriptSessionFeature(
+                this.ServiceMockGroup.Path,
+                this.Items.Cast<MockMethodNode>(),
+                this.Io,
+                loaded => {
+                    this._sessionLoaded = loaded;
+                    this.RaisePropertyChanged(nameof(this.IsLoaded));
+                });
+        loadSessionFeature.Run();
     }
 
     public Type? ServiceType { get; private set; }

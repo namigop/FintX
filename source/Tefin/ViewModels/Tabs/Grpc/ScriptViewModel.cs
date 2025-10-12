@@ -32,7 +32,7 @@ public class ScriptViewModel : ViewModelBase {
         this.RemoveCommand = this.CreateCommand(this.OnRemove);
         this._serviceType = mi.DeclaringType;
 
-        this.GenerateDefaultScriptText(mi);
+        this.ScriptText = this.GenerateDefaultScriptText(mi);
         this.Header = "New Script";
         this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
         this.SubscribeTo( (ScriptViewModel x) => x.IsSelected, OnSelectedScriptChanged);
@@ -46,7 +46,7 @@ public class ScriptViewModel : ViewModelBase {
         this.Scripts.Remove(this);
     }
 
-    private void GenerateDefaultScriptText(MethodInfo mi) {
+    private string GenerateDefaultScriptText(MethodInfo mi) {
         var (created, resp) = TypeBuilder.getDefault(GetReturnType(mi.ReturnType), true, FSharpOption<object>.None, 0);
         var json = Instance.indirectSerialize(GetReturnType(mi.ReturnType), resp);
 
@@ -71,7 +71,7 @@ public class ScriptViewModel : ViewModelBase {
         }
 
         sb.AppendLine(json);
-        this._scriptText = sb.ToString();
+        return sb.ToString();
 
         Type GetReturnType(Type retType) {
             if (retType.IsGenericType && retType.GetGenericTypeDefinition() == typeof(Task<>)) {

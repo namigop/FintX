@@ -25,4 +25,6 @@ public abstract class GrpMockCallTypeViewModelBase : ViewModelBase {
             this.ServiceMock = obj.Client;
         }
     }
+
+    public abstract void ImportScript(string scriptFile);
 }
