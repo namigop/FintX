@@ -22,6 +22,9 @@
                     <Setter Property="Width" Value="16" />
                     <Setter Property="Height" Value="16" />
                 </Style>
+                <Style Selector="Button">
+                    <Setter Property="Margin" Value="2 0 0 0"></Setter>
+                </Style>
                 <Style Selector="Button.isNotLoaded">
                     <Style.Animations>
                         <Animation Duration="0:0:1" IterationCount="5">
@@ -41,14 +44,16 @@
             
             <Button Classes="ClearButtonStyle"
                     IsVisible="{Binding IsLoaded}"
+                    IsEnabled="{Binding CanStartServer}"
                     Command="{Binding StartServerCommand}" ToolTip.Tip="Start the mock server">
-                <controls:IconControl Icon="{StaticResource Icon.Start}" />
+                <controls:IconControl Icon="{StaticResource Icon.PlayMedia}" />
             </Button>  
             
             <Button Classes="ClearButtonStyle"
                     IsVisible="{Binding IsLoaded}"
+                    IsEnabled="{Binding !CanStartServer}"
                     Command="{Binding StopServerCommand}" ToolTip.Tip="Stop the mock server">
-                <controls:IconControl Icon="{StaticResource Icon.StopWrite}" />
+                <controls:IconControl Icon="{StaticResource Icon.StopMedia}" />
             </Button>
             
             <Button Classes.isNotLoaded="{Binding !IsLoaded}" Classes="ClearButtonStyle"

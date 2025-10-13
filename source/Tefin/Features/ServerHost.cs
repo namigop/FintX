@@ -3,16 +3,23 @@ using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Tefin.Features;
 
 public class ServerHost(Type serviceType, uint port, string serviceName) {
+    
+    private WebApplication? _app;
     private CancellationTokenSource? _csource;
 
     public async Task Stop() {
-        await this._csource?.CancelAsync()!;
+        if (this._csource == null) 
+            return;
+        
+        await this._app?.StopAsync(this._csource!.Token)!;
         this._csource?.Dispose();
         this._csource = null;
+        this._app = null;
     }
 
     public async Task Start() {
@@ -46,6 +53,7 @@ public class ServerHost(Type serviceType, uint port, string serviceName) {
             () =>
                 "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+        this._app = app;
         await app.StartAsync(this._csource.Token);
     }
 }

@@ -24,12 +24,11 @@ public class ServiceMockRootNode : NodeBase {
     private ServerHost? _host;
     private string _url;
     private bool _sessionLoaded;
+    private bool _canStartServer;
 
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
-       
         this.ServiceType = serviceBaseType;
         this.Update(cg);
-
         this.IsExpanded = true;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
@@ -46,12 +45,28 @@ public class ServiceMockRootNode : NodeBase {
     public ICommand StartServerCommand { get; }
 
     private async Task OnStopServer() {
-        await this._host?.Stop()!;
+        try {
+            await this._host?.Stop()!;
+            this.CanStartServer = true;
+            this.Io.Log.Info($"{this.ServiceName} server stopped.");
+        }
+        catch(Exception ex) {
+            Io.Log.Error(ex);
+        }
     }
 
     private async Task OnStartServer() {
-        this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
-        await _host.Start();
+        try {
+            this.CanStartServer = false;
+
+            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
+            await _host.Start();
+            this.Io.Log.Info($"{this.ServiceName} server started.");
+        }
+        catch (Exception ex) {
+            Io.Log.Error(ex);
+            this.CanStartServer = true;
+        }
     }
 
 
@@ -140,6 +155,7 @@ public class ServiceMockRootNode : NodeBase {
             }
         }
         finally {
+            this.CanStartServer = this.ServiceType != null;
             this._compileInProgress = false;
         }
     }
@@ -185,4 +201,9 @@ public class ServiceMockRootNode : NodeBase {
     public string ServiceName { get; private set; }
     public uint Port { get; private set; }
     public ICommand OpenServiceMockConfigCommand { get; }
+
+    public bool CanStartServer {
+        get => this._canStartServer;
+        private set => this.RaiseAndSetIfChanged(ref _canStartServer, value);
+    }
 }
