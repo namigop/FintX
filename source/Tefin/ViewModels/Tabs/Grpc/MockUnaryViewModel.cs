@@ -19,10 +19,16 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
     public MockUnaryViewModel(MethodInfo mi, ProjectTypes.ServiceMockGroup cg) : base(mi, cg) {
         this._mi = mi;
         this.Scripts = new ObservableCollection<ScriptViewModel>();
-        var scm = new ScriptViewModel(mi, cg.Name) { Scripts = this.Scripts };
+        var scm = new ScriptViewModel(mi, cg.Name, this.OnRemoveScript) { Scripts = this.Scripts };
         scm.IsSelected = true;
         this.Scripts.Add(scm);
         this.AddScriptCommand = this.CreateCommand(this.OnAddScript);
+        //this.RemoveScriptCommand = this.CreateCommand(this.OnRemoveScript);
+    }
+
+    private void OnRemoveScript(ScriptViewModel vm) {
+        this.Scripts.Remove(vm);
+        this.SetEditorHeight();
     }
 
     public ICommand AddScriptCommand { get; }
@@ -31,8 +37,10 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
 
     public override bool IsLoaded => this.Scripts.Count > 0;
 
-    private void OnAddScript() =>
-        this.Scripts.Add(new ScriptViewModel(this._mi, this.ServiceMock.Name) { Scripts = this.Scripts });
+    private void OnAddScript() {
+        this.Scripts.Add(new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) { Scripts = this.Scripts });
+        this.SetEditorHeight();
+    }
 
 
     public override string GetScriptContent() {
@@ -58,7 +66,7 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
         var m = Instance.jsonDeserialize<ScriptFile>(content);
         this.Scripts.Clear();
         foreach (var s in m.Scripts) {
-            var scm = new ScriptViewModel(this._mi, this.ServiceMock.Name) { Scripts = this.Scripts };
+            var scm = new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) { Scripts = this.Scripts };
             scm.ScriptText = s.Content;
             scm.IsSelected = s.IsSelected;
             this.Scripts.Add(scm);
@@ -70,6 +78,10 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
                 this.Scripts.First().IsSelected = true;
         }
         
+        this.SetEditorHeight();
+    }
+
+    private void SetEditorHeight() {
         var height = this.Scripts.Count == 1 ? 600 : 400;
         foreach (var s in this.Scripts) {
             s.EditorHeight = height;

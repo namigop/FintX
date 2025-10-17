@@ -26,11 +26,11 @@ public class ScriptViewModel : ViewModelBase {
     private SolidColorBrush _selectedColor;
     private double _editorHeight;
 
-    public ScriptViewModel(MethodInfo mi, string cgName) {
+    public ScriptViewModel(MethodInfo mi, string cgName, Action<ScriptViewModel> onRemove) {
         this._serviceName = cgName;
         this._methodInfo = mi;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
-        this.RemoveCommand = this.CreateCommand(this.OnRemove);
+        this.RemoveCommand = this.CreateCommand(() => onRemove(this));
         this._serviceType = mi.DeclaringType;
 
         this.ScriptText = Script.generateDefaultScriptText(mi);
@@ -43,13 +43,7 @@ public class ScriptViewModel : ViewModelBase {
     public ICommand CompileCommand { get; }
 
     public ICommand RemoveCommand { get; }
-
-    private void OnRemove() {
-        this.Scripts.Remove(this);
-    }
-
-    
-
+ 
     private void OnSelectedScriptChanged(ScriptViewModel obj) {
         if (obj._isSelected) {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSeaGreen"));
