@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:overlay="clr-namespace:Tefin.ViewModels.Overlay"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="overlay:GrpcServiceMockConfigViewModel"
+             x:Class="Tefin.Views.Overlay.GrpcServiceMockConfigView">
+    <Border>
+        <Grid RowDefinitions="*, Auto">
+            <StackPanel Orientation="Vertical" Grid.Row="0">
+                <StackPanel.Styles>
+                    <Style Selector="StackPanel">
+                        <Setter Property="Margin" Value="0 8 0 0" />
+                    </Style>
+                </StackPanel.Styles>
+                <StackPanel>
+                    <TextBlock Text="Name" Classes="FormField" />
+                    <TextBox Text="{Binding ServiceMockName}" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Port" Classes="FormField" />
+                    <TextBox Text="{Binding Port}" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Description" Classes="FormField" />
+                    <TextBox Text="{Binding Description}" Height="80" />
+                </StackPanel>
+               
+
+                 
+
+            </StackPanel>
+             
+            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 24 0 0">
+                <Button Command="{Binding OkayCommand}" MinWidth="70">
+                    <StackPanel Orientation="Horizontal">
+                        <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
+                                              Width="16" Height="16" Margin="0 0 2 0"></controls:IconControl>
+                        <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
+                <Button Margin="6 0 0 0" Command="{Binding CancelCommand}">
+                    <TextBlock Text="Cancel" HorizontalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Border>
+</UserControl>

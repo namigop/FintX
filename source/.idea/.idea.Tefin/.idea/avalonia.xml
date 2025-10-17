@@ -70,6 +70,7 @@
         <entry key="Tefin/Views/Overlay/AddGrpcServiceOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/AddNewProjectOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/GrpcClientConfigView.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Overlay/GrpcServiceMockConfigView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/OverlayHostView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/ResetGrpcServiceOverlayView.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Overlay/YesNoOverlayView.axaml" value="Tefin/Tefin.csproj" />

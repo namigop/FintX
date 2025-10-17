@@ -14,6 +14,7 @@ using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer.Client;
+using Tefin.ViewModels.Overlay;
 
 using ClientCompiler = Tefin.Core.Build.ClientCompiler;
 
@@ -34,10 +35,16 @@ public class ServiceMockRootNode : NodeBase {
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.StartServerCommand = this.CreateCommand(this.OnStartServer);
         this.StopServerCommand = this.CreateCommand(this.OnStopServer);
+        this.OpenServiceMockConfigCommand = this.CreateCommand(this.OnOpenServiceMockConfig);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
         //this.ExportCommand = this.CreateCommand(this.OnExport);
         GlobalHub.subscribe<MessageProject.MsgServiceMockUpdated>(this.OnServiceMockUpdated)
             .Then(this.MarkForCleanup);
+    }
+
+    private void OnOpenServiceMockConfig() {
+        var vm = new GrpcServiceMockConfigViewModel(this.ServiceConfigFile, this.OnServiceMockNameChanged);
+        GlobalHub.publish(new OpenOverlayMessage(vm));
     }
 
     public ICommand StopServerCommand { get; }
@@ -112,7 +119,8 @@ public class ServiceMockRootNode : NodeBase {
 
     public Type? ServiceType { get; private set; }
 
-    private void OnClientNameChanged() {
+    private void OnServiceMockNameChanged() {
+        
     }
 
     private void OnServiceMockUpdated(MessageProject.MsgServiceMockUpdated obj) {

@@ -72,8 +72,43 @@
     <system:String x:Key="Icon.Script">Icon.Script</system:String>
     <system:String x:Key="Icon.PlayMedia">Icon.PlayMedia</system:String>
     <system:String x:Key="Icon.StopMedia">Icon.StopMedia</system:String>
+    <system:String x:Key="Icon.Number1">Icon.Number1</system:String>
+    <system:String x:Key="Icon.Number2">Icon.Number2</system:String>
+    <system:String x:Key="Icon.Number3">Icon.Number3</system:String>
 
     <resources:IconTemplate x:Key="Icons">
+        <DataTemplate x:Key="{StaticResource Icon.Number3}"> 
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M0.5,8c0,4.142,3.358,7.5,7.5,7.5s7.5,-3.358,7.5,-7.5S12.142,0.5,8,0.5S0.5,3.858,0.5,8z" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M5.5,5.625c0.044,-0.829,0.49,-2.129,2.498,-2.129c2.131,0,2.502,1.462,2.502,2.274c0,1.156,-0.895,1.977,-2.483,2.231H7.61M5.5,10.371C5.544,11.2,5.99,12.5,7.998,12.5c2.131,0,2.502,-1.462,2.502,-2.274c0,-1.052,-0.889,-1.973,-2.483,-2.225H7.61" Stroke="#20A0E0" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Number2}">
+            <Viewbox Height="24" Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Path Data="M8,0.5c4.142,0,7.5,3.358,7.5,7.5s-3.358,7.5,-7.5,7.5S0.5,12.142,0.5,8S3.858,0.5,8,0.5z" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M11,12H5.5l0.018,-0.87c0.01,-0.463,0.229,-0.904,0.609,-1.224l3.785,-3.183c0.191,-0.233,0.467,-0.613,0.467,-1.193c0,-1.121,-1.086,-2.03,-2.425,-2.03c-1.306,0,-2.37,0.863,-2.423,1.945" Stroke="#20A0E0" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Number1}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Ellipse Canvas.Left="0" Canvas.Top="0" Width="16" Height="16" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M5.878,6.022L8.441,3.5h0.067v9.5" Stroke="#20A0E0" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.StopMedia}">
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">

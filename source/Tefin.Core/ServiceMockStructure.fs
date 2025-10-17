@@ -1,6 +1,7 @@
 namespace Tefin.Core
 
 open System.Reflection
+open Tefin.Core.Infra.Actors
 open Tefin.Core.Interop
 open System.IO
 open System
@@ -91,7 +92,33 @@ module ServiceMockStructure =
     
     let deleteMock (io: IOs)  (mock: ServiceMockGroup) =
       io.Dir.Delete mock.Path true //deletes everything
-      io.Log.Info $"Deleted {mock.Name}"  
+      io.Log.Info $"Deleted {mock.Name}"
+    
+    let updateConfig (io:IOs) (mockConfigFile:string) (cfg:ServiceMockConfig) =
+      task {
+        
+        let oldDirName = Path.GetDirectoryName mockConfigFile |> Path.GetFileName
+        let oldMockPath = Path.GetDirectoryName mockConfigFile 
+        let currentName = cfg.ServiceName
+        let nameChanged = not (oldDirName = currentName)
+
+        let cfgFile, mockPath =
+          if nameChanged then
+            let newMockPath = Path.GetDirectoryName oldMockPath |> fun p -> Path.Combine(p, currentName)
+            io.Dir.Move oldMockPath newMockPath
+            let fileName = Path.GetFileName mockConfigFile
+            let newConfigFile = Path.Combine(newMockPath, fileName)
+            newConfigFile, newMockPath
+          else
+            mockConfigFile, oldMockPath
+
+        let json = Instance.jsonSerialize cfg
+        do! io.File.WriteAllTextAsync cfgFile json        
+        let grp = loadServiceMock io mockPath
+        GlobalHub.publish (MsgServiceMockUpdated(grp, oldMockPath, mockPath))
+      }
+      
+      
         
   
 

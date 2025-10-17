@@ -3,6 +3,8 @@ namespace Tefin.Core.Scripting
 open System
 open System.Collections.Concurrent
 open System.Collections.Generic
+open System.IO
+open System.Reflection
 open System.Security.Cryptography
 open System.Text
 open System.Threading.Tasks
@@ -43,6 +45,60 @@ module Script =
         let md5 = MD5.Create()
         let bytes = md5.ComputeHash (Encoding.UTF8.GetBytes code)
         Convert.ToBase64String bytes
+        
+    let generateDefaultScriptText (mi:MethodInfo) =
+        let getReturnType (retType : Type)=
+            if (retType.IsGenericType && retType.GetGenericTypeDefinition() = typedefof<Task<_>>) then
+                retType.GetGenericArguments()[0]
+            else
+                retType
+                
+        let struct (created, resp) = TypeBuilder.getDefault (getReturnType mi.ReturnType) true None 0
+        let json = Instance.indirectSerialize (getReturnType(mi.ReturnType)) resp
+        use sr = new StringReader(json)
+        
+        let mutable l = sr.ReadLine()
+        let mutable stringSampleLine = ""
+        let mutable  intSampleLine = ""
+        let mutable  doubleSampleLine = ""
+        while (l <> null) do
+            if (stringSampleLine = "" && l.Contains(": \"\"")) then
+                stringSampleLine <- l
+            
+            if (intSampleLine = "" && l.Contains(": 0")) then
+                intSampleLine <- l
+            
+            if (doubleSampleLine = "" && l.Contains(": 0.0")) then
+                doubleSampleLine <- l
+                
+            l <- sr.ReadLine()
+        
+
+        let sb =  StringBuilder("// Add C# snippets to the json below to make more dynamic");
+        sb.AppendLine() |> ignore
+        if not (String.IsNullOrWhiteSpace(stringSampleLine)) then
+            stringSampleLine <- stringSampleLine.Trim().Replace("\"\"", "\"$<<DateTime.Now.ToString(\"yyyy-MM-dd HH:mm:ss.fff\")>>\"")
+            sb.AppendLine($"// For example: {stringSampleLine}") |> ignore
+        
+        if not (String.IsNullOrWhiteSpace(intSampleLine)) then
+            intSampleLine <- intSampleLine.Trim().Replace("0", "$<<Random.Shared.Next(1,100)>>")
+            sb.AppendLine($"// For example: {intSampleLine}") |> ignore
+        
+        if not (String.IsNullOrWhiteSpace(doubleSampleLine)) then
+            let demoFunc =
+                """$<<
+//                   var x = 2.0;
+//                   double WhatIsLife() {
+//                     return 21 * x;
+//                   }
+//                   return WhatIsLife();
+//                >>"""
+            doubleSampleLine <- doubleSampleLine.Trim().Replace("0.0", $"{demoFunc}")
+            sb.AppendLine($"// Multi-line snippets are fine too. For example: \n" +
+                          $"// {doubleSampleLine}").AppendLine() |> ignore
+        
+        sb.AppendLine(json) |> ignore
+        sb.ToString()
         
     /// Compiles a given C# script into a ScriptRunner delegate for execution.
     ///

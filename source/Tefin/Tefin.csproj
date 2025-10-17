@@ -410,6 +410,10 @@
           <DependentUpon>TextEditControl.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Overlay\GrpcServiceMockConfigView.axaml.cs">
+          <DependentUpon>GrpcServiceMockConfigView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

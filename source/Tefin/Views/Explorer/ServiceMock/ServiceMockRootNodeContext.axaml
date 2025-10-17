@@ -30,6 +30,7 @@
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenServiceMockConfigCommand}"
+                IsEnabled="{Binding CanStartServer}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
                 ToolTip.Tip="open client config">
             <StackPanel Orientation="Horizontal">

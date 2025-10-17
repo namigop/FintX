@@ -85,7 +85,6 @@ public class ClientRootNode : ExplorerRootNode {
         }
 
         this.IsExpanded = true;
-
         var loadSessionFeature =
             new LoadSessionFeature(
                 this.Client.Path,

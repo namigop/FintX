@@ -63,5 +63,16 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
             scm.IsSelected = s.IsSelected;
             this.Scripts.Add(scm);
         }
+
+        if (this.Scripts.Any()) {
+            var hasSelected = this.Scripts.Any(v => v.IsSelected);
+            if (!hasSelected)
+                this.Scripts.First().IsSelected = true;
+        }
+        
+        var height = this.Scripts.Count == 1 ? 600 : 400;
+        foreach (var s in this.Scripts) {
+            s.EditorHeight = height;
+        }
     }
 }

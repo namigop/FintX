@@ -62,11 +62,12 @@
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
             </Button>
             
-            <Button Classes="ClearButtonStyle" Command="{Binding OpenServiceMockConfigCommand}"
-                    IsVisible="{Binding IsSelected}"
-                    ToolTip.Tip="open client config">
-                <controls:IconControl Icon="{StaticResource Icon.Config}" />
-            </Button>
+            <!-- <Button Classes="ClearButtonStyle" Command="{Binding OpenServiceMockConfigCommand}" -->
+            <!--         IsEnabled="{Binding CanStartServer}" -->
+            <!--         IsVisible="{Binding CanStartServer}" -->
+            <!--         ToolTip.Tip="open client config"> -->
+            <!--     <controls:IconControl Icon="{StaticResource Icon.Config}" /> -->
+            <!-- </Button> -->
             <Button Classes="ClearButtonStyle"
                     IsVisible="{Binding IsSelected}"
                     ToolTip.Tip="More actions">

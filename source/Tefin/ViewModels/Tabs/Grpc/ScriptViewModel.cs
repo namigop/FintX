@@ -24,6 +24,7 @@ public class ScriptViewModel : ViewModelBase {
     private readonly string _serviceName;
     private Thickness _margin;
     private SolidColorBrush _selectedColor;
+    private double _editorHeight;
 
     public ScriptViewModel(MethodInfo mi, string cgName) {
         this._serviceName = cgName;
@@ -32,10 +33,11 @@ public class ScriptViewModel : ViewModelBase {
         this.RemoveCommand = this.CreateCommand(this.OnRemove);
         this._serviceType = mi.DeclaringType;
 
-        this.ScriptText = this.GenerateDefaultScriptText(mi);
+        this.ScriptText = Script.generateDefaultScriptText(mi);
         this.Header = "New Script";
         this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
         this.SubscribeTo( (ScriptViewModel x) => x.IsSelected, OnSelectedScriptChanged);
+        this.EditorHeight = 400;
     }
 
     public ICommand CompileCommand { get; }
@@ -46,41 +48,7 @@ public class ScriptViewModel : ViewModelBase {
         this.Scripts.Remove(this);
     }
 
-    private string GenerateDefaultScriptText(MethodInfo mi) {
-        var (created, resp) = TypeBuilder.getDefault(GetReturnType(mi.ReturnType), true, FSharpOption<object>.None, 0);
-        var json = Instance.indirectSerialize(GetReturnType(mi.ReturnType), resp);
-
-        StringReader sr = new(json);
-        var l = sr.ReadLine();
-        var sampleLine = "";
-        while (l != null) {
-            if (l.Contains(": \"\"")) {
-                sampleLine = l;
-                break;
-            }
-
-            l = sr.ReadLine();
-        }
-
-        var sb = new StringBuilder("// Add C# snippets to the json below to make more dynamic");
-        sb.AppendLine();
-        if (!string.IsNullOrWhiteSpace(sampleLine)) {
-            sampleLine = sampleLine.Trim().Replace("\"\"", "\"$<<DateTime.Now.ToString(\"yyyy-MM-dd HH:mm:ss.fff\")>>\"");
-            sb.AppendLine($"// For example: {sampleLine}");
-            sb.AppendLine();
-        }
-
-        sb.AppendLine(json);
-        return sb.ToString();
-
-        Type GetReturnType(Type retType) {
-            if (retType.IsGenericType && retType.GetGenericTypeDefinition() == typeof(Task<>)) {
-                return retType.GetGenericArguments()[0];
-            }
-
-            return retType;
-        }
-    }
+    
 
     private void OnSelectedScriptChanged(ScriptViewModel obj) {
         if (obj._isSelected) {
@@ -145,6 +113,11 @@ public class ScriptViewModel : ViewModelBase {
     public SolidColorBrush SelectedColor {
         get => this._selectedColor;
         private set => this.RaiseAndSetIfChanged(ref _selectedColor, value);
+    }
+
+    public double EditorHeight {
+        get => this._editorHeight;
+        set => this.RaiseAndSetIfChanged(ref _editorHeight, value);
     }
 
     public SingleScript ToScriptFileContent() {
