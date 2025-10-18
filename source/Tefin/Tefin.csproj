@@ -414,6 +414,10 @@
           <DependentUpon>GrpcServiceMockConfigView.axaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="Views\Overlay\NotSupportedOverlayView.axaml.cs">
+          <DependentUpon>NotSupportedOverlayView.axaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
 
     </ItemGroup>
 

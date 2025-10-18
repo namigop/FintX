@@ -5,6 +5,7 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
+using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Tabs;
@@ -20,6 +21,7 @@ public sealed class MockMethodNode : NodeBase {
         this.ServiceMock = cg;
         this.CanOpen = true;
         this.Title = methodInfo.Name;
+        this.SubTitle = $"{{{GrpcMethod.getMethodTypeFromClient(methodInfo)}}}";
         this.OpenMethodCommand = this.CreateCommand(this.OnOpenMethod);
         this.NewRequestCommand = this.CreateCommand(this.OnNewRequest);
         //this.ExportCommand = this.CreateCommand(this.OnExport);

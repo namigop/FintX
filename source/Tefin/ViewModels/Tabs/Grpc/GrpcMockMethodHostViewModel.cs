@@ -6,8 +6,10 @@ using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Grpc;
+using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Explorer;
+using Tefin.ViewModels.Overlay;
 
 #endregion
 
@@ -17,21 +19,24 @@ public class GrpcMockMethodHostViewModel : MockMethodViewModelBase {
     private string _importFile = "";
 
     public GrpcMockMethodHostViewModel(MethodInfo mi, ProjectTypes.ServiceMockGroup cg) : base(mi) {
-        var type = GrpcMethod.getMethodType(mi);
+        var type = GrpcMethod.getMethodTypeFromClient(mi);
         if (type == MethodType.Unary) {
             this.CallType = new MockUnaryViewModel(mi, cg);
         }
         else if (type == MethodType.ServerStreaming) {
-            throw new NotFiniteNumberException("ServerStreamingViewModel mock todo");
-            //this.CallType = new ServerStreamingViewModel(mi, cg);
+           var vm = new NotSupportedOverlayViewModel("Mocking server streaming methods is not supported in the Community Edition.");
+            OpenOverlayMessage msg = new(vm);
+            GlobalHub.publish(msg);
         }
         else if (type == MethodType.ClientStreaming) {
-            throw new NotFiniteNumberException("ClientStreamingViewModel mock todo");
-            //this.CallType = new ClientStreamingViewModel(mi, cg);
+            var vm = new NotSupportedOverlayViewModel("Mocking client streaming methods is not supported in the Community Edition.");
+            OpenOverlayMessage msg = new(vm);
+            GlobalHub.publish(msg);
         }
         else {
-            throw new NotFiniteNumberException("DuplexStreamingViewModel mock todo");
-            //this.CallType = new DuplexStreamingViewModel(mi, cg);
+            var vm = new NotSupportedOverlayViewModel("Mocking duplex streaming methods is not supported in the Community Edition.");
+            OpenOverlayMessage msg = new(vm);
+            GlobalHub.publish(msg);
         }
 
         this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);

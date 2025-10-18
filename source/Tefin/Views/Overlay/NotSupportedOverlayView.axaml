@@ -1,0 +1,48 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:overlay="clr-namespace:Tefin.ViewModels.Overlay"
+             xmlns:controls="clr-namespace:Tefin.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="overlay:NotSupportedOverlayViewModel"
+             x:Class="Tefin.Views.Overlay.NotSupportedOverlayView">
+    <Border>
+        <StackPanel Orientation="Vertical">
+            <Grid ColumnDefinitions="Auto, *">
+                <Panel Grid.Column="0">
+                    <Viewbox Height="48" Stretch="Uniform" Margin="16" VerticalAlignment="Center">
+                        <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0">
+                            <Canvas>
+                                <Path Data="M16,3.5l14.15,26h-28.3L16,3.5z" Fill="#BA9B04" Stroke="#FBD28A" StrokeThickness="1"  />
+                                <Path Data="M16,12v10M16,24v2" Fill="#4E4E4E" Stroke="#D8D8D8" StrokeThickness="2"/>
+                            </Canvas>
+                        </Canvas>
+                    </Viewbox>
+                </Panel>
+                <StackPanel Orientation="Vertical" Grid.Column="1" Margin="8" VerticalAlignment="Center">
+                    <SelectableTextBlock Text="{Binding Message}"></SelectableTextBlock>
+                    <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
+                        <TextBlock Text="Woks great with FintX Enterprise though. Check it out at " VerticalAlignment="Center"></TextBlock>
+                        <HyperlinkButton NavigateUri="https://fintx.dev" ClickMode="Press" Margin="-4 0 0 0">https://fintx.dev</HyperlinkButton>    
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
+
+            <Grid ColumnDefinitions="*, Auto" Margin="0 15 0 0">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Command="{Binding OkayCommand}" MinWidth="70">
+                        <StackPanel Orientation="Horizontal">
+                            <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
+                                                  Width="16" Height="16" Margin="0 0 2 0" />
+                            <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Margin="6 0 0 0" Command="{Binding CancelCommand}">
+                        <TextBlock Text="Cancel" HorizontalAlignment="Center" />
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>
