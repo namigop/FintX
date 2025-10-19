@@ -23,7 +23,7 @@
                 <StackPanel Orientation="Vertical" Grid.Column="1" Margin="8" VerticalAlignment="Center">
                     <SelectableTextBlock Text="{Binding Message}"></SelectableTextBlock>
                     <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
-                        <TextBlock Text="Woks great with FintX Enterprise though. Check it out at " VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Text="Works great with FintX Enterprise though. Check it out at " VerticalAlignment="Center"></TextBlock>
                         <HyperlinkButton NavigateUri="https://fintx.dev" ClickMode="Press" Margin="-4 0 0 0">https://fintx.dev</HyperlinkButton>    
                     </StackPanel>
                 </StackPanel>
