@@ -33,15 +33,15 @@
                 <TextBlock Text="Open in a window" />
             </StackPanel>
         </Button>
-        <Separator Classes="Horizontal" Width="200" />
-        <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding NewRequestCommand}"
-                utils:CloseFlyoutBehavior.CloseOnClick="True"
-                ToolTip.Tip="Create a new request">
-            <StackPanel Orientation="Horizontal">
-                <controls:IconControl Icon="{StaticResource Icon.FileReqNew}" />
-                <TextBlock Text="New request" />
-            </StackPanel>
-        </Button>
+        <!-- <Separator Classes="Horizontal" Width="200" /> -->
+        <!-- <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding NewRequestCommand}" -->
+        <!--         utils:CloseFlyoutBehavior.CloseOnClick="True" -->
+        <!--         ToolTip.Tip="Create a new request"> -->
+        <!--     <StackPanel Orientation="Horizontal"> -->
+        <!--         <controls:IconControl Icon="{StaticResource Icon.FileReqNew}" /> -->
+        <!--         <TextBlock Text="New request" /> -->
+        <!--     </StackPanel> -->
+        <!-- </Button> -->
         <!-- <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding ExportCommand}" -->
         <!--         utils:CloseFlyoutBehavior.CloseOnClick="True" -->
         <!--         ToolTip.Tip="Export"> -->
