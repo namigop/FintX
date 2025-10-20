@@ -52,11 +52,8 @@ module ScriptParser =
         |> Res.map (fun lines ->
             lines
             |> Array.mapFold (fun state line ->
-                let (lineNumber, sb)= state
-                if line.TrimStart().StartsWith("//") then
-                    let scr = ScriptLine.asComment line lineNumber                    
-                    (scr, (lineNumber + 1, None))
-                else if line.Contains(expressionStart) && line.Contains(expressionEnd) then
+                let (lineNumber, sb)= state                
+                if line.Contains(expressionStart) && line.Contains(expressionEnd) then
                     let scr = ScriptLine.asOneliner line lineNumber                   
                     (scr, (lineNumber + 1, None))
                 else if line.Contains(expressionStart) && not (line.Contains(expressionEnd)) then
@@ -77,6 +74,9 @@ module ScriptParser =
                     let (multiLineStart, builder) = sb.Value
                     ignore(builder.AppendLine line)
                     let scr = ScriptLine.asMultilineScript (builder.ToString()) multiLineStart lineNumber
+                    (scr, (lineNumber + 1, None))
+                else if line.TrimStart().StartsWith("//") then
+                    let scr = ScriptLine.asComment line lineNumber                    
                     (scr, (lineNumber + 1, None))
                 else
                     let scr = ScriptLine.asRaw line lineNumber
