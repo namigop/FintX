@@ -1,15 +1,18 @@
 using System.Reflection;
+
 using Grpc.Core;
+
 using Tefin.Core;
 using Tefin.Core.Scripting;
 
-namespace Tefin.Features;
+namespace Tefin.Features.Scripting;
 
 public static class ServerHandler {
     
     private static Dictionary<string, ScriptEnv> _env = new();
+    
+    // ReSharper disable once UnusedMember.Global
     public static async Task<object> RunUnary(string concreteService, string methodName, object request, ServerCallContext context) {
-        await Task.CompletedTask;
         if (_env.TryGetValue(concreteService, out var env)) {
             var (json, responseType) = await env.RunUnary(methodName, request, context);
             return Instance.indirectDeserialize(responseType, json);
@@ -18,14 +21,22 @@ public static class ServerHandler {
         throw new RpcException(new Status(StatusCode.NotFound, $"Service not found"));
     }
     
-    public static Task<object> RunClientStream(string concreteService, string methodName, object requestStream , ServerCallContext context) {
-        throw new NotImplementedException("Mocks are not supported for client streaming. Try out FintX Enterprise instead at https://fintx.dev");
+    // ReSharper disable once UnusedMember.Global
+    public static async Task<object> RunClientStream(string concreteService, string methodName, object requestStream , ServerCallContext context) {
+        if (_env.TryGetValue(concreteService, out var env)) {
+            var (json, responseType) = await env.RunClientStream(methodName, requestStream, context);
+            return Instance.indirectDeserialize(responseType, json);
+        }
+
+        throw new RpcException(new Status(StatusCode.NotFound, $"Service not found"));
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Task RunServerStream(string concreteService, string methodName, object request, object responseStream, ServerCallContext context) {
         throw new NotImplementedException("Mocks are not supported for server streaming. Try out FintX Enterprise instead at https://fintx.dev");
     }
 
+    // ReSharper disable once UnusedMember.Global
     public static Task RunDuplex(string concreteService, string methodName, object requestStream, object responseStream, ServerCallContext context) {
         throw new NotImplementedException("Mocks are not supported for duplex streaming. Try out FintX Enterprise instead at https://fintx.dev");
     }
@@ -73,6 +84,22 @@ public static class ServerHandler {
             if (tm != null) {
                 var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
                 var gl = new ServerGlobals(request, null, null, context, Resolver.value);
+                var script = tm.GetScriptText();
+                var res = await ScriptExec.start(Resolver.value, this.Engine, script, gl, $"{ServiceName}-{method}");
+                if (res.IsOk) {
+                    return (res.ResultValue, responseType);
+                }
+
+                return (res.ErrorValue.ToString(), responseType);
+            }
+
+            throw new RpcException(new Status(StatusCode.NotFound, $"Method {method} not found"));
+        }
+        public async Task<(string, Type)> RunClientStream(string method, object requestStream, ServerCallContext context) {
+            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == method);
+            if (tm != null) {
+                var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
+                var gl = new ServerGlobals(null, requestStream, null, context, Resolver.value);
                 var script = tm.GetScriptText();
                 var res = await ScriptExec.start(Resolver.value, this.Engine, script, gl, $"{ServiceName}-{method}");
                 if (res.IsOk) {

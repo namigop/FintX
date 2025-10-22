@@ -3,6 +3,7 @@ namespace Tefin.Core
 open System
 open System.IO
 open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 open Tefin.Core.Json
 open Tefin.Core.Reflection
 
@@ -83,3 +84,12 @@ module Instance =
         pi.SetValue(instance, p.Value)
 
       indirectSerialize generatedType instance)
+    
+  let jsonSelectToken (jPath: string) (json:string) =
+    Res.exec (fun () ->
+      if json.StartsWith('[') then
+         let j = JArray.Parse json
+         j.SelectToken jPath
+      else
+        let jObj = JObject.Parse json
+        jObj.SelectToken jPath)

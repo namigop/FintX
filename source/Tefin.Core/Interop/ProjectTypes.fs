@@ -113,6 +113,7 @@ module ProjectTypes =
   type ServiceMockSaveState =
     { Name: string
       OpenScripts: string array }
+    static member Empty() = { Name = ""; OpenScripts = Array.empty }
 
   type ProjectSaveState =
     { Package: string

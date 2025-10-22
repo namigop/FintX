@@ -11,6 +11,7 @@ using Tefin.Core;
 using Tefin.Core.Reflection;
 using Tefin.Core.Scripting;
 using Tefin.Features;
+using Tefin.Features.Scripting;
 
 namespace Tefin.ViewModels.Tabs.Grpc;
 

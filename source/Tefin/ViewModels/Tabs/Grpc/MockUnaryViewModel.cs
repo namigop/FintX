@@ -6,6 +6,7 @@ using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Core.Scripting;
 using Tefin.Features;
+using Tefin.Features.Scripting;
 
 using File = System.IO.File;
 

@@ -10,6 +10,7 @@ using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Features;
+using Tefin.Features.Scripting;
 using Tefin.Grpc;
 using Tefin.Messages;
 using Tefin.Utils;

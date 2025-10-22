@@ -3,9 +3,8 @@ using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace Tefin.Features;
+namespace Tefin.Features.Scripting;
 
 public class ServerHost(Type serviceType, uint port, string serviceName) {
     

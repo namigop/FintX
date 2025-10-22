@@ -8,7 +8,7 @@ module GrpcMethod =
 
   let getMethodTypeFromClient (mi:MethodInfo) =
     let paramNames = mi.GetParameters() |> Array.map (fun p -> p.Name)
-    let request = ""
+    let request = "request"
     let context = "context"
     let requestStream = "requestStream"
     let responseStream = "responseStream"

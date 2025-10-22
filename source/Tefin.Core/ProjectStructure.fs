@@ -33,7 +33,10 @@ module ProjectStructure =
       if (System.String.IsNullOrEmpty content) then
         ProjectSaveState.Empty("grpc")
       else
-        Instance.jsonDeserialize<ProjectSaveState> (content)
+        let state = Instance.jsonDeserialize<ProjectSaveState> (content)
+        if (state.MockState = null) then
+          {state with MockState = Array.empty }
+        else state
 
     saveState
 

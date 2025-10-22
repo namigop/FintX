@@ -24,24 +24,31 @@ public class GrpcMockMethodHostViewModel : MockMethodViewModelBase {
             this.CallType = new MockUnaryViewModel(mi, cg);
         }
         else if (type == MethodType.ServerStreaming) {
-           var vm = new NotSupportedOverlayViewModel("Mocking server streaming methods is not supported in the Community Edition.");
+            var str = "Mocking server streaming methods is not supported in the Community Edition.";
+            var vm = new NotSupportedOverlayViewModel(str);
             OpenOverlayMessage msg = new(vm);
             GlobalHub.publish(msg);
+            throw new NotSupportedException(str);
         }
         else if (type == MethodType.ClientStreaming) {
-            var vm = new NotSupportedOverlayViewModel("Mocking client streaming methods is not supported in the Community Edition.");
+            var str = "Mocking client streaming methods is not supported in the Community Edition.";
+            var vm = new NotSupportedOverlayViewModel(str);
             OpenOverlayMessage msg = new(vm);
             GlobalHub.publish(msg);
+            throw new NotSupportedException(str);
         }
         else {
-            var vm = new NotSupportedOverlayViewModel("Mocking duplex streaming methods is not supported in the Community Edition.");
+            var str = "Mocking duplex streaming methods is not supported in the Community Edition.";
+            var vm = new NotSupportedOverlayViewModel(str);
             OpenOverlayMessage msg = new(vm);
             GlobalHub.publish(msg);
+            throw new NotSupportedException(str);
         }
-
+        
         this.CallType.SubscribeTo(x => x.IsBusy, vm => this.IsBusy = vm.IsBusy);
         GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
+
     }
 
     private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {

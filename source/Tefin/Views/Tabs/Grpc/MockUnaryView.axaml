@@ -9,9 +9,9 @@
              x:Class="Tefin.Views.Tabs.Grpc.MockUnaryView">
     <Grid RowDefinitions="Auto, *">
         <StackPanel Grid.Row="0">
-            <Button Command="{Binding AddScriptCommand}">
+            <Button Command="{Binding AddScriptCommand}" Classes="ClearButtonStyle" Margin="8">
                 <StackPanel Orientation="Horizontal">
-                    <controls:IconControl Icon="{StaticResource Icon.Script}"></controls:IconControl>
+                    <controls:IconControl Height="24" Width="24" Icon="{StaticResource Icon.Script}"></controls:IconControl>
                     <TextBlock VerticalAlignment="Center" Text=" + script"></TextBlock>
                 </StackPanel>
 
