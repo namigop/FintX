@@ -8,11 +8,6 @@ open System.Reflection
 open System.Security.Cryptography
 open System.Text
 open System.Threading.Tasks
-open Grpc.Core
-open Microsoft.CodeAnalysis.CSharp.Scripting
-open System.Runtime.Loader
-open Microsoft.CodeAnalysis
-open Microsoft.CodeAnalysis.CSharp
 open Microsoft.CodeAnalysis.CSharp.Scripting
 open Microsoft.CodeAnalysis.Scripting
 open Tefin.Core.Reflection

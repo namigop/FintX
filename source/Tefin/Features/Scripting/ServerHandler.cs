@@ -78,14 +78,17 @@ public static class ServerHandler {
         }
     }
     
-    public record ScriptEnv(string ServiceName, ScriptEngine Engine, List<TargetMethod> Methods) {
+    public class ScriptEnv(string serviceName, ScriptEngine engine, List<TargetMethod> methods) {
+        public string ServiceName => serviceName;
+        public ScriptEngine Engine => engine;
+        public List<TargetMethod> Methods => methods;
         public async Task<(string, Type)> RunUnary(string method, object request, ServerCallContext context) {
-            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == method);
+            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == method);
             if (tm != null) {
                 var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
                 var gl = new ServerGlobals(request, null, null, context, Resolver.value);
                 var script = tm.GetScriptText();
-                var res = await ScriptExec.start(Resolver.value, this.Engine, script, gl, $"{ServiceName}-{method}");
+                var res = await ScriptExec.start(Resolver.value, engine, script, gl, $"{serviceName}-{method}");
                 if (res.IsOk) {
                     return (res.ResultValue, responseType);
                 }
@@ -96,12 +99,12 @@ public static class ServerHandler {
             throw new RpcException(new Status(StatusCode.NotFound, $"Method {method} not found"));
         }
         public async Task<(string, Type)> RunClientStream(string method, object requestStream, ServerCallContext context) {
-            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == method);
+            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == method);
             if (tm != null) {
                 var responseType = tm.MethodInfo.ReturnType.GetGenericArguments()[0];
                 var gl = new ServerGlobals(null, requestStream, null, context, Resolver.value);
                 var script = tm.GetScriptText();
-                var res = await ScriptExec.start(Resolver.value, this.Engine, script, gl, $"{ServiceName}-{method}");
+                var res = await ScriptExec.start(Resolver.value, engine, script, gl, $"{serviceName}-{method}");
                 if (res.IsOk) {
                     return (res.ResultValue, responseType);
                 }
@@ -113,16 +116,16 @@ public static class ServerHandler {
         }
 
         public void TryAddMethod(MethodInfo methodInfo,  Func<string> getScriptText) {
-            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
+            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
             if (tm == null) {
-                Methods.Add(new TargetMethod(methodInfo, getScriptText));
+                methods.Add(new TargetMethod(methodInfo, getScriptText));
             }
         }
 
         public void TryRemoveMethod(MethodInfo methodInfo) {
-            var tm = Methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
+            var tm = methods.FirstOrDefault(m => m.MethodInfo.Name == methodInfo.Name);
             if (tm != null) {
-                Methods.Remove(tm);
+                methods.Remove(tm);
             }
         }
     }

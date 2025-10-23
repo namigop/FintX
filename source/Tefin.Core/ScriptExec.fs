@@ -12,7 +12,6 @@ module ScriptExec =
         |> Res.map (fun parsedLines ->
             task {
                 let sb = StringBuilder()
-                //let engine = Script.createEngine id
                 for line in parsedLines do
                     if line.ContainsScript then
                         let script = ScriptParser.extract line.Raw
