@@ -29,6 +29,10 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
 
     private void OnRemoveScript(ScriptViewModel vm) {
         this.Scripts.Remove(vm);
+        if (vm.IsSelected && this.Scripts.Any()) {
+            this.Scripts.First().IsSelected = true;
+        }
+
         this.SetEditorHeight();
     }
 
