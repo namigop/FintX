@@ -48,7 +48,7 @@ module CoreExport =
     RequestUtils.emitRequest getClassName getProperties
 
   let inspect (exportType: Type) (exportInstance: obj) =
-    let toString o =
+    let toString (o:obj | null) =
       if o = null then "null" else o.ToString()
 
     let api = exportType.GetProperty("Api").GetValue(exportInstance) |> toString
@@ -57,7 +57,18 @@ module CoreExport =
     let methodType = exportType.GetProperty("MethodType").GetValue(exportInstance) |> toString
     let requestType = exportType.GetProperty("RequestType").GetValue(exportInstance) |> toString
     let request = exportType.GetProperty("Request").GetValue(exportInstance)
-    let vars = exportType.GetProperty("Variables").GetValue(exportInstance) :?> AllVariables
+    let vars =
+      // Res.ok (exportType.GetProperty("Variables"))
+      // |> Res.map (fun pi -> pi.GetValue exportInstance)
+      // |> Res.map (fun varInst -> if (varInst <> null) then varInst :?> AllVariables else AllVariables.Empty())
+      // |> Res.getValue
+      
+      let varInst = exportType.GetProperty("Variables").GetValue(exportInstance) //:?> AllVariables
+      if (varInst <> null) then
+         varInst :?> AllVariables
+      else
+         AllVariables.Empty()
+        
     let requestStream =
       let prop = exportType.GetProperty("RequestStream")
       if prop = null then
