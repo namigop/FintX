@@ -23,10 +23,19 @@
         <Button Classes="ClearButtonStyle ContextFlyout"
                 IsVisible="{Binding !IsLoaded}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
-                Command="{Binding CompileCommand}" ToolTip.Tip="Recompile the client">
+                Command="{Binding CompileCommand}" ToolTip.Tip="Recompile the gRPC mock server">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
                 <TextBlock Text="Compile" />
+            </StackPanel>
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout"
+                IsVisible="{Binding !IsLoaded}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                Command="{Binding RecompileCommand}" ToolTip.Tip="Start over and recreate the mock server">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Refresh}" />
+                <TextBlock Text="Reset" />
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenServiceMockConfigCommand}"

@@ -306,10 +306,6 @@
             <DependentUpon>DuplexStreamingRespView.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="Views\Explorer\ClientNodeActionView.axaml.cs">
-            <DependentUpon>ClientNodeActionView.axaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="Views\MainMenu\ConfigMenuItemView.axaml.cs">
             <DependentUpon>ConfigMenuItemView.axaml</DependentUpon>
             <SubType>Code</SubType>

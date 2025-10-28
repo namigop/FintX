@@ -33,6 +33,7 @@ public class ClientRootNode : ExplorerRootNode {
 
         this.IsExpanded = true;
         this.CompileClientTypeCommand = this.CreateCommand(this.OnCompileClientType);
+        this.RecompileClientTypeCommand = this.CreateCommand(this.OnRecompileClientType);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         //this.ImportCommand = this.CreateCommand(this.OnImport);
         this.ExportCommand = this.CreateCommand(this.OnExport);
@@ -43,6 +44,7 @@ public class ClientRootNode : ExplorerRootNode {
     public ICommand ExportCommand { get; }
     
     public ICommand CompileClientTypeCommand { get; }
+    public ICommand RecompileClientTypeCommand { get; }
 
     public ICommand DeleteCommand { get; }
 
@@ -110,6 +112,14 @@ public class ClientRootNode : ExplorerRootNode {
     }
 
     private async Task OnCompileClientType() {
+        await this.Compile(false);
+    } 
+    
+    private async Task OnRecompileClientType() {
+        await this.Compile(true);
+    }
+
+    private async Task Compile(bool recompile) {
         if (this._compileInProgress) {
             return;
         }
@@ -120,7 +130,7 @@ public class ClientRootNode : ExplorerRootNode {
             var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
                 this.Io);
             var csFiles = this.Client.CodeFiles;
-            var (ok, compileOutput) = await compile.CompileExisting(csFiles, false);
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles, false, recompile);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 var clientTypes = ServiceClient.findClientType(types);

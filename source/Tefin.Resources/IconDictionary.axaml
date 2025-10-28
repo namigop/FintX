@@ -34,6 +34,7 @@
     <system:String x:Key="Icon.ChevronDown">Icon.ChevronDown</system:String>
     <system:String x:Key="Icon.Check">Icon.Check</system:String>
     <system:String x:Key="Icon.Build">Icon.Build</system:String>
+    <system:String x:Key="Icon.Rebuild">Icon.Rebuild</system:String>
     <system:String x:Key="Icon.Config">Icon.Config</system:String>
     <system:String x:Key="Icon.Delete">Icon.Delete</system:String>
     <system:String x:Key="Icon.Minus">Icon.Minus</system:String>
@@ -500,10 +501,8 @@
                     </Canvas>
                 </Canvas>
             </Viewbox>
-
         </DataTemplate>
         <DataTemplate x:Key="{StaticResource Icon.Build}">
-
             <Viewbox Stretch="Uniform">
                 <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
                     <Canvas>
@@ -513,6 +512,18 @@
                             Data="M12,13h-2v-1h2V13zM9,13H7v-1h2V13zM6,13H4v-1h2V13zM13.5,11h-2v-1h2V11zM10.5,11H8.5v-1h2V11zM7.5,11H5.5v-1h2V11zM4.5,11H2.5v-1h2V11z"
                             Fill="LightSlateGray" />
                         <Path Data="M8,7.8V0M4.348,4.239L8,7.9l3.563,-3.661" Stroke="#20A0E0" StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.Rebuild}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16" Canvas.Left="0" Canvas.Top="0">
+                    <Canvas>
+                        <Rectangle Canvas.Left="0.5" Canvas.Top="7.5" Width="15" Height="8" Fill="#4E4E4E" Stroke="LightSlateGray" StrokeThickness="1" />
+                        <Path Data="M12,13h-2v-1h2V13zM9,13H7v-1h2V13zM6,13H4v-1h2V13zM13.5,11h-2v-1h2V11zM10.5,11H8.5v-1h2V11zM7.5,11H5.5v-1h2V11zM4.5,11H2.5v-1h2V11z" Fill="#A0A0A0"/>
+                        <Path Data="M3.5,5.7V0M0.448,2.739L3.5,5.8l2.963,-3.061" Stroke="#20A0E0" StrokeThickness="1" />
+                        <Path Data="M12.5,5.7V0M9.548,2.739L12.5,5.8l2.963,-3.061" Stroke="LightSeaGreen" StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
             </Viewbox>

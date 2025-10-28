@@ -22,6 +22,7 @@ type CompileParameters =
     ProtoFiles: string array
     CsFiles: string array
     ReflectionServiceUrl: string
+    Recompile : bool
     Config: ReadOnlyDictionary<string, string> }
 
 module ServiceClient =
@@ -91,14 +92,22 @@ module ServiceClient =
     }
  
   let compile (io: IOs) (sourceFiles: string array) (compileParams: CompileParameters) =
-    task {      
+    task {
+      let csFilesAndAssembly =
+        if compileParams.Recompile then
+          let dllOpt = sourceFiles |> Array.tryFind (fun d -> (Path.GetExtension d) = ".dll")
+          match dllOpt with
+          | Some dll -> io.File.Delete dll                       
+          | None -> ()
+        sourceFiles |> Array.filter (fun f -> io.File.Exists f)
+      
       let grpcParams =
         { compileParams with
             Config = GrpcPackage.grpcConfigValues
-            CsFiles = sourceFiles }
+            CsFiles = csFilesAndAssembly }
 
-      let sourceFiles = grpcParams.CsFiles |> Array.map (fun f -> Path.GetFileName(f))
-      let msg = String.Join(", ", sourceFiles)
+      let sourceFileNames = grpcParams.CsFiles |> Array.map (fun f -> Path.GetFileName(f))
+      let msg = String.Join(", ", sourceFileNames)
       io.Log.Info($"Compiling : {msg}")
       let tempFile = Path.GetTempFileName()
       io.File.Delete(tempFile)

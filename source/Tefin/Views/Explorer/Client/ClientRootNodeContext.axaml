@@ -23,10 +23,19 @@
         <Button Classes="ClearButtonStyle ContextFlyout"
                 IsVisible="{Binding !IsLoaded}"
                 utils:CloseFlyoutBehavior.CloseOnClick="True"
-                Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the client">
+                Command="{Binding CompileClientTypeCommand}" ToolTip.Tip="Recompile the gRPC client">
             <StackPanel Orientation="Horizontal">
                 <controls:IconControl Icon="{StaticResource Icon.Build}" />
                 <TextBlock Text="Compile" />
+            </StackPanel>
+        </Button>
+        <Button Classes="ClearButtonStyle ContextFlyout"
+                IsVisible="{Binding !IsLoaded}"
+                utils:CloseFlyoutBehavior.CloseOnClick="True"
+                Command="{Binding RecompileClientTypeCommand}" ToolTip.Tip="Start over and recreate the gRPC client">
+            <StackPanel Orientation="Horizontal">
+                <controls:IconControl Icon="{StaticResource Icon.Refresh}" />
+                <TextBlock Text="Reset" />
             </StackPanel>
         </Button>
         <Button Classes="ClearButtonStyle ContextFlyout" Command="{Binding OpenClientConfigCommand}"

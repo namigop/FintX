@@ -110,7 +110,6 @@ module ClientCompiler =
         else
             use ms = new MemoryStream()
             let moduleName = Path.GetFileName input.ModuleFile
-
             let compilation = createCompilation io input.SourceFiles moduleName input.TargetOutput input.AdditionalReferences
             let result = compilation.Emit ms
 

@@ -33,6 +33,7 @@ public class ServiceMockRootNode : NodeBase {
         this.Update(cg);
         this.IsExpanded = true;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
+        this.RecompileCommand = this.CreateCommand(this.OnRecompile);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
         this.StartServerCommand = this.CreateCommand(this.OnStartServer);
         this.StopServerCommand = this.CreateCommand(this.OnStopServer);
@@ -77,7 +78,7 @@ public class ServiceMockRootNode : NodeBase {
         }
     }
 
-
+    public ICommand RecompileCommand { get; }
     public ICommand CompileCommand { get; }
 
     public ICommand DeleteCommand { get; }
@@ -133,6 +134,13 @@ public class ServiceMockRootNode : NodeBase {
     }
 
     private async Task OnCompile() {
+        await this.Compile(false);
+    }
+    private async Task OnRecompile() {
+        await this.Compile(true);
+    }
+
+    private async Task Compile(bool recompile) {
         if (this._compileInProgress) {
             return;
         }
@@ -143,7 +151,7 @@ public class ServiceMockRootNode : NodeBase {
             var compile = new CompileFeature(this.ServiceName, $"{this.ServiceName}DummyClient", this.Desc, protoFiles, this.Url,
                 this.Io);
             var csFiles = this.ServiceMockGroup.CodeFiles;
-            var (ok, compileOutput) = await compile.CompileExisting(csFiles, true);
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles, true, recompile);
             if (ok) {
                 var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
                 var serviceImplTypes = ServiceClient.findConcreteServiceTypes(types);
