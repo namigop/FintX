@@ -27,6 +27,7 @@ public class ServiceMockRootNode : NodeBase {
     private string _url;
     private bool _sessionLoaded;
     private bool _canStartServer;
+    private uint _port;
 
     public ServiceMockRootNode(ProjectTypes.ServiceMockGroup cg, Type? serviceBaseType) {
         this.ServiceType = serviceBaseType;
@@ -62,22 +63,29 @@ public class ServiceMockRootNode : NodeBase {
         catch(Exception ex) {
             Io.Log.Error(ex);
         }
+        finally {
+            this.RaisePropertyChanged(nameof(IsRunning));
+        }
     }
 
     private async Task OnStartServer() {
         try {
             this.CanStartServer = false;
-
             this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
             await _host.Start();
             this.Io.Log.Info($"{this.ServiceName} server started.");
+
         }
         catch (Exception ex) {
             Io.Log.Error(ex);
             this.CanStartServer = true;
         }
+        finally {
+            this.RaisePropertyChanged(nameof(IsRunning));
+        }
     }
 
+    public bool IsRunning { get => this._host is { IsRunning:true }; }
     public ICommand RecompileCommand { get; }
     public ICommand CompileCommand { get; }
 
@@ -216,7 +224,12 @@ public class ServiceMockRootNode : NodeBase {
 
     public string ServicePath { get; private set; }
     public string ServiceName { get; private set; }
-    public uint Port { get; private set; }
+
+    public uint Port {
+        get => this._port;
+        private set => this.RaiseAndSetIfChanged(ref _port, value);
+    }
+
     public ICommand OpenServiceMockConfigCommand { get; }
 
     public bool CanStartServer {

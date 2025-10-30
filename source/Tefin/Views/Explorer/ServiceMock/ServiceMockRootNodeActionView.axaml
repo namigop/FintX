@@ -41,7 +41,7 @@
                     </Style.Animations>
                 </Style>
             </StackPanel.Styles>
-            
+          
             <Button Classes="ClearButtonStyle"
                     IsVisible="{Binding IsLoaded}"
                     IsEnabled="{Binding CanStartServer}"
