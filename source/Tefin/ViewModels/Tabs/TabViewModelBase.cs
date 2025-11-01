@@ -14,9 +14,9 @@ using Tefin.ViewModels.Explorer;
 namespace Tefin.ViewModels.Tabs;
 
 public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
+    private bool _isSelected;
     private string _subTitle;
     private string _title;
-    private bool _isSelected;
 
     protected TabViewModelBase(IExplorerItem item) {
         this._title = "";
@@ -48,7 +48,7 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public bool IsSelected {
         get => this._isSelected;
-        set => this.RaiseAndSetIfChanged(ref _isSelected , value);
+        set => this.RaiseAndSetIfChanged(ref this._isSelected, value);
     }
 
     public string Id {
@@ -68,16 +68,6 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
 
     public abstract void Init();
 
-    private void OnOpenInWindow() {
-        //close the tab but do not dispose it
-        GlobalHub.publish(new RemoveTabMessage(this));
-        GlobalHub.publish(new OpenChildWindowMessage(this));
-    }
-
-    private void OnCloseAll() => GlobalHub.publish(new CloseAllTabsMessage());
-
-    private void OnCloseAllOthers() => GlobalHub.publish(new CloseAllOtherTabsMessage(this));
-
     protected virtual string GetTabId() => $"{this.Title}-{this.ExplorerItem.GetType().FullName}";
 
     protected virtual Task OnClose() {
@@ -89,6 +79,16 @@ public abstract class TabViewModelBase : ViewModelBase, ITabViewModel {
         this.Dispose();
 
         return Task.CompletedTask;
+    }
+
+    private void OnCloseAll() => GlobalHub.publish(new CloseAllTabsMessage());
+
+    private void OnCloseAllOthers() => GlobalHub.publish(new CloseAllOtherTabsMessage(this));
+
+    private void OnOpenInWindow() {
+        //close the tab but do not dispose it
+        GlobalHub.publish(new RemoveTabMessage(this));
+        GlobalHub.publish(new OpenChildWindowMessage(this));
     }
 
     private void OnRemoveTreeItemRemoved(RemoveTreeItemMessage obj) {

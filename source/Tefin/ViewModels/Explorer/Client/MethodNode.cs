@@ -28,24 +28,11 @@ public sealed class MethodNode : NodeBase {
     public ProjectTypes.ClientGroup Client { get; set; }
     public MethodInfo MethodInfo { get; }
     public ICommand NewRequestCommand { get; }
+
     public ICommand OpenMethodCommand { get; }
+
     //public ICommand ExportCommand { get; }
     public ICommand OpenMethodInWindowCommand { get; }
-
-    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
-        //update in case the Url and ClientName has been changed
-        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
-            this.Client = obj.Client;
-            this.Io.Log.Debug($"Updated methodNode {this.MethodInfo.Name} clientInstance");
-        }
-    }
-
-    private void OnOpenMethodInWindow() {
-        var tab = TabFactory.From(this, this.Io);
-        if (tab != null) {
-            GlobalHub.publish(new OpenChildWindowMessage(tab));
-        }
-    }
 
     public ClientMethodViewModelBase CreateViewModel() =>
         new GrpcClientMethodHostViewModel(this.MethodInfo, this.Client);
@@ -63,10 +50,18 @@ public sealed class MethodNode : NodeBase {
         }
     }
 
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
+            this.Client = obj.Client;
+            this.Io.Log.Debug($"Updated methodNode {this.MethodInfo.Name} clientInstance");
+        }
+    }
+
     private void OnNewRequest() {
         var path = ClientStructure.getMethodPath(this.Client.Path, this.MethodInfo.Name);
         var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
-        
+
         var fn = new FileReqNode(file);
         this.AddItem(fn);
         this.IsExpanded = true;
@@ -77,6 +72,13 @@ public sealed class MethodNode : NodeBase {
         var tab = TabFactory.From(this, this.Io);
         if (tab != null) {
             GlobalHub.publish(new OpenTabMessage(tab));
+        }
+    }
+
+    private void OnOpenMethodInWindow() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null) {
+            GlobalHub.publish(new OpenChildWindowMessage(tab));
         }
     }
 }

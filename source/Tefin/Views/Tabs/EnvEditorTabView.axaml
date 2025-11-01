@@ -11,49 +11,50 @@
              x:Class="Tefin.Views.Tabs.EnvEditorTabView">
     <Grid>
         <Grid RowDefinitions="Auto, Auto, Auto, Auto, Auto, *">
-            
-            <TextBlock Text="Name*" Classes="FormField" Grid.Row="0" MinWidth="600"/>
+
+            <TextBlock Text="Name*" Classes="FormField" Grid.Row="0" MinWidth="600" />
             <TextBox Grid.Row="1" MinWidth="600"
                      HorizontalAlignment="Left"
                      Watermark="Enter the environment name"
                      ToolTip.Tip="Enter the environment name"
                      Text="{Binding EnvData.Name}" />
-            
-            <TextBlock Text="Description" Classes="FormField" Grid.Row="2" MinWidth="600"/>
+
+            <TextBlock Text="Description" Classes="FormField" Grid.Row="2" MinWidth="600" />
             <TextBox Grid.Row="3" HorizontalAlignment="Left" MinWidth="600"
                      Watermark="Enter the description"
                      ToolTip.Tip="Enter the description"
                      MinHeight="100"
                      Text="{Binding EnvData.Description}" />
-            
-            <DockPanel  Grid.Row="4">
+
+            <DockPanel Grid.Row="4">
                 <TextBlock Text="Variables" DockPanel.Dock="Left" Classes="FormField" />
-                <Button Command="{Binding  EnvData.AddNewRowCommand}" 
-                        Margin="6 6 0 6" 
+                <Button Command="{Binding  EnvData.AddNewRowCommand}"
+                        Margin="6 6 0 6"
                         DockPanel.Dock="Right"
                         VerticalAlignment="Center">
-                    <TextBlock Text="new variable"></TextBlock>
+                    <TextBlock Text="new variable" />
                 </Button>
-                <Panel></Panel>
+                <Panel />
             </DockPanel>
-            <DataGrid Grid.Row="5" HorizontalAlignment="Left"  MinWidth="600" Name="VarGrid"
+            <DataGrid Grid.Row="5" HorizontalAlignment="Left" MinWidth="600" Name="VarGrid"
                       CanUserReorderColumns="False"
                       ItemsSource="{Binding EnvData.Variables}">
                 <DataGrid.Styles>
                     <Style Selector="DataGridRow:nth-child(odd)">
-                        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}"/>
+                        <Setter Property="Background" Value="{StaticResource Bym.Color.DefaultWindowBackground}" />
                     </Style>
                     <Style Selector="TextBox">
-                        <Setter Property="BorderBrush" Value="Transparent"></Setter>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="HorizontalAlignment" Value="Stretch" />
                     </Style>
                 </DataGrid.Styles>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Template" Binding="{Binding Name}"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Template" Binding="{Binding Name}" />
                     <DataGridTemplateColumn Header="Current Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding CurrentValueEditor.FormattedValue}" Margin="8 6 8 6"></TextBlock>
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{Binding CurrentValueEditor.FormattedValue}" Margin="8 6 8 6" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
@@ -69,7 +70,8 @@
                     <DataGridTemplateColumn Header="Default Value">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding DefaultValueEditor.FormattedValue}" Margin="8 6 8 6"></TextBlock>
+                                <TextBlock VerticalAlignment="Center"
+                                           Text="{Binding DefaultValueEditor.FormattedValue}" Margin="8 6 8 6" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                         <DataGridTemplateColumn.CellEditingTemplate>
@@ -82,36 +84,37 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellEditingTemplate>
                     </DataGridTemplateColumn>
-                    
+
                     <DataGridTemplateColumn Header="Data Type">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                               <ComboBox Margin="8 6 8 6" MinWidth="120" 
-                                         BorderThickness="0"
-                                         ItemsSource="{Binding TypeList}"
-                                        SelectedItem="{Binding SelectedDisplayType}">
-                               </ComboBox>
+                                <ComboBox Margin="8 6 8 6" MinWidth="120"
+                                          BorderThickness="0"
+                                          ItemsSource="{Binding TypeList}"
+                                          SelectedItem="{Binding SelectedDisplayType}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Width="*" Header="Desc" Binding="{Binding Description}"></DataGridTextColumn>
+                    <DataGridTextColumn Width="*" Header="Desc" Binding="{Binding Description}" />
                     <DataGridTemplateColumn Header="">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                 <Button HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                         Command="{Binding RemoveRowCommand}"
-                                         CommandParameter="{Binding}"
-                                         ToolTip.Tip="Remove project variable"
-                                         Classes="ClearButtonStyle">
-                                     <controls:IconControl Icon="Icon.Delete" Width="16" Height="16" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 0 0" />
-                                 </Button>
+                                <Button HorizontalAlignment="Center" VerticalAlignment="Center"
+                                        Command="{Binding RemoveRowCommand}"
+                                        CommandParameter="{Binding}"
+                                        ToolTip.Tip="Remove project variable"
+                                        Classes="ClearButtonStyle">
+                                    <controls:IconControl Icon="Icon.Delete" Width="16" Height="16"
+                                                          VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                          Margin="0 0 0 0" />
+                                </Button>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>
-        
+
         <!-- <ContentControl Content="{Binding ClientMethod}" /> -->
         <!-- -->
         <!-- <StackPanel Orientation="Vertical" IsVisible="{Binding IsBusy}" VerticalAlignment="Center" -->

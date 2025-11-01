@@ -13,11 +13,12 @@ using Tefin.ViewModels.Types;
 
 namespace Tefin.ViewModels.Tabs;
 
-public class ListJsonEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup cg, bool isRequest) : ViewModelBase, IListEditorViewModel {
+public class ListJsonEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup cg, bool isRequest)
+    : ViewModelBase, IListEditorViewModel {
     private readonly MethodInfo _addMethod = listType.GetMethod("Add")!;
+    private readonly bool _isRequest = isRequest;
     private readonly Type _listItemType = TypeHelper.getListItemType(listType).Value;
     private readonly string _name = name;
-    private readonly bool _isRequest = isRequest;
     private string _json = "";
     private object? _listInstance = Activator.CreateInstance(listType);
 
@@ -41,9 +42,8 @@ public class ListJsonEditorViewModel(string name, Type listType, ProjectTypes.Cl
 
     public void Clear() => this.Json = "";
 
-    public void RemoveSelectedItem() {
-        Io.Log.Info("Removing items is not supported with the json editor");
-    }
+    public void RemoveSelectedItem() => this.Io.Log.Info("Removing items is not supported with the json editor");
+
     public (bool, object) GetList() {
         try {
             var list = Instance.indirectDeserialize(this.ListType, this._json);

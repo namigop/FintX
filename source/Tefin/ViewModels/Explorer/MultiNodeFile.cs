@@ -20,13 +20,24 @@ public abstract class MultiNodeFile : NodeBase {
         this.ExportCommand = this.CreateCommand(this.OnExport);
     }
 
+    public ICommand DeleteCommand { get; }
+
     public ICommand ExportCommand {
         get;
     }
 
-    public ICommand DeleteCommand { get; }
+    protected abstract FSharpResult<string, Exception> CreateZipShare(IOs io, string zipFile, string[] folders,
+        ProjectTypes.ClientGroup client);
 
-    protected abstract FSharpResult<string, Exception> CreateZipShare(IOs io, string zipFile, string[] folders, ProjectTypes.ClientGroup client);
+    public override void Init() { }
+
+    private void OnDelete() {
+        var files = this.Items.Where(c => c is FileNode).Select(t => ((FileNode)t).FullPath);
+
+        foreach (var file in files) {
+            this.Io.File.Delete(file);
+        }
+    }
 
     private async Task OnExport() {
         var share = new SharingFeature();
@@ -46,14 +57,4 @@ public abstract class MultiNodeFile : NodeBase {
             this.Io.Log.Error(result.ErrorValue);
         }
     }
-
-    private void OnDelete() {
-        var files = this.Items.Where(c => c is FileNode).Select(t => ((FileNode)t).FullPath);
-
-        foreach (var file in files) {
-            this.Io.File.Delete(file);
-        }
-    }
-
-    public override void Init() { }
 }

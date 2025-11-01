@@ -1,18 +1,13 @@
 #region
 
-using System.Collections.ObjectModel;
-using System.Security.Cryptography.X509Certificates;
 using System.Windows.Input;
 
 using ReactiveUI;
 
-using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Features;
 using Tefin.Messages;
-using Tefin.Utils;
-using Tefin.ViewModels.Validations;
 
 #endregion
 
@@ -21,11 +16,11 @@ namespace Tefin.ViewModels.Overlay;
 public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _mockConfigFile;
     private readonly Action _onServiceMockNameChanged;
-    private ProjectTypes.ServiceMockConfig _mockConfig = null!;
-    private string _serviceMockName = "";
     private string _description = "";
+    private ProjectTypes.ServiceMockConfig _mockConfig = null!;
+    private uint _port;
+    private string _serviceMockName = "";
     private string _url = "";
-    private uint _port = 0;
 
     public GrpcServiceMockConfigViewModel(string mockConfigFile, Action onServiceMockNameChanged) {
         this._mockConfigFile = mockConfigFile;
@@ -37,34 +32,34 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public ICommand CancelCommand { get; }
- 
- 
-    public string ServiceMockName {
-        get => this._serviceMockName;
-        set => this.RaiseAndSetIfChanged(ref this._serviceMockName, value);
-    }
 
     public string Description {
         get => this._description;
         set => this.RaiseAndSetIfChanged(ref this._description, value);
     }
- 
+
     public ICommand OkayCommand { get; }
 
+    public uint Port {
+        get => this._port;
+        set => this.RaiseAndSetIfChanged(ref this._port, value);
+    }
+
     public ICommand ResetCommand { get; }
-    
+
+
+    public string ServiceMockName {
+        get => this._serviceMockName;
+        set => this.RaiseAndSetIfChanged(ref this._serviceMockName, value);
+    }
+
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
- 
+
 
     public string Title { get; } = "Edit mock service configuration";
-
-    public uint Port {
-        get => this._port;
-        set => this.RaiseAndSetIfChanged(ref _port, value);
-    }
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
@@ -74,7 +69,7 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = this._mockConfig.Desc;
         this.Port = this._mockConfig.Port;
     }
-    
+
     private async Task OnOkay() {
         var nameChanged = this._mockConfig.ServiceName != this.ServiceMockName;
         this._mockConfig.ServiceName = this.ServiceMockName;
@@ -89,11 +84,9 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Close();
     }
 
-    private Task OnReset() {
+    private Task OnReset() =>
         // GlobalHub.publish(new CloseOverlayMessage(this));
         // var vm = new ResetGrpcServiceOverlayViewModel(this._mockConfigFile);
         // GlobalHub.publish(new OpenOverlayMessage(vm));
-
-        return Task.CompletedTask;
-    }
+        Task.CompletedTask;
 }

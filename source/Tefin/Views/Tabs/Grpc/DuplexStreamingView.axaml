@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Tabs.Grpc.DuplexStreamingView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
-            
+
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
@@ -60,37 +60,38 @@
                     <Separator Background="DimGray" Height="1" CornerRadius="2" Margin="8" />
 
                     <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
-                        <Button Command="{Binding ReqViewModel.WriteCommand}" Classes="MenuButton"
-                                CornerRadius="24 0 0 24"
-                                ToolTip.ShowDelay="0"
-                                Background="{StaticResource Bym.Color.Green}"
-                                ToolTip.Tip="Write to the request stream" IsEnabled="{Binding ReqViewModel.CanWrite}">
-                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Write}" />
-                        </Button>
-                        <Button Command="{Binding ReqViewModel.EndWriteCommand}" Classes="MenuButton"
-                                ToolTip.ShowDelay="0"
-                                CornerRadius="0 24 24 0"
-                                Margin="1 0 0 0"
-                                ToolTip.Tip="Finish writing to the request stream"
-                                Background="{StaticResource Bym.Color.Red}"
-                                Opacity="0.8"
-                                IsEnabled="{Binding ReqViewModel.CanWrite}">
-                            <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
-                        </Button>
-                    </StackPanel>
-                        <Button Classes="MenuButton" Margin="1 6 0 0" 
-                                ToolTip.Tip = "Add an item to the client stream"
+                        <StackPanel Orientation="Horizontal" Margin="0 0 0 0">
+                            <Button Command="{Binding ReqViewModel.WriteCommand}" Classes="MenuButton"
+                                    CornerRadius="24 0 0 24"
+                                    ToolTip.ShowDelay="0"
+                                    Background="{StaticResource Bym.Color.Green}"
+                                    ToolTip.Tip="Write to the request stream"
+                                    IsEnabled="{Binding ReqViewModel.CanWrite}">
+                                <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Write}" />
+                            </Button>
+                            <Button Command="{Binding ReqViewModel.EndWriteCommand}" Classes="MenuButton"
+                                    ToolTip.ShowDelay="0"
+                                    CornerRadius="0 24 24 0"
+                                    Margin="1 0 0 0"
+                                    ToolTip.Tip="Finish writing to the request stream"
+                                    Background="{StaticResource Bym.Color.Red}"
+                                    Opacity="0.8"
+                                    IsEnabled="{Binding ReqViewModel.CanWrite}">
+                                <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.StopWrite}" />
+                            </Button>
+                        </StackPanel>
+                        <Button Classes="MenuButton" Margin="1 6 0 0"
+                                ToolTip.Tip="Add an item to the client stream"
                                 Command="{Binding ReqViewModel.AddListItemCommand}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.PlusWhite}" />
                         </Button>
-                        <Button Classes="MenuButton" Margin="1 2 0 0"  
-                                ToolTip.Tip = "Remove the selected item from the client stream"
+                        <Button Classes="MenuButton" Margin="1 2 0 0"
+                                ToolTip.Tip="Remove the selected item from the client stream"
                                 Command="{Binding ReqViewModel.RemoveListItemCommand}">
                             <controls:IconControl Width="18" Height="18" Icon="{StaticResource Icon.Minus}" />
                         </Button>
-                        </StackPanel>
-                        
+                    </StackPanel>
+
                     <!-- <Separator Background="DimGray" Height="1" Margin="6" /> -->
                     <!-- <Button Command="{Binding ExportRequestCommand}" ToolTip.Tip="save the request to a (.fxrq) file" -->
                     <!--         IsEnabled="{Binding !CanStop}" -->
@@ -103,7 +104,7 @@
                     <!--     <controls:IconControl Icon="{StaticResource Icon.Import}" /> -->
                     <!-- </Button> -->
                     <Separator Background="DimGray" Height="1" Margin="8" />
-                     
+
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
                     </ToggleButton>

@@ -18,7 +18,7 @@
                         <TextBlock Text="{Binding Content.Title}" FontSize="18" VerticalAlignment="Center"
                                    Margin="16" HorizontalAlignment="Center" />
 
-                        <Border Height="1" HorizontalAlignment="Stretch" Background="{StaticResource Bym.Color.Gray}" ></Border>
+                        <Border Height="1" HorizontalAlignment="Stretch" Background="{StaticResource Bym.Color.Gray}" />
                         <ScrollViewer>
                             <ContentControl Content="{Binding Content}" MinWidth="450" Padding="0 0 0 12" />
                         </ScrollViewer>

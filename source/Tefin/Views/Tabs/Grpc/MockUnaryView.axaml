@@ -11,8 +11,8 @@
         <StackPanel Grid.Row="0">
             <Button Command="{Binding AddScriptCommand}" Classes="ClearButtonStyle" Margin="8">
                 <StackPanel Orientation="Horizontal">
-                    <controls:IconControl Height="24" Width="24" Icon="{StaticResource Icon.Script}"></controls:IconControl>
-                    <TextBlock VerticalAlignment="Center" Text=" + script"></TextBlock>
+                    <controls:IconControl Height="24" Width="24" Icon="{StaticResource Icon.Script}" />
+                    <TextBlock VerticalAlignment="Center" Text=" + script" />
                 </StackPanel>
 
             </Button>
@@ -20,7 +20,7 @@
 
         <Grid Grid.Row="1">
             <ScrollViewer>
-                <ItemsControl ItemsSource="{Binding Scripts}" Background="Transparent" Grid.Row="1"
+                <ItemsControl ItemsSource="{Binding Scripts}" Background="Transparent"
                               ScrollViewer.BringIntoViewOnFocusChange="False"
                               ScrollViewer.VerticalSnapPointsAlignment="Near"
                               ScrollViewer.VerticalSnapPointsType="None"
@@ -30,7 +30,7 @@
                             <Grid RowDefinitions="Auto, *" Margin="8 16 8 8">
 
                                 <Panel Grid.Row="0" Height="20">
-                                    <TextBlock Text="{Binding Header}" IsVisible="False"></TextBlock>
+                                    <TextBlock Text="{Binding Header}" IsVisible="False" />
                                 </Panel>
                                 <Border MaxHeight="{Binding EditorHeight}" BorderBrush="{Binding SelectedColor}"
                                         BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="6">
@@ -43,15 +43,15 @@
                                         BorderBrush="{Binding SelectedColor}" CornerRadius="6">
                                     <StackPanel Orientation="Horizontal" Margin="8 2 8 2">
                                         <ToggleSwitch OnContent="Active" OffContent="Inactive"
-                                                      IsChecked="{Binding IsSelected}">
-                                        </ToggleSwitch>
+                                                      IsChecked="{Binding IsSelected}" />
                                         <Button Classes="ClearButtonStyle" Margin="8 0 0 0"
                                                 ToolTip.Tip="Compile any C# expressions found in the script"
                                                 Command="{Binding CompileCommand}">
-                                            <controls:IconControl Icon="{StaticResource Icon.Build}"></controls:IconControl>
+                                            <controls:IconControl Icon="{StaticResource Icon.Build}" />
                                         </Button>
-                                        <Button Classes="ClearButtonStyle" Margin="8 0 0 0" ToolTip.Tip="Remove this script">
-                                            <controls:IconControl Icon="{StaticResource Icon.Delete}"></controls:IconControl>
+                                        <Button Classes="ClearButtonStyle" Margin="8 0 0 0"
+                                                ToolTip.Tip="Remove this script">
+                                            <controls:IconControl Icon="{StaticResource Icon.Delete}" />
                                             <Button.Flyout>
                                                 <Flyout Placement="BottomEdgeAlignedLeft">
                                                     <Grid RowDefinitions="*, Auto" Height="100">

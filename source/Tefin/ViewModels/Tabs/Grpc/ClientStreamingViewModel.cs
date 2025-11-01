@@ -16,6 +16,7 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
+    private readonly AllVariableDefinitions _envVars = new();
     private bool _showTreeEditor;
     private string _statusText = "";
 
@@ -34,9 +35,9 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public bool CanStop => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
-    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
 
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
@@ -59,66 +60,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
     public ICommand StopCommand { get; }
 
-    private readonly AllVariableDefinitions _envVars = new();
     public override void Dispose() {
         base.Dispose();
         this.ReqViewModel.Dispose();
         this.RespViewModel.Dispose();
-    }
-
-    public override string GetRequestContent() {
-        var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
-        if (ok) {
-            var (isValid, reqStream) = this.ReqViewModel.ClientStreamEditor.GetList();
-            if (isValid) {
-                var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
-                var requestVariables = methodInfoNode.Variables;
-
-                List<VarDefinition> responseVariables;
-                if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
-                    responseVariables = respNode.Variables;
-                }
-                else {
-                    responseVariables = this._envVars.ResponseVariables;
-                }
-               
-                List<VarDefinition> requestStreamVariables;
-                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
-                    requestStreamVariables = rs.Variables;
-                }
-                else {
-                    requestStreamVariables = this._envVars.RequestStreamVariables;
-                }
-                
-                var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, requestStreamVariables, [], reqStream);
-                var exportReqJson = feature.Export();
-                if (exportReqJson.IsOk) {
-                    return exportReqJson.ResultValue;
-                }
-            }
-        }
-
-        return string.Empty;
-    }
-
-   public override void ImportRequest(string requestFile) {
-        GrpcUiUtils.ImportRequest(
-            this.ReqViewModel.RequestEditor,
-            this.ReqViewModel.ClientStreamEditor,
-            this._envVars,
-            this.ReqViewModel.ListType,
-            this.MethodInfo,
-            this.Client,
-            requestFile,
-            this.Io);
-        
-        this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
-        this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
-        this.ReqViewModel.IsLoaded = true;
-    }
-
-    public override void Init() {
-        this.ReqViewModel.Init(this._envVars.RequestVariables);
     }
 
     private async Task<object> EndClientStreamingCall(ClientStreamingCallResponse callResponse) {
@@ -146,6 +91,60 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
     }
 
+    public override string GetRequestContent() {
+        var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
+        if (ok) {
+            var (isValid, reqStream) = this.ReqViewModel.ClientStreamEditor.GetList();
+            if (isValid) {
+                var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
+                var requestVariables = methodInfoNode.Variables;
+
+                List<VarDefinition> responseVariables;
+                if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
+                    responseVariables = respNode.Variables;
+                }
+                else {
+                    responseVariables = this._envVars.ResponseVariables;
+                }
+
+                List<VarDefinition> requestStreamVariables;
+                if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
+                    requestStreamVariables = rs.Variables;
+                }
+                else {
+                    requestStreamVariables = this._envVars.RequestStreamVariables;
+                }
+
+                var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables,
+                    requestStreamVariables, [], reqStream);
+                var exportReqJson = feature.Export();
+                if (exportReqJson.IsOk) {
+                    return exportReqJson.ResultValue;
+                }
+            }
+        }
+
+        return string.Empty;
+    }
+
+    public override void ImportRequest(string requestFile) {
+        GrpcUiUtils.ImportRequest(
+            this.ReqViewModel.RequestEditor,
+            this.ReqViewModel.ClientStreamEditor,
+            this._envVars,
+            this.ReqViewModel.ListType,
+            this.MethodInfo,
+            this.Client,
+            requestFile,
+            this.Io);
+
+        this.ReqViewModel.RequestVariables = this._envVars.RequestVariables;
+        this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
+        this.ReqViewModel.IsLoaded = true;
+    }
+
+    public override void Init() => this.ReqViewModel.Init(this._envVars.RequestVariables);
+
     private void OnCallResponseChanged(ViewModelBase obj) {
         var reqVm = (ClientStreamingReqViewModel)obj;
         var resp = reqVm.CallResponse;
@@ -164,9 +163,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             if (!isValid) {
                 this.Io.Log.Warn("Request stream is invalid. Content will not be saved to the request file");
             }
+
             var methodInfoNode = (MethodInfoNode)this.ReqViewModel.TreeEditor.Items[0];
             var requestVariables = methodInfoNode.Variables;
-               
+
             List<VarDefinition> responseVariables;
             if (this.RespViewModel.TreeResponseEditor.Items.FirstOrDefault() is ResponseNode respNode) {
                 responseVariables = respNode.Variables;
@@ -174,7 +174,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             else {
                 responseVariables = this._envVars.ResponseVariables;
             }
-            
+
             List<VarDefinition> requestStreamVariables;
             if (this.ReqViewModel.ClientStreamTreeEditor.StreamItems.FirstOrDefault() is StreamNode rs) {
                 requestStreamVariables = rs.Variables;
@@ -185,11 +185,11 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
             await GrpcUiUtils.ExportRequest(
                 mParams,
-                requestVariables, 
+                requestVariables,
                 responseVariables,
                 requestStreamVariables,
                 [],
-                reqStream, 
+                reqStream,
                 this.MethodInfo,
                 this.Io);
         }
@@ -201,8 +201,8 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             this.ReqViewModel.ClientStreamEditor,
             this._envVars,
             this.ReqViewModel.ListType,
-            this.MethodInfo, 
-            this.Client, 
+            this.MethodInfo,
+            this.Client,
             this.Io);
 
         this.ReqViewModel.RequestStreamVariables = this._envVars.RequestStreamVariables;
@@ -222,7 +222,8 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();
                 if (ok) {
-                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response, this._envVars.RequestStreamVariables); //
+                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response,
+                        this._envVars.RequestStreamVariables); //
                 }
                 else {
                     this.EndStreaming((ClientStreamingCallResponse)response);

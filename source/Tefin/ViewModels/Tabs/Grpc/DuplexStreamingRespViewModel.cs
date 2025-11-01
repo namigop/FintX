@@ -20,7 +20,6 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
     private readonly Type _listType;
     private readonly Type _responseItemType;
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
-    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
 
     //private CancellationTokenSource? _cs;
@@ -35,10 +34,10 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._responseItemType);
 
-        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg, false);
+        this.ServerStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg, false);
         this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType, cg, false);
         this._isShowingServerStreamTree = true;
-        this._serverStreamEditor = this._serverStreamTreeEditor;
+        this._serverStreamEditor = this.ServerStreamTreeEditor;
 
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree,
             this.OnIsShowingServerStreamTreeChanged);
@@ -54,22 +53,33 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
 
-    public ListTreeEditorViewModel ServerStreamTreeEditor => _serverStreamTreeEditor;
+    public Task? ResponseCompletedTask { get; private set; }
+
+    public List<VarDefinition> ResponseStreamVariables { get; private set; } = [];
 
     public IListEditorViewModel ServerStreamEditor {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
     }
 
-    public List<VarDefinition> ResponseStreamVariables { get; private set; } = [];
-    public Task? ResponseCompletedTask { get; private set; }
+    public ListTreeEditorViewModel ServerStreamTreeEditor { get; }
 
     public override void Init(AllVariableDefinitions envVariables) {
         this.ResponseVariables = envVariables.ResponseVariables;
         this.ResponseStreamVariables = envVariables.ResponseStreamVariables;
         this.ResponseEditor.Init();
     }
-    
+
+    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
+        var vm = (DuplexStreamingRespViewModel)obj;
+        if (vm._isShowingServerStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
     public async Task SetupDuplexStreamNode(object response) {
         var resp = (DuplexStreamingCallResponse)response;
         var readDuplexStream = new ReadDuplexStreamFeature();
@@ -102,16 +112,6 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         this.ServerStreamEditor.Show(stream!, this.ResponseStreamVariables);
     }
 
-    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
-        var vm = (DuplexStreamingRespViewModel)obj;
-        if (vm._isShowingServerStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
-    }
-
     private void ShowAsJson() {
         var (ok, list) = this._serverStreamEditor.GetList();
         this.ServerStreamEditor = this._serverStreamJsonEditor;
@@ -122,7 +122,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
 
     private void ShowAsTree() {
         var (ok, list) = this._serverStreamEditor.GetList();
-        this.ServerStreamEditor = this._serverStreamTreeEditor;
+        this.ServerStreamEditor = this.ServerStreamTreeEditor;
         if (ok) {
             this.ServerStreamEditor.Show(list, this.ResponseStreamVariables);
         }

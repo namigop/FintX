@@ -15,10 +15,9 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public abstract class StandardResponseViewModel : ViewModelBase {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
-    private readonly ProjectTypes.ClientGroup _clientGroup;
-    private readonly TreeResponseEditorViewModel _treeRespEditor;
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
 
@@ -27,9 +26,9 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         this._clientGroup = cg;
         this.IsShowingResponseTreeEditor = true;
 
-        this._treeRespEditor = new TreeResponseEditorViewModel(methodInfo, cg);
+        this.TreeResponseEditor = new TreeResponseEditorViewModel(methodInfo, cg);
         this._jsonRespEditor = new JsonResponseEditorViewModel(methodInfo);
-        this._responseEditor = this._treeRespEditor;
+        this._responseEditor = this.TreeResponseEditor;
         this.SubscribeTo(vm => ((StandardResponseViewModel)vm).IsShowingResponseTreeEditor,
             this.OnIsShowingResponseTreeEditor);
     }
@@ -39,12 +38,15 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
     }
 
-    public TreeResponseEditorViewModel TreeResponseEditor => this._treeRespEditor;
     public IResponseEditorViewModel ResponseEditor {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
+
     public List<VarDefinition> ResponseVariables { get; protected set; }
+
+    public TreeResponseEditorViewModel TreeResponseEditor { get; }
+
     public async Task Complete(Type responseType, Func<Task<object>> completeRead) {
         var response = await completeRead();
         responseType = response?.GetType() ?? responseType;
@@ -52,8 +54,6 @@ public abstract class StandardResponseViewModel : ViewModelBase {
     }
 
     public abstract void Init(AllVariableDefinitions envVariables);
-
-    public abstract void Show(bool ok, object response, Context context);
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
         try {
@@ -70,17 +70,19 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         }
     }
 
+    public abstract void Show(bool ok, object response, Context context);
+
     private void ShowAsJson() {
-        var (ok, resp) = this._treeRespEditor.GetResponse();
+        var (ok, resp) = this.TreeResponseEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;
         if (ok) {
-            this.ResponseEditor.Show(resp, this.ResponseVariables, this._treeRespEditor.ResponseType);
+            this.ResponseEditor.Show(resp, this.ResponseVariables, this.TreeResponseEditor.ResponseType);
         }
     }
 
     private void ShowAsTree() {
         var (ok, resp) = this._jsonRespEditor.GetResponse();
-        this.ResponseEditor = this._treeRespEditor;
+        this.ResponseEditor = this.TreeResponseEditor;
         if (ok) {
             this.ResponseEditor.Show(resp, this.ResponseVariables, this._jsonRespEditor.ResponseType);
         }

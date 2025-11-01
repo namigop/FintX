@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Reactive;
 using System.Windows.Input;
 
@@ -46,18 +45,21 @@ public class TabHostViewModel : ViewModelBase {
         });
     }
 
-    public ICommand OpenWebSiteCommand { get; }
-
     public ObservableCollection<ITabViewModel> Items { get; } = new();
+
+    public ICommand OpenWebSiteCommand { get; }
 
     public ITabViewModel? SelectedItem {
         get => this._selectedItem;
         set {
-            if (this._selectedItem != null)
+            if (this._selectedItem != null) {
                 this._selectedItem.IsSelected = false;
-            if (value != null)
+            }
+
+            if (value != null) {
                 value.IsSelected = true;
-            
+            }
+
             this.RaiseAndSetIfChanged(ref this._selectedItem, value);
         }
     }
@@ -97,20 +99,6 @@ public class TabHostViewModel : ViewModelBase {
         }
     }
 
-    private async Task RemoveTab(ITabViewModel tab) =>
-        await Dispatcher.UIThread.InvokeAsync(() => {
-            if (this.Items.Count > 1) {
-                if (this.SelectedItem?.Id == tab.Id) {
-                    this.SelectedItem = this.Items.Last();
-                }
-            }
-
-            var tab2 = this.Items.FirstOrDefault(t => t.Id == tab.Id);
-            if (tab2 != null) {
-                this.Items.Remove(tab2);
-            }
-        });
-
     private async Task OnReceiveRemoveTabMessage(RemoveTabMessage obj) => await this.RemoveTab(obj.Tab);
 
     private async Task OnReceiveTabCloseMessage(CloseTabMessage obj) => await this.RemoveTab(obj.Tab);
@@ -130,4 +118,18 @@ public class TabHostViewModel : ViewModelBase {
         //Close any open windows
         GlobalHub.publish(new CloseChildWindowMessage(obj.Tab));
     }
+
+    private async Task RemoveTab(ITabViewModel tab) =>
+        await Dispatcher.UIThread.InvokeAsync(() => {
+            if (this.Items.Count > 1) {
+                if (this.SelectedItem?.Id == tab.Id) {
+                    this.SelectedItem = this.Items.Last();
+                }
+            }
+
+            var tab2 = this.Items.FirstOrDefault(t => t.Id == tab.Id);
+            if (tab2 != null) {
+                this.Items.Remove(tab2);
+            }
+        });
 }

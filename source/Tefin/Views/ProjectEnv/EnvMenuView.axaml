@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:project="clr-namespace:Tefin.ViewModels.ProjectEnv"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
-             xmlns:utils="clr-namespace:Tefin.Utils"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Name="foo"
              x:DataType="project:EnvMenuViewModel"

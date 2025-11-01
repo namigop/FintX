@@ -2,6 +2,8 @@
 
 using DynamicData;
 
+using Google.Protobuf.WellKnownTypes;
+
 using ReactiveUI;
 
 using Tefin.Core;
@@ -15,16 +17,16 @@ using Type = System.Type;
 namespace Tefin.ViewModels.Tabs;
 
 public class EnvVarViewModel : ViewModelBase {
-   
-    private string _description = "";
-    private string _type = "";
-    private string _defaultValue = "";
+    private static readonly string[] DisplayTypes = SystemType.getTypesForDisplay();
+    private static readonly Type[] ActualTypes = SystemType.getTypes().ToArray();
     private string _currentValue = "";
+    private string _defaultValue = "";
+
+    private string _description = "";
     private string _name = "";
     private string _selectedDisplayType;
-    private static string[] DisplayTypes = SystemType.getTypesForDisplay();
-    private static Type[] ActualTypes = SystemType.getTypes().ToArray();
-    
+    private string _type = "";
+
     public EnvVarViewModel(EnvVar envVar, ICommand removeRowCommand) {
         this.RemoveRowCommand = removeRowCommand;
         this.Name = envVar.Name;
@@ -33,18 +35,18 @@ public class EnvVarViewModel : ViewModelBase {
         this.Description = envVar.Description;
         this.DisplayType = envVar.Type;
         var actualType = DisplayTypes.IndexOf(envVar.Type).Then(i => ActualTypes[i]);
-        
+
         var curInstRes = TypeHelper.tryIndirectCast(envVar.CurrentValue, actualType);
         var defInstRes = TypeHelper.tryIndirectCast(envVar.DefaultValue, actualType);
         this._selectedDisplayType = this.DisplayType;
-        if (actualType == typeof( Google.Protobuf.WellKnownTypes.Timestamp)) {
+        if (actualType == typeof(Timestamp)) {
             var currentTsNode = new TimestampNode(envVar.Name,
                 actualType,
                 null!,
                 curInstRes.IsOk ? curInstRes.ResultValue : TypeHelper.getDefault(actualType),
                 null);
             this.CurrentValueEditor = new TimestampEditor(currentTsNode);
-            
+
             var defaultTsNode = new TimestampNode(envVar.Name,
                 actualType,
                 null!,
@@ -73,47 +75,48 @@ public class EnvVarViewModel : ViewModelBase {
         //this.SubscribeTo(x => ((EnvVarViewModel)x).Name, OnNameChanged);
     }
 
-    // private void OnNameChanged(ViewModelBase obj) {
-    //     var i = (EnvVarViewModel)obj;
-    //     this._name =  i.Name.Replace("{{", "").Replace("}}", "").Then(t => "{{" + t + "}}");
-    // }
+    public string CurrentValue {
+        get => this._currentValue;
+        set => this.RaiseAndSetIfChanged(ref this._currentValue, value);
+    }
 
-    public ICommand RemoveRowCommand { get; }
-    public string[] TypeList => DisplayTypes;
+    public ITypeEditor CurrentValueEditor { get; init; }
 
-    public string SelectedDisplayType {
-        get => this._selectedDisplayType;
-        set => this.RaiseAndSetIfChanged(ref _selectedDisplayType, value);
+    public string DefaultValue {
+        get => this._defaultValue;
+        set => this.RaiseAndSetIfChanged(ref this._defaultValue, value);
     }
 
     public ITypeEditor DefaultValueEditor { get; init; }
 
-    public ITypeEditor CurrentValueEditor { get; init; }
+    public string Description {
+        get => this._description;
+        set => this.RaiseAndSetIfChanged(ref this._description, value);
+    }
 
     public string DisplayType {
         get => this._type;
         set => this.RaiseAndSetIfChanged(ref this._type, value);
     }
 
-    public string Description {
-        get => this._description;
-        set => this.RaiseAndSetIfChanged(ref this._description , value);
-    }
-
-    public string DefaultValue {
-        get => this._defaultValue;
-        set => this.RaiseAndSetIfChanged(ref this._defaultValue , value);
-    }
-
-    public string CurrentValue {
-        get => this._currentValue;
-        set => this.RaiseAndSetIfChanged(ref this._currentValue, value);
-    }
-
     public string Name {
         get => this._name;
         set => this.RaiseAndSetIfChanged(ref this._name, value?.Trim() ?? "");
     }
+
+    // private void OnNameChanged(ViewModelBase obj) {
+    //     var i = (EnvVarViewModel)obj;
+    //     this._name =  i.Name.Replace("{{", "").Replace("}}", "").Then(t => "{{" + t + "}}");
+    // }
+
+    public ICommand RemoveRowCommand { get; }
+
+    public string SelectedDisplayType {
+        get => this._selectedDisplayType;
+        set => this.RaiseAndSetIfChanged(ref this._selectedDisplayType, value);
+    }
+
+    public string[] TypeList => DisplayTypes;
 
     public EnvVar ToEnvVar() {
         this.CurrentValueEditor.CommitEdit();

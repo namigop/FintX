@@ -19,7 +19,6 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     private readonly Type _listType;
     private readonly Type _responseItemType;
     private readonly ListJsonEditorViewModel _serverStreamJsonEditor;
-    private readonly ListTreeEditorViewModel _serverStreamTreeEditor;
     private bool _canRead;
 
     // private CancellationTokenSource? _cs;
@@ -33,17 +32,15 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         var listType = typeof(List<>);
         this._listType = listType.MakeGenericType(this._responseItemType);
 
-        this._serverStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg, false);
+        this.ServerStreamTreeEditor = new ListTreeEditorViewModel("ResponseStream", this._listType, cg, false);
         this._serverStreamJsonEditor = new ListJsonEditorViewModel("ResponseStream", this._listType, cg, false);
         this._isShowingServerStreamTree = true;
-        this._serverStreamEditor = this._serverStreamTreeEditor;
+        this._serverStreamEditor = this.ServerStreamTreeEditor;
 
         this.SubscribeTo(vm => ((ServerStreamingRespViewModel)vm).IsShowingServerStreamTree,
             this.OnIsShowingServerStreamTreeChanged);
     }
 
-    public List<VarDefinition> ResponseStreamVariables { get; private set; }
-    public ListTreeEditorViewModel ServerStreamTreeEditor => this._serverStreamTreeEditor;
     public bool CanRead {
         get => this._canRead;
         private set => this.RaiseAndSetIfChanged(ref this._canRead, value);
@@ -54,9 +51,29 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isShowingServerStreamTree, value);
     }
 
+    public List<VarDefinition> ResponseStreamVariables { get; private set; }
+
     public IListEditorViewModel ServerStreamEditor {
         get => this._serverStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._serverStreamEditor, value);
+    }
+
+    public ListTreeEditorViewModel ServerStreamTreeEditor { get; }
+
+    public override void Init(AllVariableDefinitions envVariables) {
+        this.ResponseVariables = envVariables.ResponseVariables;
+        this.ResponseStreamVariables = envVariables.ResponseStreamVariables;
+        this.ResponseEditor.Init();
+    }
+
+    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
+        var vm = (ServerStreamingRespViewModel)obj;
+        if (vm._isShowingServerStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
     }
 
     public async Task SetupServerStreamNode(object response) {
@@ -78,26 +95,10 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         }
     }
 
-    public override void Init(AllVariableDefinitions envVariables) {
-        this.ResponseVariables = envVariables.ResponseVariables;
-        this.ResponseStreamVariables = envVariables.ResponseStreamVariables;
-        this.ResponseEditor.Init();
-    }
-
     public override void Show(bool ok, object response, Context context) {
         //base.Show(ok, response, context);
         var stream = Activator.CreateInstance(this._listType);
         this.ServerStreamEditor.Show(stream!, this.ResponseStreamVariables);
-    }
-
-    private void OnIsShowingServerStreamTreeChanged(ViewModelBase obj) {
-        var vm = (ServerStreamingRespViewModel)obj;
-        if (vm._isShowingServerStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
     }
 
     private void ShowAsJson() {
@@ -110,7 +111,7 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
 
     private void ShowAsTree() {
         var (ok, list) = this._serverStreamEditor.GetList();
-        this.ServerStreamEditor = this._serverStreamTreeEditor;
+        this.ServerStreamEditor = this.ServerStreamTreeEditor;
         if (ok) {
             this.ServerStreamEditor.Show(list, this.ResponseStreamVariables);
         }

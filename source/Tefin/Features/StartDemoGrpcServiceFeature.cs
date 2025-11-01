@@ -4,27 +4,21 @@ using System.Threading;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+
 using Tefin.Grpc.Sample.Services;
 
 namespace Tefin.Features;
 
 public class StartDemoGrpcServiceFeature {
-    public static string Url = "http://localhost:54321";
     private const string _clientName = "NorthwindServiceClient";
-    private CancellationTokenSource? _cs;
+    public static string Url = "http://localhost:54321";
     private WebApplication? _app;
+    private CancellationTokenSource? _cs;
 
-    public string GetClientName() {
-        return _clientName + "-" + Path.GetFileNameWithoutExtension(Path.GetTempFileName());
-    }
-    public async Task Stop() {
-        if (this._cs == null) return;
-        await this._app!.StopAsync(this._cs.Token);;
-        this._cs.Dispose();
-        this._cs = null;
-        this._app = null;
-        this.IsStarted = false;
-    }
+    public bool IsStarted { get; private set; }
+
+    public string GetClientName() => _clientName + "-" + Path.GetFileNameWithoutExtension(Path.GetTempFileName());
+
     public async Task Start() {
         this._cs = new CancellationTokenSource();
         var builder = WebApplication.CreateBuilder();
@@ -41,8 +35,18 @@ public class StartDemoGrpcServiceFeature {
 
         await this._app.StartAsync(this._cs.Token);
         this.IsStarted = true;
-
     }
 
-    public bool IsStarted { get; private set; }
+    public async Task Stop() {
+        if (this._cs == null) {
+            return;
+        }
+
+        await this._app!.StopAsync(this._cs.Token);
+        ;
+        this._cs.Dispose();
+        this._cs = null;
+        this._app = null;
+        this.IsStarted = false;
+    }
 }

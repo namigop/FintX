@@ -9,7 +9,8 @@
              x:Class="Tefin.Views.Explorer.ServiceMock.MockMethodScriptNodeView">
     <StackPanel Orientation="Horizontal">
         <StackPanel Orientation="Horizontal">
-            <controls:IconControl IsVisible="{Binding IsManagedByGit}" Icon="{Binding GitFileIcon}" Height="12" Width="16" />
+            <controls:IconControl IsVisible="{Binding IsManagedByGit}" Icon="{Binding GitFileIcon}" Height="12"
+                                  Width="16" />
             <Border>
                 <controls:IconControl Icon="{StaticResource Icon.Grpc2}" Height="12" Width="16" />
             </Border>
@@ -18,7 +19,7 @@
         <TextBlock Text="{Binding Title}" ToolTip.Tip="{Binding SubTitle}" Margin="6 0 0 0"
                    IsVisible="{Binding !IsEditing}"
                    Background="Transparent"
-                   
+
                    VerticalAlignment="Center" />
 
         <TextBox Text="{Binding TempTitle}" x:Name="tbEditor" IsVisible="{Binding IsEditing}"

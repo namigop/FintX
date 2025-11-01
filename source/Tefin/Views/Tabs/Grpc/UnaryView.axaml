@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Tabs.Grpc.UnaryView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, 8, *" ColumnDefinitions="*, Auto, *">
-          
+
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
@@ -67,7 +67,7 @@
                     <!--     <controls:IconControl Icon="{StaticResource Icon.Import}" /> -->
                     <!-- </Button> -->
                     <Separator Background="DimGray" Height="1" Margin="8" />
-                    
+
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
 

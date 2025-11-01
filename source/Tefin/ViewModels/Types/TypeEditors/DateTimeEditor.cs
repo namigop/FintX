@@ -16,8 +16,6 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
         this._isUtc = dateTime.Kind == DateTimeKind.Utc;
     }
 
-    public SystemNode TypeNode => (SystemNode)this.Node;
-
     public string DateTimeText {
         get => this._dateTimeText;
         set => this.RaiseAndSetIfChanged(ref this._dateTimeText, value);
@@ -32,6 +30,8 @@ public class DateTimeEditor : TypeEditorBase<DateTime> {
             this.HasChanges = true;
         }
     }
+
+    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public override void CommitEdit() {
         if (DateTime.TryParse(this.DateTimeText, out var dt)) {

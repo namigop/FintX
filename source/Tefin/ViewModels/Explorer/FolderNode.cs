@@ -28,14 +28,16 @@ public class FolderNode : NodeBase {
         this.SubscribeTo(vm => ((FolderNode)vm).IsExpanded, this.OnExpandedChanged);
     }
 
-    public ICommand CutCommand { get; }
     public ICommand CopyCommand { get; }
-    public ICommand PasteCommand { get; }
-    public ICommand RenameCommand { get; private set; }
 
-    public string TempTitle {
-        get => this._tempTitle;
-        set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
+    public ICommand CutCommand { get; }
+    public ICommand DeleteCommand { get; }
+
+    public string FullPath { get; private set; }
+
+    public string Icon {
+        get => this._icon;
+        private set => this.RaiseAndSetIfChanged(ref this._icon, value);
     }
 
     public override bool IsCut {
@@ -49,61 +51,12 @@ public class FolderNode : NodeBase {
         }
     }
 
-    public string Icon {
-        get => this._icon;
-        private set => this.RaiseAndSetIfChanged(ref this._icon, value);
-    }
+    public ICommand PasteCommand { get; }
+    public ICommand RenameCommand { get; private set; }
 
-    public string FullPath { get; private set; }
-    public ICommand DeleteCommand { get; }
-
-    private void OnCut() {
-        this.IsCut = true;
-        var msg = new CutCopyNodeMessage([this.FullPath], [this], false, true);
-        GlobalHub.publish(msg);
-    }
-
-    private void OnCopy() {
-        var msg = new CutCopyNodeMessage([this.FullPath], [this], false);
-        GlobalHub.publish(msg);
-    }
-
-    private void OnPaste() {
-        var msg = new PasteNodeMessage(this);
-        GlobalHub.publish(msg);
-    }
-
-    private void OnDelete() {
-        if (this.IsEditing) {
-            return;
-        }
-
-        this.Io.Dir.Delete(this.FullPath, true);
-    }
-
-    private void OnRename() => this.IsEditing = true;
-
-    private void OnExpandedChanged(ViewModelBase vm) =>
-        this.Icon = ((FolderNode)vm).IsExpanded ? "Icon.FolderOpen2" : "Icon.Folder";
-
-    public override void Init() {
-        //Create the sub folders
-        var subDirNames = this.Io.Dir.GetDirectories(this.FullPath).Select(d => Path.GetFileName(d)).Order().ToArray();
-
-        foreach (var subDirName in subDirNames) {
-            var subDir = Path.Combine(this.FullPath, subDirName);
-            var msg = new FileChangeMessage(subDir, "", WatcherChangeTypes.Created);
-            GlobalHub.publish(msg);
-        }
-
-        var fileNames = this.Io.Dir.GetFiles(this.FullPath, "*.*", SearchOption.TopDirectoryOnly).Select(c => Path.GetFileName(c)).Order().ToArray();
-
-        //this will trigger the handlers that will create the file nodes
-        foreach (var fileName in fileNames) {
-            var file = Path.Combine(this.FullPath, fileName);
-            var msg = new FileChangeMessage(file, "", WatcherChangeTypes.Created);
-            GlobalHub.publish(msg);
-        }
+    public string TempTitle {
+        get => this._tempTitle;
+        set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
     }
 
     public void CancelEdit() {
@@ -130,6 +83,56 @@ public class FolderNode : NodeBase {
 
             this.IsEditing = false;
         });
+
+    public override void Init() {
+        //Create the sub folders
+        var subDirNames = this.Io.Dir.GetDirectories(this.FullPath).Select(d => Path.GetFileName(d)).Order().ToArray();
+
+        foreach (var subDirName in subDirNames) {
+            var subDir = Path.Combine(this.FullPath, subDirName);
+            var msg = new FileChangeMessage(subDir, "", WatcherChangeTypes.Created);
+            GlobalHub.publish(msg);
+        }
+
+        var fileNames = this.Io.Dir.GetFiles(this.FullPath, "*.*", SearchOption.TopDirectoryOnly)
+            .Select(c => Path.GetFileName(c)).Order().ToArray();
+
+        //this will trigger the handlers that will create the file nodes
+        foreach (var fileName in fileNames) {
+            var file = Path.Combine(this.FullPath, fileName);
+            var msg = new FileChangeMessage(file, "", WatcherChangeTypes.Created);
+            GlobalHub.publish(msg);
+        }
+    }
+
+    private void OnCopy() {
+        var msg = new CutCopyNodeMessage([this.FullPath], [this], false);
+        GlobalHub.publish(msg);
+    }
+
+    private void OnCut() {
+        this.IsCut = true;
+        var msg = new CutCopyNodeMessage([this.FullPath], [this], false, true);
+        GlobalHub.publish(msg);
+    }
+
+    private void OnDelete() {
+        if (this.IsEditing) {
+            return;
+        }
+
+        this.Io.Dir.Delete(this.FullPath, true);
+    }
+
+    private void OnExpandedChanged(ViewModelBase vm) =>
+        this.Icon = ((FolderNode)vm).IsExpanded ? "Icon.FolderOpen2" : "Icon.Folder";
+
+    private void OnPaste() {
+        var msg = new PasteNodeMessage(this);
+        GlobalHub.publish(msg);
+    }
+
+    private void OnRename() => this.IsEditing = true;
 
     public void UpdateFolderPath(string newFullPath) {
         this.Io.Log.Debug("Updated folder path");

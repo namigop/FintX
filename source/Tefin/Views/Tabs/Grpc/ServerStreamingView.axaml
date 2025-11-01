@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Tabs.Grpc.ServerStreamingView">
     <Border BorderThickness="0">
         <Grid RowDefinitions="Auto, Auto, *" ColumnDefinitions="*, Auto, *">
-            
+
             <Grid Grid.Row="2" Grid.Column="0">
                 <ContentControl Content="{Binding ReqViewModel}" />
             </Grid>
@@ -68,7 +68,7 @@
                     <!--     <controls:IconControl Icon="{StaticResource Icon.Import}" /> -->
                     <!-- </Button> -->
                     <Separator Background="DimGray" Height="1" Margin="6" />
-                    
+
                     <ToggleButton IsChecked="{Binding !IsShowingRequestTreeEditor}" HorizontalAlignment="Center">
                         <controls:IconControl Icon="{StaticResource Icon.CurlyBrace}" />
                     </ToggleButton>

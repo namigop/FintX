@@ -1,14 +1,9 @@
 #region
 
-using System.Reactive;
 using System.Windows.Input;
 
-using Tefin.Core;
 using Tefin.Core.Infra.Actors;
-using Tefin.Features;
 using Tefin.Messages;
-using Tefin.Utils;
-using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Explorer.ServiceMock;
 using Tefin.ViewModels.Overlay;
 
@@ -25,7 +20,7 @@ public class ServiceMockSubMenuViewModel : ViewModelBase, ISubMenusViewModel {
     }
 
     public ICommand AddServiceMockCommand { get; }
-    
+
 
     private void OnAddServiceMock() {
         AddGrpcMockOverlayViewModel overlayVm = new(this._explorerViewModel.Project!);

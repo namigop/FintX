@@ -44,18 +44,20 @@
                         <Grid Grid.Row="1">
                             <Grid IsVisible="{Binding IsCertFromFile}" RowDefinitions="Auto, Auto">
                                 <DockPanel Grid.Row="0">
-                                    <Button Margin="6 0 0 0"  DockPanel.Dock ="Right" Command="{Binding OpenCertFileCommand}">
+                                    <Button Margin="6 0 0 0" DockPanel.Dock="Right"
+                                            Command="{Binding OpenCertFileCommand}">
                                         <TextBlock Text="..." />
                                     </Button>
-                                    <TextBox  x:Name="CertFileTextBox" Text="{Binding CertFile}"  Watermark="Open certificate file" />
+                                    <TextBox x:Name="CertFileTextBox" Text="{Binding CertFile}"
+                                             Watermark="Open certificate file" />
                                 </DockPanel>
-                                
-                                <TextBox Grid.Row="1" Text="{Binding CertFilePassword}" 
+
+                                <TextBox Grid.Row="1" Text="{Binding CertFilePassword}"
                                          HorizontalAlignment="Left"
                                          PasswordChar="*"
                                          Margin="0 8 0 0"
                                          Width="{Binding Path=#CertFileTextBox.Bounds.Width} "
-                                         Watermark="Certificate password" 
+                                         Watermark="Certificate password"
                                          IsVisible="{Binding RequiresPassword}" />
                             </Grid>
                             <DockPanel IsVisible="{Binding !IsCertFromFile}">
@@ -93,11 +95,11 @@
                 </StackPanel>
 
             </StackPanel>
-            <StackPanel Grid.Row="1" HorizontalAlignment="Left"  Margin="0 24 0 0">
+            <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 24 0 0">
                 <Button Command="{Binding ResetCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Refresh}" VerticalAlignment="Center"
-                                              Width="16" Height="16" Margin="0 0 4 0"></controls:IconControl>
+                                              Width="16" Height="16" Margin="0 0 4 0" />
                         <TextBlock Text="Reset" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
@@ -106,7 +108,7 @@
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
-                                              Width="16" Height="16" Margin="0 0 2 0"></controls:IconControl>
+                                              Width="16" Height="16" Margin="0 0 2 0" />
                         <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>

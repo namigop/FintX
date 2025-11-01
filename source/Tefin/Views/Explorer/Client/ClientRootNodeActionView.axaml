@@ -23,7 +23,7 @@
                     <Setter Property="Height" Value="16" />
                 </Style>
                 <Style Selector="Button">
-                    <Setter Property="Margin" Value="2 0 0 0"></Setter>
+                    <Setter Property="Margin" Value="2 0 0 0" />
                 </Style>
                 <Style Selector="Button.isNotLoaded">
                     <Style.Animations>

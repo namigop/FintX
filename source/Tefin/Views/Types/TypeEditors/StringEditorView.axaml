@@ -11,10 +11,9 @@
         <Grid ColumnDefinitions="*">
             <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
                                  VerticalAlignment="Center"
-                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}" />
 
-            <Grid ColumnDefinitions="*,auto"  IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
+            <Grid ColumnDefinitions="*,auto" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <TextBox x:Name="TextBox"
                          Grid.Column="0"
                          MinWidth="200"
@@ -22,7 +21,7 @@
                          Text="{Binding TempValue}"
                          IsEnabled="{Binding !IsNull}"
                          x:CompileBindings="False" />
-                <CheckBox Grid.Column="1" Margin="6 0 0 0" IsChecked="{Binding IsNull}" 
+                <CheckBox Grid.Column="1" Margin="6 0 0 0" IsChecked="{Binding IsNull}"
                           Foreground="{StaticResource Bym.Color.DefaultTextColor}"
                           Content="null" />
             </Grid>

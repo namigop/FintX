@@ -10,12 +10,12 @@
              x:Class="Tefin.Views.Tabs.TabHostView">
     <Border CornerRadius="10" BorderThickness="2" BorderBrush="{StaticResource Bym.Color.DefaultMenuHeaderBackground}">
         <Grid>
-            <TabControl ItemsSource="{Binding Items}" 
+            <TabControl ItemsSource="{Binding Items}"
                         Padding="0 0 0 0"
                         SelectedItem="{Binding SelectedItem}">
                 <TabControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel Background="{StaticResource Bym.Color.DefaultMenuHeaderBackground}"></WrapPanel>
+                        <WrapPanel Background="{StaticResource Bym.Color.DefaultMenuHeaderBackground}" />
                     </ItemsPanelTemplate>
                 </TabControl.ItemsPanel>
                 <TabControl.ItemTemplate>
@@ -27,7 +27,7 @@
 
                             <TextBlock Text="{Binding Title}" Grid.Column="1" VerticalAlignment="Center" />
 
-                            <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="2" 
+                            <Button x:Name="btnCloseTab" Background="Transparent" Grid.Column="2"
                                     IsVisible="{Binding IsSelected}"
                                     VerticalAlignment="Center"
                                     Padding="2"
@@ -135,7 +135,7 @@
                 <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="Looking for more features?" FontSize="20" VerticalAlignment="Stretch"
                                Margin="0 20 0 10 " />
-                    
+
                     <StackPanel Orientation="Horizontal">
                         <Button Command="{Binding OpenWebSiteCommand}">
                             <TextBlock Text="Download the PRO version" />

@@ -64,10 +64,13 @@ public class ClientExplorerViewModel : ViewModelBase {
     }
 
     public ICommand CopyCommand { get; }
+    public ICommand DeleteCommand { get; }
 
     public ICommand EditCommand { get; }
 
     public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
+
+    private ObservableCollection<IExplorerItem> Items { get; } = [];
 
     public ICommand PasteCommand { get; }
 
@@ -76,10 +79,7 @@ public class ClientExplorerViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._project, value);
     }
 
-    private ObservableCollection<IExplorerItem> Items { get; } = [];
-
     public IExplorerItem? SelectedItem { get; set; }
-    public ICommand DeleteCommand { get; }
 
     public ClientRootNode AddClientNode(ClientGroup cg, Type? type = null) {
         var c = Dispatcher.UIThread.Invoke(() => {
@@ -152,26 +152,10 @@ public class ClientExplorerViewModel : ViewModelBase {
         if (target != null) {
             this.Items.Remove(target);
         }
-        
+
         var client = this._project?.Clients.FirstOrDefault(m => m.Path == obj.Client.Path);
-        if (client != null)
-            this._project?.Clients.Remove(client); 
-    }
-
-    private void OnDelete() {
-        var header = "Please confirm";
-        switch (this.SelectedItem) {
-            case FileNode fn: {
-                var dialog = new YesNoOverlayViewModel(header, $"Delete {fn.Title} file. Are you sure?", fn.DeleteCommand, EmptyCommand);
-                GlobalHub.publish(new OpenOverlayMessage(dialog));
-                break;
-            }
-
-            case MultiNodeFile mFilesNode: {
-                var dialog = new YesNoOverlayViewModel(header, $"Delete {mFilesNode.Items.Count} files. Are you sure?", mFilesNode.DeleteCommand, EmptyCommand);
-                GlobalHub.publish(new OpenOverlayMessage(dialog));
-                break;
-            }
+        if (client != null) {
+            this._project?.Clients.Remove(client);
         }
     }
 
@@ -180,6 +164,25 @@ public class ClientExplorerViewModel : ViewModelBase {
             var selected = item.FindSelected();
             if (selected is FileNode fn) {
                 this._copyPastePending = new CopyPasteArg(fn.Parent, fn.FullPath);
+            }
+        }
+    }
+
+    private void OnDelete() {
+        var header = "Please confirm";
+        switch (this.SelectedItem) {
+            case FileNode fn: {
+                var dialog = new YesNoOverlayViewModel(header, $"Delete {fn.Title} file. Are you sure?",
+                    fn.DeleteCommand, EmptyCommand);
+                GlobalHub.publish(new OpenOverlayMessage(dialog));
+                break;
+            }
+
+            case MultiNodeFile mFilesNode: {
+                var dialog = new YesNoOverlayViewModel(header, $"Delete {mFilesNode.Items.Count} files. Are you sure?",
+                    mFilesNode.DeleteCommand, EmptyCommand);
+                GlobalHub.publish(new OpenOverlayMessage(dialog));
+                break;
             }
         }
     }
@@ -199,10 +202,12 @@ public class ClientExplorerViewModel : ViewModelBase {
         }
     }
 
-    private void OnFileChanged(FileChangeMessage obj) => Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
+    private void OnFileChanged(FileChangeMessage obj) =>
+        Dispatcher.UIThread.Invoke(() => this.OnFileChangedInternal(obj));
 
     private void OnFileChangedInternal(FileChangeMessage obj) {
-        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction, Func<IExplorerItem, bool> check) {
+        void Traverse(IExplorerItem[] items, FileChangeMessage msg, Action<IExplorerItem, FileChangeMessage> doAction,
+            Func<IExplorerItem, bool> check) {
             lock (this) {
                 var item = items.FirstOrDefault();
                 if (item == null) {
@@ -295,7 +300,8 @@ public class ClientExplorerViewModel : ViewModelBase {
         this.Exec(() => {
             foreach (var item in this.Items) {
                 var selected = item.FindSelected();
-                if (selected != null && (selected == this._copyPastePending.Container || selected.Parent == this._copyPastePending.Container)) {
+                if (selected != null && (selected == this._copyPastePending.Container ||
+                                         selected.Parent == this._copyPastePending.Container)) {
                     var path = Path.GetDirectoryName(this._copyPastePending.FileToCopy);
                     if (path != null) {
                         var ext = Path.GetExtension(this._copyPastePending.FileToCopy);
@@ -319,7 +325,7 @@ public class ClientExplorerViewModel : ViewModelBase {
                 var svcType = t.DeclaringType!.FullName!.ToUpperInvariant();
                 return svcType.EndsWith(obj.SelectedDiscoveredService!.ToUpperInvariant());
             });
-            
+
             if (type != null && this.Project != null) {
                 //Update the currently loaded project
                 var feature = new AddClientFeature(
@@ -339,11 +345,11 @@ public class ClientExplorerViewModel : ViewModelBase {
                 this.Project = proj;
 
                 var client = proj.Clients.First(t => t.Name == obj.ClientName);
-                if (obj.Reset && 
+                if (obj.Reset &&
                     this.GetClientNodes().FirstOrDefault(t => t.Client.Path == client.Path) is { } cn) {
                     this.Items.Remove(cn);
                 }
-                
+
                 this.AddClientNode(client, type);
             }
         }

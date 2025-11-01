@@ -19,7 +19,7 @@ namespace Tefin.ViewModels.Explorer.Client;
 public class ClientRootNode : ExplorerRootNode {
     private bool _compileInProgress;
     private bool _sessionLoaded;
-    
+
     public ClientRootNode(ProjectTypes.ClientGroup cg, Type? clientType) : base(cg, clientType) {
         this.Client = ProjectTypes.ClientGroup.Empty();
         this.CanOpen = true;
@@ -41,31 +41,52 @@ public class ClientRootNode : ExplorerRootNode {
             .Then(this.MarkForCleanup);
     }
 
-    public ICommand ExportCommand { get; }
-    
     public ICommand CompileClientTypeCommand { get; }
-    public ICommand RecompileClientTypeCommand { get; }
 
     public ICommand DeleteCommand { get; }
 
-    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
+    public ICommand ExportCommand { get; }
 
-    private async Task OnExport() {
-        var share = new SharingFeature();
-        var zipName = $"{this.ClientName}_export.zip";
-        var zipFile = await share.GetZipFile(zipName);
-        if (string.IsNullOrEmpty(zipFile)) {
+    public bool IsLoaded => this.Items.Count > 0 && this.Items[0] is not EmptyNode && this._sessionLoaded;
+    public ICommand RecompileClientTypeCommand { get; }
+
+    private async Task Compile(bool recompile) {
+        if (this._compileInProgress) {
             return;
         }
 
-        var result = share.ShareClient(this.Io, zipFile, this.Client);
-        if (result.IsOk) {
-            this.Io.Log.Info($"Export created: {zipFile}");
+        try {
+            this._compileInProgress = true;
+            var protoFiles = Array.Empty<string>();
+            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
+                this.Io);
+            var csFiles = this.Client.CodeFiles;
+            var (ok, compileOutput) = await compile.CompileExisting(csFiles, false, recompile);
+            if (ok) {
+                var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
+                var clientTypes = ServiceClient.findClientType(types);
+                if (clientTypes.Length == 0) {
+                    throw new Exception("No client types found");
+                }
+
+                if (clientTypes.Length == 1) {
+                    this.ClientType = clientTypes[0];
+                }
+                else {
+                    this.ClientType = clientTypes.First(c => {
+                        var svc = c.DeclaringType!.FullName!.ToUpperInvariant();
+                        return svc.EndsWith(this.ServiceName.ToUpperInvariant());
+                    });
+                }
+
+                this.Init();
+            }
         }
-        else {
-            this.Io.Log.Error(result.ErrorValue);
+        finally {
+            this._compileInProgress = false;
         }
     }
+
     public override void Init() {
         if (this.ClientType == null) {
             return;
@@ -111,49 +132,7 @@ public class ClientRootNode : ExplorerRootNode {
         }
     }
 
-    private async Task OnCompileClientType() {
-        await this.Compile(false);
-    } 
-    
-    private async Task OnRecompileClientType() {
-        await this.Compile(true);
-    }
-
-    private async Task Compile(bool recompile) {
-        if (this._compileInProgress) {
-            return;
-        }
-
-        try {
-            this._compileInProgress = true;
-            var protoFiles = Array.Empty<string>();
-            var compile = new CompileFeature(this.ServiceName, this.ClientName, this.Desc, protoFiles, this.Url,
-                this.Io);
-            var csFiles = this.Client.CodeFiles;
-            var (ok, compileOutput) = await compile.CompileExisting(csFiles, false, recompile);
-            if (ok) {
-                var types = ClientCompiler.getTypes(compileOutput.CompiledBytes);
-                var clientTypes = ServiceClient.findClientType(types);
-                if (clientTypes.Length == 0) {
-                    throw new Exception("No client types found");
-                }
-                if (clientTypes.Length == 1) {
-                    this.ClientType = clientTypes[0];
-                }
-                else {
-                    this.ClientType = clientTypes.First(c => {
-                        var svc = c.DeclaringType!.FullName!.ToUpperInvariant();
-                        return svc.EndsWith(this.ServiceName.ToUpperInvariant());
-                    });
-                }
-
-                this.Init();
-            }
-        }
-        finally {
-            this._compileInProgress = false;
-        }
-    }
+    private async Task OnCompileClientType() => await this.Compile(false);
 
     private void OnDelete() {
         var feature = new DeleteClientFeature(this.Client, this.Io);
@@ -166,6 +145,25 @@ public class ClientRootNode : ExplorerRootNode {
         this.Items.Clear();
         GlobalHub.publish(new ClientDeletedMessage(this.Client));
     }
+
+    private async Task OnExport() {
+        var share = new SharingFeature();
+        var zipName = $"{this.ClientName}_export.zip";
+        var zipFile = await share.GetZipFile(zipName);
+        if (string.IsNullOrEmpty(zipFile)) {
+            return;
+        }
+
+        var result = share.ShareClient(this.Io, zipFile, this.Client);
+        if (result.IsOk) {
+            this.Io.Log.Info($"Export created: {zipFile}");
+        }
+        else {
+            this.Io.Log.Error(result.ErrorValue);
+        }
+    }
+
+    private async Task OnRecompileClientType() => await this.Compile(true);
 
     private void Update(ProjectTypes.ClientGroup cg) {
         this.Client = cg;

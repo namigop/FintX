@@ -13,6 +13,9 @@ using Tefin.Views;
 namespace Tefin;
 
 public class App : Application {
+    private void AboutMenuItem_OnClick(object? sender, EventArgs e) {
+    }
+
     public override void Initialize() {
         var start = new StartupFeature();
         start.Init();
@@ -31,8 +34,5 @@ public class App : Application {
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private void AboutMenuItem_OnClick(object? sender, EventArgs e) {
     }
 }

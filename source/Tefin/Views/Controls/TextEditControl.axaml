@@ -11,24 +11,24 @@
             <ControlTemplate>
                 <Border>
                     <Grid ColumnDefinitions="Auto, Auto">
-                        <SelectableTextBlock Grid.Column="0" 
-                                             
+                        <SelectableTextBlock Grid.Column="0"
+
                                              FontSize="18"
-                                             Text="{TemplateBinding TextToEdit}" 
-                                             VerticalAlignment="Center"></SelectableTextBlock> 
-                       
+                                             Text="{TemplateBinding TextToEdit}"
+                                             VerticalAlignment="Center" />
+
                         <StackPanel Orientation="Horizontal" Grid.Column="1">
-                            <TextBox Text="{TemplateBinding TempTextToEdit}" Grid.Column="0" FontSize="18"
-                                     ></TextBox>
-                            <Button Classes="ClearButtonStyle"  Command="{TemplateBinding EditCommand}">
-                                <controls:IconControl Icon="{StaticResource Icon.EditType}"></controls:IconControl>
+                            <TextBox Text="{TemplateBinding TempTextToEdit}" FontSize="18" />
+                            <Button Classes="ClearButtonStyle" Command="{TemplateBinding EditCommand}">
+                                <controls:IconControl Icon="{StaticResource Icon.EditType}" />
                             </Button>
                             <Button Classes="ClearButtonStyle" Height="30" IsVisible="{TemplateBinding CanStopEdit}"
                                     Command="{TemplateBinding CommitEditCommand}">
-                                <controls:IconControl Icon="{StaticResource Icon.Check}"></controls:IconControl>
+                                <controls:IconControl Icon="{StaticResource Icon.Check}" />
                             </Button>
-                            <Button Classes="ClearButtonStyle" IsVisible="{TemplateBinding CanStopEdit}" Margin="8 0 0 0">
-                                <controls:IconControl Icon="{StaticResource Icon.Cancel}"></controls:IconControl>
+                            <Button Classes="ClearButtonStyle" IsVisible="{TemplateBinding CanStopEdit}"
+                                    Margin="8 0 0 0">
+                                <controls:IconControl Icon="{StaticResource Icon.Cancel}" />
                             </Button>
                         </StackPanel>
                     </Grid>

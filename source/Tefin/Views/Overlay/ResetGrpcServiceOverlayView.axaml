@@ -60,7 +60,7 @@
                          ToolTip.Tip="Enter a name" />
 
 
-                <TextBlock Grid.Row="8" Text="Description" Classes="FormField"  />
+                <TextBlock Grid.Row="8" Text="Description" Classes="FormField" />
                 <TextBox Grid.Row="9" HorizontalAlignment="Stretch" MinHeight="100" />
 
             </Grid>
@@ -68,11 +68,10 @@
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
-                                              Width="16" Height="16" Margin="0 0 2 0"
-                                              ></controls:IconControl>
+                                              Width="16" Height="16" Margin="0 0 2 0" />
                         <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
-                    
+
                 </Button>
                 <Button Margin="6 0 0 0" Command="{Binding CancelCommand}">
                     <TextBlock Text="Cancel" HorizontalAlignment="Center" />

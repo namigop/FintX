@@ -30,20 +30,18 @@
 
         <!-- <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" /> -->
         <!-- -->
-        
+
         <Grid>
             <SelectableTextBlock IsVisible="{Binding EnvVar.IsEnvVarTagVisible}"
                                  VerticalAlignment="Center"
-                                 Text="{Binding EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 Text="{Binding EnvVar.EnvVarTag}" />
 
-            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox" 
-                     IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}"
-                     />
+            <TextBox Text="{Binding DateTimeText}" x:Name="TextBox"
+                     IsVisible="{Binding !EnvVar.IsEnvVarTagVisible}" />
 
-            
+
         </Grid>
-        
-        
+
+
     </StackPanel>
 </UserControl>

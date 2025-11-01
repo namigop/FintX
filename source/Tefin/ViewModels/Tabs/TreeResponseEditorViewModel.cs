@@ -42,13 +42,15 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         private set;
     }
 
-    public async Task Complete(Type responseType, Func<Task<object>> completeRead, List<VarDefinition> responseVariables) {
+    public async Task Complete(Type responseType, Func<Task<object>> completeRead,
+        List<VarDefinition> responseVariables) {
         this.Items.Clear();
         this._responseVariables = responseVariables;
         try {
             this.ResponseType = responseType;
             var resp = await completeRead();
-            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null, this._responseVariables, this._clientGroup.Path);
+            var node = new ResponseNode(this.MethodInfo.Name, responseType, null, resp, null, this._responseVariables,
+                this._clientGroup.Path);
             node.Init();
             node.InitVariableNodes(this._responseVariables, this._clientGroup.Path, this.Io);
             this.Items.Add(node);
@@ -82,7 +84,8 @@ public class TreeResponseEditorViewModel : ViewModelBase, IResponseEditorViewMod
         try {
             this._responseVariables = variables;
             this.ResponseType = responseType;
-            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null, this._responseVariables, this._clientGroup.Path);
+            var node = new ResponseNode(this.MethodInfo.Name, this.ResponseType, null, resp, null,
+                this._responseVariables, this._clientGroup.Path);
             node.Init();
             node.InitVariableNodes(this._responseVariables, this._clientGroup.Path, this.Io);
             this.Items.Add(node);

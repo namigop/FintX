@@ -19,24 +19,27 @@ public class CompileFeature(
     IOs io) {
     private static readonly Dictionary<string, CompileOutput> CompilationCache = new();
 
-    public async Task<(bool, CompileOutput)> CompileExisting(string[] codeFiles, bool createMockService, bool recompile) {
+    public async Task<(bool, CompileOutput)>
+        CompileExisting(string[] codeFiles, bool createMockService, bool recompile) {
         try {
             var key = string.Join("-", codeFiles);
-            if (recompile)
+            if (recompile) {
                 CompilationCache.Remove(key);
-            
+            }
+
             if (CompilationCache.TryGetValue(key, out var cOutput)) {
                 return (true, cOutput);
             }
 
             if (createMockService) {
-                GlobalHub.publish(new ServiceMockCompileMessage(true));   
+                GlobalHub.publish(new ServiceMockCompileMessage(true));
             }
             else {
                 GlobalHub.publish(new ClientCompileMessage(true));
             }
 
-            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl, recompile, null);
+            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl,
+                recompile, null);
             var com = await ServiceClient.compile(io, codeFiles, cParams);
             if (com.IsOk) {
                 CompilationCache.Add(key, com.ResultValue);
@@ -48,12 +51,11 @@ public class CompileFeature(
         }
         finally {
             if (createMockService) {
-                GlobalHub.publish(new ServiceMockCompileMessage(false));   
+                GlobalHub.publish(new ServiceMockCompileMessage(false));
             }
             else {
                 GlobalHub.publish(new ClientCompileMessage(false));
             }
-
         }
     }
 
@@ -61,11 +63,12 @@ public class CompileFeature(
         try {
             GlobalHub.publish(new ClientCompileMessage(true));
             var csFiles = Array.Empty<string>();
-            var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles, reflectionUrl, false, null);
+            var cParams = new CompileParameters(clientName, description, serviceName, protoFiles, csFiles,
+                reflectionUrl, false, null);
             var csFilesRet = await ServiceClient.generateSourceFiles(io, cParams);
             if (!csFilesRet.IsOk) {
                 io.Log.Error(csFilesRet.ErrorValue);
-                return (false, null!);           
+                return (false, null!);
             }
 
             if (createMockService) {
@@ -84,8 +87,9 @@ public class CompileFeature(
             return (false, com.ResultValue);
         }
         finally {
-            if (!createMockService)
+            if (!createMockService) {
                 GlobalHub.publish(new ClientCompileMessage(false));
+            }
         }
     }
 }

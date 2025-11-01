@@ -3,7 +3,5 @@
 namespace Tefin.Views.Overlay;
 
 public partial class YesNoOverlayView : UserControl {
-    public YesNoOverlayView() {
-        InitializeComponent();
-    }
+    public YesNoOverlayView() => this.InitializeComponent();
 }

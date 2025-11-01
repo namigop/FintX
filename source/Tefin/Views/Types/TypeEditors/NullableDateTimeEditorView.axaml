@@ -11,8 +11,7 @@
             <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
 
                                  VerticalAlignment="Center"
-                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}" />
 
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <!-- <CalendarDatePicker SelectedDate="{Binding DateValue}" /> -->

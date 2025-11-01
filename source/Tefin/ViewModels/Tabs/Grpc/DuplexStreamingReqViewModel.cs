@@ -20,17 +20,17 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
-    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
-    
+
     private readonly Type _requestItemType;
     private DuplexStreamingCallResponse? _callResponse;
     private bool _canWrite;
 
     private IListEditorViewModel _clientStreamEditor;
     private bool _isShowingClientStreamTree;
-    
 
-    public DuplexStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree, List<object?>? methodParameterInstances = null)
+
+    public DuplexStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree,
+        List<object?>? methodParameterInstances = null)
         : base(methodInfo, cg, generateFullTree, methodParameterInstances) {
         this._clientGroup = cg;
         this.WriteCommand = this.CreateCommand(this.OnWrite);
@@ -38,41 +38,41 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this.AddListItemCommand = this.CreateCommand(this.OnAddListItem);
         this.RemoveListItemCommand = this.CreateCommand(this.OnRemoveListItem);
 
-        
+
         this._callResponse = DuplexStreamingCallResponse.Empty();
         var args = methodInfo.ReturnType.GetGenericArguments();
         this._requestItemType = args[0];
         var listType = typeof(List<>);
         this.ListType = listType.MakeGenericType(this._requestItemType);
 
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this.ListType, cg, true);
+        this.ClientStreamTreeEditor = new ListTreeEditorViewModel("RequestStream", this.ListType, cg, true);
         this._clientStreamJsonEditor = new ListJsonEditorViewModel("RequestStream", this.ListType, cg, true);
         this._isShowingClientStreamTree = true;
-        this._clientStreamEditor = this._clientStreamTreeEditor;
+        this._clientStreamEditor = this.ClientStreamTreeEditor;
 
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree,
             this.OnIsShowingClientStreamTreeChanged);
     }
 
-    public Type ListType { get; }
+    public ICommand AddListItemCommand { get; }
+
     public DuplexStreamingCallResponse? CallResponse {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
     }
-    public List<VarDefinition> RequestVariables { get; set; }
-    public List<VarDefinition> RequestStreamVariables { get; set; }
+
     public bool CanWrite {
         get => this._canWrite;
         private set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
-    public ListTreeEditorViewModel ClientStreamTreeEditor => this._clientStreamTreeEditor;
     public IListEditorViewModel ClientStreamEditor {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
-    
-    
+
+    public ListTreeEditorViewModel ClientStreamTreeEditor { get; }
+
 
     public ICommand EndWriteCommand { get; }
 
@@ -81,20 +81,70 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
     }
 
-    public ICommand WriteCommand { get; }
+    public Type ListType { get; }
     public ICommand RemoveListItemCommand { get; }
-    public ICommand AddListItemCommand { get; }
+    public List<VarDefinition> RequestStreamVariables { get; set; }
+    public List<VarDefinition> RequestVariables { get; set; }
+
+    public ICommand WriteCommand { get; }
 
     private void OnAddListItem() {
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
         if (ok) {
             this._clientStreamEditor.AddItem(reqInstance);
-        } 
+        }
     }
-    private void OnRemoveListItem() {
-        this._clientStreamEditor.RemoveSelectedItem();
+
+    private async Task OnEndWrite() {
+        try {
+            var writer = new WriteDuplexStreamFeature();
+            this.IsBusy = true;
+            if (this.CallResponse != null) {
+                this.CallResponse = await writer.CompleteWrite(this.CallResponse);
+            }
+        }
+        finally {
+            this.CanWrite = false;
+            //this.ClientStreamEditor.Clear();
+            this.IsBusy = false;
+        }
     }
-    
+
+    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
+        var vm = (DuplexStreamingReqViewModel)obj;
+        if (vm._isShowingClientStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
+    private void OnRemoveListItem() => this._clientStreamEditor.RemoveSelectedItem();
+
+    private async Task OnWrite() {
+        try {
+            if (this.CallResponse == null) {
+                this.Io.Log.Warn("Unable to write to the request stream");
+                return;
+            }
+
+            var resp = this.CallResponse;
+            var writer = new WriteDuplexStreamFeature();
+            this.IsBusy = true;
+
+            foreach (var i in this.ClientStreamEditor.GetListItems()) {
+                await writer.Write(resp, i);
+            }
+        }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
+        finally {
+            this.IsBusy = false;
+        }
+    }
+
     // public async Task ImportRequest() {
     //      await GrpcUiUtils.ImportRequest(this.RequestEditor,
     //          this.ClientStreamEditor, 
@@ -130,54 +180,6 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         this.CanWrite = true;
     }
 
-    private async Task OnEndWrite() {
-        try {
-            var writer = new WriteDuplexStreamFeature();
-            this.IsBusy = true;
-            if (this.CallResponse != null) {
-                this.CallResponse = await writer.CompleteWrite(this.CallResponse);
-            }
-        }
-        finally {
-            this.CanWrite = false;
-            //this.ClientStreamEditor.Clear();
-            this.IsBusy = false;
-        }
-    }
-
-    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
-        var vm = (DuplexStreamingReqViewModel)obj;
-        if (vm._isShowingClientStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
-    }
-
-    private async Task OnWrite() {
-        try {
-            if (this.CallResponse == null) {
-                this.Io.Log.Warn("Unable to write to the request stream");
-                return;
-            }
-
-            var resp = this.CallResponse;
-            var writer = new WriteDuplexStreamFeature();
-            this.IsBusy = true;
-
-            foreach (var i in this.ClientStreamEditor.GetListItems()) {
-                await writer.Write(resp, i);
-            }
-        }
-        catch (Exception exc) {
-            this.Io.Log.Error(exc);
-        }
-        finally {
-            this.IsBusy = false;
-        }
-    }
-
     private void ShowAsJson() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
@@ -188,7 +190,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
 
     private void ShowAsTree() {
         var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamTreeEditor;
+        this.ClientStreamEditor = this.ClientStreamTreeEditor;
         if (ok) {
             this.ClientStreamEditor.Show(list, this.RequestStreamVariables);
         }

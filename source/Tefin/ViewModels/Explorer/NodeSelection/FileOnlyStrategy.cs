@@ -10,9 +10,10 @@ namespace Tefin.ViewModels.Explorer;
 ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
 /// </summary>
 public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
+    private readonly Func<IExplorerItem, NodeBase?> _findParentNode;
+
     //private readonly ClientExplorerViewModel _explorerViewModel;
     private readonly Func<IExplorerItem?> _getSelected;
-    private readonly Func<IExplorerItem, NodeBase?> _findParentNode;
 
     /// <summary>
     ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
@@ -21,17 +22,14 @@ public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
     public FileOnlyStrategy(ClientExplorerViewModel explorerViewModel) {
         //this._explorerViewModel = explorerViewModel;
         this.ExplorerTree = explorerViewModel.ExplorerTree;
-        Func<IExplorerItem?> getSelected =
+        var getSelected =
             () => explorerViewModel.GetClientNodes()
                 .Select(c => c.FindSelected())
                 .FirstOrDefault(m => m != null);
 
         this._getSelected = getSelected;
-        this._findParentNode = (i) => i.FindParentNode<ClientRootNode>();
-        
+        this._findParentNode = i => i.FindParentNode<ClientRootNode>();
     }
-
-    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; private set; }
 
     /// <summary>
     ///     Single selection for non-FileNodes.  MultipleSelection for FileNodes
@@ -45,9 +43,10 @@ public class FileOnlyStrategy : IExplorerNodeSelectionStrategy {
                 .FirstOrDefault(m => m != null);
 
         this._getSelected = getSelected;
-        this._findParentNode = (i) => i.FindParentNode<ServiceMockRootNode>();
-        
+        this._findParentNode = i => i.FindParentNode<ServiceMockRootNode>();
     }
+
+    public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; }
 
     public void Apply(TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
         var selected = this._getSelected();

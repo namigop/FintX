@@ -20,13 +20,13 @@ namespace Tefin.ViewModels.Overlay;
 
 public class ResetGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.ClientConfig _clientConfig;
+    private readonly string _clientPath;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
-    private readonly string _clientPath;
 
     public ResetGrpcServiceOverlayViewModel(string clientConfigFile) {
         this._clientConfig = new ReadClientConfigFeature(clientConfigFile, this.Io).Read();
@@ -160,26 +160,28 @@ public class ResetGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel
         var (serviceFound, _) = await disco.Discover(this.Io);
         if (serviceFound) {
             var cfgGroup = new LoadClientFeature(this.Io, this._clientPath).Run();
-            
+
             // remove old *.cs and *.dll files
-            foreach (var f in cfgGroup.CodeFiles)
+            foreach (var f in cfgGroup.CodeFiles) {
                 this.Io.File.Delete(f);
-            
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
+            }
+
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
+                this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run(false);
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
                 var address = this.IsDiscoveringUsingProto ? this.Address : this.ReflectionUrl;
 
                 address = string.IsNullOrWhiteSpace(address) ? "http://address/not/set" : address;
-                var msg = new ShowClientMessage(output, 
+                var msg = new ShowClientMessage(output,
                     address,
-                    this.ClientName, 
+                    this.ClientName,
                     this.SelectedDiscoveredService,
                     this.Description,
                     csFiles,
                     output.Input.Value.ModuleFile) { Reset = true };
-                
+
                 GlobalHub.publish(msg);
             }
         }

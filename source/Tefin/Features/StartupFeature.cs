@@ -13,7 +13,6 @@ namespace Tefin.Features;
 
 public class StartupFeature {
     public void Init() {
-        
         //ServiceMock.genService(@"/Users/erikaraojo/.local/share/FintX/packages/grpc/projects/_default/mocks/BenchmarkServiceMock/code/BenchmarkServiceGrpc.cs");
         Startup.init();
         Current.Init();

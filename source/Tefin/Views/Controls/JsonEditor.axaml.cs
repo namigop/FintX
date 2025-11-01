@@ -70,6 +70,32 @@ public partial class JsonEditor : UserControl {
         set => this.SetValue(TextProperty, value);
     }
 
+    private void FoldingTimer_Tick(object? sender, EventArgs e) {
+        if (this._foldingManager == null) {
+            this._foldingManager = FoldingManager.Install(this.Editor.TextArea);
+        }
+
+        if (this._foldingManager != null && this.Editor.Document.TextLength > 0) {
+            //HACK
+            var info = this._foldingManager.GetType()
+                .GetField("_margin", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (info != null) {
+                if (info.GetValue(this._foldingManager) is FoldingMargin foldingMargin) {
+                    foldingMargin.FoldingMarkerBackgroundBrush = SolidColorBrush.Parse("Transparent");
+                }
+            }
+
+            this._folding.UpdateFoldings(this._foldingManager, this.Editor.Document);
+        }
+    }
+
+    private void JsonTextEditor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e) {
+        var t = sender as JsonEditor;
+        t!._foldingTimer.Stop();
+        t._foldingTimer.Tick -= this.FoldingTimer_Tick;
+        t.Editor.TextChanged -= this.OnTextChanged;
+    }
+
     private static bool OnCoerceIsReadOnly(AvaloniaObject d, bool arg2) {
         var sender = (JsonEditor)d;
         sender.Editor.IsReadOnly = arg2;
@@ -84,33 +110,6 @@ public partial class JsonEditor : UserControl {
         }
 
         return arg2;
-    }
-
-    private void FoldingTimer_Tick(object? sender, EventArgs e) {
-        if (this._foldingManager == null) {
-            this._foldingManager = FoldingManager.Install(this.Editor.TextArea);
-        }
-
-        if (this._foldingManager != null && this.Editor.Document.TextLength > 0) {
-           
-            //HACK
-            var info = this._foldingManager.GetType().GetField("_margin", System.Reflection.BindingFlags.NonPublic | BindingFlags.Instance);
-            if (info != null) {
-                if (info.GetValue(this._foldingManager) is FoldingMargin foldingMargin) {
-                    foldingMargin.FoldingMarkerBackgroundBrush = SolidColorBrush.Parse("Transparent");
-                }
-            }
-
-            this._folding.UpdateFoldings(this._foldingManager, this.Editor.Document);
-
-        }
-    }
-
-    private void JsonTextEditor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e) {
-        var t = sender as JsonEditor;
-        t!._foldingTimer.Stop();
-        t._foldingTimer.Tick -= this.FoldingTimer_Tick;
-        t.Editor.TextChanged -= this.OnTextChanged;
     }
 
     private void OnTextChanged(object? sender, EventArgs e) => this.Text = this.Editor.Text;

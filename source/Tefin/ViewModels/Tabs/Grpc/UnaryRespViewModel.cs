@@ -4,7 +4,6 @@ using System.Reflection;
 
 using ReactiveUI;
 
-using Tefin.Core.Execution;
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Types;
 
@@ -13,10 +12,10 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryRespViewModel : ViewModelBase {
+    private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly JsonResponseEditorViewModel _jsonRespEditor;
     private readonly MethodInfo _methodInfo;
-    private readonly ProjectTypes.ClientGroup _clientGroup;
-    
+
     private bool _isShowingResponseTreeEditor;
     private IResponseEditorViewModel _responseEditor;
 
@@ -32,8 +31,6 @@ public class UnaryRespViewModel : ViewModelBase {
             this.OnIsShowingResponseTreeEditor);
     }
 
-    public TreeResponseEditorViewModel TreeResponseEditor { get; private set; }
-
     public bool IsShowingResponseTreeEditor {
         get => this._isShowingResponseTreeEditor;
         set => this.RaiseAndSetIfChanged(ref this._isShowingResponseTreeEditor, value);
@@ -43,15 +40,15 @@ public class UnaryRespViewModel : ViewModelBase {
         get => this._responseEditor;
         set => this.RaiseAndSetIfChanged(ref this._responseEditor, value);
     }
-    
+
     public List<VarDefinition> ResponseVariables { get; set; }
+
+    public TreeResponseEditorViewModel TreeResponseEditor { get; }
+
     public void Init(AllVariableDefinitions envVariables) {
         this.ResponseVariables = envVariables.ResponseVariables;
         this.ResponseEditor.Init();
     }
-
-    public void Show(object response) =>
-        this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response), this.ResponseVariables);
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
         try {
@@ -67,6 +64,9 @@ public class UnaryRespViewModel : ViewModelBase {
             Console.WriteLine(e);
         }
     }
+
+    public void Show(object response) =>
+        this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response), this.ResponseVariables);
 
     private void ShowAsJson() {
         var (ok, resp) = this.TreeResponseEditor.GetResponse();

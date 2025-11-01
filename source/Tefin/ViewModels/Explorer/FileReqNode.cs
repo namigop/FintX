@@ -21,6 +21,8 @@ public class FileReqNode : FileNode {
         }
     }
 
+    public ClientMethodViewModelBase? CreateViewModel() => ((MethodNode)this.Parent!).CreateViewModel();
+
     private async Task OnExport() {
         var share = new SharingFeature();
         var zipName = $"{Path.GetFileNameWithoutExtension(this.FullPath)}_export.zip";
@@ -39,6 +41,4 @@ public class FileReqNode : FileNode {
             this.Io.Log.Error(result.ErrorValue);
         }
     }
-
-    public ClientMethodViewModelBase? CreateViewModel() => ((MethodNode)this.Parent!).CreateViewModel();
 }

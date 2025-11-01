@@ -1,7 +1,6 @@
 ﻿#region
 
 using System.Collections.ObjectModel;
-using System.Reactive;
 using System.Windows.Input;
 
 using Avalonia.Controls;
@@ -64,10 +63,13 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     }
 
     public ICommand CopyCommand { get; }
+    public ICommand DeleteCommand { get; }
 
     public ICommand EditCommand { get; }
 
     public HierarchicalTreeDataGridSource<IExplorerItem> ExplorerTree { get; set; }
+
+    private ObservableCollection<IExplorerItem> Items { get; } = [];
 
     public ICommand PasteCommand { get; }
 
@@ -76,10 +78,23 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         set => this.RaiseAndSetIfChanged(ref this._project, value);
     }
 
-    private ObservableCollection<IExplorerItem> Items { get; } = [];
-
     public IExplorerItem? SelectedItem { get; set; }
-    public ICommand DeleteCommand { get; }
+
+    public ServiceMockRootNode AddMockNode(ServiceMockGroup mockGroup, Type? type = null) {
+        var c = Dispatcher.UIThread.Invoke(() => {
+            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == mockGroup.Path);
+            if (n == null) {
+                var mockNode = new ServiceMockRootNode(mockGroup, type);
+                mockNode.Init();
+                this.Items.Add(mockNode);
+                this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
+                return mockNode;
+            }
+
+            return (ServiceMockRootNode)n;
+        });
+        return c;
+    }
 
     public ServiceMockRootNode AddRootNode(ServiceMockGroup cg, Type? type = null) {
         var c = Dispatcher.UIThread.Invoke(() => {
@@ -108,54 +123,16 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     public ServiceMockRootNode[] GetServiceMockNodes() =>
         this.Items.Where(c => c is ServiceMockRootNode).Cast<ServiceMockRootNode>().ToArray();
 
-    // public void LoadProject(string path) {
-    //     if (string.IsNullOrWhiteSpace(path)) {
-    //         return;
-    //     }
-    //
-    //     if (!Directory.Exists(path)) {
-    //         return;
-    //     }
-    //
-    //     if (path == this.Project?.Path) {
-    //         return;
-    //     }
-    //
-    //     var stateFile = Path.Combine(path, ProjectSaveState.FileName);
-    //     if (!this.Io.File.Exists(stateFile)) {
-    //         this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
-    //         return;
-    //     }
-    //
-    //     //Close all existing tabs
-    //     GlobalHub.publish(new CloseAllTabsMessage());
-    //
-    //     var load = new LoadProjectFeature(this.Io, path);
-    //     this.Project = load.Run();
-    //
-    //     this.Items.Clear();
-    //     foreach (var client in this.Project.Clients) {
-    //         this.AddRootNode(client);
-    //     }
-    //
-    //     //if there are no clients, show the add dialog
-    //     if (!this.Project.Clients.Any()) {
-    //         var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
-    //         GlobalHub.publish(new OpenOverlayMessage(overlay));
-    //     }
-    // }
+    public void Init() {
+    }
 
-    private void OnServiceMockCompile(ServiceMockCompileMessage message) => this.IsBusy = message.InProgress;
-
-    private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
-        var target = this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
-        if (target != null) 
-            this.Items.Remove(target);
-        
-        var projMock = this._project?.Mocks.FirstOrDefault(m => m.Path == obj.ServiceMock.Path);
-        if (projMock != null)
-            this._project?.Mocks.Remove(projMock); 
-
+    private void OnCopy() {
+        foreach (var item in this.Items) {
+            var selected = item.FindSelected();
+            if (selected is FileNode fn) {
+                this._copyPastePending = new CopyPasteArg(fn.Parent, fn.FullPath);
+            }
+        }
     }
 
     private void OnDelete() {
@@ -173,15 +150,6 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     mFilesNode.DeleteCommand, EmptyCommand);
                 GlobalHub.publish(new OpenOverlayMessage(dialog));
                 break;
-            }
-        }
-    }
-
-    private void OnCopy() {
-        foreach (var item in this.Items) {
-            var selected = item.FindSelected();
-            if (selected is FileNode fn) {
-                this._copyPastePending = new CopyPasteArg(fn.Parent, fn.FullPath);
             }
         }
     }
@@ -316,6 +284,58 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
         });
     }
 
+    // public void LoadProject(string path) {
+    //     if (string.IsNullOrWhiteSpace(path)) {
+    //         return;
+    //     }
+    //
+    //     if (!Directory.Exists(path)) {
+    //         return;
+    //     }
+    //
+    //     if (path == this.Project?.Path) {
+    //         return;
+    //     }
+    //
+    //     var stateFile = Path.Combine(path, ProjectSaveState.FileName);
+    //     if (!this.Io.File.Exists(stateFile)) {
+    //         this.Io.Log.Error($"{path} is not a valid project path. Please select another folder");
+    //         return;
+    //     }
+    //
+    //     //Close all existing tabs
+    //     GlobalHub.publish(new CloseAllTabsMessage());
+    //
+    //     var load = new LoadProjectFeature(this.Io, path);
+    //     this.Project = load.Run();
+    //
+    //     this.Items.Clear();
+    //     foreach (var client in this.Project.Clients) {
+    //         this.AddRootNode(client);
+    //     }
+    //
+    //     //if there are no clients, show the add dialog
+    //     if (!this.Project.Clients.Any()) {
+    //         var overlay = new AddGrpcServiceOverlayViewModel(this.Project);
+    //         GlobalHub.publish(new OpenOverlayMessage(overlay));
+    //     }
+    // }
+
+    private void OnServiceMockCompile(ServiceMockCompileMessage message) => this.IsBusy = message.InProgress;
+
+    private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
+        var target =
+            this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
+        if (target != null) {
+            this.Items.Remove(target);
+        }
+
+        var projMock = this._project?.Mocks.FirstOrDefault(m => m.Path == obj.ServiceMock.Path);
+        if (projMock != null) {
+            this._project?.Mocks.Remove(projMock);
+        }
+    }
+
     private async Task OnShowServiceMock(ShowServiceMockMessage obj) {
         async Task Show() {
             var compileOutput = obj.Output;
@@ -385,24 +405,5 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
     private class CopyPasteArg(IExplorerItem? container, string fileToCopy) {
         public IExplorerItem? Container { get; } = container;
         public string FileToCopy { get; } = fileToCopy;
-    }
-
-    public void Init() {
-    }
-
-    public ServiceMockRootNode AddMockNode(ServiceMockGroup mockGroup, Type? type = null) {
-        var c = Dispatcher.UIThread.Invoke(() => {
-            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == mockGroup.Path);
-            if (n == null) {
-                var mockNode = new ServiceMockRootNode(mockGroup, type);
-                mockNode.Init();
-                this.Items.Add(mockNode);
-                this.ExplorerTree.RowSelection!.Select(new IndexPath(0));
-                return mockNode;
-            }
-
-            return (ServiceMockRootNode)n;
-        });
-        return c;
     }
 }

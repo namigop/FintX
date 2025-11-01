@@ -72,17 +72,6 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
         this.HasChanges = false;
     }
 
-    public virtual void Reset() {
-        if (this.Node.Value != null) {
-            this.TempValue = (T)this.Node.Value;
-        }
-        else {
-            this.TempValue = this._og is null ? default : this._og;
-        }
-
-        this.HasChanges = false;
-    }
-
     private void OnIsNullChanged(ViewModelBase obj) {
         var sender = (TypeEditorBase<T>)obj;
         if (sender._isNull) {
@@ -92,5 +81,16 @@ public abstract class TypeEditorBase<T> : ViewModelBase, ITypeEditor<T> {
         else {
             this.Reset();
         }
+    }
+
+    public virtual void Reset() {
+        if (this.Node.Value != null) {
+            this.TempValue = (T)this.Node.Value;
+        }
+        else {
+            this.TempValue = this._og is null ? default : this._og;
+        }
+
+        this.HasChanges = false;
     }
 }

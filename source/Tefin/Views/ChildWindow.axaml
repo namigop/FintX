@@ -20,8 +20,8 @@
                 <!-- <controls:IconControl Icon="{StaticResource Icon.AppSmall}" Height="18" Width="18" -->
                 <!--                       VerticalAlignment="Center" -->
                 <!--                       ToolTip.Tip="{Binding Content.SubTitle}" /> -->
-                <controls:IconControl   IsVisible="{Binding Content.HasIcon}"
-                                      Icon="{Binding Content.Icon}"  
+                <controls:IconControl IsVisible="{Binding Content.HasIcon}"
+                                      Icon="{Binding Content.Icon}"
                                       Margin="0 0 0 0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding Content.Title}" ToolTip.Tip="{Binding Content.SubTitle}"
                            VerticalAlignment="Center"

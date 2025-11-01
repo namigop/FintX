@@ -6,7 +6,8 @@ namespace Tefin.ViewModels.Explorer;
 ///     Multiple selection allowed only for the same types of nodes
 /// </summary>
 /// <param name="explorerViewModel"></param>
-public class SameNodeTypeStrategy<T>(IExplorerTree<T> explorerViewModel) : IExplorerNodeSelectionStrategy where T : NodeBase {
+public class SameNodeTypeStrategy<T>(IExplorerTree<T> explorerViewModel)
+    : IExplorerNodeSelectionStrategy where T : NodeBase {
     public void Apply(TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
         var selected = explorerViewModel.GetRootNodes().Select(c => c.FindSelected()).FirstOrDefault(m => m != null);
         var nodeType = selected?.GetType();

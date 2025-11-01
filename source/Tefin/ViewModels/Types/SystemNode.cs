@@ -10,11 +10,10 @@ using Tefin.ViewModels.Types.TypeEditors;
 namespace Tefin.ViewModels.Types;
 
 public class SystemNode : TypeBaseNode {
-   
     public SystemNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(name,
         type, propInfo, instance, parent) {
-        this.EnvVar = new(this);
-       
+        this.EnvVar = new EnvVarNodeViewModel(this);
+
         this.FormattedTypeName = $"{{{SystemType.getDisplayName(type)}}}";
         if (type == typeof(string)) {
             this.Editor = new StringEditor(this);
@@ -120,6 +119,8 @@ public class SystemNode : TypeBaseNode {
     }
 
     public ITypeEditor Editor { get; }
+
+    public EnvVarNodeViewModel EnvVar { get; }
     public override string FormattedTypeName { get; }
 
     public override string FormattedValue => this.Editor.FormattedValue;
@@ -128,9 +129,7 @@ public class SystemNode : TypeBaseNode {
         get => this.Editor.IsEditing;
         set => this.Editor.IsEditing = value;
     }
- 
-    public EnvVarNodeViewModel EnvVar { get; }
-   
+
     public override void Dispose() {
         base.Dispose();
         this.Editor.Dispose();

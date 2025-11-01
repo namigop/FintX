@@ -40,7 +40,7 @@
                                  Watermark="Select a *.proto file" IsVisible="{Binding IsDiscoveringUsingProto}" />
                     </Grid>
                 </DockPanel>
-                
+
                 <TextBlock Grid.Row="2" Text="Service*" Classes="FormField" />
                 <ComboBox Grid.Row="3" HorizontalAlignment="Stretch"
                           ToolTip.Tip="Select a service"
@@ -49,7 +49,7 @@
                 <TextBlock Grid.Row="4" Text="Name*" Classes="FormField" />
                 <TextBox Grid.Row="5" HorizontalAlignment="Stretch" Text="{Binding ServiceName}"
                          ToolTip.Tip="Enter a name" />
-                
+
                 <TextBlock Grid.Row="6" Text="Port*" Classes="FormField" />
                 <TextBox Grid.Row="7" HorizontalAlignment="Stretch" Text="{Binding Port}"
                          ToolTip.Tip="Enter a port number" />

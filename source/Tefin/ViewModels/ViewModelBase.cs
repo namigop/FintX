@@ -29,16 +29,6 @@ public class ViewModelBase : ReactiveObject, IDisposable {
         }
     }
 
-    public void SubscribeTo<R>(Expression<Func<ViewModelBase, R>> prop, Action<ViewModelBase> onChanged) {
-        var b = (MemberExpression)prop.Body;
-        this.Subscribe(b.Member.Name, onChanged).Then(this.MarkForCleanup);
-    }
-
-    public void SubscribeTo<R,V>(Expression<Func<V, R>> prop, Action<V> onChanged) where V : ViewModelBase {
-        var b = (MemberExpression)prop.Body;
-        this.Subscribe(b.Member.Name, vb => onChanged((V)vb)).Then(this.MarkForCleanup);
-    }
-
     protected ICommand CreateCommand(Func<Task> doThis) =>
         ReactiveCommand.Create(async () => {
             try {
@@ -49,9 +39,9 @@ public class ViewModelBase : ReactiveObject, IDisposable {
             }
         });
 
-    
+
     protected ICommand CreateCommand<T>(Func<T, Task> doThis) =>
-        ReactiveCommand.CreateFromTask<T>(async (arg) => {
+        ReactiveCommand.CreateFromTask<T>(async arg => {
             try {
                 this.IsBusy = true;
                 await doThis(arg);
@@ -75,7 +65,7 @@ public class ViewModelBase : ReactiveObject, IDisposable {
         });
 
     protected ICommand CreateCommand<T>(Action<T> doThis) =>
-        ReactiveCommand.Create<T>((arg) => {
+        ReactiveCommand.Create<T>(arg => {
             try {
                 doThis(arg);
             }
@@ -83,8 +73,6 @@ public class ViewModelBase : ReactiveObject, IDisposable {
                 this.Io.Log.Error(exc);
             }
         });
-
-    protected void MarkForCleanup(IDisposable d) => this._disposables.Add(d);
 
     protected void Exec(Action a) {
         try {
@@ -102,5 +90,17 @@ public class ViewModelBase : ReactiveObject, IDisposable {
         catch (Exception e) {
             this.Io.Log.Error(e);
         }
+    }
+
+    protected void MarkForCleanup(IDisposable d) => this._disposables.Add(d);
+
+    public void SubscribeTo<R>(Expression<Func<ViewModelBase, R>> prop, Action<ViewModelBase> onChanged) {
+        var b = (MemberExpression)prop.Body;
+        this.Subscribe(b.Member.Name, onChanged).Then(this.MarkForCleanup);
+    }
+
+    public void SubscribeTo<R, V>(Expression<Func<V, R>> prop, Action<V> onChanged) where V : ViewModelBase {
+        var b = (MemberExpression)prop.Body;
+        this.Subscribe(b.Member.Name, vb => onChanged((V)vb)).Then(this.MarkForCleanup);
     }
 }

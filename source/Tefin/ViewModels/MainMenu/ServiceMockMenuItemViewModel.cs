@@ -1,7 +1,3 @@
-#region
-
-#endregion
-
 using Tefin.Core.Interop;
 using Tefin.ViewModels.Explorer.ServiceMock;
 
@@ -17,7 +13,7 @@ public class ServiceMockMenuItemViewModel : MenuItemBaseViewModel, IMenuItemView
     public override string ToolTip { get; } = "Mock gRPC services";
     public override string Name { get; } = "gRPC Mocks";
     public override string ShortName { get; } = "mocks";
-    public override ISubMenusViewModel? SubMenus { get; } = null;
+    public override ISubMenusViewModel? SubMenus { get; }
 
     public void Init(ProjectTypes.Project project) {
         this.Explorer.Project = project;

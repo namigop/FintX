@@ -22,6 +22,18 @@ public class HostWindowViewModel : ViewModelBase {
 
     public Dictionary<string, ChildWindowViewModel> Items { get; } = new();
 
+    private void OnReceiveChildWindowClosedMessage(ChildWindowClosedMessage obj) {
+        if (this.Items.ContainsKey(obj.Content.Id)) {
+            this.Items.Remove(obj.Content.Id);
+        }
+    }
+
+    private void OnReceiveCloseChildWindowMessage(CloseChildWindowMessage obj) {
+        if (this.Items.TryGetValue(obj.Content.Id, out var vm)) {
+            vm.Close();
+        }
+    }
+
     private void OnReceiveFileChangeMessage(FileChangeMessage msg) =>
         this.Exec(() => {
             var items = this.Items.Values.ToArray();
@@ -39,18 +51,6 @@ public class HostWindowViewModel : ViewModelBase {
                 }
             }
         });
-
-    private void OnReceiveCloseChildWindowMessage(CloseChildWindowMessage obj) {
-        if (this.Items.TryGetValue(obj.Content.Id, out var vm)) {
-            vm.Close();
-        }
-    }
-
-    private void OnReceiveChildWindowClosedMessage(ChildWindowClosedMessage obj) {
-        if (this.Items.ContainsKey(obj.Content.Id)) {
-            this.Items.Remove(obj.Content.Id);
-        }
-    }
 
     private async Task OnReceiveOpenChildWindowMessage(OpenChildWindowMessage obj) {
         obj.Content.Init();

@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:typeEditors="clr-namespace:Tefin.ViewModels.Types.TypeEditors"
-             xmlns:node="clr-namespace:Tefin.ViewModels.Types"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="typeEditors:TimestampEditor"
              x:Class="Tefin.Views.Types.TypeEditors.TimestampEditorView">
@@ -23,8 +22,7 @@
         <Grid>
             <SelectableTextBlock IsVisible="{Binding Node.EnvVar.IsEnvVarTagVisible}"
                                  VerticalAlignment="Center"
-                                 Text="{Binding Node.EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 Text="{Binding Node.EnvVar.EnvVarTag}" />
 
             <Grid IsVisible="{Binding !Node.EnvVar.IsEnvVarTagVisible}">
                 <TextBox Text="{Binding Node.DateTimeText}" x:Name="TextBox" />

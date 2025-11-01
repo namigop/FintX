@@ -9,9 +9,10 @@ public class IsValidPortNumberAttribute : ValidationAttribute {
         }
 
         var enteredPort = value.ToString()?.Trim();
-        if (uint.TryParse(enteredPort, out var port))
+        if (uint.TryParse(enteredPort, out var port)) {
             return ValidationResult.Success;
-        
+        }
+
         return new ValidationResult($"Value {enteredPort} is not a valid port number");
     }
 }

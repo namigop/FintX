@@ -37,7 +37,7 @@
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
-                                              Width="16" Height="16" Margin="0 0 2 0"></controls:IconControl>
+                                              Width="16" Height="16" Margin="0 0 2 0" />
                         <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>

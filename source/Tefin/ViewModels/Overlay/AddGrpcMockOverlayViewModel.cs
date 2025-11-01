@@ -2,7 +2,6 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -25,12 +24,12 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
-    private string _port = "50051";
     private bool _isDiscoveringUsingProto;
+    private string _port = "50051";
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
-    
+
     public AddGrpcMockOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
@@ -43,20 +42,6 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
     public ICommand CancelCommand { get; }
 
-    [Required(ErrorMessage = "Enter a unique name")]
-    [IsValidFolderName]
-    public string ServiceName {
-        get => this._clientName;
-        set => this.RaiseAndSetIfChanged(ref this._clientName, value);
-    }
-    
-    [Required(ErrorMessage = "Enter a port number")]
-    [IsValidPortNumber]
-    public string Port {
-        get => this._port;
-        set => this.RaiseAndSetIfChanged(ref this._port, value);
-    }
-
     public string Description { get; set; }
     public ICommand DiscoverCommand { get; }
     public ObservableCollection<string> DiscoveredServices { get; } = [];
@@ -67,6 +52,13 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public ICommand OkayCommand { get; }
+
+    [Required(ErrorMessage = "Enter a port number")]
+    [IsValidPortNumber]
+    public string Port {
+        get => this._port;
+        set => this.RaiseAndSetIfChanged(ref this._port, value);
+    }
 
     [IsProtoFile]
     public string ProtoFile {
@@ -92,6 +84,13 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
                 }
             }
         }
+    }
+
+    [Required(ErrorMessage = "Enter a unique name")]
+    [IsValidFolderName]
+    public string ServiceName {
+        get => this._clientName;
+        set => this.RaiseAndSetIfChanged(ref this._clientName, value);
     }
 
     public string Title { get; }
@@ -158,19 +157,20 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (success, _) = await disco.Discover(this.Io);
         if (success) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
-            var (ok, output) = await cmd.Run(createMockService:true);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
+                this.ReflectionUrl, this.Io);
+            var (ok, output) = await cmd.Run(true);
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
                 var msg = new ShowServiceMockMessage(
                     output,
-                    this.IsDiscoveringUsingProto  ? protoFiles[0] : this.ReflectionUrl,
-                    this.ServiceName, 
+                    this.IsDiscoveringUsingProto ? protoFiles[0] : this.ReflectionUrl,
+                    this.ServiceName,
                     this.SelectedDiscoveredService,
                     this.Description,
                     csFiles,
                     Convert.ToUInt32(this.Port),
-                    output.Input.Value.ModuleFile) {Reset = false};
+                    output.Input.Value.ModuleFile) { Reset = false };
                 GlobalHub.publish(msg);
             }
         }

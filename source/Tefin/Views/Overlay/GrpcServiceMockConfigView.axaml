@@ -27,17 +27,15 @@
                     <TextBlock Text="Description" Classes="FormField" />
                     <TextBox Text="{Binding Description}" Height="80" />
                 </StackPanel>
-               
 
-                 
 
             </StackPanel>
-             
+
             <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 24 0 0">
                 <Button Command="{Binding OkayCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Check}" VerticalAlignment="Center"
-                                              Width="16" Height="16" Margin="0 0 2 0"></controls:IconControl>
+                                              Width="16" Height="16" Margin="0 0 2 0" />
                         <TextBlock Text="Okay" HorizontalAlignment="Center" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>

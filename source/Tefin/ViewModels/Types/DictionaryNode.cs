@@ -36,6 +36,12 @@ public class DictionaryNode : ListNode {
 
     public override string FormattedTypeName { get; }
 
+    protected override Type GetItemType() => this._itemType;
+
+    protected override object GetListInstance() => this._internalList;
+
+    protected override ListTypeMethod GetMethods() => this._listMethods;
+
     public static object? ToListOfPairs(Type lpType, object? dict) {
         if (dict == null) {
             return null;
@@ -46,12 +52,6 @@ public class DictionaryNode : ListNode {
         fromDictionary!.Invoke(lpInstance, [dict]);
         return lpInstance;
     }
-
-    protected override Type GetItemType() => this._itemType;
-
-    protected override object GetListInstance() => this._internalList;
-
-    protected override ListTypeMethod GetMethods() => this._listMethods;
 
     public class ListOfPairs<K, V> : List<Pair<K, V>> where K : notnull {
         public void FromDictionary(Dictionary<K, V> source) {

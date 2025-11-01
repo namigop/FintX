@@ -5,7 +5,6 @@ using Avalonia.Threading;
 using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
-using Tefin.Features;
 using Tefin.Messages;
 using Tefin.Utils;
 
@@ -15,11 +14,44 @@ using fileChange = FileChange<ConfigGroupNode, EnvNode>;
 
 public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
     private static readonly object FileSystemHandlerLock = new();
+
     public ConfigExplorerViewModel() {
         this.SupportedExtensions = [Ext.envExt];
         this.EditCommand = this.CreateCommand(this.OnEdit);
         GlobalHub.subscribe<FileChangeMessage>(this.OnFileChanged).Then(this.MarkForCleanup);
     }
+
+    public ICommand EditCommand { get; }
+
+    protected override string[] SupportedExtensions { get; }
+
+    protected override MultiNodeFile CreateMultiNodeFile(IExplorerItem[] items, ProjectTypes.ClientGroup client) =>
+        throw new NotImplementedException();
+
+    protected override NodeBase CreateMultiNodeFolder(IExplorerItem[] items, ProjectTypes.ClientGroup client) =>
+        throw new NotImplementedException();
+
+    protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) =>
+        new(this.Project!.Path);
+
+    protected override string GetRootFilePath(string clientPath) => VarsStructure.getVarPathForProject(clientPath);
+
+    public void Init() {
+        if (this.Project is null) {
+            return;
+        }
+
+        Dispatcher.UIThread.Invoke(() => {
+            var root = new ConfigGroupNode(this.Project.Path) {
+                Title = "Project Variables", SubTitle = "All environment variables for this project"
+            };
+            this.Items.Add(root);
+            root.Init();
+            root.IsExpanded = true;
+        });
+    }
+
+    private void OnEdit() { }
 
     private void OnFileChanged(FileChangeMessage obj) {
         lock (FileSystemHandlerLock) {
@@ -46,7 +78,8 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
             if (obj.ChangeType == WatcherChangeTypes.Created) {
                 NodeWalker.Walk(this.Items.ToArray(),
                     obj,
-                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path), VarsStructure.getVarPathForProject),
+                    (i, msg) => fileChange.Create(i, msg, path => new EnvNode(path),
+                        VarsStructure.getVarPathForProject),
                     i => i is ConfigGroupNode);
             }
         }
@@ -70,36 +103,5 @@ public class ConfigExplorerViewModel : ExplorerViewModel<ConfigGroupNode> {
         //         }
         //     }
         // }
-    }
-
-    public ICommand EditCommand { get; }
-
-    protected override string[] SupportedExtensions { get; }
-
-    protected override MultiNodeFile CreateMultiNodeFile(IExplorerItem[] items, ProjectTypes.ClientGroup client) => throw new NotImplementedException();
-
-    protected override NodeBase CreateMultiNodeFolder(IExplorerItem[] items, ProjectTypes.ClientGroup client) => throw new NotImplementedException();
-
-    protected override string GetRootFilePath(string clientPath) {
-        return VarsStructure.getVarPathForProject(clientPath);
-    }
-
-    protected override ConfigGroupNode CreateRootNode(ProjectTypes.ClientGroup cg, Type? type = null) {
-        return new ConfigGroupNode(this.Project!.Path);
-    }
-
-    private void OnEdit() { }
-
-    public void Init() {
-        if (this.Project is null)
-            return;
-        
-        Dispatcher.UIThread.Invoke(() => {
-            var root = new ConfigGroupNode(this.Project.Path) { Title = "Project Variables", SubTitle = "All environment variables for this project"};
-            this.Items.Add(root);
-            root.Init();
-            root.IsExpanded = true;
-        });
-        
     }
 }

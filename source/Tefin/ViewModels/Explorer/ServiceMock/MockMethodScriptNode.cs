@@ -1,17 +1,13 @@
 using System.Windows.Input;
 
-using Tefin.Features;
-using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Tabs.Grpc;
 
 namespace Tefin.ViewModels.Explorer.ServiceMock;
 
 public class MockMethodScriptNode : FileNode {
-    public MockMethodScriptNode(string fullPath) : base(fullPath) {
-        this.CanOpen = true;
-        //this.ExportCommand = this.CreateCommand(this.OnExport);
-    }
+    public MockMethodScriptNode(string fullPath) : base(fullPath) => this.CanOpen = true;
 
+    //this.ExportCommand = this.CreateCommand(this.OnExport);
     public ICommand ExportCommand { get; }
 
     public override string Title {

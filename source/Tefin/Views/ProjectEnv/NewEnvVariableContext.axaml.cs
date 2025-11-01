@@ -11,21 +11,10 @@ namespace Tefin.Views.ProjectEnv;
 public partial class NewEnvVariableContext : UserControl {
     public NewEnvVariableContext() => this.InitializeComponent();
 
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e) {
+    private void ButtonCancelClick(object? sender, RoutedEventArgs e) {
+        this.ClosePopup();
         var vm = this.DataContext as EnvVarNodeViewModel;
-        if (!(bool)vm?.IsEnvVarTagCreated) {
-            vm?.Reset();
-        }
-    }
-
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e) {
-        if (e.Parent.DataContext is SystemNode node) {
-            node?.EnvVar?.ShowDefault();
-        }
-
-        if (e.Parent.DataContext is TimestampNode tn) {
-            tn?.EnvVar?.ShowDefault();
-        }
+        vm?.Reset();
     }
 
     private void ButtonOkayClick(object? sender, RoutedEventArgs e) {
@@ -41,9 +30,20 @@ public partial class NewEnvVariableContext : UserControl {
         }
     }
 
-    private void ButtonCancelClick(object? sender, RoutedEventArgs e) {
-        this.ClosePopup();
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e) {
+        if (e.Parent.DataContext is SystemNode node) {
+            node?.EnvVar?.ShowDefault();
+        }
+
+        if (e.Parent.DataContext is TimestampNode tn) {
+            tn?.EnvVar?.ShowDefault();
+        }
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e) {
         var vm = this.DataContext as EnvVarNodeViewModel;
-        vm?.Reset();
+        if (!(bool)vm?.IsEnvVarTagCreated) {
+            vm?.Reset();
+        }
     }
 }

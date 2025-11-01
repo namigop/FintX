@@ -18,17 +18,17 @@ namespace Tefin.ViewModels.Tabs.Grpc;
 public class ClientStreamingReqViewModel : UnaryReqViewModel {
     private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly ListJsonEditorViewModel _clientStreamJsonEditor;
-    private readonly ListTreeEditorViewModel _clientStreamTreeEditor;
-    public Type ListType { get; }
     private readonly Type _requestItemType;
     private ClientStreamingCallResponse _callResponse;
     private bool _canWrite;
 
     private IListEditorViewModel _clientStreamEditor;
+
     private bool _isShowingClientStreamTree;
     //private AllVariableDefinitions? _envVars;
 
-    public ClientStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree, List<object?>? methodParameterInstances = null)
+    public ClientStreamingReqViewModel(MethodInfo methodInfo, ProjectTypes.ClientGroup cg, bool generateFullTree,
+        List<object?>? methodParameterInstances = null)
         : base(methodInfo, cg, generateFullTree, methodParameterInstances) {
         this._clientGroup = cg;
         this.WriteCommand = this.CreateCommand(this.OnWrite);
@@ -40,25 +40,17 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this._requestItemType = args[0];
         var listType = typeof(List<>);
         this.ListType = listType.MakeGenericType(this._requestItemType);
-        this._clientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg, true);
+        this.ClientStreamTreeEditor = new ListTreeEditorViewModel("ClientStream", this.ListType, cg, true);
         this._clientStreamJsonEditor = new ListJsonEditorViewModel("ClientStream", this.ListType, cg, true);
         this._isShowingClientStreamTree = true;
-        this._clientStreamEditor = this._clientStreamTreeEditor;
+        this._clientStreamEditor = this.ClientStreamTreeEditor;
 
         this.SubscribeTo(vm => ((ClientStreamingReqViewModel)vm).IsShowingClientStreamTree,
             this.OnIsShowingClientStreamTreeChanged);
     }
 
-    private void OnAddListItem() {
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
-        if (ok) {
-            this._clientStreamEditor.AddItem(reqInstance);
-        } 
-    }
-    private void OnRemoveListItem() {
-        this._clientStreamEditor.RemoveSelectedItem();
-    }
-    
+    public ICommand AddListItemCommand { get; }
+
     public ClientStreamingCallResponse CallResponse {
         get => this._callResponse;
         private set => this.RaiseAndSetIfChanged(ref this._callResponse, value);
@@ -69,15 +61,12 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._canWrite, value);
     }
 
-    public List<VarDefinition> RequestVariables { get; set; }
-    public List<VarDefinition> RequestStreamVariables { get; set; }
     public IListEditorViewModel ClientStreamEditor {
         get => this._clientStreamEditor;
         private set => this.RaiseAndSetIfChanged(ref this._clientStreamEditor, value);
     }
-    public ListTreeEditorViewModel ClientStreamTreeEditor {
-        get => this._clientStreamTreeEditor;
-    }
+
+    public ListTreeEditorViewModel ClientStreamTreeEditor { get; }
 
     public ICommand EndWriteCommand {
         get;
@@ -88,13 +77,67 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isShowingClientStreamTree, value);
     }
 
+    public Type ListType { get; }
+    public ICommand RemoveListItemCommand { get; }
+    public List<VarDefinition> RequestStreamVariables { get; set; }
+
+    public List<VarDefinition> RequestVariables { get; set; }
+
     public ICommand WriteCommand {
         get;
     }
 
-    public ICommand AddListItemCommand { get; }
-    public ICommand RemoveListItemCommand { get; }
-    
+    private void OnAddListItem() {
+        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        if (ok) {
+            this._clientStreamEditor.AddItem(reqInstance);
+        }
+    }
+
+    private async Task OnEndWrite() {
+        try {
+            var resp = this.CallResponse;
+            this.IsBusy = true;
+            var writer = new WriteClientStreamFeature();
+            this.CallResponse = await writer.CompleteWrite(resp);
+        }
+        finally {
+            this.CanWrite = false;
+            //this._clientStreamEditor.Clear();
+            this.IsBusy = false;
+        }
+    }
+
+    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
+        var vm = (ClientStreamingReqViewModel)obj;
+        if (vm._isShowingClientStreamTree) {
+            this.ShowAsTree();
+        }
+        else {
+            this.ShowAsJson();
+        }
+    }
+
+    private void OnRemoveListItem() => this._clientStreamEditor.RemoveSelectedItem();
+
+    private async Task OnWrite() {
+        try {
+            var resp = this.CallResponse;
+            this.IsBusy = true;
+            var writer = new WriteClientStreamFeature();
+
+            foreach (var i in this.ClientStreamEditor.GetListItems()) {
+                await writer.Write(resp, i);
+            }
+        }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
+        finally {
+            this.IsBusy = false;
+        }
+    }
+
     // public override async Task ImportRequest() => await GrpcUiUtils.ImportRequest(
     //     this.RequestEditor,
     //     this.ClientStreamEditor,
@@ -144,48 +187,6 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         this.CanWrite = true;
     }
 
-    private async Task OnEndWrite() {
-        try {
-            var resp = this.CallResponse;
-            this.IsBusy = true;
-            var writer = new WriteClientStreamFeature();
-            this.CallResponse = await writer.CompleteWrite(resp);
-        }
-        finally {
-            this.CanWrite = false;
-            //this._clientStreamEditor.Clear();
-            this.IsBusy = false;
-        }
-    }
-
-    private void OnIsShowingClientStreamTreeChanged(ViewModelBase obj) {
-        var vm = (ClientStreamingReqViewModel)obj;
-        if (vm._isShowingClientStreamTree) {
-            this.ShowAsTree();
-        }
-        else {
-            this.ShowAsJson();
-        }
-    }
-
-    private async Task OnWrite() {
-        try {
-            var resp = this.CallResponse;
-            this.IsBusy = true;
-            var writer = new WriteClientStreamFeature();
-
-            foreach (var i in this.ClientStreamEditor.GetListItems()) {
-                await writer.Write(resp, i);
-            }
-        }
-        catch (Exception exc) {
-            this.Io.Log.Error(exc);
-        }
-        finally {
-            this.IsBusy = false;
-        }
-    }
-
     private void ShowAsJson() {
         var (ok, list) = this._clientStreamEditor.GetList();
         this.ClientStreamEditor = this._clientStreamJsonEditor;
@@ -196,7 +197,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
 
     private void ShowAsTree() {
         var (ok, list) = this._clientStreamEditor.GetList();
-        this.ClientStreamEditor = this._clientStreamTreeEditor;
+        this.ClientStreamEditor = this.ClientStreamTreeEditor;
         if (ok) {
             this.ClientStreamEditor.Show(list, this.RequestStreamVariables);
         }

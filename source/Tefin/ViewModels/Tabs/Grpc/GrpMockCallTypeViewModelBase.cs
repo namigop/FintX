@@ -13,10 +13,13 @@ public abstract class GrpMockCallTypeViewModelBase : ViewModelBase {
         GlobalHub.subscribe<MessageProject.MsgServiceMockUpdated>(this.OnServiceMockUpdated).Then(this.MarkForCleanup);
     }
 
-    public ProjectTypes.ServiceMockGroup ServiceMock { get; private set; }
-    public MethodInfo MethodInfo { get; }
     public abstract bool IsLoaded { get; }
+    public MethodInfo MethodInfo { get; }
+
+    public ProjectTypes.ServiceMockGroup ServiceMock { get; private set; }
     public abstract string GetScriptContent();
+
+    public abstract void ImportScript(string scriptFile);
 
     public abstract void Init();
 
@@ -25,6 +28,4 @@ public abstract class GrpMockCallTypeViewModelBase : ViewModelBase {
             this.ServiceMock = obj.Client;
         }
     }
-
-    public abstract void ImportScript(string scriptFile);
 }

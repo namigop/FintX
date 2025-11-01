@@ -15,15 +15,14 @@ public class AddServiceMockFeature(
     uint port,
     MethodInfo[] methods,
     IOs io) {
-    public void Add() {
+    public void Add() =>
         ServiceMockStructure.addServiceMock(
             io,
             project,
             serviceName,
             description,
             csFiles,
-            dll, 
+            dll,
             port,
             methods);
-    }
 }

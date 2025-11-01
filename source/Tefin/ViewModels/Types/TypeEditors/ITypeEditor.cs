@@ -11,6 +11,4 @@ public interface ITypeEditor : IDisposable {
 
 public interface ITypeEditor<T> : ITypeEditor {
     T? TempValue { get; set; }
-
-  
 }

@@ -18,8 +18,6 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
         this._isUtc = dateTime.Kind == DateTimeKind.Utc;
     }
 
-    public SystemNode TypeNode => (SystemNode)this.Node;
-    
     public string DateTimeText {
         get => this._dateTimeText;
         set {
@@ -37,6 +35,8 @@ public class NullableDateTimeEditor : TypeEditorBase<DateTime?> {
             this.HasChanges = true;
         }
     }
+
+    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public override void CommitEdit() {
         if (this.IsNull) {

@@ -8,7 +8,6 @@ using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Interop;
-using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Utils;
 using Tefin.ViewModels.Types;
@@ -20,10 +19,10 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class UnaryViewModel : GrpCallTypeViewModelBase {
+    private AllVariableDefinitions _envVars = new();
     private UnaryReqViewModel _reqViewModel;
     private bool _showTreeEditor;
     private string _statusText;
-    private AllVariableDefinitions _envVars = new();
 
     public UnaryViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this._reqViewModel = new UnaryReqViewModel(mi, cg, true);
@@ -32,15 +31,16 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
         this.StopCommand = this.CreateCommand(this.OnStop);
         this._statusText = "";
         this._showTreeEditor = true;
-        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor, this.OnShowTreeEditorChanged);
+        this.ReqViewModel.SubscribeTo(vm => ((UnaryReqViewModel)vm).IsShowingRequestTreeEditor,
+            this.OnShowTreeEditorChanged);
         this.ExportRequestCommand = this.CreateCommand(this.OnExportRequest);
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
     }
 
     public bool CanStop => this.ReqViewModel.RequestEditor.CtsReq != null;
-    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
 
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
@@ -143,7 +143,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
             this.ImportRequest(files[0]);
         }
     }
- 
+
     private void OnShowTreeEditorChanged(ViewModelBase obj) {
         this.ReqViewModel = null!;
         this.ReqViewModel = (UnaryReqViewModel)obj;
@@ -161,7 +161,7 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
                 this.RaisePropertyChanged(nameof(this.CanStop));
 
                 var clientConfig = this.Client.Config.Value;
-                
+
                 var feature = new CallUnaryFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
                 var (ok, resp) = await feature.Run();
                 var (_, response, context) = resp.OkayOrFailed();

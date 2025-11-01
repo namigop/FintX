@@ -18,6 +18,10 @@ public class CloseFlyoutBehavior : AvaloniaObject {
 
     static CloseFlyoutBehavior() => CloseOnClickProperty.Changed.AddClassHandler<Interactive>(HandleCloseChanged);
 
+    public static bool GetCloseOnClick(AvaloniaObject element) => element.GetValue(CloseOnClickProperty);
+
+    public static FlyoutBase? GetFlyout(AvaloniaObject element) => element.GetValue(FlyoutProperty);
+
 
     private static void HandleCloseChanged(Interactive interactElem, AvaloniaPropertyChangedEventArgs args) {
         static bool HasContextFlyout(Control c) {
@@ -78,9 +82,5 @@ public class CloseFlyoutBehavior : AvaloniaObject {
     public static void SetCloseOnClick(AvaloniaObject element, bool close) =>
         element.SetValue(CloseOnClickProperty, close);
 
-    public static bool GetCloseOnClick(AvaloniaObject element) => element.GetValue(CloseOnClickProperty);
-
     public static void SetFlyout(AvaloniaObject element, bool close) => element.SetValue(FlyoutProperty, close);
-
-    public static FlyoutBase? GetFlyout(AvaloniaObject element) => element.GetValue(FlyoutProperty);
 }

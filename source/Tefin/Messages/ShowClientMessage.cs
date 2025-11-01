@@ -12,15 +12,16 @@ public class ShowClientMessage(
     string clientName,
     string? selectedDiscoveredService,
     string description,
-    string[] csFiles, string dll)
+    string[] csFiles,
+    string dll)
     : MessageBase {
-    public string Dll { get; } = dll;
     public string ClientName { get; } = clientName;
     public string[] CsFiles { get; } = csFiles;
     public string Description { get; } = description;
+    public string Dll { get; } = dll;
     public CompileOutput Output { get; } = output;
     public string ProtoFilesOrUrl { get; } = protoFilesOrUrl;
-    public string? SelectedDiscoveredService { get; } = selectedDiscoveredService;
 
     public required bool Reset { get; init; } = false;
+    public string? SelectedDiscoveredService { get; } = selectedDiscoveredService;
 }

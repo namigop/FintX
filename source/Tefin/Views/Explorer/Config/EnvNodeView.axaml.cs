@@ -3,7 +3,5 @@
 namespace Tefin.Views.Explorer.Config;
 
 public partial class EnvNodeView : UserControl {
-    public EnvNodeView() {
-        InitializeComponent();
-    }
+    public EnvNodeView() => this.InitializeComponent();
 }

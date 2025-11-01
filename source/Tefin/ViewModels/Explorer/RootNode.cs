@@ -32,7 +32,6 @@ public abstract class ExplorerRootNode : NodeBase {
 
         this.OpenClientConfigCommand = this.CreateCommand(this.OnOpenClientConfig);
         GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated).Then(this.MarkForCleanup);
-
     }
 
     protected ExplorerRootNode() {
@@ -42,31 +41,32 @@ public abstract class ExplorerRootNode : NodeBase {
     }
 
     public ProjectTypes.ClientGroup Client { get; protected set; }
-
-    public Type? ClientType {
-        get => this._clientType;
-        set => this.RaiseAndSetIfChanged(ref this._clientType, value);
-    }
-
-    public ICommand? OpenClientConfigCommand { get; }
     public string ClientConfigFile { get; protected set; }
-    public string ClientPath { get; protected set; } = "";
 
     public string ClientName {
         get => this._clientName;
         set => this.RaiseAndSetIfChanged(ref this._clientName, value);
     }
 
-    public string ServiceName { get; protected set; }
+    public string ClientPath { get; protected set; } = "";
 
-    public string Url {
-        get => this._url;
-        set => this.RaiseAndSetIfChanged(ref this._url, value);
+    public Type? ClientType {
+        get => this._clientType;
+        set => this.RaiseAndSetIfChanged(ref this._clientType, value);
     }
 
     public string Desc {
         get => this._desc;
         set => this.RaiseAndSetIfChanged(ref this._desc, value);
+    }
+
+    public ICommand? OpenClientConfigCommand { get; }
+
+    public string ServiceName { get; protected set; }
+
+    public string Url {
+        get => this._url;
+        set => this.RaiseAndSetIfChanged(ref this._url, value);
     }
 
     private void OnClientNameChanged() {

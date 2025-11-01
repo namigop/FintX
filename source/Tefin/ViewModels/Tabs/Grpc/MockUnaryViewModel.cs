@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Tefin.Core;
 using Tefin.Core.Interop;
 using Tefin.Core.Scripting;
-using Tefin.Features;
 using Tefin.Features.Scripting;
 
 using File = System.IO.File;
@@ -27,25 +26,13 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
         //this.RemoveScriptCommand = this.CreateCommand(this.OnRemoveScript);
     }
 
-    private void OnRemoveScript(ScriptViewModel vm) {
-        this.Scripts.Remove(vm);
-        if (vm.IsSelected && this.Scripts.Any()) {
-            this.Scripts.First().IsSelected = true;
-        }
-
-        this.SetEditorHeight();
-    }
-
     public ICommand AddScriptCommand { get; }
-
-    public ObservableCollection<ScriptViewModel> Scripts { get; }
 
     public override bool IsLoaded => this.Scripts.Count > 0;
 
-    private void OnAddScript() {
-        this.Scripts.Add(new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) { Scripts = this.Scripts });
-        this.SetEditorHeight();
-    }
+    public ObservableCollection<ScriptViewModel> Scripts { get; }
+
+    public override void Dispose() => ServerHandler.Dispose(this.ServiceMock.Name);
 
 
     public override string GetScriptContent() {
@@ -54,24 +41,18 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
         return Instance.jsonSerialize(m);
     }
 
-    
-    public override void Init() {
-    }
-
-    public override void Dispose() {
-        ServerHandler.Dispose(this.ServiceMock.Name);
-    }
-
     public override void ImportScript(string scriptFile) {
         if (!File.Exists(scriptFile)) {
             return;
         }
-        
-        var content = Io.File.ReadAllText(scriptFile);
+
+        var content = this.Io.File.ReadAllText(scriptFile);
         var m = Instance.jsonDeserialize<ScriptFile>(content);
         this.Scripts.Clear();
         foreach (var s in m.Scripts) {
-            var scm = new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) { Scripts = this.Scripts };
+            var scm = new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) {
+                Scripts = this.Scripts
+            };
             scm.ScriptText = s.Content;
             scm.IsSelected = s.IsSelected;
             this.Scripts.Add(scm);
@@ -79,10 +60,30 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
 
         if (this.Scripts.Any()) {
             var hasSelected = this.Scripts.Any(v => v.IsSelected);
-            if (!hasSelected)
+            if (!hasSelected) {
                 this.Scripts.First().IsSelected = true;
+            }
         }
-        
+
+        this.SetEditorHeight();
+    }
+
+
+    public override void Init() {
+    }
+
+    private void OnAddScript() {
+        this.Scripts.Add(
+            new ScriptViewModel(this._mi, this.ServiceMock.Name, this.OnRemoveScript) { Scripts = this.Scripts });
+        this.SetEditorHeight();
+    }
+
+    private void OnRemoveScript(ScriptViewModel vm) {
+        this.Scripts.Remove(vm);
+        if (vm.IsSelected && this.Scripts.Any()) {
+            this.Scripts.First().IsSelected = true;
+        }
+
         this.SetEditorHeight();
     }
 

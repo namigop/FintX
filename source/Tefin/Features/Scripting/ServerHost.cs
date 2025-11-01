@@ -7,23 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Tefin.Features.Scripting;
 
 public class ServerHost(Type serviceType, uint port, string serviceName) {
-    
     private WebApplication? _app;
     private CancellationTokenSource? _csource;
     public bool IsRunning { get; private set; }
-
-    public async Task Stop() {
-        if (this._csource == null) {
-            this.IsRunning = false;
-            return;
-        }
-        
-        await this._app?.StopAsync(this._csource!.Token)!;
-        this._csource?.Dispose();
-        this._csource = null;
-        this._app = null;
-        this.IsRunning = false;
-    }
 
     public async Task Start() {
         try {
@@ -64,5 +50,18 @@ public class ServerHost(Type serviceType, uint port, string serviceName) {
             this.IsRunning = false;
             throw;
         }
+    }
+
+    public async Task Stop() {
+        if (this._csource == null) {
+            this.IsRunning = false;
+            return;
+        }
+
+        await this._app?.StopAsync(this._csource!.Token)!;
+        this._csource?.Dispose();
+        this._csource = null;
+        this._app = null;
+        this.IsRunning = false;
     }
 }

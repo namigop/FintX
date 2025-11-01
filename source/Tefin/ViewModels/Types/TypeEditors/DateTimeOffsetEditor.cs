@@ -14,8 +14,6 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
         this._dateTimeText = $"{dateTime:O}";
     }
 
-    public SystemNode TypeNode => (SystemNode)this.Node;
-
     public string DateTimeText {
         get => this._dateTimeText;
         set {
@@ -25,6 +23,8 @@ public class DateTimeOffsetEditor : TypeEditorBase<DateTimeOffset> {
     }
 
     public override string FormattedValue => $"{this.TempValue:O}";
+
+    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public override void CommitEdit() {
         if (DateTimeOffset.TryParse(this.DateTimeText, out var dt)) {

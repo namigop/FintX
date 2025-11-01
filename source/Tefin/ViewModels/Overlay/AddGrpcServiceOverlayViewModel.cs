@@ -2,7 +2,6 @@
 
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -22,6 +21,7 @@ using Tefin.ViewModels.Validations;
 namespace Tefin.ViewModels.Overlay;
 
 public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
+    private static StartDemoGrpcServiceFeature? _startGrpcFeature;
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
@@ -30,7 +30,6 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
     private string _startStopDemoGrpcServiceText = "";
-    private static StartDemoGrpcServiceFeature? _startGrpcFeature;
 
     public AddGrpcServiceOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
@@ -44,47 +43,13 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
 
         _startGrpcFeature ??= new StartDemoGrpcServiceFeature();
         this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
-        
+
         this.SubscribeTo<string, AddGrpcServiceOverlayViewModel>(
             x => x.ReflectionUrl,
             vm => {
                 vm.RaisePropertyChanged(nameof(vm.StartStopDemoGrpcServiceText));
                 vm.RaisePropertyChanged(nameof(vm.CanStartDemoGrpcService));
             });
-    }
-
-    public ICommand StartStopDemoGrpcServiceCommand { get; }
-
-    public bool CanStartDemoGrpcService => this.ReflectionUrl == StartDemoGrpcServiceFeature.Url;
-
-    public string StartStopDemoGrpcServiceText {
-        get => this._startStopDemoGrpcServiceText;
-        set => this.RaiseAndSetIfChanged(ref _startStopDemoGrpcServiceText, value);
-    }
- 
-    private async Task OnStartStopDemoGrpcService() {
-        if (!_startGrpcFeature!.IsStarted) {
-            this.Description = "Demo gRPC service for testing";
-            await _startGrpcFeature.Start();
-            await this.OnDiscover();
-            this.ClientName = _startGrpcFeature.GetClientName();
-            await Task.Delay(1000);
-            await this.OnOkay();
-
-            this.Io.Log.Info("***************************");
-            this.Io.Log.Info("Demo gRPC service started");
-            this.Io.Log.Info("***************************");
-            
-            this.StartStopDemoGrpcServiceText = "Stop Demo gRPC Service";
-        }
-        else {
-            await _startGrpcFeature.Stop();
-            this.Io.Log.Info("***************************");
-            this.Io.Log.Info("Demo gRPC service stooped");
-            this.Io.Log.Info("***************************");
-            
-            this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
-        }
     }
 
     [IsHttp]
@@ -94,6 +59,8 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public ICommand CancelCommand { get; }
+
+    public bool CanStartDemoGrpcService => this.ReflectionUrl == StartDemoGrpcServiceFeature.Url;
 
     [Required(ErrorMessage = "Enter a unique name")]
     [IsValidFolderName]
@@ -141,6 +108,13 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
                 }
             }
         }
+    }
+
+    public ICommand StartStopDemoGrpcServiceCommand { get; }
+
+    public string StartStopDemoGrpcServiceText {
+        get => this._startStopDemoGrpcServiceText;
+        set => this.RaiseAndSetIfChanged(ref this._startStopDemoGrpcServiceText, value);
     }
 
     public string Title { get; }
@@ -207,7 +181,8 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
         var disco = new DiscoverFeature(protoFiles, this.ReflectionUrl);
         var (success, _) = await disco.Discover(this.Io);
         if (success) {
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
+                this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run(false);
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;
@@ -217,13 +192,38 @@ public class AddGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel {
                 var msg = new ShowClientMessage(
                     output,
                     address,
-                    this.ClientName, 
+                    this.ClientName,
                     this.SelectedDiscoveredService,
                     this.Description,
                     csFiles,
-                    output.Input.Value.ModuleFile) {Reset = false};
+                    output.Input.Value.ModuleFile) { Reset = false };
                 GlobalHub.publish(msg);
             }
+        }
+    }
+
+    private async Task OnStartStopDemoGrpcService() {
+        if (!_startGrpcFeature!.IsStarted) {
+            this.Description = "Demo gRPC service for testing";
+            await _startGrpcFeature.Start();
+            await this.OnDiscover();
+            this.ClientName = _startGrpcFeature.GetClientName();
+            await Task.Delay(1000);
+            await this.OnOkay();
+
+            this.Io.Log.Info("***************************");
+            this.Io.Log.Info("Demo gRPC service started");
+            this.Io.Log.Info("***************************");
+
+            this.StartStopDemoGrpcServiceText = "Stop Demo gRPC Service";
+        }
+        else {
+            await _startGrpcFeature.Stop();
+            this.Io.Log.Info("***************************");
+            this.Io.Log.Info("Demo gRPC service stooped");
+            this.Io.Log.Info("***************************");
+
+            this.StartStopDemoGrpcServiceText = "Start Demo gRPC Service";
         }
     }
 }

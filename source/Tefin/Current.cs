@@ -9,20 +9,18 @@ public static class Current {
         GlobalHub.subscribe<ProjectSelectedMessage>(OnProjectSelected);
     }
 
-    public static string Package { get; private set; } = "";
-
-    public static string ProjectPath { get; private set; } = "";
-
-    public static string ProjectName { get; private set; } = "";
+    public static string Env { get; private set; } = "";
 
     public static string EnvFilePath { get; private set; } = "";
 
-    public static string Env { get; private set; } = "";
+    public static string Package { get; private set; } = "";
 
-    private static void OnProjectSelected(ProjectSelectedMessage obj) {
-        ProjectName = obj.ProjectName;
-        ProjectPath = obj.ProjectPath;
-        Package = obj.Package;
+    public static string ProjectName { get; private set; } = "";
+
+    public static string ProjectPath { get; private set; } = "";
+
+    public static void Init() {
+        //intentionally empty
     }
 
     private static void OnEnvSelected(EnvSelectedMessage obj) {
@@ -30,7 +28,9 @@ public static class Current {
         EnvFilePath = obj.EnvFilePath;
     }
 
-    public static void Init() {
-       //intentionally empty
+    private static void OnProjectSelected(ProjectSelectedMessage obj) {
+        ProjectName = obj.ProjectName;
+        ProjectPath = obj.ProjectPath;
+        Package = obj.Package;
     }
 }

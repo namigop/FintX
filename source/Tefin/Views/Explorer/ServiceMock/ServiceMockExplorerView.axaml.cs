@@ -8,7 +8,6 @@ using Avalonia.VisualTree;
 using Tefin.Core.Infra.Actors;
 using Tefin.Messages;
 using Tefin.ViewModels.Explorer;
-using Tefin.ViewModels.Explorer.Client;
 using Tefin.ViewModels.Explorer.ServiceMock;
 using Tefin.ViewModels.Tabs;
 

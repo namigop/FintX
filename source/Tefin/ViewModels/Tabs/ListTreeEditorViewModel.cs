@@ -17,10 +17,10 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs;
 
 public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
-    private readonly Type _listItemType;
-    private readonly string _name;
     private readonly ProjectTypes.ClientGroup _clientGroup;
     private readonly bool _isRequest;
+    private readonly Type _listItemType;
+    private readonly string _name;
     private object _listInstance;
 
     public ListTreeEditorViewModel(string name, Type listType, ProjectTypes.ClientGroup clientGroup, bool isRequest) {
@@ -38,17 +38,8 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         };
 
         this.StreamTree.RowSelection!.SingleSelect = true;
-        this.StreamTree.RowSelection!.SelectionChanged += OnSelectionChanged;
+        this.StreamTree.RowSelection!.SelectionChanged += this.OnSelectionChanged;
         this._listItemType = TypeHelper.getListItemType(listType).Value;
-    }
-
-    private void OnSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
-        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
-            item!.IsSelected = false;
-        }
-        foreach (var item in e.SelectedItems.Where(i => i != null)) {
-            item!.IsSelected = true;
-        }
     }
 
     public ObservableCollection<IExplorerItem> StreamItems { get; } = new();
@@ -57,10 +48,12 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
     public Type ListType {
         get;
     }
+
     public void RemoveSelectedItem() {
-        if (this.StreamItems.Count <= 0)
+        if (this.StreamItems.Count <= 0) {
             return;
-        
+        }
+
         var streamNode = (StreamNode)this.StreamItems[0];
         var selectedNode = streamNode.FindSelected();
         var listItemNode = selectedNode?.FindParentNode<IExplorerItem>(FindSelected);
@@ -79,11 +72,13 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
             return false;
         }
     }
+
     public void AddItem(object instance) =>
         Dispatcher.UIThread.Post(() => {
-            if (this.StreamItems.Count == 0)
+            if (this.StreamItems.Count == 0) {
                 return;
-            
+            }
+
             var streamNode = (StreamNode)this.StreamItems[0];
             streamNode.AddItem(instance);
             if (streamNode.Items.Count == 1) {
@@ -99,7 +94,7 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
         if (this.StreamItems.Count > 0 && this.StreamItems[0] is StreamNode rs) {
             rs.TryUpdateTemplatedChildNodes(this.Io);
         }
-        
+
         dynamic list = this._listInstance;
         foreach (var i in list) {
             yield return i;
@@ -113,10 +108,21 @@ public class ListTreeEditorViewModel : ViewModelBase, IListEditorViewModel {
          */
 
         this._listInstance = listInstance;
-        var streamNode = new StreamNode(this._name, this.ListType, null, listInstance, null, streamVariables, this._clientGroup.Path, this._isRequest);
+        var streamNode = new StreamNode(this._name, this.ListType, null, listInstance, null, streamVariables,
+            this._clientGroup.Path, this._isRequest);
         this.StreamItems.Clear();
         this.StreamItems.Add(streamNode);
         streamNode.Init();
-        streamNode.InitVariableNodes(streamVariables, _clientGroup.Path, this.Io);
+        streamNode.InitVariableNodes(streamVariables, this._clientGroup.Path, this.Io);
+    }
+
+    private void OnSelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<IExplorerItem> e) {
+        foreach (var item in e.DeselectedItems.Where(i => i != null)) {
+            item!.IsSelected = false;
+        }
+
+        foreach (var item in e.SelectedItems.Where(i => i != null)) {
+            item!.IsSelected = true;
+        }
     }
 }

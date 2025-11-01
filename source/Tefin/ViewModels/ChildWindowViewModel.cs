@@ -21,15 +21,15 @@ public class ChildWindowViewModel : ViewModelBase {
         this.FooterMessage = !string.IsNullOrEmpty(content.SubTitle) ? content.SubTitle : "Ready...";
     }
 
+    public ITabViewModel Content { get; }
+    public ICommand DockCommand { get; }
+
     public string FooterMessage {
         get => this._footerMessage;
         set => this.RaiseAndSetIfChanged(ref this._footerMessage, value);
     }
 
     public Action WindowClose { get; set; }
-
-    public ITabViewModel Content { get; }
-    public ICommand DockCommand { get; }
 
     public void Close() => Dispatcher.UIThread.Invoke(() => this.WindowClose?.Invoke());
 

@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:explorer="clr-namespace:Tefin.ViewModels.Explorer.Config"
              xmlns:controls="clr-namespace:Tefin.Views.Controls"
-             xmlns:explorer1="clr-namespace:Tefin.Views.Explorer"
              xmlns:config="clr-namespace:Tefin.Views.Explorer.Config"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="explorer:EnvNode"

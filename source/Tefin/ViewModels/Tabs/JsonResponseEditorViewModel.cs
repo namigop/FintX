@@ -27,7 +27,8 @@ public class JsonResponseEditorViewModel(MethodInfo methodInfo) : ViewModelBase,
         private set;
     }
 
-    public async Task Complete(Type responseType, Func<Task<object>> completeRead, List<VarDefinition> responseVariables) {
+    public async Task Complete(Type responseType, Func<Task<object>> completeRead,
+        List<VarDefinition> responseVariables) {
         try {
             this._responseVariables = responseVariables;
             this.ResponseType = responseType;

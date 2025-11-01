@@ -3,8 +3,7 @@ using Tefin.ViewModels.Types;
 
 namespace Tefin.Features;
 
-public class RemoveEnvVarsFeature() {
-
+public class RemoveEnvVarsFeature {
     public void Remove(VarDefinition v, string clientPath, string currentEnv, IOs io) {
         var load = new LoadEnvVarsFeature();
         if (v.Scope == RequestEnvVarScope.Client) {

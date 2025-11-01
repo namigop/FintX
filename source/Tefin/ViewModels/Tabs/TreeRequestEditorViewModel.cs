@@ -11,7 +11,6 @@ using ReactiveUI;
 
 using Tefin.Core.Interop;
 using Tefin.Core.Reflection;
-using Tefin.Features;
 using Tefin.ViewModels.Explorer;
 using Tefin.ViewModels.Types;
 using Tefin.ViewModels.Types.TypeNodeBuilders;
@@ -24,6 +23,7 @@ namespace Tefin.ViewModels.Tabs;
 
 public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel {
     private List<VarDefinition> _reqVars = [];
+
     public TreeRequestEditorViewModel(MethodInfo methodInfo) {
         this.MethodInfo = methodInfo;
         //this.MethodParameterInstances = methodParameterInstances ?? new List<object?>();
@@ -66,32 +66,35 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         /* check for nodes with env tag and update the value of
          *  the node with the env variable  */
-        if (this.Items[0] is MethodInfoNode mn)
+        if (this.Items[0] is MethodInfoNode mn) {
             mn.TryUpdateTemplatedChildNodes(this.Io);
-        
+        }
+
         var mParams = this.Items[0].Items.Select(t => ((TypeBaseNode)t).Value).ToArray()!;
         var last = mParams.Last();
-       
+
         if (last is CancellationToken) {
-            if (CtsReq == null) {
+            if (this.CtsReq == null) {
                 this.CtsReq = new CancellationTokenSource();
             }
+
             //replace the CancellationToken with one that we can cancel
             mParams[^1] = this.CtsReq.Token;
         }
 
         return (mParams.Any(), mParams);
     }
-    
+
     public void Show(object?[] parameters, List<VarDefinition> reqVars, ProjectTypes.ClientGroup clientGroup) {
-        if (this._reqVars.Count == 0)
+        if (this._reqVars.Count == 0) {
             this._reqVars = reqVars;
-        
+        }
+
         this.Items.Clear();
         var methodParams = this.MethodInfo.GetParameters();
         var hasValues = parameters.Length == methodParams.Length;
 
-        var methodNode = new MethodInfoNode(this.MethodInfo, clientGroup,  this._reqVars);
+        var methodNode = new MethodInfoNode(this.MethodInfo, clientGroup, this._reqVars);
         this.Items.Add(methodNode);
 
         var counter = 0;
@@ -106,9 +109,9 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
             methodNode.AddItem(paramNode);
             counter += 1;
         }
-        
+
         this.Items[0].InitVariableNodes(reqVars, clientGroup.Path, this.Io);
-         this.RaisePropertyChanged(nameof(this.Items));
+        this.RaisePropertyChanged(nameof(this.Items));
     }
 
     public void StartRequest() {

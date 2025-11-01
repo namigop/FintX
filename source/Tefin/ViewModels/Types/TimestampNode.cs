@@ -1,21 +1,22 @@
 #region
 
 using Google.Protobuf.WellKnownTypes;
+
 using ReactiveUI;
 
 using Type = System.Type;
+
 #endregion
 
 namespace Tefin.ViewModels.Types;
 
 public class TimestampNode : TypeBaseNode {
     private string _dateTime;
-   
+
     public TimestampNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
         name, type, propInfo, instance, parent) {
-        
         var ts = instance as Timestamp;
-        this.EnvVar = new(this);
+        this.EnvVar = new EnvVarNodeViewModel(this);
         if (ts != null) {
             this._dateTime = $"{ts.ToDateTime():O}";
         }
@@ -23,14 +24,15 @@ public class TimestampNode : TypeBaseNode {
             this._dateTime = $"{DateTime.Now.ToUniversalTime():O}";
         }
     }
-    public EnvVarNodeViewModel EnvVar { get; }
- 
+
 
     public string DateTimeText {
         get => this._dateTime;
         set => this.RaiseAndSetIfChanged(ref this._dateTime, value);
     }
-    
+
+    public EnvVarNodeViewModel EnvVar { get; }
+
     public override string FormattedTypeName { get; } = $"{{{nameof(Timestamp)}}}";
 
     public void CommitEdit() {

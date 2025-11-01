@@ -16,14 +16,14 @@
 
         <TextBlock Text="{Binding OpenSourceLicense}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
         <TextBlock Text="{Binding Copyright}" VerticalAlignment="Stretch" Margin="0 2 0 0 " />
-    
+
         <StackPanel Margin="0 20 0 10">
             <StackPanel.Styles>
                 <Style Selector="HyperlinkButton">
                     <Setter Property="Padding" Value="2" />
                 </Style>
             </StackPanel.Styles>
-            <TextBlock  Text="Tutorials" FontSize="20"  />
+            <TextBlock Text="Tutorials" FontSize="20" />
             <HyperlinkButton Command="{Binding OpenBrowserCommand}" CommandParameter="https://fintx.dev/?p=345">
                 <TextBlock Text="Quickstart Guide" Foreground="CornflowerBlue" />
             </HyperlinkButton>
@@ -44,5 +44,5 @@
             </HyperlinkButton>
         </StackPanel>
     </StackPanel>
-    
+
 </UserControl>

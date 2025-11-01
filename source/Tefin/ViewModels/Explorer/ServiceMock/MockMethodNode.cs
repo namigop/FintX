@@ -29,30 +29,17 @@ public sealed class MockMethodNode : NodeBase {
         GlobalHub.subscribe<MessageProject.MsgServiceMockUpdated>(this.OnServiceMockUpdated).Then(this.MarkForCleanup);
     }
 
-    public ProjectTypes.ServiceMockGroup ServiceMock { get; set; }
     public MethodInfo MethodInfo { get; }
     public ICommand NewRequestCommand { get; }
+
     public ICommand OpenMethodCommand { get; }
+
     //public ICommand ExportCommand { get; }
     public ICommand OpenMethodInWindowCommand { get; }
 
-    private void OnServiceMockUpdated(MessageProject.MsgServiceMockUpdated obj) {
-        //update in case the Url and ClientName has been changed
-        if (this.ServiceMock.Path == obj.Path || this.ServiceMock.Path == obj.PreviousPath) {
-            this.ServiceMock = obj.Client;
-            this.Io.Log.Debug($"Updated methodNode {this.MethodInfo.Name} clientInstance");
-        }
-    }
+    public ProjectTypes.ServiceMockGroup ServiceMock { get; set; }
 
-    private void OnOpenMethodInWindow() {
-        var tab = TabFactory.From(this, this.Io);
-        if (tab != null) {
-            GlobalHub.publish(new OpenChildWindowMessage(tab));
-        }
-    }
-
-    public GrpcMockMethodHostViewModel CreateViewModel() =>
-        new GrpcMockMethodHostViewModel(this.MethodInfo, this.ServiceMock);
+    public GrpcMockMethodHostViewModel CreateViewModel() => new(this.MethodInfo, this.ServiceMock);
 
     public override void Init() {
         ServiceMockStructure.getMethodPath(this.ServiceMock.Path, this.MethodInfo.Name)
@@ -61,17 +48,17 @@ public sealed class MockMethodNode : NodeBase {
         var method = this.ServiceMock.Methods.FirstOrDefault(m => m.Name == this.MethodInfo.Name);
         if (method != null && File.Exists(method.ScriptFile)) {
             //foreach (var file in method.ScriptFile.OrderBy(f => f)) {
-                var fn = new MockMethodScriptNode(method.ScriptFile);
-                fn.Init();
-                this.AddItem(fn);
-           // }
+            var fn = new MockMethodScriptNode(method.ScriptFile);
+            fn.Init();
+            this.AddItem(fn);
+            // }
         }
     }
 
     private void OnNewRequest() {
         var path = ClientStructure.getMethodPath(this.ServiceMock.Path, this.MethodInfo.Name);
         var file = Path.Combine(path, Core.Utils.getAvailableFileName(path, this.MethodInfo.Name, Ext.requestFileExt));
-        
+
         var fn = new FileReqNode(file);
         this.AddItem(fn);
         this.IsExpanded = true;
@@ -82,6 +69,21 @@ public sealed class MockMethodNode : NodeBase {
         var tab = TabFactory.From(this, this.Io);
         if (tab != null) {
             GlobalHub.publish(new OpenTabMessage(tab));
+        }
+    }
+
+    private void OnOpenMethodInWindow() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null) {
+            GlobalHub.publish(new OpenChildWindowMessage(tab));
+        }
+    }
+
+    private void OnServiceMockUpdated(MessageProject.MsgServiceMockUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (this.ServiceMock.Path == obj.Path || this.ServiceMock.Path == obj.PreviousPath) {
+            this.ServiceMock = obj.Client;
+            this.Io.Log.Debug($"Updated methodNode {this.MethodInfo.Name} clientInstance");
         }
     }
 }

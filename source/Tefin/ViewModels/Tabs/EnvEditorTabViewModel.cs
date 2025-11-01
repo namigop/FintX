@@ -1,8 +1,5 @@
-﻿using Avalonia.Threading;
+﻿using ReactiveUI;
 
-using ReactiveUI;
-
-using Tefin.Core;
 using Tefin.Core.Infra.Actors;
 using Tefin.Core.Interop;
 using Tefin.Features;
@@ -15,16 +12,39 @@ namespace Tefin.ViewModels.Tabs;
 
 public class EnvEditorTabViewModel : PersistedTabViewModel {
     private const string _icon = "";
+    private readonly string _envFile;
+    private readonly LoadEnvVarsFeature _loadEnv;
     private EnvDataViewModel _envData;
     private bool _isEditing;
-    private readonly LoadEnvVarsFeature _loadEnv;
-    private readonly string _envFile;
 
     public EnvEditorTabViewModel(EnvNode item) : base(item) {
-        this._envFile =  Path.GetFullPath(item.EnvFile);
+        this._envFile = Path.GetFullPath(item.EnvFile);
         this._envData = new EnvDataViewModel(item.GetEnvData());
-        GlobalHub.subscribe<FileChangeMessage>(OnFileChange);
-        _loadEnv = new LoadEnvVarsFeature();
+        GlobalHub.subscribe<FileChangeMessage>(this.OnFileChange);
+        this._loadEnv = new LoadEnvVarsFeature();
+    }
+
+    public override ProjectTypes.ClientGroup Client => ProjectTypes.ClientGroup.Empty();
+    public override ClientMethodViewModelBase ClientMethod => null!;
+
+    public EnvDataViewModel EnvData {
+        get => this._envData;
+        private set => this.RaiseAndSetIfChanged(ref this._envData, value);
+    }
+
+    public override string Icon => _icon;
+
+    public bool IsEditing {
+        get => this._isEditing;
+        set => this.RaiseAndSetIfChanged(ref this._isEditing, value);
+    }
+
+    public override string GenerateFileContent() => this._isEditing ? "" : this.EnvData.GenerateFileContent();
+    protected override string GetTabId() => ((EnvNode)this.ExplorerItem).FullPath;
+
+    public override void Init() {
+        this.Id = this.GetTabId();
+        this.Title = Path.GetFileName(this.Id);
     }
 
     private void OnFileChange(FileChangeMessage msg) {
@@ -34,30 +54,6 @@ public class EnvEditorTabViewModel : PersistedTabViewModel {
         }
     }
 
-    public EnvDataViewModel EnvData {
-        get => this._envData;
-        private set => this.RaiseAndSetIfChanged(ref  _envData , value);
-    }
-
-    public override string Icon => _icon;
-
-    public override ProjectTypes.ClientGroup Client => ProjectTypes.ClientGroup.Empty();
-    public override ClientMethodViewModelBase ClientMethod => null!;
-
-    public bool IsEditing {
-        get => this._isEditing;
-        set => this.RaiseAndSetIfChanged(ref _isEditing, value);
-    }
-
-    public override string GenerateFileContent() {
-        return this._isEditing ? "" : EnvData.GenerateFileContent();
-    }
-
-    public override void Init() {
-        this.Id = this.GetTabId();
-        this.Title = Path.GetFileName(this.Id);
-    }
-
-    public override void UpdateTitle(string oldFullPath, string newFullPath) => this.Title = Path.GetFileName(newFullPath);
-    protected override string GetTabId() => ((EnvNode)this.ExplorerItem).FullPath;
+    public override void UpdateTitle(string oldFullPath, string newFullPath) =>
+        this.Title = Path.GetFileName(newFullPath);
 }

@@ -24,6 +24,10 @@ public class AddNewProjectOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.ProjectName = "";
     }
 
+    public ICommand CancelCommand { get; }
+
+    public ICommand OkayCommand { get; }
+
     public string ParentFolder {
         get => this._parentFolder;
         set => this.RaiseAndSetIfChanged(ref this._parentFolder, value);
@@ -37,15 +41,10 @@ public class AddNewProjectOverlayViewModel : ViewModelBase, IOverlayViewModel {
         }
     }
 
-    public ICommand OkayCommand { get; }
-
-    public ICommand CancelCommand { get; }
     public ICommand SelectFolderCommand { get; }
     public string Title { get; } = "Create new project";
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
-
-    private async Task OnSelectFolder() => this.ParentFolder = await DialogUtils.SelectFolder();
 
     private void OnOkay() {
         if (string.IsNullOrWhiteSpace(this.ParentFolder)) {
@@ -68,4 +67,6 @@ public class AddNewProjectOverlayViewModel : ViewModelBase, IOverlayViewModel {
         GlobalHub.publish(new NewProjectCreatedMessage(this._package, projectPath));
         this.Close();
     }
+
+    private async Task OnSelectFolder() => this.ParentFolder = await DialogUtils.SelectFolder();
 }

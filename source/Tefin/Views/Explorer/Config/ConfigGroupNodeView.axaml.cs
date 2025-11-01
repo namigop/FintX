@@ -3,7 +3,5 @@
 namespace Tefin.Views.Explorer.Config;
 
 public partial class ConfigGroupNodeView : UserControl {
-    public ConfigGroupNodeView() {
-        InitializeComponent();
-    }
+    public ConfigGroupNodeView() => this.InitializeComponent();
 }

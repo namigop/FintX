@@ -10,9 +10,8 @@
     <Border x:Name="MainBorder">
         <Grid ColumnDefinitions="*">
             <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
-                     VerticalAlignment="Center"
-                     Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 VerticalAlignment="Center"
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}" />
 
             <controls:Number
                 IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}"

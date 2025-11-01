@@ -8,7 +8,6 @@ using ReactiveUI;
 
 using Tefin.Core;
 using Tefin.Core.Interop;
-using Tefin.Core.Reflection;
 using Tefin.Features;
 using Tefin.Grpc.Execution;
 using Tefin.Utils;
@@ -21,9 +20,9 @@ using static Tefin.Core.Utils;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
+    private AllVariableDefinitions _envVars = new();
     private bool _showTreeEditor;
     private string _statusText;
-    private AllVariableDefinitions _envVars = new();
 
     public ServerStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, cg, true);
@@ -38,9 +37,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public bool CanStop => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
-    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
+    public override bool IsLoaded => this.ReqViewModel.IsLoaded;
 
     public bool IsShowingRequestTreeEditor {
         get => this._showTreeEditor;
@@ -91,12 +90,12 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                 responseStreamVariables = this._envVars.ResponseStreamVariables;
             }
 
-            var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [], responseStreamVariables);
+            var feature = new ExportFeature(this.MethodInfo, mParams, requestVariables, responseVariables, [],
+                responseStreamVariables);
             var exportReqJson = feature.Export();
             if (exportReqJson.IsOk) {
                 return exportReqJson.ResultValue;
             }
-
         }
 
         return string.Empty;

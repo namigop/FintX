@@ -7,13 +7,41 @@ using Tefin.ViewModels.Explorer.Client;
 namespace Tefin.ViewModels.Explorer.Config;
 
 public static class FileChange<TRoot, TFile> where TRoot : ExplorerRootNode where TFile : FileNode {
+    public static void Create(IExplorerItem item, FileChangeMessage msg, Func<string, TFile> newFileNode,
+        Func<string, string> getRootPath) {
+        var fileName = Path.GetFileName(msg.FullPath);
+
+        if (item is TRoot root) {
+            var rootPath = getRootPath(root.ClientPath);
+            if (Path.Combine(rootPath, fileName) == msg.FullPath) {
+                var ft = newFileNode(msg.FullPath);
+                root.AddItem(ft);
+                RefreshClient(ft);
+                return;
+            }
+        }
+
+        if (item is FolderNode node) {
+            var dir = Path.GetDirectoryName(msg.FullPath);
+            if (dir == node.FullPath) {
+                var existing = node.Items.FirstOrDefault(t => t is TFile fn && fn.FullPath == msg.FullPath);
+                if (existing == null) {
+                    var n = newFileNode(msg.FullPath);
+                    node.AddItem(n);
+                    node.IsExpanded = true;
+                    RefreshClient(n);
+                }
+            }
+        }
+    }
+
     public static void Delete(IExplorerItem item, FileChangeMessage msg) {
         if (item is TFile node && node.FullPath == msg.FullPath) {
             node.Parent?.Items.Remove(node);
             RefreshClient(node);
         }
     }
-    
+
     public static void FileModified(IExplorerItem item, FileChangeMessage msg) {
         if (item is TFile node && node.FullPath == msg.FullPath) {
             node.CheckGitStatus();
@@ -48,33 +76,6 @@ public static class FileChange<TRoot, TFile> where TRoot : ExplorerRootNode wher
 
 
             RefreshClient(node);
-        }
-    }
-
-    public static void Create(IExplorerItem item, FileChangeMessage msg, Func<string, TFile> newFileNode, Func<string, string> getRootPath) {
-        var fileName = Path.GetFileName(msg.FullPath);
-        
-        if (item is TRoot root) {
-            var rootPath = getRootPath(root.ClientPath);
-            if (Path.Combine(rootPath, fileName) == msg.FullPath) {
-                var ft = newFileNode(msg.FullPath);
-                root.AddItem(ft);
-                RefreshClient(ft);
-                return;
-            }
-        }
-
-        if (item is FolderNode node) {
-            var dir = Path.GetDirectoryName(msg.FullPath);
-            if (dir == node.FullPath) {
-                var existing = node.Items.FirstOrDefault(t => t is TFile fn && fn.FullPath == msg.FullPath);
-                if (existing == null) {
-                    var n = newFileNode(msg.FullPath);
-                    node.AddItem(n);
-                    node.IsExpanded = true;
-                    RefreshClient(n);
-                }
-            }
         }
     }
 }

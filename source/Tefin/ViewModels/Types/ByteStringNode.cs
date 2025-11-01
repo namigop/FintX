@@ -76,8 +76,6 @@ public class ByteStringNode : TypeBaseNode {
         }
     }
 
-    public void Reset() => this.Init();
-
     private async Task OnOpenFile() {
         var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", ["*.*"]);
         if (ok) {
@@ -87,4 +85,6 @@ public class ByteStringNode : TypeBaseNode {
             this.CreateFromBase64String();
         }
     }
+
+    public void Reset() => this.Init();
 }

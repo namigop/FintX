@@ -11,7 +11,7 @@
         <StackPanel Orientation="Vertical">
             <Grid ColumnDefinitions="Auto, *">
                 <Panel Grid.Column="0">
-                    <controls:IconControl Icon="{StaticResource Icon.Warn32}" Width="40" Height="40"></controls:IconControl>
+                    <controls:IconControl Icon="{StaticResource Icon.Warn32}" Width="40" Height="40" />
                     <!-- <Viewbox Height="48" Stretch="Uniform" Margin="16" VerticalAlignment="Center"> -->
                     <!--     <Canvas Width="32" Height="32" Canvas.Left="0" Canvas.Top="0"> -->
                     <!--         <Canvas> -->
@@ -22,10 +22,11 @@
                     <!-- </Viewbox> -->
                 </Panel>
                 <StackPanel Orientation="Vertical" Grid.Column="1" Margin="8" VerticalAlignment="Center">
-                    <SelectableTextBlock Text="{Binding Message}"></SelectableTextBlock>
+                    <SelectableTextBlock Text="{Binding Message}" />
                     <StackPanel Orientation="Horizontal" Margin="0 4 0 0">
-                        <TextBlock Text="Works great with FintX Enterprise though. Check it out at " VerticalAlignment="Center"></TextBlock>
-                        <HyperlinkButton NavigateUri="https://fintx.dev" ClickMode="Press" Margin="-4 0 0 0">https://fintx.dev</HyperlinkButton>    
+                        <TextBlock Text="Works great with FintX Enterprise though. Check it out at "
+                                   VerticalAlignment="Center" />
+                        <HyperlinkButton NavigateUri="https://fintx.dev" ClickMode="Press" Margin="-4 0 0 0">https://fintx.dev</HyperlinkButton>
                     </StackPanel>
                 </StackPanel>
             </Grid>

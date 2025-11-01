@@ -13,8 +13,6 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
         var dateTime = (DateTimeOffset)(node.Value ?? DateTimeOffset.Now.AddDays(1));
         this._dateTimeText = $"{dateTime:O}";
     }
-    
-    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public string DateTimeText {
         get => this._dateTimeText;
@@ -25,6 +23,8 @@ public class NullableDateTimeOffsetEditor : TypeEditorBase<DateTimeOffset?> {
     }
 
     public override string FormattedValue => this.TempValue == null ? "null" : $"{this.TempValue:O}";
+
+    public SystemNode TypeNode => (SystemNode)this.Node;
 
     public override void CommitEdit() {
         if (this.IsNull) {

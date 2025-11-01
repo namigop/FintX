@@ -24,11 +24,6 @@ public class CharFoldingStrategy(char openingChar, char closingChar) {
     /// </summary>
     private char OpeningBrace { get; } = openingChar;
 
-    public void UpdateFoldings(FoldingManager manager, TextDocument document) {
-        var newFoldings = this.CreateNewFoldings(document, out var firstErrorOffset);
-        manager.UpdateFoldings(newFoldings, firstErrorOffset);
-    }
-
     /// <summary>
     ///     Create <see cref="NewFolding" />s for the specified document.
     /// </summary>
@@ -66,5 +61,10 @@ public class CharFoldingStrategy(char openingChar, char closingChar) {
 
         newFoldings.Sort((a, b) => a.StartOffset.CompareTo(b.StartOffset));
         return newFoldings;
+    }
+
+    public void UpdateFoldings(FoldingManager manager, TextDocument document) {
+        var newFoldings = this.CreateNewFoldings(document, out var firstErrorOffset);
+        manager.UpdateFoldings(newFoldings, firstErrorOffset);
     }
 }

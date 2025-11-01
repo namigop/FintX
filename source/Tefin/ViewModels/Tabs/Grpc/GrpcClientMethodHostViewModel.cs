@@ -36,15 +36,9 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
             .Then(this.MarkForCleanup);
     }
 
-    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
-        //update in case the Url and ClientName has been changed
-        if (!string.IsNullOrEmpty(this._importFile) && this._importFile.StartsWith(obj.PreviousPath)) {
-            this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
-        }
-    }
-    public override bool IsLoaded => this.CallType.IsLoaded;
     public override string ApiType { get; } = GrpcPackage.packageName;
     public GrpCallTypeViewModelBase CallType { get; }
+    public override bool IsLoaded => this.CallType.IsLoaded;
 
     public override void Dispose() {
         base.Dispose();
@@ -57,7 +51,6 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
 
     public void Init() =>
         this.Exec(() => {
-           
             if (string.IsNullOrEmpty(this._importFile)) {
                 this.CallType.Init();
                 return;
@@ -69,9 +62,14 @@ public class GrpcClientMethodHostViewModel : ClientMethodViewModelBase {
                 this.Io.File.WriteAllText(this._importFile, content);
                 return;
             }
-            
-            this.CallType.ImportRequest(this._importFile);
-            
-        });
-}
 
+            this.CallType.ImportRequest(this._importFile);
+        });
+
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (!string.IsNullOrEmpty(this._importFile) && this._importFile.StartsWith(obj.PreviousPath)) {
+            this._importFile = this._importFile.Replace(obj.PreviousPath, obj.Path);
+        }
+    }
+}

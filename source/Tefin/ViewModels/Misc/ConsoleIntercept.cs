@@ -33,31 +33,6 @@ public class ConsoleIntercept : TextWriter {
         this.Sync();
     }
 
-    public override void Write(StringBuilder? value) {
-        this._sb.Append(value);
-        this.Sync();
-    }
-
-    public override void Write(char value) {
-        if (value == (char)27) {
-            //ESC char
-            this._sb.Append(" ");
-            return;
-        }
-
-        this._sb.Append(value);
-        this.Sync();
-    }
-
-    public override void WriteLine(string? value) {
-        if (string.IsNullOrEmpty(value)) {
-            return;
-        }
-
-        this._sb.AppendLine(value);
-        this.Sync();
-    }
-
     private void Sync() {
         if (this.TextEditor == null) {
             return;
@@ -86,5 +61,30 @@ public class ConsoleIntercept : TextWriter {
         var target = this._txtEditor!.Document.Lines.Count - 1;
         //var vertOffset = (this._txtEditor.TextArea.TextView.DefaultLineHeight) * target;
         this._txtEditor.ScrollTo(target, 0);
+    }
+
+    public override void Write(StringBuilder? value) {
+        this._sb.Append(value);
+        this.Sync();
+    }
+
+    public override void Write(char value) {
+        if (value == (char)27) {
+            //ESC char
+            this._sb.Append(" ");
+            return;
+        }
+
+        this._sb.Append(value);
+        this.Sync();
+    }
+
+    public override void WriteLine(string? value) {
+        if (string.IsNullOrEmpty(value)) {
+            return;
+        }
+
+        this._sb.AppendLine(value);
+        this.Sync();
     }
 }

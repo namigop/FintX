@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -18,13 +17,13 @@ namespace Tefin.ViewModels.ProjectEnv;
 public class ProjectMenuViewModel : ViewModelBase {
     private readonly ClientExplorerViewModel _clientExplorer;
     private readonly ConfigExplorerViewModel _configExplorer;
-    private readonly ServiceMockExplorerViewModel _serviceMockExplorer;
     private readonly EnvMenuViewModel _envMenu;
+    private readonly ServiceMockExplorerViewModel _serviceMockExplorer;
     private ProjectSelection _selectedProject;
 
     public ProjectMenuViewModel(
         ClientExplorerViewModel explorerViewModel,
-        ConfigExplorerViewModel configExplorer, 
+        ConfigExplorerViewModel configExplorer,
         ServiceMockExplorerViewModel serviceMockExplorer,
         EnvMenuViewModel envMenu, AppTypes.AppState? appState) {
         this._clientExplorer = explorerViewModel;
@@ -52,7 +51,7 @@ public class ProjectMenuViewModel : ViewModelBase {
             this._selectedProject.IsSelected = true;
             this._envMenu.Init(this._selectedProject.Path);
         }
-        
+
         GlobalHub.publish(new ProjectSelectedMessage(this._selectedProject.Name,
             this._selectedProject.Path, this._selectedProject.Package));
 
@@ -60,6 +59,12 @@ public class ProjectMenuViewModel : ViewModelBase {
             .Then(this.MarkForCleanup);
         this.SubscribeTo(vm => ((ProjectMenuViewModel)vm).SelectedProject, this.OnSelectedProjectChanged);
     }
+
+    public ICommand NewProjectCommand { get; set; }
+
+    public ICommand OpenProjectCommand { get; set; }
+
+    public ObservableCollection<ProjectSelection> RecentProjects { get; set; }
 
     public ProjectSelection SelectedProject {
         get => this._selectedProject;
@@ -74,23 +79,16 @@ public class ProjectMenuViewModel : ViewModelBase {
         }
     }
 
-    public ObservableCollection<ProjectSelection> RecentProjects { get; set; }
+    private void OnNewProject() {
+        var pack = this._clientExplorer.Project?.Package ?? Core.App.defaultPackage;
+        var vm = new AddNewProjectOverlayViewModel(pack);
+        GlobalHub.publish(new OpenOverlayMessage(vm));
+    }
 
-    public ICommand OpenProjectCommand { get; set; }
-
-    public ICommand NewProjectCommand { get; set; }
-
-    private void OnSelectedProjectChanged(ViewModelBase obj) =>
-        this.Exec(() => {
-            var vm = (ProjectMenuViewModel)obj;
-            foreach (var i in vm.RecentProjects) {
-                i.IsSelected = i == vm.SelectedProject;
-            }
-
-            vm.OpenProject(vm.SelectedProject.Path);
-            this._envMenu.Init(vm.SelectedProject.Path);
-            GlobalHub.publish(new ProjectSelectedMessage(vm.SelectedProject.Name, vm.SelectedProject.Path, vm.SelectedProject.Package));
-        });
+    private async Task OnOpenProject() {
+        var projectPath = await DialogUtils.SelectFolder();
+        this.OpenProject(projectPath);
+    }
 
     private void OnReceiveNewProjectCreatedMessage(NewProjectCreatedMessage obj) =>
         this.Exec(() => {
@@ -102,18 +100,18 @@ public class ProjectMenuViewModel : ViewModelBase {
             }
         });
 
-    private async Task OnOpenProject() {
-        var projectPath = await DialogUtils.SelectFolder();
-        this.OpenProject(projectPath);
-    }
-    private void ResetExplorers(string projectPath) {
-        this._clientExplorer.LoadProject(projectPath);
-        this._serviceMockExplorer.Project = this._clientExplorer.Project;
-        this._configExplorer.Project = this._clientExplorer.Project;
-        this._configExplorer.Clear();
-        this._configExplorer.Init();
-        
-    }
+    private void OnSelectedProjectChanged(ViewModelBase obj) =>
+        this.Exec(() => {
+            var vm = (ProjectMenuViewModel)obj;
+            foreach (var i in vm.RecentProjects) {
+                i.IsSelected = i == vm.SelectedProject;
+            }
+
+            vm.OpenProject(vm.SelectedProject.Path);
+            this._envMenu.Init(vm.SelectedProject.Path);
+            GlobalHub.publish(new ProjectSelectedMessage(vm.SelectedProject.Name, vm.SelectedProject.Path,
+                vm.SelectedProject.Package));
+        });
 
     private void OpenProject(string projectPath) {
         this.ResetExplorers(projectPath);
@@ -126,9 +124,11 @@ public class ProjectMenuViewModel : ViewModelBase {
         }
     }
 
-    private void OnNewProject() {
-        var pack = this._clientExplorer.Project?.Package ?? Core.App.defaultPackage;
-        var vm = new AddNewProjectOverlayViewModel(pack);
-        GlobalHub.publish(new OpenOverlayMessage(vm));
+    private void ResetExplorers(string projectPath) {
+        this._clientExplorer.LoadProject(projectPath);
+        this._serviceMockExplorer.Project = this._clientExplorer.Project;
+        this._configExplorer.Project = this._clientExplorer.Project;
+        this._configExplorer.Clear();
+        this._configExplorer.Init();
     }
 }

@@ -23,13 +23,6 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
         GlobalHub.subscribe<MessageProject.MsgClientUpdated>(this.OnClientUpdated)
             .Then(this.MarkForCleanup);
     }
-    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
-        //update in case the Url and ClientName has been changed
-        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
-            this._client = obj.Client;
-            this.Io.Log.Debug($"Updated clientInstance for tab {this.GetTabId()}");
-        }
-    }
 
     public override ProjectTypes.ClientGroup Client => this._client;
 
@@ -43,6 +36,11 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
 
     public override string GenerateFileContent() => this.ClientMethod.GetRequestContent();
 
+    protected override string GetTabId() {
+        var id = AutoSave.getAutoSaveLocation(this.Io, this.ClientMethod.MethodInfo, this.Client.Path);
+        return id;
+    }
+
     public override void Init() {
         if (!string.IsNullOrEmpty(this._requestFile)) {
             this.Id = this._requestFile;
@@ -55,15 +53,18 @@ public sealed class MethodTabViewModel : PersistedTabViewModel {
         this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
 
+    private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
+        //update in case the Url and ClientName has been changed
+        if (this.Client.Path == obj.Path || this.Client.Path == obj.PreviousPath) {
+            this._client = obj.Client;
+            this.Io.Log.Debug($"Updated clientInstance for tab {this.GetTabId()}");
+        }
+    }
+
+    private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
+
     public override void UpdateTitle(string oldFullPath, string newFullPath) {
         this.Id = newFullPath;
         this.Title = Path.GetFileNameWithoutExtension(this.Id);
     }
-
-    protected override string GetTabId() {
-        var id = AutoSave.getAutoSaveLocation(this.Io, this.ClientMethod.MethodInfo, this.Client.Path);
-        return id;
-    }
-
-    private void OnIsBusyChanged(ViewModelBase obj) => this.IsBusy = obj.IsBusy;
 }

@@ -96,9 +96,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public ICommand LoadStoreCertificatesCommand { get; }
 
     public ICommand OkayCommand { get; }
+    public ICommand OpenCertFileCommand { get; }
+
+    public bool RequiresPassword {
+        get => this._requiresPassword;
+        private set => this.RaiseAndSetIfChanged(ref this._requiresPassword, value);
+    }
 
     public ICommand ResetCommand { get; }
-    public ICommand OpenCertFileCommand { get; }
 
     public StoreLocation SelectedCertStoreLocation {
         get => this._selectedCertStoreLocation;
@@ -126,11 +131,6 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
-    }
-
-    public bool RequiresPassword {
-        get => this._requiresPassword;
-        private set => this.RaiseAndSetIfChanged(ref this._requiresPassword, value);
     }
 
     public string Title { get; } = "Client Configuration";
@@ -190,9 +190,10 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertFile = this.CertFile;
         if (this._isCertFromFile) {
             if (this.RequiresPassword) {
-                this._clientConfig.CertFilePassword = Core.Utils.encrypt(this.CertFilePassword, Path.GetFileName(this.CertFile));
+                this._clientConfig.CertFilePassword =
+                    Core.Utils.encrypt(this.CertFilePassword, Path.GetFileName(this.CertFile));
             }
-            
+
             var x509 = CertUtils.createFromFile(this.CertFile, this.CertFilePassword);
             this.Thumbprint = x509.Thumbprint;
             this._clientConfig.CertThumbprint = x509.Thumbprint;

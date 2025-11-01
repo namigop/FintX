@@ -54,10 +54,6 @@ public abstract class TypeBaseNode : NodeBase {
         }
     }
 
-    public abstract void Init(Dictionary<string, int> processedTypeNames);
-
-    public override void Init() => this.Init(new Dictionary<string, int>());
-
     protected List<PropertyInfo> GetProperties() {
         var t = this.Type;
         var props = t.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.CanRead || p.CanWrite)
@@ -68,6 +64,10 @@ public abstract class TypeBaseNode : NodeBase {
             .Where(p => p.PropertyType != typeof(IDictionary<string, object>)).OrderBy(p => p.Name).ToList();
         return props;
     }
+
+    public abstract void Init(Dictionary<string, int> processedTypeNames);
+
+    public override void Init() => this.Init(new Dictionary<string, int>());
 
     protected virtual void OnValueChanged(object? oldValue, object? newValue) {
         try {

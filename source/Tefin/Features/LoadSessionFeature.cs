@@ -17,36 +17,6 @@ public class LoadSessionFeature(
     IEnumerable<MethodNode> nodes,
     IOs io,
     Action<bool> onLoaded) {
-    private bool IsAutoSaveFile(string reqFile) {
-        var dir = Path.GetDirectoryName(reqFile);
-        return dir != null && dir.EndsWith(ClientStructure.AutoSaveFolderName);
-    }
-
-    private void LoadOne(string json, string reqFile) {
-        var ext = Path.GetExtension(reqFile);
-        if (ext != Ext.requestFileExt)
-            return;
-        
-        var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
-        var item = nodes.FirstOrDefault(i => i.MethodInfo.Name == methodName);
-        if (item != null) {
-            IExplorerItem? node = item;
-            var isAutoSave = this.IsAutoSaveFile(reqFile);
-            if (!isAutoSave) {
-                //if its not an auto-save file, open it as an existing file request
-                var fileNode = item.Items.FirstOrDefault(c => ((FileReqNode)c).FullPath == reqFile);
-                node = fileNode;
-            }
-
-            if (node != null) {
-                var tab = TabFactory.From(node, io, reqFile);
-                if (tab != null) {
-                    GlobalHub.publish(new OpenTabMessage(tab));
-                }
-            }
-        }
-    }
-
     private Action CreateAction(string reqFile) {
         var json = io.File.ReadAllText(reqFile);
         if (string.IsNullOrWhiteSpace(json)) {
@@ -70,6 +40,37 @@ public class LoadSessionFeature(
                 return false;
             },
             TimeSpan.FromMilliseconds(100));
+    }
+
+    private bool IsAutoSaveFile(string reqFile) {
+        var dir = Path.GetDirectoryName(reqFile);
+        return dir != null && dir.EndsWith(ClientStructure.AutoSaveFolderName);
+    }
+
+    private void LoadOne(string json, string reqFile) {
+        var ext = Path.GetExtension(reqFile);
+        if (ext != Ext.requestFileExt) {
+            return;
+        }
+
+        var methodName = Core.Utils.jSelectToken(json, "$.Method").Value<string>();
+        var item = nodes.FirstOrDefault(i => i.MethodInfo.Name == methodName);
+        if (item != null) {
+            IExplorerItem? node = item;
+            var isAutoSave = this.IsAutoSaveFile(reqFile);
+            if (!isAutoSave) {
+                //if its not an auto-save file, open it as an existing file request
+                var fileNode = item.Items.FirstOrDefault(c => ((FileReqNode)c).FullPath == reqFile);
+                node = fileNode;
+            }
+
+            if (node != null) {
+                var tab = TabFactory.From(node, io, reqFile);
+                if (tab != null) {
+                    GlobalHub.publish(new OpenTabMessage(tab));
+                }
+            }
+        }
     }
 
     public void Run() {

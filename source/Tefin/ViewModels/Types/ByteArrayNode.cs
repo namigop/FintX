@@ -77,12 +77,6 @@ public class ByteArrayNode : TypeBaseNode {
         }
     }
 
-    public void Reset() => this.Init();
-
-    //public ICommand OpenFileCommand { get; }
-    protected override void OnValueChanged(object? oldValue, object? newValue) {
-    }
-
     private async Task OnOpenFile() {
         var (ok, files) = await DialogUtils.OpenFile("Open File", "All Files", ["*.*"]);
         if (ok) {
@@ -91,4 +85,10 @@ public class ByteArrayNode : TypeBaseNode {
             this.Base64 = Convert.ToBase64String(bytes);
         }
     }
+
+    //public ICommand OpenFileCommand { get; }
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
+    }
+
+    public void Reset() => this.Init();
 }

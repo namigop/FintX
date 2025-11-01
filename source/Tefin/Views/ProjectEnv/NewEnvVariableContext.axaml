@@ -17,7 +17,8 @@
             <StackPanel Orientation="Horizontal">
                 <TextBox Margin="8 0 8 0 "
 
-                         Text="{Binding  EnvVarTag}" VerticalContentAlignment="Center" Width="220" Background="Transparent" />
+                         Text="{Binding  EnvVarTag}" VerticalContentAlignment="Center" Width="220"
+                         Background="Transparent" />
             </StackPanel>
         </Border>
 
@@ -43,16 +44,16 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                 <Button Width="80" x:CompileBindings="False"
                         utils:CloseFlyoutBehavior.CloseOnClick="True"
-                        
+
                         Command="{Binding CreateEnvVariableCommand}">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="Icon.Check" />
                         <TextBlock Text="Okay" Margin="8 0 0 0" />
                     </StackPanel>
                 </Button>
-                <Button Margin="8 0 0 0" 
+                <Button Margin="8 0 0 0"
                         utils:CloseFlyoutBehavior.CloseOnClick="True"
-                        Command="{Binding Reset}" >
+                        Command="{Binding Reset}">
                     <TextBlock Text="Cancel" Margin="8 0 0 0" />
                 </Button>
             </StackPanel>

@@ -35,21 +35,6 @@ public static class DialogUtils {
         return (false, []);
     }
 
-    public static async Task<string>
-        SelectFile(string dialogTitle, string fileName, string fileTitle, string extension) {
-        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
-
-        // Start async operation to open the dialog.
-        var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
-            Title = dialogTitle,
-            ShowOverwritePrompt = true,
-            SuggestedFileName = fileName,
-            FileTypeChoices = [new FilePickerFileType(fileTitle) { Patterns = [extension] }]
-        });
-
-        return file?.Path.LocalPath ?? string.Empty;
-    }
-
     public static async Task SaveFile(string dialogTitle, string fileName, string content, string fileTitle,
         string extension) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
@@ -67,6 +52,21 @@ public static class DialogUtils {
             await using var streamWriter = new StreamWriter(stream);
             await streamWriter.WriteAsync(content);
         }
+    }
+
+    public static async Task<string>
+        SelectFile(string dialogTitle, string fileName, string fileTitle, string extension) {
+        var topLevel = TopLevel.GetTopLevel(GetMainWindow());
+
+        // Start async operation to open the dialog.
+        var file = await topLevel!.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions {
+            Title = dialogTitle,
+            ShowOverwritePrompt = true,
+            SuggestedFileName = fileName,
+            FileTypeChoices = [new FilePickerFileType(fileTitle) { Patterns = [extension] }]
+        });
+
+        return file?.Path.LocalPath ?? string.Empty;
     }
 
     public static async Task<string> SelectFolder() {

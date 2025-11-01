@@ -9,7 +9,7 @@ public class FileExistsAttribute : ValidationAttribute {
         }
 
         try {
-            if (!File.Exists(value.ToString()!) ) {
+            if (!File.Exists(value.ToString()!)) {
                 return new ValidationResult("File does not exist");
             }
         }

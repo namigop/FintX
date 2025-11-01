@@ -47,7 +47,7 @@
                 <TextBlock Text="Config" />
             </StackPanel>
         </Button>
-        
+
         <Separator Classes="Horizontal" Width="200" />
         <Button Classes="ClearButtonStyle ContextFlyout" x:Name="btnDelete"
                 IsVisible="{Binding IsSelected}"

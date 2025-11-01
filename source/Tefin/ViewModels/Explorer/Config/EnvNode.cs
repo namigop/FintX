@@ -11,15 +11,14 @@ public class EnvNode : FileNode {
         //this.EnvData = data;
         base.Title = Path.GetFileName(fullPath);
     }
-    public string EnvFile { get; init; }
 
-    public EnvConfigData GetEnvData() {
-        return VarsStructure.getVarsFromFile(this.Io, this.EnvFile);
-    }
+    public string EnvFile { get; init; }
 
     public ICommand ExportCommand { get; }
 
-    private Task OnExport() => throw new NotImplementedException();
+    public EnvConfigData GetEnvData() => VarsStructure.getVarsFromFile(this.Io, this.EnvFile);
 
     public override void Init() { }
+
+    private Task OnExport() => throw new NotImplementedException();
 }

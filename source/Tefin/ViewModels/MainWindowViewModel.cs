@@ -28,9 +28,9 @@ public class MainWindowViewModel : ViewModelBase {
         this.EnvMenuViewModel = new EnvMenuViewModel();
         this.ProjectMenuViewModel = new ProjectMenuViewModel(
             this.MainMenu.ClientMenuItem.Explorer,
-            this.MainMenu.ConfigMenuItem.Explorer, 
+            this.MainMenu.ConfigMenuItem.Explorer,
             this.MainMenu.ServiceMockMenuItem.Explorer,
-            this.EnvMenuViewModel, 
+            this.EnvMenuViewModel,
             appState);
     }
 
@@ -40,6 +40,7 @@ public class MainWindowViewModel : ViewModelBase {
     public MainMenuViewModel MainMenu { get; }
     public MiscViewModel Misc { get; } = new();
     public OverlayHostViewModel Overlay { get; } = new();
+    public ProjectMenuViewModel ProjectMenuViewModel { get; }
     public AppTypes.Root? Root { get; private set; }
     public string SponsorAlignment { get; } = Core.Utils.isMac() ? "Right" : "Left";
 
@@ -47,9 +48,8 @@ public class MainWindowViewModel : ViewModelBase {
 
     public string SubTitle { get; } = "Native, cross-platform gRPC testing";
     public TabHostViewModel TabHost { get; } = new();
-    public HostWindowViewModel WindowHost { get; } = new();
     public string Title { get; } = $"{Core.Utils.appName} v{Core.Utils.appVersionSimple}";
-    public ProjectMenuViewModel ProjectMenuViewModel { get; }
+    public HostWindowViewModel WindowHost { get; } = new();
 
     public void Init() {
         this.Root = new StartupFeature().Load(this.Io);
@@ -80,9 +80,9 @@ public class MainWindowViewModel : ViewModelBase {
     private void OnSponsor() => Core.Utils.openBrowser("https://github.com/sponsors/namigop");
 
     private void StartAutoSave() {
-        #if DEBUG
-       // return;
-        #endif
+#if DEBUG
+        // return;
+#endif
 
         AutoSave.ClientParam[] GetClientParam(List<PersistedTabViewModel> persistableTabs) {
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
@@ -101,8 +101,9 @@ public class MainWindowViewModel : ViewModelBase {
                     var fileParams = new List<AutoSave.FileParam>();
                     foreach (var tab in tabsForMethod.Where(t => t.ClientMethod.IsLoaded)) {
                         var fp = tab.GetFileParam();
-                        if (fp.CanSave)
+                        if (fp.CanSave) {
                             fileParams.Add(fp);
+                        }
                     }
 
                     var methodParam = AutoSave.MethodParam.Empty()
@@ -127,6 +128,7 @@ public class MainWindowViewModel : ViewModelBase {
                 .Where(t => t.CanSave)
                 .ToArray();
         }
+
         AutoSave.ServiceMockParam[] GetServiceMockParam(List<MockMethodTabViewModel> mockTabs) {
             var loadedProject = this.MainMenu.ClientMenuItem.Explorer.Project;
             var loadedMocks = this.MainMenu.ServiceMockMenuItem.Explorer.GetServiceMockNodes()
@@ -144,8 +146,9 @@ public class MainWindowViewModel : ViewModelBase {
                     var fileParams = new List<AutoSave.FileParam>();
                     foreach (var tab in tabsForMethod.Where(t => t.MockMethod.IsLoaded)) {
                         var fp = tab.GetFileParam();
-                        if (fp.CanSave)
+                        if (fp.CanSave) {
                             fileParams.Add(fp);
+                        }
                     }
 
                     var methodParam = AutoSave.MethodParam.Empty()
@@ -164,15 +167,17 @@ public class MainWindowViewModel : ViewModelBase {
 
             return clientParams.ToArray();
         }
-        
+
         AutoSave.AutoSaveParam[] Get() {
             var persistableTabs = this.TabHost.Items.Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>().ToList();
-            var openWindows = this.WindowHost.Items.Select(f => f.Value.Content).Where(t => t.CanAutoSave).Cast<PersistedTabViewModel>();
+            var openWindows = this.WindowHost.Items.Select(f => f.Value.Content).Where(t => t.CanAutoSave)
+                .Cast<PersistedTabViewModel>();
             persistableTabs.AddRange(openWindows);
             var nonMethodTabs = persistableTabs.Where(t => t.Client.Methods.Length == 0).ToList();
             persistableTabs.RemoveMany(nonMethodTabs);
-            
-            var mockTabs = nonMethodTabs.Where(t => t is MockMethodTabViewModel).Cast<MockMethodTabViewModel>().ToList();
+
+            var mockTabs = nonMethodTabs.Where(t => t is MockMethodTabViewModel).Cast<MockMethodTabViewModel>()
+                .ToList();
             nonMethodTabs.RemoveMany(mockTabs);
             var clientParams = GetClientParam(persistableTabs);
             var fileParams = GetEnvConfigParam(nonMethodTabs);

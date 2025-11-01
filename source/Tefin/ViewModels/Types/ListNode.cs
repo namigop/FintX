@@ -44,6 +44,8 @@ public class ListNode : TypeBaseNode {
 
     public bool IsNullOrEmpty => this.IsNull || this.ListItemsCount == 0;
 
+    protected virtual string ItemName => "Item";
+
     public int ListItemsCount {
         get => this._listItemsCount;
         set {
@@ -64,14 +66,12 @@ public class ListNode : TypeBaseNode {
         }
     }
 
-    protected virtual string ItemName => "Item";
-
     public void AddItem(object itemInstance) {
         var listInstance = this.GetListInstance();
         this.GetMethods().AddMethod!.Invoke(listInstance, [itemInstance]);
         var itemType = this.GetItemType();
         var count = GetListSize(listInstance!);
-        var name = $"{this.ItemName}[{count-1}]";
+        var name = $"{this.ItemName}[{count - 1}]";
         var processedTypeNames = new Dictionary<string, int>();
 
         var node = this.CreateListItemNode(name, itemType, processedTypeNames, count, itemInstance, this);
@@ -83,24 +83,43 @@ public class ListNode : TypeBaseNode {
         this.RaisePropertyChanged(nameof(this.FormattedValue));
     }
 
-    public void RemoveItem(IExplorerItem item) {
-        var index = this.Items.IndexOf(item);
-        if (index >= 0) {
-            this.Items.RemoveAt(index);
-            dynamic listInstance = this.GetListInstance()!;
-            listInstance?.RemoveAt(index);
-            int count = 0;
-            foreach (var i in Items) {
-                var name = $"{this.ItemName}[{count}]";
-                i.Title = name;
-                count++;
-            }
-            
-            this._listItemsCount = this.Items.Count;
-            this._targetListItemsCount = this.Items.Count;
-            this.RaisePropertyChanged(nameof(this.FormattedValue));
-        }
+    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType,
+        Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode parent) {
+        var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this),
+            processedTypeNames, current, parent);
+        return inner;
     }
+
+    protected virtual Type GetItemType() => this._itemType;
+
+    protected virtual object? GetListInstance() => this.Value;
+
+    protected static int GetListSize(object value) {
+        var currentCount = -1;
+
+        var countProp = value.GetType().GetProperty("Count");
+        if (countProp != null) {
+            currentCount = (int)countProp.GetValue(value)!;
+        }
+
+        if (currentCount == -1) {
+            countProp = value.GetType().GetProperty("Length");
+            if (countProp != null) {
+                currentCount = (int)countProp.GetValue(value)!;
+            }
+        }
+
+        if (currentCount == -1) {
+            var asList = value as IList;
+            currentCount = asList != null ? asList.Count : -1;
+        }
+
+        return currentCount;
+    }
+
+    protected virtual Type GetListType() => this.Type;
+
+    protected virtual ListTypeMethod GetMethods() => ListTypeMethod.GetMethods(this.Type);
 
     public override void Init(Dictionary<string, int> processedTypeNames) {
         var listInstance = this.GetListInstance();
@@ -127,47 +146,6 @@ public class ListNode : TypeBaseNode {
         this._targetListItemsCount = this.Items.Count;
         this.IsExpanded = true;
         this.RaisePropertyChanged(nameof(this.IsNullOrEmpty));
-    }
-
-    protected static int GetListSize(object value) {
-        var currentCount = -1;
-
-        var countProp = value.GetType().GetProperty("Count");
-        if (countProp != null) {
-            currentCount = (int)countProp.GetValue(value)!;
-        }
-
-        if (currentCount == -1) {
-            countProp = value.GetType().GetProperty("Length");
-            if (countProp != null) {
-                currentCount = (int)countProp.GetValue(value)!;
-            }
-        }
-
-        if (currentCount == -1) {
-            var asList = value as IList;
-            currentCount = asList != null ? asList.Count : -1;
-        }
-
-        return currentCount;
-    }
-
-    protected virtual TypeBaseNode CreateListItemNode(string name, Type itemType,
-        Dictionary<string, int> processedTypeNames, int counter, object? current, TypeBaseNode parent) {
-        var inner = TypeNodeBuilder.Create(name, itemType, new ListTypeInfo(counter, itemType, this),
-            processedTypeNames, current, parent);
-        return inner;
-    }
-
-    protected virtual Type GetItemType() => this._itemType;
-
-    protected virtual object? GetListInstance() => this.Value;
-
-    protected virtual Type GetListType() => this.Type;
-
-    protected virtual ListTypeMethod GetMethods() => ListTypeMethod.GetMethods(this.Type);
-
-    protected override void OnValueChanged(object? oldValue, object? newValue) {
     }
 
     private void OnCountChanged(ViewModelBase obj) {
@@ -218,6 +196,28 @@ public class ListNode : TypeBaseNode {
 
         if (targetCount < currentCount) {
             RemoveNodes(targetCount, currentCount, listInstance);
+        }
+    }
+
+    protected override void OnValueChanged(object? oldValue, object? newValue) {
+    }
+
+    public void RemoveItem(IExplorerItem item) {
+        var index = this.Items.IndexOf(item);
+        if (index >= 0) {
+            this.Items.RemoveAt(index);
+            dynamic listInstance = this.GetListInstance()!;
+            listInstance?.RemoveAt(index);
+            var count = 0;
+            foreach (var i in this.Items) {
+                var name = $"{this.ItemName}[{count}]";
+                i.Title = name;
+                count++;
+            }
+
+            this._listItemsCount = this.Items.Count;
+            this._targetListItemsCount = this.Items.Count;
+            this.RaisePropertyChanged(nameof(this.FormattedValue));
         }
     }
 }

@@ -17,8 +17,9 @@ public interface IRequestEditorViewModel {
     void EndRequest();
 
     public (bool, object?[]) GetParameters();
-    
-    public void Show(object?[] methodParameterInstances, List<VarDefinition> parameters, ProjectTypes.ClientGroup clientGroup);
+
+    public void Show(object?[] methodParameterInstances, List<VarDefinition> parameters,
+        ProjectTypes.ClientGroup clientGroup);
 
     void StartRequest();
 }

@@ -10,8 +10,7 @@
         <Grid ColumnDefinitions="*">
             <SelectableTextBlock IsVisible="{Binding TypeNode.EnvVar.IsEnvVarTagVisible}"
                                  VerticalAlignment="Center"
-                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}">
-            </SelectableTextBlock>
+                                 Text="{Binding TypeNode.EnvVar.EnvVarTag}" />
 
             <StackPanel Orientation="Horizontal" IsVisible="{Binding !TypeNode.EnvVar.IsEnvVarTagVisible}">
                 <TimePicker SelectedTime="{Binding TempValue}" />

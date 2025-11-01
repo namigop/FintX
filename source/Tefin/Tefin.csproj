@@ -28,37 +28,37 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**" />
-        <AvaloniaResource Remove="Views\Types\**" />
+        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Remove="Views\Types\**"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.2.2" />
-        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.1.0" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.2" />
-        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.1.0" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.2.2" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.2" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.2" />
+        <PackageReference Include="Avalonia" Version="11.2.2"/>
+        <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.1.0"/>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.2"/>
+        <PackageReference Include="Avalonia.Controls.TreeDataGrid" Version="11.1.0"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.2.2"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.2"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.2"/>
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.2" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.2" />
-        <PackageReference Include="DotNet.Bundle" Version="0.9.13" />
-        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.31.0" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.71.0" />
-        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" />
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.2"/>
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.2"/>
+        <PackageReference Include="DotNet.Bundle" Version="0.9.13"/>
+        <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.2.1"/>
+        <PackageReference Include="Google.Protobuf" Version="3.31.0"/>
+        <PackageReference Include="Grpc.Net.Client" Version="2.71.0"/>
+        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4"/>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Tefin.Grpc.Sample\Tefin.Grpc.Sample.csproj" />
-        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj" />
-        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj" />
-        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0" />
-        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0" />
+        <ProjectReference Include="..\Tefin.Grpc.Sample\Tefin.Grpc.Sample.csproj"/>
+        <ProjectReference Include="..\Tefin.Grpc\Tefin.Grpc.fsproj"/>
+        <ProjectReference Include="..\Tefin.Resources\Tefin.Resources.csproj"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.71.0"/>
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.71.0"/>
     </ItemGroup>
 
 
@@ -335,146 +335,146 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\Config\EnvNodeActionView.axaml.cs">
-          <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>FileReqNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\Config\EnvNodeContext.axaml.cs">
-          <DependentUpon>FileReqNodeContext.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>FileReqNodeContext.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\EnvEditorTabView.axaml.cs">
-          <DependentUpon>EnvEditorTabView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>EnvEditorTabView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\ProjectEnv\EnvMenuView.axaml.cs">
-          <DependentUpon>EnvMenuView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>EnvMenuView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Overlay\ResetGrpcServiceOverlayView.axaml.cs">
-          <DependentUpon>ResetGrpcServiceOverlayView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ResetGrpcServiceOverlayView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\MainMenu\ServiceMockSubMenuView.axaml.cs">
-          <DependentUpon>ServiceMockSubMenuView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ServiceMockSubMenuView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\ServiceMockExplorerView.axaml.cs">
-          <DependentUpon>ClientExplorerView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientExplorerView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeActionView.axaml.cs">
-          <DependentUpon>ClientRootNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientRootNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeContext.axaml.cs">
-          <DependentUpon>ClientRootNodeContext.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientRootNodeContext.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\ServiceMockRootNodeView.axaml.cs">
-          <DependentUpon>ClientRootNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ClientRootNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Overlay\AddGrpcMockOverlayView.axaml.cs">
-          <DependentUpon>AddGrpcMockOverlayView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>AddGrpcMockOverlayView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeActionView.axaml.cs">
-          <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MethodNodeActionView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeContext.axaml.cs">
-          <DependentUpon>MethodNodeContext.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MethodNodeContext.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\MockMethodNodeView.axaml.cs">
-          <DependentUpon>MethodNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MethodNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Explorer\ServiceMock\MockMethodScriptNodeView.axaml.cs">
-          <DependentUpon>FileReqNodeView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>FileReqNodeView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\MockMethodTabView.axaml.cs">
-          <DependentUpon>MockMethodTabView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>MockMethodTabView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Tabs\Grpc\GrpcMockMethodHostView.axaml.cs">
-          <DependentUpon>GrpcMockMethodHostView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>GrpcMockMethodHostView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Controls\TextEditControl.axaml.cs">
-          <DependentUpon>TextEditControl.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>TextEditControl.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Overlay\GrpcServiceMockConfigView.axaml.cs">
-          <DependentUpon>GrpcServiceMockConfigView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>GrpcServiceMockConfigView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="Views\Overlay\NotSupportedOverlayView.axaml.cs">
-          <DependentUpon>NotSupportedOverlayView.axaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>NotSupportedOverlayView.axaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
 
     </ItemGroup>
 
 
     <ItemGroup>
-        <None Remove="Assets\fire.ico" />
-        <None Remove="Assets\fire.png" />
-        <None Remove="Resources\json.xshd" />
-        <EmbeddedResource Include="Resources\json.xshd" />
-        <None Remove="Resources\log.xshd" />
-        <Content Include="Assets\fire.ico" />
-        <EmbeddedResource Include="Resources\log.xshd" />
+        <None Remove="Assets\fire.ico"/>
+        <None Remove="Assets\fire.png"/>
+        <None Remove="Resources\json.xshd"/>
+        <EmbeddedResource Include="Resources\json.xshd"/>
+        <None Remove="Resources\log.xshd"/>
+        <Content Include="Assets\fire.ico"/>
+        <EmbeddedResource Include="Resources\log.xshd"/>
         <None Update="Resources\fire.icns">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <Compile Remove="ViewModels\Explorer\MethodNode.cs" />
-        <AvaloniaXaml Remove="Views\Explorer\ExplorerView.axaml" />
-        <None Include="Views\Explorer\ExplorerView.axaml" />
+        <Compile Remove="ViewModels\Explorer\MethodNode.cs"/>
+        <AvaloniaXaml Remove="Views\Explorer\ExplorerView.axaml"/>
+        <None Include="Views\Explorer\ExplorerView.axaml"/>
     </ItemGroup>
 
 
     <ItemGroup>
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png" />
-        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json" />
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\100.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\102.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\1024.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\108.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\114.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\120.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\128-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\144.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\152.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\16-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\167.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\172.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\180.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\196.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\20.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\216.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\234.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\256-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\258.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\29.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\32-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\40.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\48.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\50.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\512-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\55.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\57.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\58.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\60.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\64-mac.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\66.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\72.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\76.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\80.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\87.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\88.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\92.png"/>
+        <UpToDateCheckInput Remove="Assets\AppIcon.appiconset\Contents.json"/>
     </ItemGroup>
 
 

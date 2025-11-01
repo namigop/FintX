@@ -33,6 +33,10 @@ public class FileNode : NodeBase {
         this.CheckGitStatus();
     }
 
+    public ICommand DeleteCommand { get; }
+    public string FullPath { get; private set; }
+    public string GitFileIcon => this.GetGitFileIcon();
+
     public FileGitStatus GitFileStatus {
         get => this._gitFileStatus;
         private set {
@@ -42,21 +46,49 @@ public class FileNode : NodeBase {
     }
 
     public bool IsManagedByGit => !this.GitFileStatus.IsNoRepository;
-    public string GitFileIcon => this.GetGitFileIcon();
+
+    public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
+    public ICommand OpenCommand { get; }
 
     public ICommand OpenFilePathCommand { get; }
     public ICommand OpenMethodInWindowCommand { get; }
-
-    public DateTime LastWriteTime => this.Io.File.GetLastWriteTime(this.FullPath);
-    public ICommand DeleteCommand { get; }
-    public string FullPath { get; private set; }
-    public ICommand OpenCommand { get; }
     public ICommand RenameCommand { get; }
 
     public string TempTitle {
         get => this._tempTitle;
         set => this.RaiseAndSetIfChanged(ref this._tempTitle, value);
     }
+
+    public void CancelEdit() {
+        this.TempTitle = Path.GetFileName(this.FullPath);
+        this.IsEditing = false;
+    }
+
+    public void CheckGitStatus() => this.GitFileStatus = Git.getFileStatus(this.FullPath);
+
+    public void EndEdit() =>
+        this.Exec(() => {
+            this.TempTitle = Core.Utils.makeValidFileName(this.TempTitle.Trim());
+            var origExt = Path.GetExtension(this.FullPath);
+            if (!this.TempTitle.EndsWith(origExt)) {
+                this.TempTitle = $"{this.TempTitle}{origExt}";
+            }
+
+            if (this.TempTitle != this.Title) {
+                this.Title = this.TempTitle;
+                var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path!, this.Title));
+                if (!this.Io.File.Exists(newFile)) {
+                    //will trigger a file watcher event that will sync the explorer tree
+                    this.Io.File.Move(this.FullPath, newFile);
+                }
+                else {
+                    this.Title = Path.GetFileName(this.FullPath);
+                    this.Io.Log.Warn($"Unable to rename {Path.GetFileName(this.FullPath)}. Target file already exists");
+                }
+            }
+
+            this.IsEditing = false;
+        });
 
     private string GetGitFileIcon() {
         if (this.GitFileStatus.IsModified) {
@@ -99,7 +131,8 @@ public class FileNode : NodeBase {
         // return GitStatusColors.Default;
     }
 
-    public void CheckGitStatus() => this.GitFileStatus = Git.getFileStatus(this.FullPath);
+    public override void Init() {
+    }
 
     private void OnClientUpdated(MessageProject.MsgClientUpdated obj) {
         if (this.FullPath.StartsWith(obj.PreviousPath)) {
@@ -107,48 +140,32 @@ public class FileNode : NodeBase {
         }
     }
 
+    private void OnDelete() =>
+        // Delete from the file system *only*.  The OS event notification FileSystemWatcher
+        // will get handled by ExplorerViewModel and the delete file will be removed
+        // from the explorer tree
+        this.Io.File.Delete(this.FullPath);
+
+    private void OnOpen() {
+        var tab = TabFactory.From(this, this.Io);
+        if (tab != null) {
+            this.Io.Log.Info($"Opening {this.FullPath}");
+            GlobalHub.publish(new OpenTabMessage(tab));
+        }
+    }
+
+    private void OnOpenFilePath() {
+        var dir = Path.GetDirectoryName(this.FullPath);
+        Core.Utils.openPath(dir);
+    }
+
+    private void OnRename() => this.IsEditing = true;
+
     private void OpenMethodInWindow() {
         var tab = TabFactory.From(this, this.Io);
         if (tab != null) {
             GlobalHub.publish(new OpenChildWindowMessage(tab));
         }
-    }
-
-    private void UpdateSubTitle() {
-        var time = this.LastWriteTime.ToString("dddd, dd MMMM yyyy h:m tt");
-        this.SubTitle = $"Last updated: {time}";
-    }
-
-    public void CancelEdit() {
-        this.TempTitle = Path.GetFileName(this.FullPath);
-        this.IsEditing = false;
-    }
-
-    public void EndEdit() =>
-        this.Exec(() => {
-            this.TempTitle = Core.Utils.makeValidFileName(this.TempTitle.Trim());
-            var origExt = Path.GetExtension(this.FullPath);
-            if (!this.TempTitle.EndsWith(origExt)) {
-                this.TempTitle = $"{this.TempTitle}{origExt}";
-            }
-
-            if (this.TempTitle != this.Title) {
-                this.Title = this.TempTitle;
-                var newFile = Path.GetDirectoryName(this.FullPath).Then(path => Path.Combine(path!, this.Title));
-                if (!this.Io.File.Exists(newFile)) {
-                    //will trigger a file watcher event that will sync the explorer tree
-                    this.Io.File.Move(this.FullPath, newFile);
-                }
-                else {
-                    this.Title = Path.GetFileName(this.FullPath);
-                    this.Io.Log.Warn($"Unable to rename {Path.GetFileName(this.FullPath)}. Target file already exists");
-                }
-            }
-
-            this.IsEditing = false;
-        });
-
-    public override void Init() {
     }
 
     public void UpdateFilePath(string newFilePath) {
@@ -163,23 +180,8 @@ public class FileNode : NodeBase {
         }
     }
 
-    private void OnDelete() =>
-        // Delete from the file system *only*.  The OS event notification FileSystemWatcher
-        // will get handled by ExplorerViewModel and the delete file will be removed
-        // from the explorer tree
-        this.Io.File.Delete(this.FullPath);
-
-    private void OnOpenFilePath() {
-        var dir = Path.GetDirectoryName(this.FullPath);
-        Core.Utils.openPath(dir);
+    private void UpdateSubTitle() {
+        var time = this.LastWriteTime.ToString("dddd, dd MMMM yyyy h:m tt");
+        this.SubTitle = $"Last updated: {time}";
     }
-    private void OnOpen() {
-        var tab = TabFactory.From(this, this.Io);
-        if (tab != null) {
-            Io.Log.Info($"Opening {this.FullPath}");
-            GlobalHub.publish(new OpenTabMessage(tab));
-        }
-    }
-
-    private void OnRename() => this.IsEditing = true;
 }
