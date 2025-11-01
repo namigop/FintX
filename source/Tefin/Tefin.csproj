@@ -422,6 +422,7 @@
         <None Remove="Assets\fire.ico"/>
         <None Remove="Assets\fire.png"/>
         <None Remove="Resources\json.xshd"/>
+        <EmbeddedResource Include="Resources\csharp.xshd" />
         <EmbeddedResource Include="Resources\json.xshd"/>
         <None Remove="Resources\log.xshd"/>
         <Content Include="Assets\fire.ico"/>

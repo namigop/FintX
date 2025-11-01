@@ -34,7 +34,7 @@
                                 </Panel>
                                 <Border MaxHeight="{Binding EditorHeight}" BorderBrush="{Binding SelectedColor}"
                                         BorderThickness="3 1 1 1 " Grid.Row="1" CornerRadius="6">
-                                    <controls:JsonEditor Text="{Binding ScriptText}" Padding="4" Focusable="True" />
+                                    <controls:CsEditor Text="{Binding ScriptText}" Padding="4" Focusable="True" />
                                 </Border>
 
                                 <Border ZIndex="100" Background="#1E1F22" Grid.Row="1" HorizontalAlignment="Right"
