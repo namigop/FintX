@@ -6,6 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Tefin.Views.Controls.JsonEditor">
     <DockPanel LastChildFill="True">
-        <avalonEdit:TextEditor x:Name="Editor" FontSize="13" ShowLineNumbers="True" />
+        <avalonEdit:TextEditor x:Name="Editor" FontSize="14" ShowLineNumbers="True"  />
     </DockPanel>
 </UserControl>

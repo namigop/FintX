@@ -40,14 +40,8 @@ public static class ServerHandler {
     }
 
     // ReSharper disable once UnusedMember.Global
-    public static async Task<object> RunClientStream(string concreteService, string methodName, object requestStream,
-        ServerCallContext context) {
-        if (_env.TryGetValue(concreteService, out var env)) {
-            var (json, responseType) = await env.RunClientStream(methodName, requestStream, context);
-            return Instance.indirectDeserialize(responseType, json);
-        }
-
-        throw new RpcException(new Status(StatusCode.NotFound, "Service not found"));
+    public static async Task<object> RunClientStream(string concreteService, string methodName, object requestStream, ServerCallContext context) {
+        throw new NotImplementedException("Mocks are not supported for client streaming. Try out FintX Enterprise instead at https://fintx.dev");
     }
 
     // ReSharper disable once UnusedMember.Global

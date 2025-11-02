@@ -100,7 +100,7 @@ public class ScriptViewModel : ViewModelBase {
     private void OnSelectedScriptChanged(ScriptViewModel obj) {
         if (obj._isSelected) {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSeaGreen"));
-            ServerHandler.Register(obj._serviceName, obj._methodInfo, () => obj._scriptText);
+            ServerHandler.Register(obj._serviceName, obj._methodInfo, () => obj.ScriptText);
             foreach (var s in this.Scripts) {
                 if (s != obj) {
                     s.IsSelected = false;

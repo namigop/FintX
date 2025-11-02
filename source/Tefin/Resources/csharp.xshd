@@ -30,6 +30,8 @@
          <Color name="TypeKeywords"          foreground="#C58362" fontWeight="normal" />
          <Color name="SemanticKeywords"      foreground="Cyan" fontWeight="bold" exampleText="if (args == null) throw new ArgumentNullException(nameof(args));" />
      
+         <Color name="ScriptKeywords"      foreground="DarkKhaki" fontWeight="normal"  />
+          
          <Color name="CommentMarkerSetTodo"       foreground="#78A234" fontWeight="bold" />
          <Color name="CommentMarkerSetHackUndone" foreground="#78A234" fontWeight="bold" />
          
@@ -289,6 +291,13 @@
 		<Keywords color="SemanticKeywords">
 			<Word>nameof</Word>
 		</Keywords>
+		<Keywords color="ScriptKeywords">
+        			<Word>$&lt;&lt;</Word>
+        			<Word>&gt;&gt;</Word>
+        			<Word>(</Word>
+        			<Word>)</Word>
+        			
+        </Keywords>
 
 		<!-- Mark previous rule-->
 		<Rule color="MethodCall">

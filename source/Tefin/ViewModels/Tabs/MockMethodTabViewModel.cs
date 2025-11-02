@@ -40,8 +40,9 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
         AutoSave.ServiceMockParam.Empty().WithMock(this.ServiceMock);
 
     protected override string GetTabId() {
-        var id = AutoSave.getMockAutoSaveLocation(this.Io, this.MockMethod.MethodInfo, this.ServiceMock.Path);
-        return id;
+        var file = AutoSave.getMockAutoSaveLocation(this.Io, this.MockMethod.MethodInfo, this.ServiceMock.Path);
+        file = Path.GetDirectoryName(file).Then(path => Path.Combine(path, $"{this.MockMethod.MethodInfo.Name}{Ext.mockScriptExt}"));
+        return file;
     }
 
     public override void Init() {
