@@ -23,7 +23,7 @@ public sealed class MockMethodTabViewModel : PersistedTabViewModel {
     public override ProjectTypes.ClientGroup Client => ProjectTypes.ClientGroup.Empty();
 
     public override ClientMethodViewModelBase ClientMethod { get; } = null!;
-    public override string Icon { get; } = "Icon.Method";
+    public override string Icon { get; } = "Icon.MockMethod";
 
     public GrpcMockMethodHostViewModel MockMethod { get; }
 

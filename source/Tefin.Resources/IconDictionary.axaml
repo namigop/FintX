@@ -23,6 +23,7 @@
     <system:String x:Key="Icon.Grpc2">Icon.Grpc2</system:String>
     <system:String x:Key="Icon.Web">Icon.Web</system:String>
     <system:String x:Key="Icon.Method">Icon.Method</system:String>
+    <system:String x:Key="Icon.MockMethod">Icon.MockMethod</system:String>
     <system:String x:Key="Icon.CurlyBrace">Icon.CurlyBrace</system:String>
     <system:String x:Key="Icon.Plus">Icon.Plus</system:String>
     <system:String x:Key="Icon.PlusGray">Icon.PlusGray</system:String>
@@ -764,6 +765,20 @@
                         <Line StartPoint="7.50,15.183" EndPoint="7.506, 6.87" Fill="Transparent" Stroke="#20A0E0"
                               StrokeThickness="1" />
                         <Polyline Points="0.647,3.663 7.477,6.823 14.359,3.717" Fill="Transparent" Stroke="#20A0E0"
+                                  StrokeThickness="1" />
+                    </Canvas>
+                </Canvas>
+            </Viewbox>
+        </DataTemplate>
+        <DataTemplate x:Key="{StaticResource Icon.MockMethod}">
+            <Viewbox Stretch="Uniform">
+                <Canvas Width="16" Height="16">
+                    <Canvas>
+                        <Polygon Points="0.5,3.569 7.506,0.774 14.511,3.569 14.511,12.018 7.506,15.3 0.5,11.725"
+                                 Fill="Transparent" Stroke="MediumPurple" StrokeThickness="1" />
+                        <Line StartPoint="7.50,15.183" EndPoint="7.506, 6.87" Fill="Transparent" Stroke="MediumPurple"
+                              StrokeThickness="1" />
+                        <Polyline Points="0.647,3.663 7.477,6.823 14.359,3.717" Fill="Transparent" Stroke="MediumPurple"
                                   StrokeThickness="1" />
                     </Canvas>
                 </Canvas>
