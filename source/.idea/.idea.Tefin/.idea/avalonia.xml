@@ -9,6 +9,7 @@
         <entry key="Tefin.Resources/ResourceDictionary.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/App.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/ChildWindow.axaml" value="Tefin/Tefin.csproj" />
+        <entry key="Tefin/Views/Controls/CsEditor.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Controls/IconControl.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Controls/JsonEditor.axaml" value="Tefin/Tefin.csproj" />
         <entry key="Tefin/Views/Controls/Number.axaml" value="Tefin/Tefin.csproj" />

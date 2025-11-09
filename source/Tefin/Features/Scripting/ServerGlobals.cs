@@ -9,6 +9,7 @@ public class ServerGlobals {
 
     private readonly object? _requestStream;
     private readonly object? _responseStream;
+    private readonly ScriptRequestUtils _requestUtils;
 
     public ServerGlobals(object? request, object? requestStream, object? responseStream, ServerCallContext context,
         IOs io) {
@@ -16,8 +17,12 @@ public class ServerGlobals {
         this._responseStream = responseStream;
         this.context = context;
         this._io = io;
+        this.request = new ScriptRequestUtils(request);
     }
 
+    // ReSharper disable once InconsistentNaming
+    public ScriptRequestUtils request { get; }
+    
     // ReSharper disable once InconsistentNaming
     public ServerCallContext context { get; }
 
@@ -53,6 +58,17 @@ public class ServerGlobals {
             }
 
             return $"<error> {jPath} did not match any node in the json";
+        }
+    }
+
+    public class ScriptRequestUtils(object? request) {
+
+        private static readonly ScriptUtilJson JsUtils = new();
+        private string _reqJson = JsUtils.From(request);        
+       
+        // ReSharper disable once UnusedMember.Global
+        public string Get(string jPath) {
+            return JsUtils.Get(jPath, this._reqJson);
         }
     }
 }
