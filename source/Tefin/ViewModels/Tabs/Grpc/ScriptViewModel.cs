@@ -13,8 +13,6 @@ using Tefin.Features.Scripting;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public class ScriptViewModel : ViewModelBase {
-    private readonly MethodInfo _methodInfo;
-    private readonly string _serviceName;
     private readonly Type? _serviceType;
     private double _editorHeight;
     private string _header = "";
@@ -24,9 +22,9 @@ public class ScriptViewModel : ViewModelBase {
     private string _scriptText = "";
     private SolidColorBrush _selectedColor;
 
-    public ScriptViewModel(MethodInfo mi, string cgName, Action<ScriptViewModel> onRemove) {
-        this._serviceName = cgName;
-        this._methodInfo = mi;
+    public ScriptViewModel(MethodInfo mi, string serviceName, Action<ScriptViewModel> onRemove) {
+        this.ServiceName = serviceName;
+        this.MethodInfo = mi;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this.RemoveCommand = this.CreateCommand(() => onRemove(this));
         this._serviceType = mi.DeclaringType;
@@ -65,6 +63,8 @@ public class ScriptViewModel : ViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._margin, value);
     }
 
+    public MethodInfo MethodInfo { get; }
+
     public ICommand RemoveCommand { get; }
 
     public required ObservableCollection<ScriptViewModel> Scripts { get; init; }
@@ -79,10 +79,12 @@ public class ScriptViewModel : ViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._selectedColor, value);
     }
 
+    public string ServiceName { get; }
+
     private void OnCompile() {
         var parseResult = ScriptParser.parse.Invoke(this._scriptText);
         if (parseResult.IsOk) {
-            var env = ServerHandler.GetOrAddScriptEnv(this._serviceName);
+            var env = ServerHandler.GetOrAddScriptEnv(this.ServiceName);
             foreach (var line in parseResult.ResultValue) {
                 if (line.ContainsScript) {
                     var code = ScriptParser.extract.Invoke(line.Raw);
@@ -97,21 +99,27 @@ public class ScriptViewModel : ViewModelBase {
         }
     }
 
-    private void OnSelectedScriptChanged(ScriptViewModel obj) {
-        if (obj._isSelected) {
+    private void OnSelectedScriptChanged(ScriptViewModel obj) => obj.TryRegisterMethod();
+
+    public SingleScript ToScriptFileContent() => new(this.IsSelected, this.ScriptText);
+
+    public void TryRegisterMethod() {
+        if (this._isSelected) {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSeaGreen"));
-            ServerHandler.Register(obj._serviceName, obj._methodInfo, () => obj.ScriptText);
+            ServerHandler.UnRegister(this.ServiceName, this.MethodInfo);
+            ;
+            ServerHandler.Register(this.ServiceName, this.MethodInfo, () => this.ScriptText);
             foreach (var s in this.Scripts) {
-                if (s != obj) {
+                if (s != this) {
                     s.IsSelected = false;
                 }
             }
+
+            ServerHandler.Register(this.ServiceName, this.MethodInfo, () => this.ScriptText);
         }
         else {
             this.SelectedColor = new SolidColorBrush(Color.Parse("LightSlateGray"));
-            ServerHandler.UnRegister(obj._serviceName, obj._methodInfo);
+            ServerHandler.UnRegister(this.ServiceName, this.MethodInfo);
         }
     }
-
-    public SingleScript ToScriptFileContent() => new(this.IsSelected, this.ScriptText);
 }

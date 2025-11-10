@@ -9,7 +9,6 @@ public class ServerGlobals {
 
     private readonly object? _requestStream;
     private readonly object? _responseStream;
-    private readonly ScriptRequestUtils _requestUtils;
 
     public ServerGlobals(object? request, object? requestStream, object? responseStream, ServerCallContext context,
         IOs io) {
@@ -18,19 +17,23 @@ public class ServerGlobals {
         this.context = context;
         this._io = io;
         this.request = new ScriptRequestUtils(request);
+        this.headers = new ScriptMetadataUtils(context.RequestHeaders);
     }
 
     // ReSharper disable once InconsistentNaming
-    public ScriptRequestUtils request { get; }
-    
-    // ReSharper disable once InconsistentNaming
     public ServerCallContext context { get; }
+
+    // ReSharper disable once InconsistentNaming
+    public ScriptMetadataUtils headers { get; }
 
     // ReSharper disable once InconsistentNaming
     public ScriptUtilJson json { get; } = new();
 
     // ReSharper disable once InconsistentNaming
     public Log.ILog log => this._io.Log;
+
+    // ReSharper disable once InconsistentNaming
+    public ScriptRequestUtils request { get; }
 
     // ReSharper disable once InconsistentNaming
     public Dictionary<string, object> variables { get; } = new();
@@ -62,13 +65,15 @@ public class ServerGlobals {
     }
 
     public class ScriptRequestUtils(object? request) {
-
         private static readonly ScriptUtilJson JsUtils = new();
-        private string _reqJson = JsUtils.From(request);        
-       
+        private readonly string _reqJson = JsUtils.From(request);
+
         // ReSharper disable once UnusedMember.Global
-        public string Get(string jPath) {
-            return JsUtils.Get(jPath, this._reqJson);
-        }
+        public string Get(string jPath) => JsUtils.Get(jPath, this._reqJson);
+    }
+
+    public class ScriptMetadataUtils(Metadata metadata) {
+        // ReSharper disable once UnusedMember.Global
+        public string? Get(string key) => metadata.GetValue(key);
     }
 }

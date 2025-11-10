@@ -56,6 +56,7 @@ public class MockUnaryViewModel : GrpMockCallTypeViewModelBase {
             scm.ScriptText = s.Content;
             scm.IsSelected = s.IsSelected;
             this.Scripts.Add(scm);
+            scm.TryRegisterMethod();
         }
 
         if (this.Scripts.Any()) {
