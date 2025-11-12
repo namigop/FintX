@@ -25,6 +25,8 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _address = string.Empty;
     private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
+    private bool _isUsingNamedPipes;
+    private string _pipeName;
     private string _port = "50051";
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
@@ -51,7 +53,17 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._isDiscoveringUsingProto, value);
     }
 
+    public bool IsUsingNamedPipes {
+        get => this._isUsingNamedPipes;
+        set => this.RaiseAndSetIfChanged(ref this._isUsingNamedPipes, value);
+    }
+
     public ICommand OkayCommand { get; }
+
+    public string PipeName {
+        get => this._pipeName;
+        set => this.RaiseAndSetIfChanged(ref this._pipeName, value);
+    }
 
     [Required(ErrorMessage = "Enter a port number")]
     [IsValidPortNumber]
@@ -170,6 +182,8 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
                     this.Description,
                     csFiles,
                     Convert.ToUInt32(this.Port),
+                    this.IsUsingNamedPipes,
+                    this.PipeName,
                     output.Input.Value.ModuleFile) { Reset = false };
                 GlobalHub.publish(msg);
             }

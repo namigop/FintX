@@ -2,11 +2,12 @@ using System.Threading;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tefin.Features.Scripting;
 
-public class ServerHost(Type serviceType, uint port, string serviceName) {
+public class ServerHost(Type serviceType, uint port, string serviceName, bool useNamedPipes, string pipeName) {
     private WebApplication? _app;
     private CancellationTokenSource? _csource;
     public bool IsRunning { get; private set; }
@@ -21,6 +22,15 @@ public class ServerHost(Type serviceType, uint port, string serviceName) {
                     listenOptions.UseHttps();
                 });
             });
+
+            if (useNamedPipes) {
+                builder.WebHost.ConfigureKestrel(serverOptions => {
+                    serverOptions.ListenNamedPipe(pipeName, listenOptions => {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                    });
+                });
+            }
+
             builder.Services.AddScoped(serviceType, sp => {
                 var cons = serviceType.GetConstructors().First();
                 var instance = cons.Invoke([serviceName]);

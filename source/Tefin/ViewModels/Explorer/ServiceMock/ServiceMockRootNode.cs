@@ -54,7 +54,11 @@ public class ServiceMockRootNode : NodeBase {
 
     public bool IsRunning => this._host is { IsRunning: true };
 
+    public bool IsUsingNamedPipes { get; private set; }
+
     public ICommand OpenServiceMockConfigCommand { get; }
+
+    public string PipeName { get; private set; }
 
     public uint Port {
         get => this._port;
@@ -186,7 +190,7 @@ public class ServiceMockRootNode : NodeBase {
     private async Task OnStartServer() {
         try {
             this.CanStartServer = false;
-            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
+            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName, this.IsUsingNamedPipes, this.PipeName);
             await this._host.Start();
             this.Io.Log.Info($"{this.ServiceName} server started.");
         }
@@ -219,6 +223,8 @@ public class ServiceMockRootNode : NodeBase {
         this.ServicePath = cg.Path;
         this.ServiceName = cg.Config.Value.ServiceName;
         this.Port = cg.Config.Value.Port;
+        this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;
+        this.PipeName = cg.Config.Value.PipeName;
         // this.Url = cg.Config.Value.Url;
         this.Title = cg.Config.Value.ServiceName;
         // this.SubTitle = cg.Config.Value.Description;

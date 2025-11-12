@@ -13,9 +13,11 @@ public class AddServiceMockFeature(
     string[] csFiles,
     string dll,
     uint port,
+    bool isUsingNAmedPipes,
+    string pipeName,
     MethodInfo[] methods,
     IOs io) {
-    public void Add() =>
+    public void Add() {
         ServiceMockStructure.addServiceMock(
             io,
             project,
@@ -24,5 +26,7 @@ public class AddServiceMockFeature(
             csFiles,
             dll,
             port,
+            isUsingNAmedPipes ? Core.Utils.some(pipeName) : Core.Utils.none<string>(),
             methods);
+    }
 }

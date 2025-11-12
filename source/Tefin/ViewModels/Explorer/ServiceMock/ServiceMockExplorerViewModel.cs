@@ -357,6 +357,8 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     obj.CsFiles,
                     obj.Dll,
                     obj.Port,
+                    obj.IsUsingNamedPipes,
+                    obj.PipeName,
                     methods,
                     this.Io);
                 feature.Add();

@@ -10,6 +10,8 @@ module ProjectTypes =
     member val ServiceName = "" with get, set
     member val Port = 0u with get, set
     member val Desc = "" with get,set
+    member val IsUsingNamedPipes = false with get,set
+    member val PipeName = "" with get,set
   
   //Use a class instead of an F# record to easily serialize to json
   type ClientConfig() =

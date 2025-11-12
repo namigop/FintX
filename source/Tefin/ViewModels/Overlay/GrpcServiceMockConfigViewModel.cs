@@ -21,6 +21,8 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
     private uint _port;
     private string _serviceMockName = "";
     private string _url = "";
+    private bool _isUsingNamedPipes;
+    private string _pipeName;
 
     public GrpcServiceMockConfigViewModel(string mockConfigFile, Action onServiceMockNameChanged) {
         this._mockConfigFile = mockConfigFile;
@@ -61,6 +63,16 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; } = "Edit mock service configuration";
 
+    public bool IsUsingNamedPipes {
+        get => this._isUsingNamedPipes;
+        set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
+    }
+
+    public string PipeName {
+        get => this._pipeName;
+        set => this.RaiseAndSetIfChanged(ref _pipeName, value);
+    }
+
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string mockConfigFile) {
@@ -68,6 +80,8 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.ServiceMockName = this._mockConfig.ServiceName;
         this.Description = this._mockConfig.Desc;
         this.Port = this._mockConfig.Port;
+        this.IsUsingNamedPipes = this._mockConfig.IsUsingNamedPipes;
+        this.PipeName = this._mockConfig.PipeName;
     }
 
     private async Task OnOkay() {
@@ -75,6 +89,8 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._mockConfig.ServiceName = this.ServiceMockName;
         this._mockConfig.Desc = this.Description;
         this._mockConfig.Port = this.Port;
+        this._mockConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
+        this._mockConfig.PipeName = this.PipeName;
         var feature = new SaveServiceMockConfigFeature(this._mockConfigFile, this._mockConfig, this.Io);
         await feature.Save();
         if (nameChanged) {
