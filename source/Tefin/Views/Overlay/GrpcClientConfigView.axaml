@@ -43,7 +43,7 @@
                         </CheckBox>
 
                         <CheckBox IsChecked="{Binding IsUsingNamedPipes}" Margin="8 2 0 0" Grid.Column="1" >
-                            <TextBlock Text="Use named pipes"></TextBlock>
+                            <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
                         </CheckBox>
                                        
                     </Grid>

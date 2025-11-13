@@ -51,14 +51,14 @@
                          ToolTip.Tip="Enter a name" />
 
                 <TextBlock Grid.Row="6" Text="Port*" Classes="FormField" />
-                <TextBox Grid.Row="7" HorizontalAlignment="Stretch" Text="{Binding Port}"
+                <TextBox Grid.Row="7" HorizontalAlignment="Stretch" Text="{Binding Port}" IsEnabled="{Binding !IsUsingNamedPipes}"
                          ToolTip.Tip="Enter a port number" />
 
                 <TextBlock Grid.Row="8" Text="Description" Classes="FormField" />
                 <TextBox Grid.Row="9" HorizontalAlignment="Stretch" MinHeight="100" />
                 
                 <CheckBox Grid.Row="10" IsChecked="{Binding IsUsingNamedPipes}" Margin="0 15 0 4">
-                    <TextBlock Text="Use named pipes"></TextBlock>
+                    <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
                 </CheckBox>
                 <TextBox Grid.Row="11" Text="{Binding PipeName}" 
                          Watermark="Enter the pipe name"

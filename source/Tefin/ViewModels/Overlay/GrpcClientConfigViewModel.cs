@@ -50,6 +50,13 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._selectedCertStoreLocation = this.CertStoreLocations[1];
 
         this.Load(this._clientConfigFile);
+        this.SubscribeTo<bool, GrpcClientConfigViewModel>(
+            x => x.IsUsingNamedPipes,
+            vm => {
+                 if (vm.IsUsingNamedPipes) {
+                     vm.Url = "http://localhost";
+                 }
+            });
     }
 
     public ICommand CancelCommand { get; }
