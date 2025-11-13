@@ -27,22 +27,22 @@ module ServiceMock =
 """
     let private unaryTemplate =
         """            
-        var resp = await global::Tefin.Features.ServerHandler.RunUnary(this.ServiceName, "{{METHOD_NAME}}", request, context);
+        var resp = await global::Tefin.Features.Scripting.ServerHandler.RunUnary(this.ServiceName, "{{METHOD_NAME}}", request, context);
         return ({{RESPONSE_TYPE}})resp;
         """
     let private clientStreamTemplate =
         """            
-        var resp = await global::Tefin.Features.ServerHandler.RunClientStream(this.ServiceName, "{{METHOD_NAME}}", requestStream, context);
+        var resp = await global::Tefin.Features.Scripting.ServerHandler.RunClientStream(this.ServiceName, "{{METHOD_NAME}}", requestStream, context);
         return ({{RESPONSE_TYPE}})resp;
         """
     let private serverStreamTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.RunServerStream(this.ServiceName, "{{METHOD_NAME}}", request, responseStream, context);
+        var task = global::Tefin.Features.ServerHandler.Scripting.RunServerStream(this.ServiceName, "{{METHOD_NAME}}", request, responseStream, context);
         await task;
         """
     let private duplexTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.RunDuplex(this.ServiceName, "{{METHOD_NAME}}", requestStream, responseStream, context);
+        var task = global::Tefin.Features.ServerHandler.Scripting.RunDuplex(this.ServiceName, "{{METHOD_NAME}}", requestStream, responseStream, context);
         await task;
         """
             
