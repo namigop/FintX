@@ -1,9 +1,13 @@
 namespace Tefin.Grpc.Execution
 
 open System
+open System.IO
+open System.IO.Pipes
 open System.Net.Security
 open System.Security.Cryptography.X509Certificates
+open System.Security.Principal
 open System.Threading
+open System.Threading.Tasks
 open Grpc.Core
 open Grpc.Net.Client
 open Grpc.Net.Client.Configuration
@@ -24,7 +28,9 @@ type CallConfig =
   { Url: string
     IsUsingSSL: bool
     JWT: string
-    X509Cert: Cert option //todo
+    X509Cert: Cert option
+    IsUsingNamedPipes : bool
+    NamedPipe : NamedPipeClientConfig
     Io: IOs }
 
   static member From  (cfg: ClientConfig) (io: IOs) (envFile:string)=
@@ -59,6 +65,8 @@ type CallConfig =
       IsUsingSSL = cfg.IsUsingSSL
       JWT = cfg.Jwt.Trim()
       X509Cert = cert
+      IsUsingNamedPipes = cfg.IsUsingNamedPipes
+      NamedPipe = cfg.NamedPipe
       Io = io }
 
 module ChannelBuilder =
@@ -138,12 +146,56 @@ module ChannelBuilder =
 
     let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
     buildChannel cfg httpclient defaultMethodConfig
-
+    
+  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeClientConfig) =
+      let pipeDirection =
+         let ok, v = Enum.TryParse<PipeDirection>(namedPipe.Direction)
+         if ok then v else PipeDirection.InOut
+      let impersonation =
+         let ok, v = Enum.TryParse<TokenImpersonationLevel>(namedPipe.ImpersonationLevel)
+         if ok then v else TokenImpersonationLevel.Anonymous
+      let options =
+        let mutable pipeOptions = PipeOptions.None
+        if Array.contains "WriteThrough" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.WriteThrough
+        if Array.contains "Asynchronous" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.Asynchronous
+        if Array.contains "CurrentUserOnly" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.CurrentUserOnly
+        if Array.contains "FirstPipeInstance" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.FirstPipeInstance
+          
+        pipeOptions
+      
+      let createNamedPipeStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
+          task {
+            let clientStream = new NamedPipeClientStream(
+              ".", //named pipes are supported only on the local machine
+              namedPipe.PipeName,
+              pipeDirection,
+              options,
+              impersonation)
+            
+            try
+                do! clientStream.ConnectAsync(token).ConfigureAwait(false)              
+            with exc ->
+                clientStream.Dispose()
+                raise exc              
+            return clientStream :> Stream
+          }
+          |> fun t -> ValueTask.FromResult(t.Result)                
+      
+      let handler =        
+        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
+        new SocketsHttpHandler( ConnectCallback = f )
+        
+      let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
+      channel
+      
   let createGrpcChannel (cfg: CallConfig) =
     let defaultMethodConfig =
       let m = MethodConfig()
       m.Names.Add(MethodName.Default)
-
       m.RetryPolicy <-
         RetryPolicy(
           MaxAttempts = 5,
@@ -157,5 +209,7 @@ module ChannelBuilder =
 
     if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
       createSecureChannel cfg defaultMethodConfig
+    elif cfg.IsUsingNamedPipes then
+      createNamedPipeChannel cfg.Url cfg.NamedPipe
     else
       createInsecureChannel cfg defaultMethodConfig

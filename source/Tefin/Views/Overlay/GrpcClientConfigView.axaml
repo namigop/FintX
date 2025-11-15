@@ -33,9 +33,21 @@
                 </StackPanel>
 
                 <StackPanel>
-                    <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0"
-                                  OnContent="Use client x509 certificate (https://)"
-                                  OffContent="Don't use SSL (http://)" />
+                    <Grid ColumnDefinitions="*, *">
+                        <!-- <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" -->
+                        <!--               Grid.Column="0" -->
+                        <!--               OnContent="Use client x509 certificate (https://)" -->
+                        <!--               OffContent="Don't use SSL (http://)" />     -->
+                        <CheckBox IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" Grid.Column="0" >
+                            <TextBlock Text="Use client x509 certificate"></TextBlock>
+                        </CheckBox>
+
+                        <CheckBox IsChecked="{Binding IsUsingNamedPipes}" Margin="8 2 0 0" Grid.Column="1" >
+                            <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
+                        </CheckBox>
+                                       
+                    </Grid>
+                    
                     <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSsl}" Margin="0 0 0 0">
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
                             <RadioButton Content="File" Margin="0" IsChecked="{Binding IsCertFromFile}" />
@@ -89,8 +101,12 @@
 
                             </DockPanel>
                         </Grid>
-
-
+                    </Grid>
+                    <Grid IsVisible="{Binding IsUsingNamedPipes}">
+                        <Grid ColumnDefinitions="Auto, *">
+                            <TextBlock  Grid.Column="0" Text="Pipe name" VerticalAlignment="Center"></TextBlock>
+                            <TextBox Grid.Column="1" Text="{Binding PipeName}" Margin="8"></TextBox>
+                        </Grid>
                     </Grid>
                 </StackPanel>
 

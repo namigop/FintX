@@ -44,19 +44,24 @@ module App =
   let getAppState (io: IOs) =
     let file = Path.Combine(Root.Path, AppState.FileName)
 
-    if (io.File.Exists file) then
-      let state = file |> io.File.ReadAllText |> Instance.jsonDeserialize<AppState>
-      let recents = state.RecentProjects |> Array.filter (fun d -> io.Dir.Exists d.Path)
-      let activeOpt = recents |> Array.tryFind (fun d -> d.Path = state.ActiveProject.Path)
-      match activeOpt with
-      | Some a -> { RecentProjects = recents; ActiveProject = a }
-      | None -> { RecentProjects = recents
-                  ActiveProject = AppProject.Create (getDefaultProjectPath defaultPackage) defaultPackage }
-    else
-      let path = getDefaultProjectPath defaultPackage
-
-      { RecentProjects = Array.empty
-        ActiveProject = AppProject.Create path defaultPackage }
+    try
+      if (io.File.Exists file) then
+        let state = file |> io.File.ReadAllText |> Instance.jsonDeserialize<AppState>
+        let recents = state.RecentProjects |> Array.filter (fun d -> io.Dir.Exists d.Path)
+        let activeOpt = recents |> Array.tryFind (fun d -> d.Path = state.ActiveProject.Path)
+        match activeOpt with
+        | Some a -> { RecentProjects = recents; ActiveProject = a }
+        | None -> { RecentProjects = recents
+                    ActiveProject = AppProject.Create (getDefaultProjectPath defaultPackage) defaultPackage }
+      else
+        let path = getDefaultProjectPath defaultPackage
+        { RecentProjects = Array.empty
+          ActiveProject = AppProject.Create path defaultPackage }
+    with
+    | _ ->
+        let path = getDefaultProjectPath defaultPackage
+        { RecentProjects = Array.empty
+          ActiveProject = AppProject.Create path defaultPackage }
 
   let loadPackage (io: IOs) (packagePath: string) =
     let dirs = io.Dir.GetDirectories(Path.Combine(packagePath, "projects"))

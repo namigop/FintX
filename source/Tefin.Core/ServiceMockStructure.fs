@@ -64,13 +64,29 @@ module ServiceMockStructure =
         description
         (csFiles: string array)
         (dll:string)
-        (port:uint)
+        (port:uint)        
+        (serverTransport: ServerTransportConfig)
         (methods:MethodInfo array) =
           
         let mockPath = Path.Combine(project.Path, "mocks", Utils.makeValidFileName serviceName)
         io.Dir.CreateDirectory mockPath
-        
-        let mockConfig = ServiceMockConfig( ServiceName = serviceName, Port = port, Desc = description)
+      
+        let mockConfig =
+          match serverTransport with
+          | NamedPipeServer pipe ->
+            ServiceMockConfig( ServiceName = serviceName,
+                               Port = port,
+                               Desc = description,
+                               IsUsingNamedPipes = true,
+                               NamedPipe = pipe)
+          | DefaultServer ->
+            ServiceMockConfig( ServiceName = serviceName,
+                               Port = port,
+                               Desc = description,
+                               IsUsingNamedPipes = false,
+                               NamedPipe = (NamedPipeServerConfig()))
+                                     
+                                            
         let mockConfigFile = Path.Combine(mockPath, ServiceMockGroup.ConfigFilename)
         let json = Instance.jsonSerialize mockConfig
         io.File.WriteAllText mockConfigFile json

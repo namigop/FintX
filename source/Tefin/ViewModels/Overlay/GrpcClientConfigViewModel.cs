@@ -34,6 +34,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
     private string _url = "";
+    private bool _isUsingNamedPipes;
+    private string _pipeName;
 
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
@@ -48,6 +50,13 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._selectedCertStoreLocation = this.CertStoreLocations[1];
 
         this.Load(this._clientConfigFile);
+        this.SubscribeTo<bool, GrpcClientConfigViewModel>(
+            x => x.IsUsingNamedPipes,
+            vm => {
+                 if (vm.IsUsingNamedPipes) {
+                     vm.Url = "http://localhost";
+                 }
+            });
     }
 
     public ICommand CancelCommand { get; }
@@ -135,6 +144,16 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; } = "Client Configuration";
 
+    public bool IsUsingNamedPipes {
+        get => this._isUsingNamedPipes;
+        set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
+    }
+
+    public string PipeName {
+        get => this._pipeName;
+        set => this.RaiseAndSetIfChanged(ref _pipeName, value);
+    }
+
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string clientConfigFile) {
@@ -145,6 +164,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.IsUsingSsl = this._clientConfig.IsUsingSSL;
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Description = this._clientConfig.Description;
+        this.IsUsingNamedPipes = this._clientConfig.IsUsingNamedPipes;
+        this.PipeName = this._clientConfig.NamedPipe.PipeName;
 
         if (this.IsCertFromFile) {
             this.CertFile = this._clientConfig.CertFile;
@@ -188,6 +209,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;
         this._clientConfig.CertFile = this.CertFile;
+        this._clientConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
+        this._clientConfig.NamedPipe.PipeName = this.PipeName;
         if (this._isCertFromFile) {
             if (this.RequiresPassword) {
                 this._clientConfig.CertFilePassword =

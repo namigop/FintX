@@ -1,21 +1,25 @@
 using System.Reflection;
 
 using Tefin.Core;
-using Tefin.Core.Interop;
+
+using static Tefin.Core.Interop.ProjectTypes;
 
 namespace Tefin.Features;
 
 public class AddServiceMockFeature(
-    ProjectTypes.Project project,
+    Project project,
     string serviceName,
     string protoOrUrl,
     string description,
     string[] csFiles,
     string dll,
     uint port,
+    bool isUsingNamedPipes,
+    NamedPipeServerConfig? namedPipeServerConfig,
     MethodInfo[] methods,
     IOs io) {
-    public void Add() =>
+    public void Add() {
+        
         ServiceMockStructure.addServiceMock(
             io,
             project,
@@ -24,5 +28,14 @@ public class AddServiceMockFeature(
             csFiles,
             dll,
             port,
+            GetServerConfig(),
             methods);
+        return;
+
+        ServerTransportConfig GetServerConfig() {
+            if (isUsingNamedPipes)
+                return ServerTransportConfig.NewNamedPipeServer(namedPipeServerConfig);
+            return  ServerTransportConfig.DefaultServer;
+        }
+    }
 }

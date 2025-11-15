@@ -54,7 +54,11 @@ public class ServiceMockRootNode : NodeBase {
 
     public bool IsRunning => this._host is { IsRunning: true };
 
+    public bool IsUsingNamedPipes { get; private set; }
+
     public ICommand OpenServiceMockConfigCommand { get; }
+
+    public string PipeName { get; private set; }
 
     public uint Port {
         get => this._port;
@@ -68,7 +72,7 @@ public class ServiceMockRootNode : NodeBase {
     public ProjectTypes.ServiceMockGroup ServiceMockGroup { get; private set; }
     public string ServiceName { get; private set; }
 
-    public string ServicePath { get; private set; }
+    public string ServiceMockPath { get; private set; }
 
     public Type? ServiceType { get; private set; }
 
@@ -177,7 +181,7 @@ public class ServiceMockRootNode : NodeBase {
 
     private void OnServiceMockUpdated(MessageProject.MsgServiceMockUpdated obj) {
         //update in case the Url and ClientName has been changed
-        if (this.ServicePath == obj.Path || this.ServicePath == obj.PreviousPath) {
+        if (this.ServiceMockPath == obj.Path || this.ServiceMockPath == obj.PreviousPath) {
             var cg = obj.Client;
             this.Update(cg);
         }
@@ -186,7 +190,7 @@ public class ServiceMockRootNode : NodeBase {
     private async Task OnStartServer() {
         try {
             this.CanStartServer = false;
-            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName);
+            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName, this.IsUsingNamedPipes, this.PipeName);
             await this._host.Start();
             this.Io.Log.Info($"{this.ServiceName} server started.");
         }
@@ -216,9 +220,11 @@ public class ServiceMockRootNode : NodeBase {
     private void Update(ProjectTypes.ServiceMockGroup cg) {
         this.ServiceMockGroup = cg;
         this.CanOpen = true;
-        this.ServicePath = cg.Path;
+        this.ServiceMockPath = cg.Path;
         this.ServiceName = cg.Config.Value.ServiceName;
         this.Port = cg.Config.Value.Port;
+        this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;
+        this.PipeName = cg.Config.Value.NamedPipe.PipeName;
         // this.Url = cg.Config.Value.Url;
         this.Title = cg.Config.Value.ServiceName;
         // this.SubTitle = cg.Config.Value.Description;

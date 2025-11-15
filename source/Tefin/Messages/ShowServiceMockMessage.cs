@@ -10,6 +10,8 @@ public class ShowServiceMockMessage(
     string description,
     string[] csFiles,
     uint port,
+    bool isUsingNamedPipes,
+    string pipeName,
     string dll)
     : MessageBase {
     public string[] CsFiles { get; } = csFiles;
@@ -22,4 +24,6 @@ public class ShowServiceMockMessage(
     public required bool Reset { get; init; } = false;
     public string? SelectedDiscoveredService { get; } = selectedDiscoveredService;
     public string ServiceName { get; } = serviceName;
+    public bool IsUsingNamedPipes { get; set; } = isUsingNamedPipes;
+    public string PipeName { get; set; } = pipeName;
 }

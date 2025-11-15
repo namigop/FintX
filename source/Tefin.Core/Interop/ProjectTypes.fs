@@ -6,11 +6,36 @@ open System.Collections.Generic
 [<AutoOpen>]
 module ProjectTypes =
   
+  type NamedPipeServerConfig() =
+    member val PipeName = "" with get, set
+    
   type ServiceMockConfig() =
     member val ServiceName = "" with get, set
     member val Port = 0u with get, set
     member val Desc = "" with get,set
+    member val IsUsingNamedPipes = false with get,set
+    member val NamedPipe = NamedPipeServerConfig() with get,set
+        
+  type NamedPipeClientConfig() =
+    member val PipeName = "" with get, set
+    member val Direction = "InOut" with get, set
+    member val Options = [| "WriteThrough"; "Asynchronous" |]
+    member val ImpersonationLevel = "Anonymous" with get,set
+    
+    (*
+    direction: PipeDirection.InOut,
+            options: PipeOptions.WriteThrough | PipeOptions.Asynchronous,
+            impersonationLevel: TokenImpersonationLevel.Anonymous);
+  *)
+    
+  type ClientTransportConfig =
+  | NamedPipeClient of NamedPipeClientConfig
+  | DefaultClient
   
+  type ServerTransportConfig =
+  | NamedPipeServer of NamedPipeServerConfig
+  | DefaultServer
+    
   //Use a class instead of an F# record to easily serialize to json
   type ClientConfig() =
     member val Name = "" with get, set
@@ -23,7 +48,9 @@ module ProjectTypes =
     member val CertStoreLocation = "" with get, set
     member val CertThumbprint = "" with get, set
     member val CertFile = "" with get, set
-    member val CertFilePassword = "" with get, set
+    member val CertFilePassword = "" with get, set  
+    member val IsUsingNamedPipes = false with get, set
+    member val NamedPipe = NamedPipeClientConfig() with get, set
 
   type MethodGroup =
     { Name: string
