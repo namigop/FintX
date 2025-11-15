@@ -72,7 +72,7 @@ public class ServiceMockRootNode : NodeBase {
     public ProjectTypes.ServiceMockGroup ServiceMockGroup { get; private set; }
     public string ServiceName { get; private set; }
 
-    public string ServicePath { get; private set; }
+    public string ServiceMockPath { get; private set; }
 
     public Type? ServiceType { get; private set; }
 
@@ -181,7 +181,7 @@ public class ServiceMockRootNode : NodeBase {
 
     private void OnServiceMockUpdated(MessageProject.MsgServiceMockUpdated obj) {
         //update in case the Url and ClientName has been changed
-        if (this.ServicePath == obj.Path || this.ServicePath == obj.PreviousPath) {
+        if (this.ServiceMockPath == obj.Path || this.ServiceMockPath == obj.PreviousPath) {
             var cg = obj.Client;
             this.Update(cg);
         }
@@ -220,7 +220,7 @@ public class ServiceMockRootNode : NodeBase {
     private void Update(ProjectTypes.ServiceMockGroup cg) {
         this.ServiceMockGroup = cg;
         this.CanOpen = true;
-        this.ServicePath = cg.Path;
+        this.ServiceMockPath = cg.Path;
         this.ServiceName = cg.Config.Value.ServiceName;
         this.Port = cg.Config.Value.Port;
         this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;

@@ -82,7 +82,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
 
     public ServiceMockRootNode AddMockNode(ServiceMockGroup mockGroup, Type? type = null) {
         var c = Dispatcher.UIThread.Invoke(() => {
-            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == mockGroup.Path);
+            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServiceMockPath == mockGroup.Path);
             if (n == null) {
                 var mockNode = new ServiceMockRootNode(mockGroup, type);
                 mockNode.Init();
@@ -98,7 +98,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
 
     public ServiceMockRootNode AddRootNode(ServiceMockGroup cg, Type? type = null) {
         var c = Dispatcher.UIThread.Invoke(() => {
-            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServicePath == cg.Path);
+            var n = this.Items.FirstOrDefault(t => ((ServiceMockRootNode)t).ServiceMockPath == cg.Path);
             if (n == null) {
                 var rootNode = new ServiceMockRootNode(cg, type);
                 rootNode.Init();
@@ -325,7 +325,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
 
     private void OnServiceMockDeleted(ServiceMockDeletedMessage obj) {
         var target =
-            this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServicePath == obj.ServiceMock.Path);
+            this.Items.FirstOrDefault(t => t is ServiceMockRootNode cn && cn.ServiceMockPath == obj.ServiceMock.Path);
         if (target != null) {
             this.Items.Remove(target);
         }
