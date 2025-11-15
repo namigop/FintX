@@ -165,7 +165,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Description = this._clientConfig.Description;
         this.IsUsingNamedPipes = this._clientConfig.IsUsingNamedPipes;
-        this.PipeName = this._clientConfig.PipeName;
+        this.PipeName = this._clientConfig.NamedPipe.PipeName;
 
         if (this.IsCertFromFile) {
             this.CertFile = this._clientConfig.CertFile;
@@ -210,7 +210,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertThumbprint = this.Thumbprint;
         this._clientConfig.CertFile = this.CertFile;
         this._clientConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
-        this._clientConfig.PipeName = this.PipeName;
+        this._clientConfig.NamedPipe.PipeName = this.PipeName;
         if (this._isCertFromFile) {
             if (this.RequiresPassword) {
                 this._clientConfig.CertFilePassword =

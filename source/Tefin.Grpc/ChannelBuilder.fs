@@ -30,7 +30,7 @@ type CallConfig =
     JWT: string
     X509Cert: Cert option
     IsUsingNamedPipes : bool
-    PipeName : string
+    NamedPipe : NamedPipeConfig
     Io: IOs }
 
   static member From  (cfg: ClientConfig) (io: IOs) (envFile:string)=
@@ -66,7 +66,7 @@ type CallConfig =
       JWT = cfg.Jwt.Trim()
       X509Cert = cert
       IsUsingNamedPipes = cfg.IsUsingNamedPipes
-      PipeName = cfg.PipeName
+      NamedPipe = cfg.NamedPipe
       Io = io }
 
 module ChannelBuilder =
@@ -147,12 +147,12 @@ module ChannelBuilder =
     let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
     buildChannel cfg httpclient defaultMethodConfig
     
-  let createNamedPipeChannel (url:string) (pipeName) =
-      let createNamedPipeStream (pipeName:string) (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
+  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeConfig) =
+      let createNamedPipeStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
           task {
             let clientStream = new NamedPipeClientStream(
               ".",
-              pipeName,
+              namedPipe.PipeName,
               PipeDirection.InOut,
               PipeOptions.WriteThrough ||| PipeOptions.Asynchronous,
               TokenImpersonationLevel.Anonymous)
@@ -166,9 +166,8 @@ module ChannelBuilder =
           }
           |> fun t -> ValueTask.FromResult(t.Result)                
       
-      let handler =
-        let callback  = createNamedPipeStream pipeName
-        let f = Func<SocketsHttpConnectionContext,CancellationToken,ValueTask<Stream>>(callback)
+      let handler =        
+        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
         new SocketsHttpHandler( ConnectCallback = f )
         
       let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
@@ -192,6 +191,6 @@ module ChannelBuilder =
     if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
       createSecureChannel cfg defaultMethodConfig
     elif cfg.IsUsingNamedPipes then
-      createNamedPipeChannel cfg.Url cfg.PipeName
+      createNamedPipeChannel cfg.Url cfg.NamedPipe
     else
       createInsecureChannel cfg defaultMethodConfig

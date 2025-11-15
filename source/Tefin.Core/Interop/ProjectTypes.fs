@@ -12,7 +12,10 @@ module ProjectTypes =
     member val Desc = "" with get,set
     member val IsUsingNamedPipes = false with get,set
     member val PipeName = "" with get,set
-  
+        
+  type NamedPipeConfig() =
+    member val PipeName = "" with get, set
+    
   //Use a class instead of an F# record to easily serialize to json
   type ClientConfig() =
     member val Name = "" with get, set
@@ -27,7 +30,7 @@ module ProjectTypes =
     member val CertFile = "" with get, set
     member val CertFilePassword = "" with get, set  
     member val IsUsingNamedPipes = false with get, set
-    member val PipeName = "" with get, set
+    member val NamedPipe = NamedPipeConfig() with get, set
 
   type MethodGroup =
     { Name: string
