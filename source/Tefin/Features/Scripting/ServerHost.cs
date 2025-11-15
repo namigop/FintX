@@ -7,7 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tefin.Features.Scripting;
 
-public class ServerHost(Type serviceType, uint port, string serviceName, bool useNamedPipes, string pipeName) {
+public class ServerHost(Type serviceType, 
+    uint port, 
+    string serviceName,
+    bool useNamedPipes,
+    string pipeName,
+    bool useUnixDomainSockets,
+    string socketFileName) {
+    
     private WebApplication? _app;
     private CancellationTokenSource? _csource;
     public bool IsRunning { get; private set; }

@@ -19,16 +19,17 @@
 
             <TextBlock Text="{Binding Title}" Margin="6 0 0 0" Classes="SubTitle" />
             <TextBlock Text=":" Margin="2 0 0 0" Classes="SubTitle" />
-            <TextBlock IsVisible="{Binding !IsUsingNamedPipes}" Margin="2 0 0 0" Classes="SubTitle">
+            
+            <TextBlock Margin="2 0 0 0" Classes="SubTitle">
                 <Run Text="[" />
-                <Run Text="{Binding Port}"></Run>
+                <Run Text="{Binding SubTitle}"></Run>
                 <Run Text="]" />
             </TextBlock>
-            <TextBlock IsVisible="{Binding IsUsingNamedPipes}" Margin="2 0 0 0" Classes="SubTitle" >
-                <Run Text="[pipe://" />
-                <Run Text="{Binding PipeName}"></Run>
-                <Run Text="]" />
-            </TextBlock>
+            <!-- <TextBlock IsVisible="{Binding IsUsingNamedPipes}" Margin="2 0 0 0" Classes="SubTitle" > -->
+            <!--     <Run Text="[pipe://" /> -->
+            <!--     <Run Text="{Binding PipeName}"></Run> -->
+            <!--     <Run Text="]" /> -->
+            <!-- </TextBlock> -->
 
             <ProgressBar VerticalAlignment="Center" IsVisible="{Binding IsRunning}" IsIndeterminate="True"
                          MinWidth="48" Width="48" Margin="8 0 0 0" />

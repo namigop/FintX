@@ -74,17 +74,25 @@ module ServiceMockStructure =
         let mockConfig =
           match serverTransport with
           | NamedPipeServer pipe ->
-            ServiceMockConfig( ServiceName = serviceName,
-                               Port = port,
-                               Desc = description,
-                               IsUsingNamedPipes = true,
-                               NamedPipe = pipe)
+              ServiceMockConfig( ServiceName = serviceName,
+                                 Port = port,
+                                 Desc = description,
+                                 IsUsingNamedPipes = true,
+                                 IsUsingUnixDomainSockets = false,
+                                 NamedPipe = pipe)
+          | UdsServer uds ->
+              ServiceMockConfig( ServiceName = serviceName,
+                                 Port = port,
+                                 Desc = description,
+                                 IsUsingNamedPipes = false,
+                                 IsUsingUnixDomainSockets = true,
+                                 UnixDomainSockets = uds)
           | DefaultServer ->
-            ServiceMockConfig( ServiceName = serviceName,
-                               Port = port,
-                               Desc = description,
-                               IsUsingNamedPipes = false,
-                               NamedPipe = (NamedPipeServerConfig()))
+              ServiceMockConfig( ServiceName = serviceName,
+                                 Port = port,
+                                 Desc = description,
+                                 IsUsingNamedPipes = false,
+                                 IsUsingUnixDomainSockets = false)
                                      
                                             
         let mockConfigFile = Path.Combine(mockPath, ServiceMockGroup.ConfigFilename)

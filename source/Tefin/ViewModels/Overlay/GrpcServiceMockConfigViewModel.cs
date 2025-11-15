@@ -23,7 +23,9 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
     private string _url = "";
     private bool _isUsingNamedPipes;
     private string _pipeName;
-
+    private bool _isUsingUnixDomainSockets;
+    private string _socketFileName;
+    
     public GrpcServiceMockConfigViewModel(string mockConfigFile, Action onServiceMockNameChanged) {
         this._mockConfigFile = mockConfigFile;
         this._onServiceMockNameChanged = onServiceMockNameChanged;
@@ -67,10 +69,18 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         get => this._isUsingNamedPipes;
         set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
     }
+    public bool IsUsingUnixDomainSockets {
+        get => this._isUsingUnixDomainSockets;
+        set => this.RaiseAndSetIfChanged(ref _isUsingUnixDomainSockets, value);
+    }
 
     public string PipeName {
         get => this._pipeName;
         set => this.RaiseAndSetIfChanged(ref _pipeName, value);
+    }
+    public string SocketFileName {
+        get => this._socketFileName;
+        set => this.RaiseAndSetIfChanged(ref this._socketFileName, value);
     }
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
@@ -82,6 +92,8 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Port = this._mockConfig.Port;
         this.IsUsingNamedPipes = this._mockConfig.IsUsingNamedPipes;
         this.PipeName = this._mockConfig.NamedPipe.PipeName;
+        this.IsUsingUnixDomainSockets = this._mockConfig.IsUsingUnixDomainSockets;
+        this.SocketFileName = this._mockConfig.UnixDomainSockets.SocketFileName;
     }
 
     private async Task OnOkay() {
@@ -91,6 +103,9 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._mockConfig.Port = this.Port;
         this._mockConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
         this._mockConfig.NamedPipe.PipeName = this.PipeName;
+        this._mockConfig.IsUsingUnixDomainSockets = this.IsUsingUnixDomainSockets;
+        this._mockConfig.UnixDomainSockets.SocketFileName = this.SocketFileName;
+        
         var feature = new SaveServiceMockConfigFeature(this._mockConfigFile, this._mockConfig, this.Io);
         await feature.Save();
         if (nameChanged) {

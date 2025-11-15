@@ -9,7 +9,7 @@
              x:Class="Tefin.Views.Overlay.AddGrpcMockOverlayView">
     <Border>
         <StackPanel Orientation="Vertical">
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto">
                 <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0 15 0 0">
                     <RadioButton Content="Reflection Service Url" IsChecked="{Binding !IsDiscoveringUsingProto}" />
                     <RadioButton Content="Proto file(s)" IsChecked="{Binding IsDiscoveringUsingProto}"
@@ -63,6 +63,13 @@
                 <TextBox Grid.Row="11" Text="{Binding PipeName}" 
                          Watermark="Enter the pipe name"
                          IsVisible="{Binding IsUsingNamedPipes}" HorizontalAlignment="Stretch" />
+                
+                <CheckBox Grid.Row="12" IsChecked="{Binding IsUsingUnixDomainSockets}" Margin="0 15 0 4">
+                    <TextBlock Text="Use unix domain sockets"></TextBlock>
+                </CheckBox>
+                <TextBox Grid.Row="13" Text="{Binding PipeName}" 
+                         Watermark="Enter the socket file name"
+                         IsVisible="{Binding IsUsingUnixDomainSockets}" HorizontalAlignment="Stretch" />
 
             </Grid>
 

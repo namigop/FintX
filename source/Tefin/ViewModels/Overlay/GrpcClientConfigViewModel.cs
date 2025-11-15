@@ -36,6 +36,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private string _url = "";
     private bool _isUsingNamedPipes;
     private string _pipeName;
+    private bool _isUsingUnixDomainSockets;
+    private string _socketFileName;
 
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
@@ -56,6 +58,13 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
                  if (vm.IsUsingNamedPipes) {
                      vm.Url = "http://localhost";
                  }
+            });
+        this.SubscribeTo<bool, GrpcClientConfigViewModel>(
+            x => x.IsUsingUnixDomainSockets,
+            vm => {
+                if (vm.IsUsingUnixDomainSockets) {
+                    vm.Url = "http://localhost";
+                }
             });
     }
 
@@ -148,10 +157,18 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         get => this._isUsingNamedPipes;
         set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
     }
+    public bool IsUsingUnixDomainSockets {
+        get => this._isUsingUnixDomainSockets;
+        set => this.RaiseAndSetIfChanged(ref _isUsingUnixDomainSockets, value);
+    }
 
     public string PipeName {
         get => this._pipeName;
         set => this.RaiseAndSetIfChanged(ref _pipeName, value);
+    }
+    public string SocketFileName {
+        get => this._socketFileName;
+        set => this.RaiseAndSetIfChanged(ref _socketFileName, value);
     }
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
@@ -166,6 +183,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = this._clientConfig.Description;
         this.IsUsingNamedPipes = this._clientConfig.IsUsingNamedPipes;
         this.PipeName = this._clientConfig.NamedPipe.PipeName;
+        this.IsUsingUnixDomainSockets = this._clientConfig.IsUsingUnixDomainSockets;
+        this.SocketFileName = this._clientConfig.UnixDomainSockets.SocketFileName;
 
         if (this.IsCertFromFile) {
             this.CertFile = this._clientConfig.CertFile;
@@ -211,6 +230,9 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertFile = this.CertFile;
         this._clientConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
         this._clientConfig.NamedPipe.PipeName = this.PipeName;
+        this._clientConfig.IsUsingUnixDomainSockets = this.IsUsingUnixDomainSockets;
+        this._clientConfig.UnixDomainSockets.SocketFileName = this.SocketFileName;
+        
         if (this._isCertFromFile) {
             if (this.RequiresPassword) {
                 this._clientConfig.CertFilePassword =
