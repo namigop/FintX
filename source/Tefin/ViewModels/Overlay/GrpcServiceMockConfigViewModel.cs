@@ -81,7 +81,7 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = this._mockConfig.Desc;
         this.Port = this._mockConfig.Port;
         this.IsUsingNamedPipes = this._mockConfig.IsUsingNamedPipes;
-        this.PipeName = this._mockConfig.PipeName;
+        this.PipeName = this._mockConfig.NamedPipe.PipeName;
     }
 
     private async Task OnOkay() {
@@ -90,7 +90,7 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._mockConfig.Desc = this.Description;
         this._mockConfig.Port = this.Port;
         this._mockConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
-        this._mockConfig.PipeName = this.PipeName;
+        this._mockConfig.NamedPipe.PipeName = this.PipeName;
         var feature = new SaveServiceMockConfigFeature(this._mockConfigFile, this._mockConfig, this.Io);
         await feature.Save();
         if (nameChanged) {

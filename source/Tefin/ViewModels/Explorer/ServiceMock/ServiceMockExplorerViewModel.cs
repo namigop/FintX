@@ -358,7 +358,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     obj.Dll,
                     obj.Port,
                     obj.IsUsingNamedPipes,
-                    obj.PipeName,
+                    obj.IsUsingNamedPipes ? new NamedPipeServerConfig(){ PipeName = obj.PipeName } : null,
                     methods,
                     this.Io);
                 feature.Add();

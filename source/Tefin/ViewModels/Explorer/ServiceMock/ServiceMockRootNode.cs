@@ -224,7 +224,7 @@ public class ServiceMockRootNode : NodeBase {
         this.ServiceName = cg.Config.Value.ServiceName;
         this.Port = cg.Config.Value.Port;
         this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;
-        this.PipeName = cg.Config.Value.PipeName;
+        this.PipeName = cg.Config.Value.NamedPipe.PipeName;
         // this.Url = cg.Config.Value.Url;
         this.Title = cg.Config.Value.ServiceName;
         // this.SubTitle = cg.Config.Value.Description;

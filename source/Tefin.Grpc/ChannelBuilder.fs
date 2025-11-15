@@ -30,7 +30,7 @@ type CallConfig =
     JWT: string
     X509Cert: Cert option
     IsUsingNamedPipes : bool
-    NamedPipe : NamedPipeConfig
+    NamedPipe : NamedPipeClientConfig
     Io: IOs }
 
   static member From  (cfg: ClientConfig) (io: IOs) (envFile:string)=
@@ -147,15 +147,34 @@ module ChannelBuilder =
     let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
     buildChannel cfg httpclient defaultMethodConfig
     
-  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeConfig) =
+  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeClientConfig) =
+      let pipeDirection =
+         let ok, v = Enum.TryParse<PipeDirection>(namedPipe.Direction)
+         if ok then v else PipeDirection.InOut
+      let impersonation =
+         let ok, v = Enum.TryParse<TokenImpersonationLevel>(namedPipe.ImpersonationLevel)
+         if ok then v else TokenImpersonationLevel.Anonymous
+      let options =
+        let mutable pipeOptions = PipeOptions.None
+        if Array.contains "WriteThrough" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.WriteThrough
+        if Array.contains "Asynchronous" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.Asynchronous
+        if Array.contains "CurrentUserOnly" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.CurrentUserOnly
+        if Array.contains "FirstPipeInstance" namedPipe.Options then
+          pipeOptions <- pipeOptions ||| PipeOptions.FirstPipeInstance
+          
+        pipeOptions
+      
       let createNamedPipeStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
           task {
             let clientStream = new NamedPipeClientStream(
-              ".",
+              ".", //named pipes are supported only on the local machine
               namedPipe.PipeName,
-              PipeDirection.InOut,
-              PipeOptions.WriteThrough ||| PipeOptions.Asynchronous,
-              TokenImpersonationLevel.Anonymous)
+              pipeDirection,
+              options,
+              impersonation)
             
             try
                 do! clientStream.ConnectAsync(token).ConfigureAwait(false)              
