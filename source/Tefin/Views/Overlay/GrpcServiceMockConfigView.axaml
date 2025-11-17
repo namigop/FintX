@@ -21,18 +21,19 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Port" Classes="FormField" />
-                    <TextBox Text="{Binding Port}" IsEnabled="{Binding !IsUsingNamedPipes}" />
+                    <TextBox Text="{Binding Port}" IsEnabled="{Binding !TransportOptions.IsSocketOrNamedPipe}" />
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Description" Classes="FormField" />
                     <TextBox Text="{Binding Description}" Height="80" />
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox IsChecked="{Binding IsUsingNamedPipes}" Margin="0 15 0 4">
-                        <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
-                    </CheckBox>
-                    <TextBox Text="{Binding PipeName}" IsVisible="{Binding IsUsingNamedPipes}" 
-                             Watermark="Enter the pipe name"/>
+                    <TextBlock  Text="Transport" Classes="FormField" />
+                    <ComboBox  HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions.Transports}" 
+                              SelectedItem="{Binding TransportOptions.SelectedTransport}" />
+                    <TextBox  IsVisible="{Binding  TransportOptions.IsSocketOrNamedPipe}" Margin="0 6 0 0"
+                             Text="{Binding TransportOptions.SocketOrPipeName}"
+                             Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
                 </StackPanel>
 
 

@@ -34,11 +34,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
     private string _url = "";
-    private bool _isUsingNamedPipes;
-    private string _pipeName;
-    private bool _isUsingUnixDomainSockets;
-    private string _socketFileName;
-
+    
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
         this._onClientNameChanged = onClientNameChanged;
@@ -50,23 +46,19 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.CertStoreLocations.Add(StoreLocation.CurrentUser);
         this.CertStoreLocations.Add(StoreLocation.LocalMachine);
         this._selectedCertStoreLocation = this.CertStoreLocations[1];
-
+        this.TransportOptions = new TransportOptionsViewModel();
+        
         this.Load(this._clientConfigFile);
-        this.SubscribeTo<bool, GrpcClientConfigViewModel>(
+        this.SubscribeTo<bool, TransportOptionsViewModel>(
             x => x.IsUsingNamedPipes,
             vm => {
-                 if (vm.IsUsingNamedPipes) {
-                     vm.Url = "http://localhost";
+                 if (vm.IsUsingNamedPipes || vm.IsUsingUnixDomainSockets) {
+                     this.Url = "http://localhost";
                  }
             });
-        this.SubscribeTo<bool, GrpcClientConfigViewModel>(
-            x => x.IsUsingUnixDomainSockets,
-            vm => {
-                if (vm.IsUsingUnixDomainSockets) {
-                    vm.Url = "http://localhost";
-                }
-            });
     }
+
+    public TransportOptionsViewModel TransportOptions { get; }
 
     public ICommand CancelCommand { get; }
 
@@ -153,24 +145,6 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; } = "Client Configuration";
 
-    public bool IsUsingNamedPipes {
-        get => this._isUsingNamedPipes;
-        set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
-    }
-    public bool IsUsingUnixDomainSockets {
-        get => this._isUsingUnixDomainSockets;
-        set => this.RaiseAndSetIfChanged(ref _isUsingUnixDomainSockets, value);
-    }
-
-    public string PipeName {
-        get => this._pipeName;
-        set => this.RaiseAndSetIfChanged(ref _pipeName, value);
-    }
-    public string SocketFileName {
-        get => this._socketFileName;
-        set => this.RaiseAndSetIfChanged(ref _socketFileName, value);
-    }
-
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string clientConfigFile) {
@@ -181,11 +155,16 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.IsUsingSsl = this._clientConfig.IsUsingSSL;
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Description = this._clientConfig.Description;
-        this.IsUsingNamedPipes = this._clientConfig.IsUsingNamedPipes;
-        this.PipeName = this._clientConfig.NamedPipe.PipeName;
-        this.IsUsingUnixDomainSockets = this._clientConfig.IsUsingUnixDomainSockets;
-        this.SocketFileName = this._clientConfig.UnixDomainSockets.SocketFileName;
+        if (this._clientConfig.IsUsingNamedPipes) {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
+            this.TransportOptions.SocketOrPipeName = this._clientConfig.NamedPipe.PipeName;
+        }
 
+        if (this._clientConfig.IsUsingUnixDomainSockets) {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
+            this.TransportOptions.SocketOrPipeName = this._clientConfig.UnixDomainSockets.SocketFileName;
+        }
+         
         if (this.IsCertFromFile) {
             this.CertFile = this._clientConfig.CertFile;
             this.CertFilePassword = Core.Utils.decrypt(
@@ -228,10 +207,19 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;
         this._clientConfig.CertFile = this.CertFile;
-        this._clientConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
-        this._clientConfig.NamedPipe.PipeName = this.PipeName;
-        this._clientConfig.IsUsingUnixDomainSockets = this.IsUsingUnixDomainSockets;
-        this._clientConfig.UnixDomainSockets.SocketFileName = this.SocketFileName;
+        if (this.TransportOptions.IsUsingNamedPipes) {
+            this._clientConfig.IsUsingNamedPipes = true;
+            this._clientConfig.NamedPipe.PipeName = this.TransportOptions.SocketOrPipeName;;
+            this._clientConfig.IsUsingUnixDomainSockets = false;
+            this._clientConfig.UnixDomainSockets.SocketFileName = "";
+        }
+
+        if (this.TransportOptions.IsUsingUnixDomainSockets) {
+            this._clientConfig.IsUsingNamedPipes = false;
+            this._clientConfig.NamedPipe.PipeName = "";
+            this._clientConfig.IsUsingUnixDomainSockets = true;
+            this._clientConfig.UnixDomainSockets.SocketFileName = this.TransportOptions.SocketOrPipeName;
+        }
         
         if (this._isCertFromFile) {
             if (this.RequiresPassword) {

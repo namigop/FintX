@@ -51,26 +51,18 @@
                          ToolTip.Tip="Enter a name" />
 
                 <TextBlock Grid.Row="6" Text="Port*" Classes="FormField" />
-                <TextBox Grid.Row="7" HorizontalAlignment="Stretch" Text="{Binding Port}" IsEnabled="{Binding !IsUsingNamedPipes}"
+                <TextBox Grid.Row="7" HorizontalAlignment="Stretch" Text="{Binding Port}" IsEnabled="{Binding !TransportOptions.IsSocketOrNamedPipe}"
                          ToolTip.Tip="Enter a port number" />
 
                 <TextBlock Grid.Row="8" Text="Description" Classes="FormField" />
                 <TextBox Grid.Row="9" HorizontalAlignment="Stretch" MinHeight="100" />
                 
-                <CheckBox Grid.Row="10" IsChecked="{Binding IsUsingNamedPipes}" Margin="0 15 0 4">
-                    <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
-                </CheckBox>
-                <TextBox Grid.Row="11" Text="{Binding PipeName}" 
-                         Watermark="Enter the pipe name"
-                         IsVisible="{Binding IsUsingNamedPipes}" HorizontalAlignment="Stretch" />
-                
-                <CheckBox Grid.Row="12" IsChecked="{Binding IsUsingUnixDomainSockets}" Margin="0 15 0 4">
-                    <TextBlock Text="Use unix domain sockets"></TextBlock>
-                </CheckBox>
-                <TextBox Grid.Row="13" Text="{Binding PipeName}" 
-                         Watermark="Enter the socket file name"
-                         IsVisible="{Binding IsUsingUnixDomainSockets}" HorizontalAlignment="Stretch" />
-
+                <TextBlock Grid.Row="10" Text="Transport" Classes="FormField" />
+                <ComboBox Grid.Row="11" HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions.Transports}" 
+                          SelectedItem="{Binding TransportOptions.SelectedTransport}" />
+                <TextBox Grid.Row="12" IsVisible="{Binding  TransportOptions.IsSocketOrNamedPipe}" Margin="0 6 0 0"
+                         Text="{Binding TransportOptions.SocketOrPipeName}"
+                         Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
             </Grid>
 
             <Grid ColumnDefinitions="*, Auto" Margin="0 15 0 0">

@@ -31,22 +31,19 @@
                     <TextBlock Text="Json Web Token (JWT)" Classes="FormField" />
                     <TextBox Text="{Binding Jwt}" Height="80" />
                 </StackPanel>
-
                 <StackPanel>
-                    <Grid ColumnDefinitions="*, *">
-                        <!-- <ToggleSwitch IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" -->
-                        <!--               Grid.Column="0" -->
-                        <!--               OnContent="Use client x509 certificate (https://)" -->
-                        <!--               OffContent="Don't use SSL (http://)" />     -->
-                        <CheckBox IsChecked="{Binding IsUsingSsl}" Margin="0 2 0 0" Grid.Column="0" >
-                            <TextBlock Text="Use client x509 certificate"></TextBlock>
-                        </CheckBox>
+                    <TextBlock  Text="Transport" Classes="FormField" />
+                    <ComboBox  HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions.Transports}" 
+                               SelectedItem="{Binding TransportOptions.SelectedTransport}" />
+                    <TextBox  IsVisible="{Binding  TransportOptions.IsSocketOrNamedPipe}" Margin="0 6 0 0"
+                              Text="{Binding TransportOptions.SocketOrPipeName}"
+                              Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
 
-                        <CheckBox IsChecked="{Binding IsUsingNamedPipes}" Margin="8 2 0 0" Grid.Column="1" >
-                            <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
-                        </CheckBox>
-                                       
-                    </Grid>
+                </StackPanel>
+                <StackPanel>
+                    <CheckBox IsChecked="{Binding IsUsingSsl}" Margin="0 15 0 0" Grid.Column="0" >
+                        <TextBlock Text="Use client x509 certificate"></TextBlock>
+                    </CheckBox>
                     
                     <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsUsingSsl}" Margin="0 0 0 0">
                         <StackPanel Orientation="Horizontal" Grid.Row="0">
@@ -102,12 +99,7 @@
                             </DockPanel>
                         </Grid>
                     </Grid>
-                    <Grid IsVisible="{Binding IsUsingNamedPipes}">
-                        <Grid ColumnDefinitions="Auto, *">
-                            <TextBlock  Grid.Column="0" Text="Pipe name" VerticalAlignment="Center"></TextBlock>
-                            <TextBox Grid.Column="1" Text="{Binding PipeName}" Margin="8"></TextBox>
-                        </Grid>
-                    </Grid>
+                    
                 </StackPanel>
 
             </StackPanel>

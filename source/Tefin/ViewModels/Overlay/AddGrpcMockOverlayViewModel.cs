@@ -20,20 +20,85 @@ using Tefin.ViewModels.Validations;
 
 namespace Tefin.ViewModels.Overlay;
 
+public class TransportOptionsViewModel : ViewModelBase {
+    public const string Default = "Default";
+    public const string NamedPipes = "Named Pipes";
+    public const string UnixDomainSockets = "Unix Domain Sockets";
+
+    private bool _isUsingNamedPipes;
+    private string _socketOrPipeName;
+    private bool _isUsingUnixDomainSockets;
+    private string _selectedTransport;
+    private bool _isSocketOrNamedPipe;
+    private string _socketOrPipeNameWatermark;
+
+    public TransportOptionsViewModel() {
+
+        if (Core.Utils.isWindows())
+            this.Transports = new List<string> { Default, NamedPipes, UnixDomainSockets };
+        else
+            this.Transports = new List<string> { Default, UnixDomainSockets };
+
+        this.SelectedTransport = "Default";
+        this.SubscribeTo<string, TransportOptionsViewModel>(
+            x => x.SelectedTransport,
+            vm => {
+                vm.IsUsingNamedPipes = vm.SelectedTransport == NamedPipes;
+                vm.IsUsingUnixDomainSockets = vm.SelectedTransport == UnixDomainSockets;
+                vm.IsSocketOrNamedPipe = vm.IsUsingNamedPipes || vm.IsUsingUnixDomainSockets;
+                if (vm.IsUsingUnixDomainSockets)
+                    vm.SocketOrPipeNameWatermark = "Enter socket file name";
+                if (vm.IsUsingNamedPipes)
+                    vm.SocketOrPipeNameWatermark = "Enter the pipe name";
+            });
+    }
+
+    public bool IsUsingNamedPipes {
+        get => this._isUsingNamedPipes;
+        set => this.RaiseAndSetIfChanged(ref this._isUsingNamedPipes, value);
+    }
+
+    public bool IsUsingUnixDomainSockets {
+        get => this._isUsingUnixDomainSockets;
+        set => this.RaiseAndSetIfChanged(ref this._isUsingUnixDomainSockets, value);
+    }
+
+    public ICommand OkayCommand { get; }
+
+    public string SocketOrPipeName {
+        get => this._socketOrPipeName;
+        set => this.RaiseAndSetIfChanged(ref this._socketOrPipeName, value);
+    }
+
+    public string SelectedTransport {
+        get => this._selectedTransport;
+        set => this.RaiseAndSetIfChanged(ref _selectedTransport, value);
+    }
+    public bool IsSocketOrNamedPipe {
+        get => this._isSocketOrNamedPipe;
+        private set => this.RaiseAndSetIfChanged(ref _isSocketOrNamedPipe, value);
+    }
+
+    public string SocketOrPipeNameWatermark {
+        get => this._socketOrPipeNameWatermark;
+        private set => this.RaiseAndSetIfChanged(ref _socketOrPipeNameWatermark, value);
+    }
+    public List<string> Transports { get; private set; }
+}
+
 public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private readonly ProjectTypes.Project _project;
     private string _address = string.Empty;
     private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
-    private bool _isUsingNamedPipes;
-    private string _pipeName;
-    private bool _isUsingUnixDomainSockets;
-    private string _socketFileName;
+    
     private string _port = "50051";
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
+    
 
+    
     public AddGrpcMockOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
@@ -42,7 +107,11 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.ReflectionUrl = StartDemoGrpcServiceFeature.Url;
         this.Title = "Create a mock gRPC service";
         this.Description = string.Empty;
+        this.TransportOptions = new TransportOptionsViewModel();
     }
+
+    public TransportOptionsViewModel TransportOptions { get; }
+
 
     public ICommand CancelCommand { get; }
 
@@ -54,27 +123,9 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         get => this._isDiscoveringUsingProto;
         set => this.RaiseAndSetIfChanged(ref this._isDiscoveringUsingProto, value);
     }
-
-    public bool IsUsingNamedPipes {
-        get => this._isUsingNamedPipes;
-        set => this.RaiseAndSetIfChanged(ref this._isUsingNamedPipes, value);
-    }
-    public bool IsUsingUnixDomainSockets {
-        get => this._isUsingUnixDomainSockets;
-        set => this.RaiseAndSetIfChanged(ref this._isUsingUnixDomainSockets, value);
-    }
-
+ 
     public ICommand OkayCommand { get; }
-
-    public string PipeName {
-        get => this._pipeName;
-        set => this.RaiseAndSetIfChanged(ref this._pipeName, value);
-    }
-    public string SocketFileName {
-        get => this._socketFileName;
-        set => this.RaiseAndSetIfChanged(ref this._socketFileName, value);
-    }
-
+    
     [Required(ErrorMessage = "Enter a port number")]
     [IsValidPortNumber]
     public string Port {
@@ -116,6 +167,8 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public string Title { get; }
+
+    
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
@@ -192,10 +245,9 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
                     this.Description,
                     csFiles,
                     Convert.ToUInt32(this.Port),
-                    this.IsUsingNamedPipes,
-                    this.PipeName,
-                    this.IsUsingUnixDomainSockets,
-                    this.SocketFileName,
+                    this.TransportOptions.IsUsingNamedPipes,
+                    this.TransportOptions.SocketOrPipeName,
+                    this.TransportOptions.IsUsingUnixDomainSockets,
                     output.Input.Value.ModuleFile) { Reset = false };
                 GlobalHub.publish(msg);
             }

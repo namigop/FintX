@@ -358,9 +358,9 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     obj.Dll,
                     obj.Port,
                     obj.IsUsingNamedPipes,
-                    obj.IsUsingNamedPipes ? new NamedPipeServerConfig(){ PipeName = obj.PipeName } : null,
+                    obj.IsUsingNamedPipes ? new NamedPipeServerConfig(){ PipeName = obj.SocketOrPipeName } : null,
                     obj.IsUsingUnixDomainSockets,
-                    obj.IsUsingUnixDomainSockets ? new UnixDomainSocketServerConfig() { SocketFileName = obj.SocketFileName} : null,
+                    obj.IsUsingUnixDomainSockets ? new UnixDomainSocketServerConfig() { SocketFileName = obj.SocketOrPipeName} : null,
                     methods,
                     this.Io);
                 feature.Add();
