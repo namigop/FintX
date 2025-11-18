@@ -75,10 +75,12 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
             this.TransportOptions.SocketOrPipeName = this._mockConfig.NamedPipe.PipeName;
         }
-
-        if (this._mockConfig.IsUsingUnixDomainSockets) {
+       else if (this._mockConfig.IsUsingUnixDomainSockets) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
             this.TransportOptions.SocketOrPipeName = this._mockConfig.UnixDomainSockets.SocketFileName;
+        }
+        else {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.Default;
         }
     }
 
@@ -93,12 +95,15 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
             this._mockConfig.IsUsingUnixDomainSockets = false;
             this._mockConfig.UnixDomainSockets.SocketFileName = "";
         }
-
-        if (this.TransportOptions.IsUsingUnixDomainSockets) {
+        else if (this.TransportOptions.IsUsingUnixDomainSockets) {
             this._mockConfig.IsUsingNamedPipes = false;
             this._mockConfig.NamedPipe.PipeName = "";
             this._mockConfig.IsUsingUnixDomainSockets = this.TransportOptions.IsUsingUnixDomainSockets;
             this._mockConfig.UnixDomainSockets.SocketFileName = this.TransportOptions.SocketOrPipeName;
+        }
+        else {
+            this._mockConfig.IsUsingNamedPipes = false;
+            this._mockConfig.IsUsingUnixDomainSockets = false;
         }
 
         var feature = new SaveServiceMockConfigFeature(this._mockConfigFile, this._mockConfig, this.Io);

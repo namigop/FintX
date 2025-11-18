@@ -49,8 +49,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.TransportOptions = new TransportOptionsViewModel();
         
         this.Load(this._clientConfigFile);
-        this.SubscribeTo<bool, TransportOptionsViewModel>(
-            x => x.IsUsingNamedPipes,
+        this.TransportOptions.SubscribeTo<string, TransportOptionsViewModel>(
+            x => x.SelectedTransport,
             vm => {
                  if (vm.IsUsingNamedPipes || vm.IsUsingUnixDomainSockets) {
                      this.Url = "http://localhost";
@@ -159,10 +159,12 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
             this.TransportOptions.SocketOrPipeName = this._clientConfig.NamedPipe.PipeName;
         }
-
-        if (this._clientConfig.IsUsingUnixDomainSockets) {
+        else if (this._clientConfig.IsUsingUnixDomainSockets) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
             this.TransportOptions.SocketOrPipeName = this._clientConfig.UnixDomainSockets.SocketFileName;
+        }
+        else {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.Default;
         }
          
         if (this.IsCertFromFile) {
@@ -213,12 +215,15 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
             this._clientConfig.IsUsingUnixDomainSockets = false;
             this._clientConfig.UnixDomainSockets.SocketFileName = "";
         }
-
-        if (this.TransportOptions.IsUsingUnixDomainSockets) {
+        else if (this.TransportOptions.IsUsingUnixDomainSockets) {
             this._clientConfig.IsUsingNamedPipes = false;
             this._clientConfig.NamedPipe.PipeName = "";
             this._clientConfig.IsUsingUnixDomainSockets = true;
             this._clientConfig.UnixDomainSockets.SocketFileName = this.TransportOptions.SocketOrPipeName;
+        }
+        else {
+            this._clientConfig.IsUsingNamedPipes = false;
+            this._clientConfig.IsUsingUnixDomainSockets = false;
         }
         
         if (this._isCertFromFile) {
