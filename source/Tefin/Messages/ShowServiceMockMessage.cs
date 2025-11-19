@@ -11,7 +11,8 @@ public class ShowServiceMockMessage(
     string[] csFiles,
     uint port,
     bool isUsingNamedPipes,
-    string pipeName,
+    string socketOrPipeName,
+    bool isUsingUnixDomainSockets,
     string dll)
     : MessageBase {
     public string[] CsFiles { get; } = csFiles;
@@ -25,5 +26,6 @@ public class ShowServiceMockMessage(
     public string? SelectedDiscoveredService { get; } = selectedDiscoveredService;
     public string ServiceName { get; } = serviceName;
     public bool IsUsingNamedPipes { get; set; } = isUsingNamedPipes;
-    public string PipeName { get; set; } = pipeName;
+    public string SocketOrPipeName { get; set; } = socketOrPipeName;
+    public bool IsUsingUnixDomainSockets { get; set; } = isUsingUnixDomainSockets;
 }

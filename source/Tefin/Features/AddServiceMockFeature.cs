@@ -16,6 +16,8 @@ public class AddServiceMockFeature(
     uint port,
     bool isUsingNamedPipes,
     NamedPipeServerConfig? namedPipeServerConfig,
+    bool isUsingUnixDomainSockets,
+    UnixDomainSocketServerConfig? uds,
     MethodInfo[] methods,
     IOs io) {
     public void Add() {
@@ -35,6 +37,8 @@ public class AddServiceMockFeature(
         ServerTransportConfig GetServerConfig() {
             if (isUsingNamedPipes)
                 return ServerTransportConfig.NewNamedPipeServer(namedPipeServerConfig);
+            if (isUsingUnixDomainSockets)
+                return ServerTransportConfig.NewUdsServer(uds);
             return  ServerTransportConfig.DefaultServer;
         }
     }

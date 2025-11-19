@@ -8,6 +8,8 @@ module ProjectTypes =
   
   type NamedPipeServerConfig() =
     member val PipeName = "" with get, set
+  type UnixDomainSocketServerConfig() =
+    member val SocketFilePath = "/tmp/fintx.sock" with get, set
     
   type ServiceMockConfig() =
     member val ServiceName = "" with get, set
@@ -15,6 +17,8 @@ module ProjectTypes =
     member val Desc = "" with get,set
     member val IsUsingNamedPipes = false with get,set
     member val NamedPipe = NamedPipeServerConfig() with get,set
+    member val IsUsingUnixDomainSockets = false with get,set
+    member val UnixDomainSockets = UnixDomainSocketServerConfig() with get,set
         
   type NamedPipeClientConfig() =
     member val PipeName = "" with get, set
@@ -27,13 +31,19 @@ module ProjectTypes =
             options: PipeOptions.WriteThrough | PipeOptions.Asynchronous,
             impersonationLevel: TokenImpersonationLevel.Anonymous);
   *)
+  type UnixDomainSocketClientConfig() =
+    member val SocketType = "Stream" with get, set
+    member val ProtocolType = "Unspecified" with get, set
+    member val SocketFilePath = "/tmp/fintx.sock" with get, set
     
   type ClientTransportConfig =
   | NamedPipeClient of NamedPipeClientConfig
+  | UdsClient of UnixDomainSocketClientConfig
   | DefaultClient
   
   type ServerTransportConfig =
   | NamedPipeServer of NamedPipeServerConfig
+  | UdsServer of UnixDomainSocketServerConfig
   | DefaultServer
     
   //Use a class instead of an F# record to easily serialize to json
@@ -51,6 +61,8 @@ module ProjectTypes =
     member val CertFilePassword = "" with get, set  
     member val IsUsingNamedPipes = false with get, set
     member val NamedPipe = NamedPipeClientConfig() with get, set
+    member val IsUsingUnixDomainSockets = false with get, set
+    member val UnixDomainSockets = UnixDomainSocketClientConfig() with get, set
 
   type MethodGroup =
     { Name: string

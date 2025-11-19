@@ -21,18 +21,29 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Port" Classes="FormField" />
-                    <TextBox Text="{Binding Port}" IsEnabled="{Binding !IsUsingNamedPipes}" />
+                    <TextBox Text="{Binding Port}" IsEnabled="{Binding !TransportOptions.IsSocketOrNamedPipe}" />
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Description" Classes="FormField" />
                     <TextBox Text="{Binding Description}" Height="80" />
                 </StackPanel>
                 <StackPanel>
-                    <CheckBox IsChecked="{Binding IsUsingNamedPipes}" Margin="0 15 0 4">
-                        <TextBlock Text="Use named pipes (Windows only)"></TextBlock>
-                    </CheckBox>
-                    <TextBox Text="{Binding PipeName}" IsVisible="{Binding IsUsingNamedPipes}" 
-                             Watermark="Enter the pipe name"/>
+                    <TextBlock  Text="Transport" Classes="FormField" />
+                    <ComboBox  HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions.Transports}" 
+                              SelectedItem="{Binding TransportOptions.SelectedTransport}" />
+                    <Panel>
+                        <TextBox  IsVisible="{Binding  TransportOptions.IsUsingNamedPipes}" Margin="0 6 0 0"
+                                  Text="{Binding TransportOptions.SocketOrPipeName}"
+                                  Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
+                        <Grid ColumnDefinitions="*, Auto" IsVisible="{Binding  TransportOptions.IsUsingUnixDomainSockets}"  Margin="0 6 0 0">
+                            <TextBox Text="{Binding TransportOptions.SocketOrPipeName}"
+                                     HorizontalAlignment="Stretch"
+                                     Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
+                            <Button Grid.Column="1" Margin="8 0 0 0" Command="{Binding TransportOptions.SelectSocketFileCommand}">
+                                <TextBlock  Text="..."></TextBlock>
+                            </Button>
+                        </Grid>
+                    </Panel>
                 </StackPanel>
 
 

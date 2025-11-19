@@ -21,8 +21,6 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
     private uint _port;
     private string _serviceMockName = "";
     private string _url = "";
-    private bool _isUsingNamedPipes;
-    private string _pipeName;
 
     public GrpcServiceMockConfigViewModel(string mockConfigFile, Action onServiceMockNameChanged) {
         this._mockConfigFile = mockConfigFile;
@@ -30,6 +28,7 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.CancelCommand = this.CreateCommand(this.Close);
         this.OkayCommand = this.CreateCommand(this.OnOkay);
         this.ResetCommand = this.CreateCommand(this.OnReset);
+        this.TransportOptions = new TransportOptionsViewModel();
         this.Load(this._mockConfigFile);
     }
 
@@ -55,6 +54,8 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref this._serviceMockName, value);
     }
 
+    public TransportOptionsViewModel TransportOptions { get; }
+
     public string Url {
         get => this._url;
         set => this.RaiseAndSetIfChanged(ref this._url, value);
@@ -63,16 +64,6 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; } = "Edit mock service configuration";
 
-    public bool IsUsingNamedPipes {
-        get => this._isUsingNamedPipes;
-        set => this.RaiseAndSetIfChanged(ref _isUsingNamedPipes, value);
-    }
-
-    public string PipeName {
-        get => this._pipeName;
-        set => this.RaiseAndSetIfChanged(ref _pipeName, value);
-    }
-
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string mockConfigFile) {
@@ -80,8 +71,17 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.ServiceMockName = this._mockConfig.ServiceName;
         this.Description = this._mockConfig.Desc;
         this.Port = this._mockConfig.Port;
-        this.IsUsingNamedPipes = this._mockConfig.IsUsingNamedPipes;
-        this.PipeName = this._mockConfig.NamedPipe.PipeName;
+        if (this._mockConfig.IsUsingNamedPipes) {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
+            this.TransportOptions.SocketOrPipeName = this._mockConfig.NamedPipe.PipeName;
+        }
+       else if (this._mockConfig.IsUsingUnixDomainSockets) {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
+            this.TransportOptions.SocketOrPipeName = this._mockConfig.UnixDomainSockets.SocketFilePath;
+        }
+        else {
+            this.TransportOptions.SelectedTransport = TransportOptionsViewModel.Default;
+        }
     }
 
     private async Task OnOkay() {
@@ -89,8 +89,23 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._mockConfig.ServiceName = this.ServiceMockName;
         this._mockConfig.Desc = this.Description;
         this._mockConfig.Port = this.Port;
-        this._mockConfig.IsUsingNamedPipes = this.IsUsingNamedPipes;
-        this._mockConfig.NamedPipe.PipeName = this.PipeName;
+        if (this.TransportOptions.IsUsingNamedPipes) {
+            this._mockConfig.IsUsingNamedPipes = this.TransportOptions.IsUsingNamedPipes;
+            this._mockConfig.NamedPipe.PipeName = this.TransportOptions.SocketOrPipeName;
+            this._mockConfig.IsUsingUnixDomainSockets = false;
+            this._mockConfig.UnixDomainSockets.SocketFilePath = "";
+        }
+        else if (this.TransportOptions.IsUsingUnixDomainSockets) {
+            this._mockConfig.IsUsingNamedPipes = false;
+            this._mockConfig.NamedPipe.PipeName = "";
+            this._mockConfig.IsUsingUnixDomainSockets = this.TransportOptions.IsUsingUnixDomainSockets;
+            this._mockConfig.UnixDomainSockets.SocketFilePath = this.TransportOptions.SocketOrPipeName;
+        }
+        else {
+            this._mockConfig.IsUsingNamedPipes = false;
+            this._mockConfig.IsUsingUnixDomainSockets = false;
+        }
+
         var feature = new SaveServiceMockConfigFeature(this._mockConfigFile, this._mockConfig, this.Io);
         await feature.Save();
         if (nameChanged) {

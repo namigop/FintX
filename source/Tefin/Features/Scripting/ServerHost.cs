@@ -7,7 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Tefin.Features.Scripting;
 
-public class ServerHost(Type serviceType, uint port, string serviceName, bool useNamedPipes, string pipeName) {
+public class ServerHost(Type serviceType, 
+    uint port, 
+    string serviceName,
+    bool useNamedPipes,
+    string pipeName,
+    bool useUnixDomainSockets,
+    string socketFilePath) {
+    
     private WebApplication? _app;
     private CancellationTokenSource? _csource;
     public bool IsRunning { get; private set; }
@@ -16,13 +23,6 @@ public class ServerHost(Type serviceType, uint port, string serviceName, bool us
         try {
             this._csource = new CancellationTokenSource();
             var builder = WebApplication.CreateBuilder();
-            builder.WebHost.ConfigureKestrel(serverOptions => {
-                serverOptions.ListenAnyIP((int)port);
-                serverOptions.ListenAnyIP((int)port + 1, listenOptions => {
-                    listenOptions.UseHttps();
-                });
-            });
-
             if (useNamedPipes) {
                 builder.WebHost.ConfigureKestrel(serverOptions => {
                     serverOptions.ListenNamedPipe(pipeName, listenOptions => {
@@ -30,7 +30,25 @@ public class ServerHost(Type serviceType, uint port, string serviceName, bool us
                     });
                 });
             }
-
+            else if (useUnixDomainSockets) {
+                if (File.Exists(socketFilePath))
+                    File.Delete(socketFilePath);
+                builder.WebHost.ConfigureKestrel(serverOptions => {
+                    serverOptions.ListenUnixSocket(socketFilePath, listenOptions => {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                    });
+                });
+            }
+            else {
+                builder.WebHost.ConfigureKestrel(serverOptions => {
+                    serverOptions.ListenAnyIP((int)port);
+                    serverOptions.ListenAnyIP((int)port + 1, listenOptions => {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                        listenOptions.UseHttps();
+                    });
+                });
+            }
+            
             builder.Services.AddScoped(serviceType, sp => {
                 var cons = serviceType.GetConstructors().First();
                 var instance = cons.Invoke([serviceName]);
@@ -73,5 +91,9 @@ public class ServerHost(Type serviceType, uint port, string serviceName, bool us
         this._csource = null;
         this._app = null;
         this.IsRunning = false;
+
+        if (useUnixDomainSockets && File.Exists(socketFilePath)) {
+            File.Delete(socketFilePath);
+        }
     }
 }

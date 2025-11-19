@@ -4,6 +4,7 @@ open System
 open System.IO
 open System.IO.Pipes
 open System.Net.Security
+open System.Net.Sockets
 open System.Security.Cryptography.X509Certificates
 open System.Security.Principal
 open System.Threading
@@ -31,6 +32,8 @@ type CallConfig =
     X509Cert: Cert option
     IsUsingNamedPipes : bool
     NamedPipe : NamedPipeClientConfig
+    IsUsingUnixDomainSockets : bool
+    UnixDomainSocketConfig : UnixDomainSocketClientConfig
     Io: IOs }
 
   static member From  (cfg: ClientConfig) (io: IOs) (envFile:string)=
@@ -67,6 +70,8 @@ type CallConfig =
       X509Cert = cert
       IsUsingNamedPipes = cfg.IsUsingNamedPipes
       NamedPipe = cfg.NamedPipe
+      IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
+      UnixDomainSocketConfig = cfg.UnixDomainSockets
       Io = io }
 
 module ChannelBuilder =
@@ -191,6 +196,37 @@ module ChannelBuilder =
         
       let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
       channel
+  
+  let createUdsChannel (url:string) (uds:UnixDomainSocketClientConfig) =
+      let protocolType =
+         let ok, v = Enum.TryParse<ProtocolType>(uds.ProtocolType)
+         if ok then v else ProtocolType.Unspecified
+      let socketType =
+         let ok, v = Enum.TryParse<SocketType>(uds.SocketType)
+         if ok then v else SocketType.Stream
+      
+      let createUdsStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
+          task {
+            let socketPath = Path.Combine(Path.GetTempPath(), uds.SocketFilePath)
+            let  udsEndPoint = UnixDomainSocketEndPoint(socketPath)            
+            let socket = new Socket(AddressFamily.Unix, socketType, protocolType)
+
+            try
+                do! socket.ConnectAsync(udsEndPoint, token).ConfigureAwait(false)       
+            with exc ->
+                socket.Dispose()
+                raise exc              
+
+            return new NetworkStream(socket, true) :> Stream
+          }
+          |> fun t -> ValueTask.FromResult(t.Result)                
+      
+      let handler =        
+        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
+        new SocketsHttpHandler( ConnectCallback = f )
+        
+      let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
+      channel
       
   let createGrpcChannel (cfg: CallConfig) =
     let defaultMethodConfig =
@@ -211,5 +247,7 @@ module ChannelBuilder =
       createSecureChannel cfg defaultMethodConfig
     elif cfg.IsUsingNamedPipes then
       createNamedPipeChannel cfg.Url cfg.NamedPipe
+    elif cfg.IsUsingUnixDomainSockets then
+      createUdsChannel cfg.Url cfg.UnixDomainSocketConfig
     else
       createInsecureChannel cfg defaultMethodConfig

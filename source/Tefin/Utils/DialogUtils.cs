@@ -18,8 +18,7 @@ public static class DialogUtils {
         throw new NotSupportedException();
     }
 
-    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions,
-        bool allowMultipleSelection = false) {
+    public static async Task<(bool, string[])> OpenFile(string dialogTitle, string fileTitle, string[] filterExtensions, bool allowMultipleSelection = false) {
         var topLevel = TopLevel.GetTopLevel(GetMainWindow());
         var files = await topLevel!.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions {
             Title = dialogTitle,

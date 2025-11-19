@@ -1,5 +1,7 @@
 ﻿using System.Windows.Input;
 
+using Microsoft.CodeAnalysis.FlowAnalysis;
+
 using ReactiveUI;
 
 using Tefin.Core;
@@ -27,6 +29,7 @@ public class ServiceMockRootNode : NodeBase {
         this.ServiceType = serviceBaseType;
         this.Update(cg);
         this.IsExpanded = true;
+        this.CanStartServer = true;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this.RecompileCommand = this.CreateCommand(this.OnRecompile);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
@@ -55,10 +58,12 @@ public class ServiceMockRootNode : NodeBase {
     public bool IsRunning => this._host is { IsRunning: true };
 
     public bool IsUsingNamedPipes { get; private set; }
+    public bool IsUsingUnixDomainSockets { get; private set; }
 
     public ICommand OpenServiceMockConfigCommand { get; }
 
     public string PipeName { get; private set; }
+    public string SocketFilePath { get; private set; }
 
     public uint Port {
         get => this._port;
@@ -188,9 +193,17 @@ public class ServiceMockRootNode : NodeBase {
     }
 
     private async Task OnStartServer() {
+        ArgumentNullException.ThrowIfNull(this.ServiceType);
         try {
             this.CanStartServer = false;
-            this._host = new ServerHost(this.ServiceType, this.Port, this.ServiceName, this.IsUsingNamedPipes, this.PipeName);
+            this._host = new ServerHost(
+                this.ServiceType,
+                this.Port,
+                this.ServiceName,
+                this.IsUsingNamedPipes,
+                this.PipeName,
+                this.IsUsingUnixDomainSockets,
+                this.SocketFilePath);
             await this._host.Start();
             this.Io.Log.Info($"{this.ServiceName} server started.");
         }
@@ -224,11 +237,18 @@ public class ServiceMockRootNode : NodeBase {
         this.ServiceName = cg.Config.Value.ServiceName;
         this.Port = cg.Config.Value.Port;
         this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;
+        this.IsUsingUnixDomainSockets = cg.Config.Value.IsUsingUnixDomainSockets;
         this.PipeName = cg.Config.Value.NamedPipe.PipeName;
+        this.SocketFilePath = cg.Config.Value.UnixDomainSockets.SocketFilePath;
         // this.Url = cg.Config.Value.Url;
         this.Title = cg.Config.Value.ServiceName;
-        // this.SubTitle = cg.Config.Value.Description;
-        // this.Desc = cg.Config.Value.Description;
         this.ServiceConfigFile = cg.ConfigFile;
+
+        if (this.IsUsingUnixDomainSockets)
+            this.SubTitle = $"uds://{this.SocketFilePath}";
+        else if (this.IsUsingNamedPipes)
+            this.SubTitle = $"pipe://{this.PipeName}";
+        else
+            this.SubTitle = this.Port.ToString();
     }
 }

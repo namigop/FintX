@@ -25,13 +25,14 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     private string _address = string.Empty;
     private string _clientName = string.Empty;
     private bool _isDiscoveringUsingProto;
-    private bool _isUsingNamedPipes;
-    private string _pipeName;
+    
     private string _port = "50051";
     private string _protoFile = string.Empty;
     private string _protoFilesOrUrl = string.Empty;
     private string? _selectedDiscoveredService;
+    
 
+    
     public AddGrpcMockOverlayViewModel(ProjectTypes.Project project) {
         this._project = project;
         this.CancelCommand = this.CreateCommand(this.Close);
@@ -40,7 +41,11 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         this.ReflectionUrl = StartDemoGrpcServiceFeature.Url;
         this.Title = "Create a mock gRPC service";
         this.Description = string.Empty;
+        this.TransportOptions = new TransportOptionsViewModel();
     }
+
+    public TransportOptionsViewModel TransportOptions { get; }
+
 
     public ICommand CancelCommand { get; }
 
@@ -52,19 +57,9 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
         get => this._isDiscoveringUsingProto;
         set => this.RaiseAndSetIfChanged(ref this._isDiscoveringUsingProto, value);
     }
-
-    public bool IsUsingNamedPipes {
-        get => this._isUsingNamedPipes;
-        set => this.RaiseAndSetIfChanged(ref this._isUsingNamedPipes, value);
-    }
-
+ 
     public ICommand OkayCommand { get; }
-
-    public string PipeName {
-        get => this._pipeName;
-        set => this.RaiseAndSetIfChanged(ref this._pipeName, value);
-    }
-
+    
     [Required(ErrorMessage = "Enter a port number")]
     [IsValidPortNumber]
     public string Port {
@@ -106,6 +101,8 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public string Title { get; }
+
+    
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
@@ -182,8 +179,9 @@ public class AddGrpcMockOverlayViewModel : ViewModelBase, IOverlayViewModel {
                     this.Description,
                     csFiles,
                     Convert.ToUInt32(this.Port),
-                    this.IsUsingNamedPipes,
-                    this.PipeName,
+                    this.TransportOptions.IsUsingNamedPipes,
+                    this.TransportOptions.SocketOrPipeName,
+                    this.TransportOptions.IsUsingUnixDomainSockets,
                     output.Input.Value.ModuleFile) { Reset = false };
                 GlobalHub.publish(msg);
             }
