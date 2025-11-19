@@ -60,9 +60,20 @@
                 <TextBlock Grid.Row="10" Text="Transport" Classes="FormField" />
                 <ComboBox Grid.Row="11" HorizontalAlignment="Stretch" ItemsSource="{Binding TransportOptions.Transports}" 
                           SelectedItem="{Binding TransportOptions.SelectedTransport}" />
-                <TextBox Grid.Row="12" IsVisible="{Binding  TransportOptions.IsSocketOrNamedPipe}" Margin="0 6 0 0"
-                         Text="{Binding TransportOptions.SocketOrPipeName}"
-                         Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
+                <Panel Grid.Row="12">
+                    <TextBox  IsVisible="{Binding  TransportOptions.IsUsingNamedPipes}" Margin="0 6 0 0"
+                             Text="{Binding TransportOptions.SocketOrPipeName}"
+                             Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
+                    <Grid ColumnDefinitions="*, Auto" IsVisible="{Binding  TransportOptions.IsUsingUnixDomainSockets}"  Margin="0 6 0 0">
+                        <TextBox Text="{Binding TransportOptions.SocketOrPipeName}"
+                                 HorizontalAlignment="Stretch"
+                                 Watermark="{Binding TransportOptions.SocketOrPipeNameWatermark}"></TextBox>
+                        <Button Grid.Column="1" Margin="8 0 0 0" Command="{Binding TransportOptions.SelectSocketFileCommand}">
+                            <TextBlock  Text="..."></TextBlock>
+                        </Button>
+                    </Grid>
+                </Panel>
+               
             </Grid>
 
             <Grid ColumnDefinitions="*, Auto" Margin="0 15 0 0">

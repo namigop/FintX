@@ -23,13 +23,6 @@ public class ServerHost(Type serviceType,
         try {
             this._csource = new CancellationTokenSource();
             var builder = WebApplication.CreateBuilder();
-            builder.WebHost.ConfigureKestrel(serverOptions => {
-                serverOptions.ListenAnyIP((int)port);
-                serverOptions.ListenAnyIP((int)port + 1, listenOptions => {
-                    listenOptions.UseHttps();
-                });
-            });
-
             if (useNamedPipes) {
                 builder.WebHost.ConfigureKestrel(serverOptions => {
                     serverOptions.ListenNamedPipe(pipeName, listenOptions => {
@@ -37,7 +30,24 @@ public class ServerHost(Type serviceType,
                     });
                 });
             }
-
+            else if (useUnixDomainSockets) {
+                builder.WebHost.ConfigureKestrel(serverOptions => {
+                    var socketPath = Path.Combine(Path.GetTempPath(), socketFileName);
+                    serverOptions.ListenUnixSocket(socketPath, listenOptions => {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                    });
+                });
+            }
+            else {
+                builder.WebHost.ConfigureKestrel(serverOptions => {
+                    serverOptions.ListenAnyIP((int)port);
+                    serverOptions.ListenAnyIP((int)port + 1, listenOptions => {
+                        listenOptions.Protocols = HttpProtocols.Http2;
+                        listenOptions.UseHttps();
+                    });
+                });
+            }
+            
             builder.Services.AddScoped(serviceType, sp => {
                 var cons = serviceType.GetConstructors().First();
                 var instance = cons.Invoke([serviceName]);

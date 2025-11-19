@@ -29,6 +29,7 @@ public class ServiceMockRootNode : NodeBase {
         this.ServiceType = serviceBaseType;
         this.Update(cg);
         this.IsExpanded = true;
+        this.CanStartServer = true;
         this.CompileCommand = this.CreateCommand(this.OnCompile);
         this.RecompileCommand = this.CreateCommand(this.OnRecompile);
         this.DeleteCommand = this.CreateCommand(this.OnDelete);
@@ -192,6 +193,7 @@ public class ServiceMockRootNode : NodeBase {
     }
 
     private async Task OnStartServer() {
+        ArgumentNullException.ThrowIfNull(this.ServiceType);
         try {
             this.CanStartServer = false;
             this._host = new ServerHost(
@@ -243,7 +245,7 @@ public class ServiceMockRootNode : NodeBase {
         this.ServiceConfigFile = cg.ConfigFile;
 
         if (this.IsUsingUnixDomainSockets)
-            this.SubTitle = "UDS";
+            this.SubTitle = $"uds://{this.SocketFileName}";
         else if (this.IsUsingNamedPipes)
             this.SubTitle = $"pipe://{this.PipeName}";
         else

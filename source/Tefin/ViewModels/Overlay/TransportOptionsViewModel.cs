@@ -2,6 +2,9 @@ using System.Windows.Input;
 
 using ReactiveUI;
 
+using Tefin.Utils;
+using Tefin.ViewModels.Tabs.Grpc;
+
 namespace Tefin.ViewModels.Overlay;
 
 public class TransportOptionsViewModel : ViewModelBase {
@@ -24,6 +27,7 @@ public class TransportOptionsViewModel : ViewModelBase {
             this.Transports = new List<string> { Default, UnixDomainSockets };
 
         this.SelectedTransport = "Default";
+        this.SelectSocketFileCommand = this.CreateCommand(OnSelectSocketFile);
         this.SubscribeTo<string, TransportOptionsViewModel>(
             x => x.SelectedTransport,
             vm => {
@@ -31,10 +35,19 @@ public class TransportOptionsViewModel : ViewModelBase {
                 vm.IsUsingUnixDomainSockets = vm.SelectedTransport == UnixDomainSockets;
                 vm.IsSocketOrNamedPipe = vm.IsUsingNamedPipes || vm.IsUsingUnixDomainSockets;
                 if (vm.IsUsingUnixDomainSockets)
-                    vm.SocketOrPipeNameWatermark = "Enter socket file name";
+                    vm.SocketOrPipeNameWatermark = "Enter path to the socket file";
                 if (vm.IsUsingNamedPipes)
                     vm.SocketOrPipeNameWatermark = "Enter the pipe name";
             });
+    }
+
+    private async Task OnSelectSocketFile() {
+        var fileTitle = "Socket file";
+         
+        var (ok, files) = await DialogUtils.OpenFile("Select socket file", fileTitle, ["*.*"]);
+        if (ok) {
+            this.SocketOrPipeName = files[0];
+        }
     }
 
     public bool IsUsingNamedPipes {
@@ -68,4 +81,5 @@ public class TransportOptionsViewModel : ViewModelBase {
         private set => this.RaiseAndSetIfChanged(ref this._socketOrPipeNameWatermark, value);
     }
     public List<string> Transports { get; private set; }
+    public ICommand SelectSocketFileCommand { get; }
 }
