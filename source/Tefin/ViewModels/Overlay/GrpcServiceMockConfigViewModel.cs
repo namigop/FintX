@@ -77,7 +77,7 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
         }
        else if (this._mockConfig.IsUsingUnixDomainSockets) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
-            this.TransportOptions.SocketOrPipeName = this._mockConfig.UnixDomainSockets.SocketFileName;
+            this.TransportOptions.SocketOrPipeName = this._mockConfig.UnixDomainSockets.SocketFilePath;
         }
         else {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.Default;
@@ -93,13 +93,13 @@ public class GrpcServiceMockConfigViewModel : ViewModelBase, IOverlayViewModel {
             this._mockConfig.IsUsingNamedPipes = this.TransportOptions.IsUsingNamedPipes;
             this._mockConfig.NamedPipe.PipeName = this.TransportOptions.SocketOrPipeName;
             this._mockConfig.IsUsingUnixDomainSockets = false;
-            this._mockConfig.UnixDomainSockets.SocketFileName = "";
+            this._mockConfig.UnixDomainSockets.SocketFilePath = "";
         }
         else if (this.TransportOptions.IsUsingUnixDomainSockets) {
             this._mockConfig.IsUsingNamedPipes = false;
             this._mockConfig.NamedPipe.PipeName = "";
             this._mockConfig.IsUsingUnixDomainSockets = this.TransportOptions.IsUsingUnixDomainSockets;
-            this._mockConfig.UnixDomainSockets.SocketFileName = this.TransportOptions.SocketOrPipeName;
+            this._mockConfig.UnixDomainSockets.SocketFilePath = this.TransportOptions.SocketOrPipeName;
         }
         else {
             this._mockConfig.IsUsingNamedPipes = false;

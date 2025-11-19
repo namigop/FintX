@@ -207,7 +207,7 @@ module ChannelBuilder =
       
       let createUdsStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
           task {
-            let socketPath = Path.Combine(Path.GetTempPath(), uds.SocketFileName)
+            let socketPath = Path.Combine(Path.GetTempPath(), uds.SocketFilePath)
             let  udsEndPoint = UnixDomainSocketEndPoint(socketPath)            
             let socket = new Socket(AddressFamily.Unix, socketType, protocolType)
 

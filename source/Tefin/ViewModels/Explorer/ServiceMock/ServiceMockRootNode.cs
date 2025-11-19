@@ -63,7 +63,7 @@ public class ServiceMockRootNode : NodeBase {
     public ICommand OpenServiceMockConfigCommand { get; }
 
     public string PipeName { get; private set; }
-    public string SocketFileName { get; private set; }
+    public string SocketFilePath { get; private set; }
 
     public uint Port {
         get => this._port;
@@ -203,7 +203,7 @@ public class ServiceMockRootNode : NodeBase {
                 this.IsUsingNamedPipes,
                 this.PipeName,
                 this.IsUsingUnixDomainSockets,
-                this.SocketFileName);
+                this.SocketFilePath);
             await this._host.Start();
             this.Io.Log.Info($"{this.ServiceName} server started.");
         }
@@ -239,13 +239,13 @@ public class ServiceMockRootNode : NodeBase {
         this.IsUsingNamedPipes = cg.Config.Value.IsUsingNamedPipes;
         this.IsUsingUnixDomainSockets = cg.Config.Value.IsUsingUnixDomainSockets;
         this.PipeName = cg.Config.Value.NamedPipe.PipeName;
-        this.SocketFileName = cg.Config.Value.UnixDomainSockets.SocketFileName;
+        this.SocketFilePath = cg.Config.Value.UnixDomainSockets.SocketFilePath;
         // this.Url = cg.Config.Value.Url;
         this.Title = cg.Config.Value.ServiceName;
         this.ServiceConfigFile = cg.ConfigFile;
 
         if (this.IsUsingUnixDomainSockets)
-            this.SubTitle = $"uds://{this.SocketFileName}";
+            this.SubTitle = $"uds://{this.SocketFilePath}";
         else if (this.IsUsingNamedPipes)
             this.SubTitle = $"pipe://{this.PipeName}";
         else

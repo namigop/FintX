@@ -13,7 +13,7 @@ public class ServerHost(Type serviceType,
     bool useNamedPipes,
     string pipeName,
     bool useUnixDomainSockets,
-    string socketFileName) {
+    string socketFilePath) {
     
     private WebApplication? _app;
     private CancellationTokenSource? _csource;
@@ -31,9 +31,10 @@ public class ServerHost(Type serviceType,
                 });
             }
             else if (useUnixDomainSockets) {
+                if (File.Exists(socketFilePath))
+                    File.Delete(socketFilePath);
                 builder.WebHost.ConfigureKestrel(serverOptions => {
-                    var socketPath = Path.Combine(Path.GetTempPath(), socketFileName);
-                    serverOptions.ListenUnixSocket(socketPath, listenOptions => {
+                    serverOptions.ListenUnixSocket(socketFilePath, listenOptions => {
                         listenOptions.Protocols = HttpProtocols.Http2;
                     });
                 });
@@ -90,5 +91,9 @@ public class ServerHost(Type serviceType,
         this._csource = null;
         this._app = null;
         this.IsRunning = false;
+
+        if (useUnixDomainSockets && File.Exists(socketFilePath)) {
+            File.Delete(socketFilePath);
+        }
     }
 }

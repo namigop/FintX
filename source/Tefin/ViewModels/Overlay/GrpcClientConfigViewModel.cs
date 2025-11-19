@@ -14,6 +14,8 @@ using Tefin.Messages;
 using Tefin.Utils;
 using Tefin.ViewModels.Validations;
 
+using File = System.IO.File;
+
 #endregion
 
 namespace Tefin.ViewModels.Overlay;
@@ -161,7 +163,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         }
         else if (this._clientConfig.IsUsingUnixDomainSockets) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.UnixDomainSockets;
-            this.TransportOptions.SocketOrPipeName = this._clientConfig.UnixDomainSockets.SocketFileName;
+            this.TransportOptions.SocketOrPipeName = this._clientConfig.UnixDomainSockets.SocketFilePath;
+            if (string.IsNullOrWhiteSpace(this.TransportOptions.SocketOrPipeName)) {
+                Io.Log.Warn("Unix domain socket path is empty");
+            }
+
+            if (!Io.File.Exists(this.TransportOptions.SocketOrPipeName)) {
+                Io.Log.Warn($"Unix domain socket file '{this.TransportOptions.SocketOrPipeName}' does not exist!");
+            }
         }
         else {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.Default;
@@ -213,13 +222,20 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
             this._clientConfig.IsUsingNamedPipes = true;
             this._clientConfig.NamedPipe.PipeName = this.TransportOptions.SocketOrPipeName;;
             this._clientConfig.IsUsingUnixDomainSockets = false;
-            this._clientConfig.UnixDomainSockets.SocketFileName = "";
+            this._clientConfig.UnixDomainSockets.SocketFilePath = "";
         }
         else if (this.TransportOptions.IsUsingUnixDomainSockets) {
             this._clientConfig.IsUsingNamedPipes = false;
             this._clientConfig.NamedPipe.PipeName = "";
             this._clientConfig.IsUsingUnixDomainSockets = true;
-            this._clientConfig.UnixDomainSockets.SocketFileName = this.TransportOptions.SocketOrPipeName;
+            this._clientConfig.UnixDomainSockets.SocketFilePath = this.TransportOptions.SocketOrPipeName;
+            if (string.IsNullOrWhiteSpace(this.TransportOptions.SocketOrPipeName)) {
+                Io.Log.Warn("Unix domain socket path is empty");
+            }
+
+            if (!Io.File.Exists(this.TransportOptions.SocketOrPipeName)) {
+                Io.Log.Warn($"Unix domain socket file '{this.TransportOptions.SocketOrPipeName}' does not exist!");
+            }
         }
         else {
             this._clientConfig.IsUsingNamedPipes = false;

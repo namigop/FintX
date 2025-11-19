@@ -360,7 +360,7 @@ public class ServiceMockExplorerViewModel : ViewModelBase {
                     obj.IsUsingNamedPipes,
                     obj.IsUsingNamedPipes ? new NamedPipeServerConfig(){ PipeName = obj.SocketOrPipeName } : null,
                     obj.IsUsingUnixDomainSockets,
-                    obj.IsUsingUnixDomainSockets ? new UnixDomainSocketServerConfig() { SocketFileName = obj.SocketOrPipeName} : null,
+                    obj.IsUsingUnixDomainSockets ? new UnixDomainSocketServerConfig() { SocketFilePath = obj.SocketOrPipeName} : null,
                     methods,
                     this.Io);
                 feature.Add();

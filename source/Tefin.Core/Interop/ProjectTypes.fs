@@ -9,7 +9,7 @@ module ProjectTypes =
   type NamedPipeServerConfig() =
     member val PipeName = "" with get, set
   type UnixDomainSocketServerConfig() =
-    member val SocketFileName = "socket.tmp" with get, set
+    member val SocketFilePath = "/tmp/fintx.sock" with get, set
     
   type ServiceMockConfig() =
     member val ServiceName = "" with get, set
@@ -34,7 +34,7 @@ module ProjectTypes =
   type UnixDomainSocketClientConfig() =
     member val SocketType = "Stream" with get, set
     member val ProtocolType = "Unspecified" with get, set
-    member val SocketFileName = "socket.tmp" with get, set
+    member val SocketFilePath = "/tmp/fintx.sock" with get, set
     
   type ClientTransportConfig =
   | NamedPipeClient of NamedPipeClientConfig
