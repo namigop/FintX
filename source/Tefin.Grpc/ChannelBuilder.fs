@@ -122,25 +122,7 @@ module ChannelBuilder =
       )
     )
 
-  let private createSecureChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
-    let x509 = getCert cfg.X509Cert.Value
-    let ignoreSslChecks = RemoteCertificateValidationCallback(fun a b c d -> true)
-
-    let handler =
-      new SocketsHttpHandler(
-        EnableMultipleHttp2Connections = true,
-        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
-        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
-        SslOptions = SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
-                                                    ClientCertificates =   new X509Certificate2Collection())
-      )
-
-    let _ = handler.SslOptions.ClientCertificates.Add(x509)
-    let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
-    buildChannel cfg httpclient defaultMethodConfig
-
-  let private createInsecureChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
+  let createSocketHandler() =
     let handler =
       new SocketsHttpHandler(
         EnableMultipleHttp2Connections = true,
@@ -148,11 +130,23 @@ module ChannelBuilder =
         KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
         PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan
       )
+    handler
+    
+  let private createSecureSocketHandler (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
+    let x509 = getCert cfg.X509Cert.Value
+    let ignoreSslChecks = RemoteCertificateValidationCallback(fun a b c d -> true)
 
+    let handler = createSocketHandler()
+    handler.SslOptions <- SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
+                                                         ClientCertificates =   new X509Certificate2Collection())
+    let _ = handler.SslOptions.ClientCertificates.Add(x509)
+    handler
+ 
+  let private createChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) (handler:SocketsHttpHandler) =     
     let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
     buildChannel cfg httpclient defaultMethodConfig
     
-  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeClientConfig) =
+  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeClientConfig) (handler:SocketsHttpHandler)=
       let pipeDirection =
          let ok, v = Enum.TryParse<PipeDirection>(namedPipe.Direction)
          if ok then v else PipeDirection.InOut
@@ -190,14 +184,12 @@ module ChannelBuilder =
           }
           |> fun t -> ValueTask.FromResult(t.Result)                
       
-      let handler =        
-        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
-        new SocketsHttpHandler( ConnectCallback = f )
-        
+      let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
+      handler.ConnectCallback <- callback    
       let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
       channel
   
-  let createUdsChannel (url:string) (uds:UnixDomainSocketClientConfig) =
+  let createUdsChannel (url:string) (uds:UnixDomainSocketClientConfig) (handler:SocketsHttpHandler) =
       let protocolType =
          let ok, v = Enum.TryParse<ProtocolType>(uds.ProtocolType)
          if ok then v else ProtocolType.Unspecified
@@ -221,9 +213,9 @@ module ChannelBuilder =
           }
           |> fun t -> ValueTask.FromResult(t.Result)                
       
-      let handler =        
-        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
-        new SocketsHttpHandler( ConnectCallback = f )
+        
+      let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
+      handler.ConnectCallback <- callback
         
       let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
       channel
@@ -242,12 +234,16 @@ module ChannelBuilder =
 
       m.RetryPolicy.RetryableStatusCodes.Add(StatusCode.Unavailable)
       m
-
-    if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
-      createSecureChannel cfg defaultMethodConfig
-    elif cfg.IsUsingNamedPipes then
-      createNamedPipeChannel cfg.Url cfg.NamedPipe
+    
+    let socketHandler =
+      if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
+        createSecureSocketHandler cfg defaultMethodConfig
+      else
+        createSocketHandler()
+        
+    if cfg.IsUsingNamedPipes then
+      createNamedPipeChannel cfg.Url cfg.NamedPipe socketHandler
     elif cfg.IsUsingUnixDomainSockets then
-      createUdsChannel cfg.Url cfg.UnixDomainSocketConfig
+      createUdsChannel cfg.Url cfg.UnixDomainSocketConfig socketHandler
     else
-      createInsecureChannel cfg defaultMethodConfig
+      createChannel cfg defaultMethodConfig socketHandler
