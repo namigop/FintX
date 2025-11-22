@@ -26,16 +26,17 @@ public class ServerHost(Type serviceType,
             if (useNamedPipes) {
                 builder.WebHost.ConfigureKestrel(serverOptions => {
                     serverOptions.ListenNamedPipe(pipeName, listenOptions => {
-                        listenOptions.Protocols = HttpProtocols.Http2;
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                     });
                 });
             }
             else if (useUnixDomainSockets) {
                 if (File.Exists(socketFilePath))
                     File.Delete(socketFilePath);
+                
                 builder.WebHost.ConfigureKestrel(serverOptions => {
                     serverOptions.ListenUnixSocket(socketFilePath, listenOptions => {
-                        listenOptions.Protocols = HttpProtocols.Http2;
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                     });
                 });
             }
@@ -43,7 +44,7 @@ public class ServerHost(Type serviceType,
                 builder.WebHost.ConfigureKestrel(serverOptions => {
                     serverOptions.ListenAnyIP((int)port);
                     serverOptions.ListenAnyIP((int)port + 1, listenOptions => {
-                        listenOptions.Protocols = HttpProtocols.Http2;
+                        listenOptions.Protocols = HttpProtocols.Http1AndHttp2AndHttp3;
                         listenOptions.UseHttps();
                     });
                 });
