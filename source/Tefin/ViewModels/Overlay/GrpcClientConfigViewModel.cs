@@ -36,7 +36,9 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private StoreCertSelection _selectedStoreCertificate = null!;
     private string _thumbprint = "";
     private string _url = "";
-    
+    private bool _isHttp2Checked;
+    private bool _isHttp3Checked;
+
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
         this._onClientNameChanged = onClientNameChanged;
@@ -147,6 +149,16 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     public string Title { get; } = "Client Configuration";
 
+    public bool IsHttp2Checked {
+        get => this._isHttp2Checked;
+        set => this.RaiseAndSetIfChanged(ref _isHttp2Checked, value);
+    }
+
+    public bool IsHttp3Checked {
+        get => this._isHttp3Checked;
+        set => this.RaiseAndSetIfChanged(ref _isHttp3Checked, value);
+    }
+
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string clientConfigFile) {
@@ -157,6 +169,9 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.IsUsingSsl = this._clientConfig.IsUsingSSL;
         this.IsCertFromFile = this._clientConfig.IsCertFromFile;
         this.Description = this._clientConfig.Description;
+        this.IsHttp2Checked = this._clientConfig.IsUsingHttp2;
+        this.IsHttp3Checked = this._clientConfig.IsUsingHttp3;
+        
         if (this._clientConfig.IsUsingNamedPipes) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
             this.TransportOptions.SocketOrPipeName = this._clientConfig.NamedPipe.PipeName;
@@ -218,6 +233,9 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertStoreLocation = Enum.GetName(this.SelectedCertStoreLocation);
         this._clientConfig.CertThumbprint = this.Thumbprint;
         this._clientConfig.CertFile = this.CertFile;
+        this._clientConfig.IsUsingHttp2 = this.IsHttp2Checked;
+        this._clientConfig.IsUsingHttp3 = this.IsHttp3Checked;
+        
         if (this.TransportOptions.IsUsingNamedPipes) {
             this._clientConfig.IsUsingNamedPipes = true;
             this._clientConfig.NamedPipe.PipeName = this.TransportOptions.SocketOrPipeName;;

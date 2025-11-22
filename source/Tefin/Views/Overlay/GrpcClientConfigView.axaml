@@ -35,10 +35,10 @@
                 <StackPanel>
                     <TextBlock Text="Protocols" Classes="FormField" />
                     <StackPanel Orientation="Horizontal" Margin="0"> 
-                        <CheckBox VerticalAlignment="Center">
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHttp2Checked}">
                             <TextBlock Text="http2"></TextBlock>
                         </CheckBox>
-                        <CheckBox VerticalAlignment="Center" Margin="10 0 0 0">
+                        <CheckBox VerticalAlignment="Center" Margin="10 0 0 0" IsChecked="{Binding IsHttp3Checked}">
                             <TextBlock Text="http3"></TextBlock>
                         </CheckBox>
                     </StackPanel>
