@@ -71,14 +71,18 @@ module MethodInvoker =
       if (cacheConfig.ContainsKey clientType) then
         let prevCfg = cacheConfig[clientType]
 
-        let isConfigUnchanged =
+        let isConfigTheSame =
           prevCfg.Url = cfg.Url
           && prevCfg.X509Cert = cfg.X509Cert
           && prevCfg.JWT = cfg.JWT
           && prevCfg.IsUsingSSL = cfg.IsUsingSSL
+          && prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2
+          && prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3
+          && prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes
+          && prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
 
         //if the config was changed clear the cached instance
-        if not isConfigUnchanged then
+        if not isConfigTheSame then
           let _ = cache.Remove(clientType)         
           ()
 

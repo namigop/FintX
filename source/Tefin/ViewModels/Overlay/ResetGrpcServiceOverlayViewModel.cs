@@ -166,8 +166,7 @@ public class ResetGrpcServiceOverlayViewModel : ViewModelBase, IOverlayViewModel
                 this.Io.File.Delete(f);
             }
 
-            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles,
-                this.ReflectionUrl, this.Io);
+            var cmd = new CompileFeature(this._selectedDiscoveredService!, this._clientName, "desc", protoFiles, this.ReflectionUrl, this.Io);
             var (ok, output) = await cmd.Run(false);
             if (ok) {
                 var csFiles = output.Input.Value.SourceFiles;

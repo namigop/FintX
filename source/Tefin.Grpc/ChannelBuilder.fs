@@ -124,7 +124,7 @@ module ChannelBuilder =
           UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
           ServiceConfig = svcConfig,
           HttpVersion = Version(3,0),
-          HttpVersionPolicy = if cfg.IsUsingHttp2 then HttpVersionPolicy.RequestVersionOrHigher else HttpVersionPolicy.RequestVersionExact)
+          HttpVersionPolicy = if cfg.IsUsingHttp2 then HttpVersionPolicy.RequestVersionOrLower else HttpVersionPolicy.RequestVersionExact)
       elif cfg.IsUsingHttp2  then
         GrpcChannelOptions(
           HttpClient = httpclient,
@@ -135,15 +135,8 @@ module ChannelBuilder =
       else
         GrpcChannelOptions(HttpClient = httpclient)
     
-    GrpcChannel.ForAddress(
-      cfg.Url,
-      GrpcChannelOptions(
-        HttpClient = httpclient,
-        Credentials = composedCredentials,
-        UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
-        ServiceConfig = svcConfig
-      )
-    )
+    GrpcChannel.ForAddress(cfg.Url, options)
+    
 
   let createSocketHandler (cfg : CallConfig) =
     let handler =
