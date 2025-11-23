@@ -63,6 +63,8 @@ module ProjectTypes =
     member val NamedPipe = NamedPipeClientConfig() with get, set
     member val IsUsingUnixDomainSockets = false with get, set
     member val UnixDomainSockets = UnixDomainSocketClientConfig() with get, set
+    member val IsUsingHttp2 = true with get, set
+    member val IsUsingHttp3 = true with get, set
 
   type MethodGroup =
     { Name: string

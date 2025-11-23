@@ -33,6 +33,8 @@ type CallConfig =
     IsUsingNamedPipes : bool
     NamedPipe : NamedPipeClientConfig
     IsUsingUnixDomainSockets : bool
+    IsUsingHttp2 : bool
+    IsUsingHttp3 : bool
     UnixDomainSocketConfig : UnixDomainSocketClientConfig
     Io: IOs }
 
@@ -71,6 +73,8 @@ type CallConfig =
       IsUsingNamedPipes = cfg.IsUsingNamedPipes
       NamedPipe = cfg.NamedPipe
       IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
+      IsUsingHttp2 = cfg.IsUsingHttp2
+      IsUsingHttp3 = cfg.IsUsingHttp3
       UnixDomainSocketConfig = cfg.UnixDomainSockets
       Io = io }
 
@@ -112,47 +116,65 @@ module ChannelBuilder =
       | Some c -> ChannelCredentials.Create(channelCredentials, c)
       | None -> channelCredentials
 
-    GrpcChannel.ForAddress(
-      cfg.Url,
-      GrpcChannelOptions(
-        HttpClient = httpclient,
-        Credentials = composedCredentials,
-        UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
-        ServiceConfig = svcConfig
-      )
-    )
+    let options =      
+      if cfg.IsUsingHttp3 then
+        GrpcChannelOptions(
+          HttpClient = httpclient,
+          Credentials = composedCredentials,
+          UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
+          ServiceConfig = svcConfig,
+          HttpVersion = Version(3,0),
+          HttpVersionPolicy = if cfg.IsUsingHttp2 then HttpVersionPolicy.RequestVersionOrLower else HttpVersionPolicy.RequestVersionExact)
+      elif cfg.IsUsingHttp2  then
+        GrpcChannelOptions(
+          HttpClient = httpclient,
+          Credentials = composedCredentials,
+          UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
+          ServiceConfig = svcConfig
+        )
+      else
+        GrpcChannelOptions(HttpClient = httpclient)
+    
+    GrpcChannel.ForAddress(cfg.Url, options)
+    
 
-  let private createSecureChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
+  let createSocketHandler (cfg : CallConfig) =
+    let handler =
+      new SocketsHttpHandler(
+        EnableMultipleHttp2Connections = true,
+        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
+        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
+        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
+        SslOptions = SslClientAuthenticationOptions( ApplicationProtocols = ResizeArray<SslApplicationProtocol>())
+      )
+        
+    if cfg.IsUsingHttp2  then
+      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http2)    
+    if cfg.IsUsingHttp3  then
+      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http3)
+    handler
+    
+  let private createSecureSocketHandler (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
     let x509 = getCert cfg.X509Cert.Value
     let ignoreSslChecks = RemoteCertificateValidationCallback(fun a b c d -> true)
 
-    let handler =
-      new SocketsHttpHandler(
-        EnableMultipleHttp2Connections = true,
-        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
-        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
-        SslOptions = SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
-                                                    ClientCertificates =   new X509Certificate2Collection())
-      )
-
+    let handler = createSocketHandler cfg
+    handler.SslOptions <- SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
+                                                         ApplicationProtocols = ResizeArray<SslApplicationProtocol>(),
+                                                         ClientCertificates =   X509Certificate2Collection())    
+    if cfg.IsUsingHttp2  then
+      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http2)
+    if cfg.IsUsingHttp3  then
+      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http3)
+     
     let _ = handler.SslOptions.ClientCertificates.Add(x509)
-    let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
-    buildChannel cfg httpclient defaultMethodConfig
-
-  let private createInsecureChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
-    let handler =
-      new SocketsHttpHandler(
-        EnableMultipleHttp2Connections = true,
-        KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
-        KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
-        PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan
-      )
-
+    handler
+ 
+  let private createChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) (handler:SocketsHttpHandler) =     
     let httpclient = new HttpClient(handler, Timeout = Timeout.InfiniteTimeSpan)
     buildChannel cfg httpclient defaultMethodConfig
     
-  let createNamedPipeChannel (url:string) (namedPipe:NamedPipeClientConfig) =
+  let createNamedPipeChannel (cfg: CallConfig)  (namedPipe:NamedPipeClientConfig) (handler:SocketsHttpHandler) (defaultMethodConfig: MethodConfig) =
       let pipeDirection =
          let ok, v = Enum.TryParse<PipeDirection>(namedPipe.Direction)
          if ok then v else PipeDirection.InOut
@@ -171,6 +193,7 @@ module ChannelBuilder =
           pipeOptions <- pipeOptions ||| PipeOptions.FirstPipeInstance
           
         pipeOptions
+        
       
       let createNamedPipeStream  (ctx: SocketsHttpConnectionContext) (token:CancellationToken)  =      
           task {
@@ -190,14 +213,38 @@ module ChannelBuilder =
           }
           |> fun t -> ValueTask.FromResult(t.Result)                
       
-      let handler =        
-        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
-        new SocketsHttpHandler( ConnectCallback = f )
-        
-      let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
+      let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
+      handler.ConnectCallback <- callback
+      
+      let svcConfig = ServiceConfig()
+      svcConfig.MethodConfigs.Add defaultMethodConfig
+      
+      let channelOptions =      
+        if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion = Version(3,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrHigher)
+        elif cfg.IsUsingHttp2 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion =  Version(2,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
+        elif cfg.IsUsingHttp3 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion =  Version(3,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
+        else
+          GrpcChannelOptions(HttpHandler = handler, ServiceConfig = svcConfig)
+          
+      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)     
       channel
   
-  let createUdsChannel (url:string) (uds:UnixDomainSocketClientConfig) =
+  let createUdsChannel (cfg:CallConfig) (uds:UnixDomainSocketClientConfig) (handler:SocketsHttpHandler) (defaultMethodConfig: MethodConfig) =
       let protocolType =
          let ok, v = Enum.TryParse<ProtocolType>(uds.ProtocolType)
          if ok then v else ProtocolType.Unspecified
@@ -221,14 +268,42 @@ module ChannelBuilder =
           }
           |> fun t -> ValueTask.FromResult(t.Result)                
       
-      let handler =        
-        let f = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
-        new SocketsHttpHandler( ConnectCallback = f )
         
-      let channel = GrpcChannel.ForAddress(url, GrpcChannelOptions (HttpHandler = handler))     
+      let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
+      handler.ConnectCallback <- callback
+        
+      let svcConfig = ServiceConfig()
+      svcConfig.MethodConfigs.Add defaultMethodConfig
+      
+      let channelOptions =      
+        if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion = Version(3,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrHigher)
+        elif cfg.IsUsingHttp2 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion =  Version(2,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
+        elif cfg.IsUsingHttp3 then
+          GrpcChannelOptions(
+            ServiceConfig = svcConfig,
+            HttpHandler = handler,
+            HttpVersion =  Version(3,0),
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
+        else
+          GrpcChannelOptions(HttpHandler = handler, ServiceConfig = svcConfig)
+          
+      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)     
       channel
       
   let createGrpcChannel (cfg: CallConfig) =
+    if cfg.IsUsingHttp2 = false && cfg.IsUsingHttp3 = false then
+      raise (ArgumentException("At least one of Http2 or Http3 must be enabled"))
+    
     let defaultMethodConfig =
       let m = MethodConfig()
       m.Names.Add(MethodName.Default)
@@ -242,12 +317,16 @@ module ChannelBuilder =
 
       m.RetryPolicy.RetryableStatusCodes.Add(StatusCode.Unavailable)
       m
-
-    if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
-      createSecureChannel cfg defaultMethodConfig
-    elif cfg.IsUsingNamedPipes then
-      createNamedPipeChannel cfg.Url cfg.NamedPipe
+    
+    let socketHandler =
+      if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
+        createSecureSocketHandler cfg defaultMethodConfig
+      else
+        createSocketHandler cfg
+        
+    if cfg.IsUsingNamedPipes then
+      createNamedPipeChannel cfg cfg.NamedPipe  socketHandler defaultMethodConfig
     elif cfg.IsUsingUnixDomainSockets then
-      createUdsChannel cfg.Url cfg.UnixDomainSocketConfig
+      createUdsChannel cfg cfg.UnixDomainSocketConfig  socketHandler defaultMethodConfig
     else
-      createInsecureChannel cfg defaultMethodConfig
+      createChannel cfg defaultMethodConfig socketHandler

@@ -8,7 +8,8 @@
              x:DataType="overlay:GrpcClientConfigViewModel"
              x:Class="Tefin.Views.Overlay.GrpcClientConfigView">
     <Border>
-        <Grid RowDefinitions="*, Auto">
+        <Grid RowDefinitions="*, Auto" MaxHeight="680">
+            <ScrollViewer Grid.Row="0" Padding="0 0 20 0">
             <StackPanel Orientation="Vertical" Grid.Row="0">
                 <StackPanel.Styles>
                     <Style Selector="StackPanel">
@@ -21,7 +22,7 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Url" Classes="FormField" />
-                    <TextBox Text="{Binding Url}" />
+                    <TextBox Text="{Binding Url}" Watermark="https://server:port" />
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Description" Classes="FormField" />
@@ -29,7 +30,18 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Json Web Token (JWT)" Classes="FormField" />
-                    <TextBox Text="{Binding Jwt}" Height="80" />
+                    <TextBox Text="{Binding Jwt}" Height="80" Watermark="Enter the JWT token (without 'Bearer')" />
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Protocols" Classes="FormField" />
+                    <StackPanel Orientation="Horizontal" Margin="0"> 
+                        <CheckBox VerticalAlignment="Center" IsChecked="{Binding IsHttp2Checked}">
+                            <TextBlock Text="http2"></TextBlock>
+                        </CheckBox>
+                        <CheckBox VerticalAlignment="Center" Margin="10 0 0 0" IsChecked="{Binding IsHttp3Checked}">
+                            <TextBlock Text="http3"></TextBlock>
+                        </CheckBox>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel>
                     <TextBlock  Text="Transport" Classes="FormField" />
@@ -116,7 +128,8 @@
                 </StackPanel>
 
             </StackPanel>
-            <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 24 0 0">
+            </ScrollViewer>
+                <StackPanel Grid.Row="1" HorizontalAlignment="Left" Margin="0 24 0 0">
                 <Button Command="{Binding ResetCommand}" MinWidth="70">
                     <StackPanel Orientation="Horizontal">
                         <controls:IconControl Icon="{StaticResource Icon.Refresh}" VerticalAlignment="Center"
