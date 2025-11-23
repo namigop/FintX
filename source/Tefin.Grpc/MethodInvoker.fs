@@ -81,9 +81,10 @@ module MethodInvoker =
           && prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes
           && prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
 
-        //if the config was changed clear the cached instance
+        //if the config was changed, clear the cached instance
         if not isConfigTheSame then
-          let _ = cache.Remove(clientType)         
+          let _ = cache.Remove(clientType)
+          let _ = cacheConfig.Remove(clientType)
           ()
 
       if cache.ContainsKey clientType then
