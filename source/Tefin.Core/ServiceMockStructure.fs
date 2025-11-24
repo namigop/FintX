@@ -54,8 +54,8 @@ module ServiceMockStructure =
     let addMethod (io:IOs) (methodsPath:string) (method:MethodInfo) =
       let path = Path.Combine(methodsPath, method.Name)
       io.Dir.CreateDirectory path
-      let scriptFile = Path.Combine(path, $"{method.Name}_script{Ext.mockScriptExt}")
-      io.File.WriteAllText scriptFile "<empty>"
+      //let scriptFile = Path.Combine(path, $"{method.Name}_script{Ext.mockScriptExt}")
+      //io.File.WriteAllText scriptFile "<empty>"
       
     let addServiceMock
         (io: IOs)
