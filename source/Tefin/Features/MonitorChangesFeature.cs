@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Timers;
 
 using Tefin.Core;
@@ -10,26 +11,31 @@ namespace Tefin.Features;
 public class MonitorChangesFeature(IOs io) {
     private static FileSystemWatcher? _watcher;
     private static readonly object _lock = new();
-    private readonly Dictionary<string, Timer?> _changedFiles = new();
+    private readonly ConcurrentDictionary<string, Timer?> _changedFiles = new();
 
     private void OnChanged(object sender, FileSystemEventArgs e) {
         if (e.Name == ProjectTypes.ProjectSaveState.FileName) {
             return;
         }
 
-        if (!this._changedFiles.TryGetValue(e.FullPath, out var timer)) {
-            timer = new Timer(TimeSpan.FromMilliseconds(500));
-            timer.AutoReset = false;
+        _changedFiles.GetOrAdd(e.FullPath, fullPath => {
+            var timer = new Timer(TimeSpan.FromMilliseconds(500)) {
+                AutoReset = false
+            };
+
             timer.Elapsed += (_, _) => {
-                this._changedFiles.Remove(e.FullPath);
+                if (_changedFiles.TryRemove(fullPath, out var removedTimer)) {
+                    removedTimer?.Dispose();
+                }
+
                 io.Log.Info($"File changed: {e.Name}");
-                var msg = new FileChangeMessage(e.FullPath, "", e.ChangeType);
+                var msg = new FileChangeMessage(fullPath, "", e.ChangeType);
                 GlobalHub.publish(msg);
             };
 
-            this._changedFiles.Add(e.FullPath, timer);
             timer.Start();
-        }
+            return timer;
+        });
     }
 
     private void OnCreated(object sender, FileSystemEventArgs e) {
