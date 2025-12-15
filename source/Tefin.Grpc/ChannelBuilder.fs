@@ -225,7 +225,7 @@ module ChannelBuilder =
             ServiceConfig = svcConfig,
             HttpHandler = handler,
             HttpVersion = Version(3,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrHigher)
+            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrLower)
         elif cfg.IsUsingHttp2 then
           GrpcChannelOptions(
             ServiceConfig = svcConfig,
