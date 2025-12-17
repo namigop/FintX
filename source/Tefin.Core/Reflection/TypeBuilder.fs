@@ -6,6 +6,8 @@ open System.Reflection
 open System.Threading
 open System.Collections.Concurrent
 //open Google.Protobuf.WellKnownTypes
+open AutoBogus
+open AutoBogus.Conventions
 open Microsoft.FSharp.Core
 
 module TypeBuilder =
@@ -20,7 +22,36 @@ module TypeBuilder =
 
   let register handler = handlers.Insert(0, handler) //side-effect
 
+  let fakeIt =
+    
+    (*
+    AutoFaker.Generate<int>();
+AutoFaker.Generate<Person>();
+    var faker = AutoFaker.Create();
+
+faker.Generate<int>();
+faker.Generate<Person>();
+    AutoFaker.Configure(builder =>
+{
+  builder.WithConventions();
+});
+    *)
+    
+    AutoFaker.Configure( fun builder -> builder.WithConventions() |> ignore )
+    fun (type2: Type) ->
+      let faker = AutoFaker.Create()     
+      let tt = typeof<Action<IAutoGenerateConfigBuilder>>;
+      let m = faker.GetType().GetMethod("Generate", [| tt |]);
+      let methodInfo = m.MakeGenericMethod(type2)
+       
+      let fakeInstance = methodInfo.Invoke(faker, [| null |])
+      fakeInstance    
+    
   let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    
+    
+    
+    
     let result =
       [ for h in handlers -> h ]
       |> Seq.fold

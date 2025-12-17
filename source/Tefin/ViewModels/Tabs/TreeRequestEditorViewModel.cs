@@ -99,10 +99,23 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
 
         var counter = 0;
         foreach (var paramInfo in methodParams) {
+            if (paramInfo.Name == "request") {
+                var instance2 = TypeBuilder.fakeIt.Invoke(paramInfo.ParameterType);
+                var typeInfo2 = new TypeInfo(paramInfo, instance2);
+            
+                var paramNode2 = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo2,
+                    new Dictionary<string, int>(), instance2, null);
+                paramNode2.Init();
+                methodNode.AddItem(paramNode2);
+                continue;
+            }
+            
+            
             var instance = hasValues
                 ? parameters[counter]
                 : TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0).Item2;
             var typeInfo = new TypeInfo(paramInfo, instance);
+            
             var paramNode = TypeNodeBuilder.Create(paramInfo.Name ?? "??", paramInfo.ParameterType, typeInfo,
                 new Dictionary<string, int>(), instance, null);
             paramNode.Init();
