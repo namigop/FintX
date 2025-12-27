@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+ 
+
+//import "bye.proto";
+//import "wassup.proto";
+
+option csharp_namespace = "Tefin.Grpc.Sample3";
+
+package greet2;
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply);
+ 
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string firstName = 1;
+  string lastName = 2;
+  string address = 3;
+  string city = 4;
+  string country = 5;
+  string email = 6;
+}
+
+// The response message containing the greetings.
+message HelloReply {
+  string message = 1;
+}
+
+enum SampleEnum {
+  A = 0;
+  B = 1;
+}
+
+message EnumMsg {
+  repeated SampleEnum someEnums = 1;
+}
+
+
+message EnumRequest {
+  SampleEnum sample = 1;
+}
+
+message EnumResponse {
+  EnumMsg response = 1;
+}
+

@@ -37,7 +37,9 @@ faker.Generate<Person>();
 });
     *)
     
-    AutoFaker.Configure( fun builder -> builder.WithConventions() |> ignore )
+    AutoFaker.Configure( fun builder ->
+      builder.WithLocale("en") |> ignore 
+      builder.WithConventions() |> ignore )
     fun (type2: Type) ->
       let faker = AutoFaker.Create()     
       let tt = typeof<Action<IAutoGenerateConfigBuilder>>;
