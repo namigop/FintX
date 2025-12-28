@@ -1,10 +1,16 @@
 #region
 
 using System.Reflection;
+using System.Threading;
+
+using Grpc.Core;
+
+using Microsoft.FSharp.Core;
 
 using ReactiveUI;
 
 using Tefin.Core.Interop;
+using Tefin.Core.Reflection;
 using Tefin.ViewModels.Types;
 
 #endregion
@@ -56,7 +62,44 @@ public class UnaryReqViewModel : ViewModelBase {
 
     public TreeRequestEditorViewModel TreeEditor { get; }
 
-    public (bool, object?[]) GetMethodParameters() => this.RequestEditor.GetParameters();
+    public (bool, object?[]) GetMethodParameters() {
+        var reqParams = this.RequestEditor.GetParameters();
+
+        var expected = this.MethodInfo.GetParameters();
+        if (expected.Length == reqParams.Item2.Length) {
+            return reqParams;
+        }
+
+        //gRPC requests should contain 1. "request" (optional) 2.Headers, 3. deadline, 4. Cancellation token
+        var methodParams = reqParams.Item2;
+        var metadata = methodParams.FirstOrDefault(t => t?.GetType() == typeof(Metadata));
+        if (metadata == null) {
+            var (_, m) = TypeBuilder.getDefault(typeof(Metadata), true, FSharpOption<object>.None, 1);
+            metadata = m;
+        }
+
+        var deadline = methodParams.FirstOrDefault(t => t?.GetType() == typeof(DateTime));
+        if (deadline == null) {
+            var (_, m) = TypeBuilder.getDefault(typeof(DateTime), true, FSharpOption<object>.None, 1);
+            deadline = m;
+        }
+
+        var newParams = new List<object>();
+        var req = this.MethodInfo.GetParameters().FirstOrDefault(t => t.Name == "request");
+        var reqInstance = methodParams.FirstOrDefault(t => t?.GetType() == req?.ParameterType);
+        if (reqInstance != null) {
+            newParams.Add(reqInstance);
+        }
+
+        var token = this.RequestEditor.CtsReq?.Token ?? CancellationToken.None;
+
+        newParams.Add(metadata);
+        newParams.Add(deadline);
+        newParams.Add(token);
+        var parameters = newParams.ToArray();
+        this.RequestEditor.Show(parameters, this._requestVariables, this._clientGroup);
+        return (true, parameters);
+    }
 
 
     public void Init(List<VarDefinition> requestVariables) {
