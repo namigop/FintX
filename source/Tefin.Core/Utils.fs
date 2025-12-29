@@ -229,3 +229,67 @@ let jSelectToken (json: string) (jPath: string) =
 let jSelectTokens (json: string) (jPath: string) =
   let jObj = JObject.Parse json
   (jObj.SelectTokens jPath)
+  
+let calculateSimilarity (text1:string) (text2:string) : float=
+  // Calculate the similarity score using Jaro-Winkler algorithm
+  if String.IsNullOrEmpty(text1) && String.IsNullOrEmpty(text2) then 1.0
+  elif text1 = text2 then 1.0
+  elif String.IsNullOrEmpty(text1) || String.IsNullOrEmpty(text2) then 0.0
+  else
+    let s1 = text1.ToLowerInvariant()
+    let s2 = text2.ToLowerInvariant()
+    let len1 = s1.Length
+    let len2 = s2.Length
+    let baseScore =
+      if s1.Contains s2 then 0.5
+      elif s2.Contains s1 then 0.5
+      else 0.0
+    
+    // Calculate match window
+    let matchWindow = (max len1 len2) / 2 - 1
+    let matchWindow = if matchWindow < 0 then 0 else matchWindow
+    
+    let s1Matches = Array.create len1 false
+    let s2Matches = Array.create len2 false
+    
+    let mutable matches = 0
+    let mutable transpositions = 0
+    
+    // Identify matches
+    for i in 0 .. len1 - 1 do
+      let start = max 0 (i - matchWindow)
+      let endIdx = min (i + matchWindow + 1) len2
+      
+      for j in start .. endIdx - 1 do
+        if not s2Matches.[j] && s1.[i] = s2.[j] then
+          s1Matches.[i] <- true
+          s2Matches.[j] <- true
+          matches <- matches + 1
+    
+    if matches = 0 then baseScore
+    else
+      // Count transpositions
+      let mutable k = 0
+      for i in 0 .. len1 - 1 do
+        if s1Matches.[i] then
+          while not s2Matches.[k] do
+            k <- k + 1
+          if s1.[i] <> s2.[k] then
+            transpositions <- transpositions + 1
+          k <- k + 1
+      
+      let m = float matches
+      let t = (float transpositions) / 2.0
+      
+      // Calculate Jaro similarity
+      let jaro = ((m / float len1) + (m / float len2) + ((m - t) / m)) / 3.0
+      
+      // Calculate common prefix length (up to 4 characters)
+      let mutable prefixLen = 0
+      let maxPrefix = min 4 (min len1 len2)
+      while prefixLen < maxPrefix && s1.[prefixLen] = s2.[prefixLen] do
+        prefixLen <- prefixLen + 1
+      
+      // Calculate Jaro-Winkler similarity
+      let p = 0.1 // standard scaling factor
+      baseScore + jaro + (float prefixLen * p * (1.0 - jaro))

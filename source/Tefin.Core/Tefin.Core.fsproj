@@ -68,8 +68,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoBogus" Version="2.13.1" />
-        <PackageReference Include="AutoBogus.Conventions" Version="2.13.1" />
+        <PackageReference Include="Bogus" Version="35.6.5" />
         <PackageReference Include="Google.Protobuf" Version="3.31.0" />
         <PackageReference Include="Grpc.Core.Api" Version="2.71.0" />
         <PackageReference Include="LibGit2Sharp" Version="0.31.0" />

@@ -55,20 +55,20 @@ module GrpcTypeBuilder =
       match (TypeHelper.getListItemType thisType) with
       | Some itemType ->
         let addMethod = thisType.GetMethod("Add", [| itemType |])
-        let struct (ok, itemInstance) = TypeBuilder.getDefault itemType true None depth
+        let struct (ok, itemInstance) = TypeBuilder.getDefault "" itemType true None depth
         let rAdd = addMethod.Invoke(parentInstance, [| itemInstance |])
         struct (true, parentInstance)
       | None -> struct (false, Unchecked.defaultof<obj>)
     | None -> struct (false, Unchecked.defaultof<obj>)
 
 
-  let getDefault (thisType: System.Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
+  let getDefault (name:string) (thisType: System.Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
     if (thisType = typeof<Nullable<DateTime>>) then
       struct (true, DateTime.UtcNow.AddDays(1) |> box)
     elif (thisType = typeof<ByteString>) then
       struct (true, ByteString.CopyFrom("", System.Text.Encoding.UTF8) |> box)
     elif thisType.FullName.StartsWith("Google.Protobuf.Collections.MapField`2") then
-      DictionaryType.getDefault thisType createInstance parentInstanceOpt depth
+      DictionaryType.getDefault "" thisType createInstance parentInstanceOpt depth
     elif thisType.FullName.StartsWith("Google.Protobuf.Collections.RepeatedField`1") then
       buildRepeatedField thisType parentInstanceOpt depth
     elif (thisType = typeof<Metadata>) then

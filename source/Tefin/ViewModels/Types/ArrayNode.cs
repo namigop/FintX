@@ -26,7 +26,7 @@ public class ArrayNode : ListNode {
 
         this._listMethods = ListTypeMethod.GetMethods(constructedListType);
         var parentValue = parent != null ? Core.Utils.some(parent.Value)! : Core.Utils.none<object>();
-        var (_, list) = TypeBuilder.getDefault(constructedListType, true, parentValue, 0);
+        var (_, list) = TypeBuilder.getDefault("", constructedListType, true, parentValue, 0);
         this._listMethods.ClearMethod!.Invoke(list, null);
 
         this._internalList = list;

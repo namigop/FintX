@@ -155,7 +155,7 @@ public class ListNode : TypeBaseNode {
                 var counter = currentCount + i;
                 var name = $"{this.ItemName}[{counter}]";
                 Dictionary<string, int>? processedTypeNames = new();
-                var (ok, instance) = TypeBuilder.getDefault(itemType, true, FSharpOption<object>.Some(listInstance), 0);
+                var (ok, instance) = TypeBuilder.getDefault("", itemType, true, FSharpOption<object>.Some(listInstance), 0);
                 if (ok) {
                     this.GetMethods().AddMethod!.Invoke(listInstance, [instance]);
                     var node = this.CreateListItemNode(name, itemType, processedTypeNames, counter, instance, this);

@@ -88,7 +88,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
     }
 
     private void OnAddListItem() {
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        var (ok, reqInstance) = TypeBuilder.getDefault("", this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
             this._clientStreamEditor.AddItem(reqInstance);
         }
@@ -173,7 +173,7 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
         }
 
         var stream = Activator.CreateInstance(this.ListType)!;
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, Core.Utils.none<object>(), 0);
+        var (ok, reqInstance) = TypeBuilder.getDefault("", this._requestItemType, true, Core.Utils.none<object>(), 0);
         if (ok) {
             var add = this.ListType.GetMethod("Add");
             add!.Invoke(stream, [reqInstance]);

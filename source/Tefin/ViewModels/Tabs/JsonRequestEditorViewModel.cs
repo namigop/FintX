@@ -98,7 +98,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
 
         if (!hasValues) {
             parameters = methodParams.Select(paramInfo => {
-                var (ok, inst) = TypeBuilder.getDefault(paramInfo.ParameterType, true, Core.Utils.none<object>(), 0);
+                var (ok, inst) = TypeBuilder.getDefault(paramInfo.Name, paramInfo.ParameterType, true, Core.Utils.none<object>(), 0);
                 return inst;
             }).ToArray();
         }

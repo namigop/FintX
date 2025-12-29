@@ -54,7 +54,7 @@ module DynamicTypes =
         else
           TypeHelper.getDefault p.ParameterType
       else
-        let struct (ok, inst) = TypeBuilder.getDefault p.ParameterType true None 0
+        let struct (ok, inst) = TypeBuilder.getDefault p.Name p.ParameterType true None 0
         inst)
 
   let toJsonRequest (p: SerParam) =

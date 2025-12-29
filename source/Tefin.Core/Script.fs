@@ -47,7 +47,7 @@ module Script =
             else
                 retType
                 
-        let struct (created, resp) = TypeBuilder.getDefault (getReturnType mi.ReturnType) true None 0
+        let struct (created, resp) = TypeBuilder.getDefault mi.Name (getReturnType mi.ReturnType) true None 0
         let json = Instance.indirectSerialize (getReturnType(mi.ReturnType)) resp
         use sr = new StringReader(json)
         

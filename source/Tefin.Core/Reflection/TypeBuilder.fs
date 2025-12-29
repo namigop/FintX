@@ -6,9 +6,19 @@ open System.Reflection
 open System.Threading
 open System.Collections.Concurrent
 //open Google.Protobuf.WellKnownTypes
-open AutoBogus
-open AutoBogus.Conventions
+//open AutoBogus
+//open AutoBogus.Conventions
+//open Google.Protobuf.WellKnownTypes
+open Bogus
 open Microsoft.FSharp.Core
+open Tefin.Core.Interop
+
+module Fake =
+  let fakerMap =
+    let f = Faker()
+    //f.Address.
+    ()
+
 
 module TypeBuilder =
   let private handlers =     
@@ -21,38 +31,9 @@ module TypeBuilder =
     )
 
   let register handler = handlers.Insert(0, handler) //side-effect
-
-  let fakeIt =
     
-    (*
-    AutoFaker.Generate<int>();
-AutoFaker.Generate<Person>();
-    var faker = AutoFaker.Create();
-
-faker.Generate<int>();
-faker.Generate<Person>();
-    AutoFaker.Configure(builder =>
-{
-  builder.WithConventions();
-});
-    *)
-    
-    AutoFaker.Configure( fun builder ->
-      builder.WithLocale("en") |> ignore 
-      builder.WithConventions() |> ignore )
-    fun (type2: Type) ->
-      let faker = AutoFaker.Create()     
-      let tt = typeof<Action<IAutoGenerateConfigBuilder>>;
-      let m = faker.GetType().GetMethod("Generate", [| tt |]);
-      let methodInfo = m.MakeGenericMethod(type2)
-       
-      let fakeInstance = methodInfo.Invoke(faker, [| null |])
-      fakeInstance    
-    
-  let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
-    
-    
-    
+  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    Console.WriteLine $"Get default for \"{name}\" of type {type2.Name}"
     
     let result =
       [ for h in handlers -> h ]
@@ -62,7 +43,7 @@ faker.Generate<Person>();
           if handled then
             state
           else
-            let ret = handleFunc type2 createInstance parentInstance depth
+            let ret = handleFunc name type2 createInstance parentInstance depth
             ret)
         (struct (false, Unchecked.defaultof<obj>))
 
@@ -159,7 +140,7 @@ module SystemType =
       let ok, _ = info.TryGetValue(thisType)
       ok
 
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsEnum then
       let v = Enum.GetValues(thisType).GetValue(0)
       struct (true, v)
@@ -170,13 +151,13 @@ module SystemType =
       struct (false, TypeHelper.getDefault thisType)
 
 module ArrayType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsArray then
       let elementType = thisType.GetElementType()
       let instance = Array.CreateInstance(elementType, 1)
 
       let struct (ok, element) =
-        TypeBuilder.getDefault elementType createInstance None depth
+        TypeBuilder.getDefault "" elementType createInstance None depth
 
       if ok then
         instance.SetValue(element, 0)
@@ -186,7 +167,7 @@ module ArrayType =
       struct (false, TypeHelper.getDefault thisType)
 
 module GenericListType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if (TypeHelper.isGenericListType thisType) && createInstance then
       let instance2 =
         let instance = Activator.CreateInstance(thisType)
@@ -195,7 +176,7 @@ module GenericListType =
           match TypeHelper.getListItemType thisType with
           | Some elementType ->
             let struct (ok, elementInstance) =
-              TypeBuilder.getDefault elementType true None depth
+              TypeBuilder.getDefault "" elementType true None depth
 
             if ok then
               let addMethod = thisType.GetMethod("Add", [| elementType |])
@@ -219,7 +200,7 @@ module ClassType =
       let mutable objV = Unchecked.defaultof<obj>
 
       try
-        let struct (_, newValue) = TypeBuilder.getDefault prop.PropertyType true None depth
+        let struct (_, newValue) = TypeBuilder.getDefault prop.Name prop.PropertyType true None depth
         objV <- newValue
         prop.SetValue(instance, newValue)
       with exc ->
@@ -255,11 +236,11 @@ module ClassType =
 
       if (count > 0) then
         let a = prop.GetValue(instance, [| count - 1 |])
-        let _ = TypeBuilder.getDefault prop.PropertyType false (Some(a)) depth
+        let _ = TypeBuilder.getDefault prop.Name prop.PropertyType false (Some(a)) depth
         ()
     else
       let currentInstance = prop.GetValue(instance)
-      let _ = TypeBuilder.getDefault prop.PropertyType true (Some currentInstance) depth
+      let _ = TypeBuilder.getDefault prop.Name prop.PropertyType true (Some currentInstance) depth
       ()
 
   let fill (instance: obj) (depth: int) =
@@ -283,7 +264,7 @@ module ClassType =
 
       instance
 
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsClass && not thisType.IsAbstract then
       if createInstance then
         let constructor = thisType.GetConstructor(Type.EmptyTypes)
@@ -302,7 +283,7 @@ module ClassType =
       struct (false, TypeHelper.getDefault thisType)
 
 module DictionaryType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
     if thisType.IsGenericType && (TypeHelper.isDictionaryType thisType) then
       let keyValTypes = thisType.GetGenericArguments()
 
@@ -312,8 +293,8 @@ module DictionaryType =
         else
           parentInstanceOpt.Value
 
-      let struct (_, keyInstance) = TypeBuilder.getDefault keyValTypes[0] true None depth
-      let struct (_, valInstance) = TypeBuilder.getDefault keyValTypes[1] true None depth
+      let struct (_, keyInstance) = TypeBuilder.getDefault "" keyValTypes[0] true None depth
+      let struct (_, valInstance) = TypeBuilder.getDefault "" keyValTypes[1] true None depth
 
       let add =
         thisType.GetMethod("Add", BindingFlags.Public ||| BindingFlags.Instance, null, keyValTypes, null)
