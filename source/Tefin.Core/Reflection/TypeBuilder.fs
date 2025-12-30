@@ -2,6 +2,7 @@ namespace rec Tefin.Core.Reflection
 
 open System
 open System.Collections.Generic
+open System.IO
 open System.Reflection
 open System.Threading
 open System.Collections.Concurrent
@@ -14,16 +15,71 @@ open Microsoft.FSharp.Core
 open Tefin.Core.Interop
 
 module Fake =
+  type Fk =
+    {
+      Name:string
+      Type:Type
+      Get: unit -> obj
+    }
+  
   let fakerMap =
-    let f = Faker()
-    //f.Address.
-    ()
+    let fakerInfo = Dictionary<string, Fk>()
+    let f = Faker()    
+    let props = f.GetType().GetProperties() //|> Array.filter (fun p -> p.Name = "Address")
+    let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode" |]
+     
+    for prop in props do
+      let propInst = prop.GetValue f
+      let mis = prop.PropertyType.GetMethods()
+                |> Array.filter (fun m -> not m.IsSpecialName)
+                |> Array.filter (fun m ->  excluded |> Array.contains m.Name |> not )
+      for mi in mis do
+        if (mi.GetParameters().Length = 0) then
+          fakerInfo.[mi.Name] <-
+            { Name = mi.Name.ToLowerInvariant()
+              Type = mi.ReturnType
+              Get = fun () -> mi.Invoke(propInst, null) }
+    fun (name:string) (targetType2:Type) ->
+      if (SystemType.isSystemType targetType2) then
+        let targetType =
+          if TypeHelper.isNullable(targetType2) then
+            Nullable.GetUnderlyingType(targetType2)
+          else
+            targetType2
+        
+        let ok, v = fakerInfo.TryGetValue (name.ToLowerInvariant())
+        if (ok && v.Type = targetType) then
+          struct(true, v.Get())  
+        else          
+          let scores = Dictionary<float, obj>()
+          for i in fakerInfo do            
+            if (i.Value.Type = targetType) then            
+              let score = Tefin.Core.Utils.calculateSimilarity name i.Key              
+              if score > 0.5 then
+                Console.WriteLine $"Score = {score} - {name }vs {i.Key} of type {i.Value.Type.Name}"
+                let foo = i.Value.Get()
+                scores[score] <- foo 
+          
+          let matched = scores.Count > 0
+          if matched then
+            let inst = scores |> Seq.sortByDescending _.Key |> Seq.head |> _.Value
+            struct(matched, inst)
+          else
+            struct (false, null)
+      else
+        struct (false, null)
+        
+  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    Console.WriteLine $"Get default for \"{name}\" of type {type2.Name}"
+    fakerMap name type2
+        
 
 
 module TypeBuilder =
   let private handlers =     
     ResizeArray(
-      [| SystemType.getDefault
+      [| Fake.getDefault
+         SystemType.getDefault
          ArrayType.getDefault
          DictionaryType.getDefault
          GenericListType.getDefault
@@ -46,35 +102,23 @@ module TypeBuilder =
             let ret = handleFunc name type2 createInstance parentInstance depth
             ret)
         (struct (false, Unchecked.defaultof<obj>))
-
     result
-//
-// let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
-//     let mutable handled = false
-//     let mutable instance = Unchecked.defaultof<obj>
-//
-//     for handleFunc in handlers do
-//         if (not handled) then
-//             let struct (h, i) = handleFunc type2 createInstance parentInstance depth
-//             handled <- h
-//             instance <- i
-
-//    struct (handled, instance)
-
+    
 module SystemType =
 
   let private info =
+    
     let markerToken = (new CancellationTokenSource()).Token
     let temp = Dictionary<Type, (unit -> obj) * string>()
-    temp.Add(typeof<int>, ((fun () -> 0), "int"))
-    temp.Add(typeof<int16>, ((fun () -> 0s), "int16"))
-    temp.Add(typeof<int64>, ((fun () -> 0L), "long"))
-    temp.Add(typeof<decimal>, ((fun () -> 0m), "dec"))
-    temp.Add(typeof<Double>, ((fun () -> 0.0), "float"))
-    temp.Add(typeof<Single>, ((fun () -> 0.0f), "float32"))
-    temp.Add(typeof<uint>, ((fun () -> 0u), "uint"))
-    temp.Add(typeof<uint16>, ((fun () -> 0us), "uint16"))
-    temp.Add(typeof<uint64>, ((fun () -> 0UL), "ulong"))
+    temp.Add(typeof<int>, ((fun () -> Random.Shared.Next(0,100) ), "int"))
+    temp.Add(typeof<int16>, ((fun () -> Random.Shared.Next(0,100)), "int16"))
+    temp.Add(typeof<int64>, ((fun () -> Random.Shared.Next(0,100)), "long"))
+    temp.Add(typeof<decimal>, ((fun () -> Random.Shared.Next(0,100)), "dec"))
+    temp.Add(typeof<Double>, ((fun () -> Random.Shared.Next(0,100)), "float"))
+    temp.Add(typeof<Single>, ((fun () -> Random.Shared.Next(0,100)), "float32"))
+    temp.Add(typeof<uint>, ((fun () -> Random.Shared.Next(1,100)), "uint"))
+    temp.Add(typeof<uint16>, ((fun () -> Random.Shared.Next(1,100)), "uint16"))
+    temp.Add(typeof<uint64>, ((fun () -> Random.Shared.Next(1,100)), "ulong"))
     temp.Add(typeof<bool>, ((fun () -> true), "bool"))
     temp.Add(typeof<DateTime>, ((fun () -> DateTime.Now.AddDays 1), "dateTime"))
     temp.Add(typeof<DateTimeOffset>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset"))
@@ -82,20 +126,20 @@ module SystemType =
     temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1L), "timespan"))
     //temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
     temp.Add(typeof<CancellationToken>, ((fun () -> markerToken), "token"))
-    temp.Add(typeof<string>, ((fun () -> ""), "string"))
+    temp.Add(typeof<string>, ((fun () -> Path.GetRandomFileName()), "string"))
     temp.Add(typeof<char>, ((fun () -> 'c'), "char"))
     temp.Add(typeof<byte>, ((fun () -> byte 0), "byte"))
     temp.Add(typeof<Uri>, ((fun () -> Uri("http://localhost:8080/")), "uri"))
 
-    temp.Add(typeof<Nullable<int>>, ((fun () -> 0), "int?"))
-    temp.Add(typeof<Nullable<int16>>, ((fun () -> 0), "int16?"))
-    temp.Add(typeof<Nullable<int64>>, ((fun () -> 0), "long?"))
-    temp.Add(typeof<Nullable<decimal>>, ((fun () -> 0), "dec?"))
-    temp.Add(typeof<Nullable<Double>>, ((fun () -> 0), "float?"))
-    temp.Add(typeof<Nullable<Single>>, ((fun () -> 0), "float32?"))
-    temp.Add(typeof<Nullable<uint>>, ((fun () -> 0), "uint?"))
-    temp.Add(typeof<Nullable<uint16>>, ((fun () -> 0), "uint16?"))
-    temp.Add(typeof<Nullable<uint64>>, ((fun () -> 0), "ulong?"))
+    temp.Add(typeof<Nullable<int>>, ((fun () -> Random.Shared.Next(0,100)), "int?"))
+    temp.Add(typeof<Nullable<int16>>, ((fun () -> Random.Shared.Next(0,100)), "int16?"))
+    temp.Add(typeof<Nullable<int64>>, ((fun () -> Random.Shared.Next(0,100)), "long?"))
+    temp.Add(typeof<Nullable<decimal>>, ((fun () -> Random.Shared.Next(0,100)), "dec?"))
+    temp.Add(typeof<Nullable<Double>>, ((fun () -> Random.Shared.Next(0,100)), "float?"))
+    temp.Add(typeof<Nullable<Single>>, ((fun () -> Random.Shared.Next(0,100)), "float32?"))
+    temp.Add(typeof<Nullable<uint>>, ((fun () -> Random.Shared.Next(0,100)), "uint?"))
+    temp.Add(typeof<Nullable<uint16>>, ((fun () -> Random.Shared.Next(0,100)), "uint16?"))
+    temp.Add(typeof<Nullable<uint64>>, ((fun () -> Random.Shared.Next(0,100)), "ulong?"))
     temp.Add(typeof<Nullable<bool>>, ((fun () -> true), "bool?"))
     temp.Add(typeof<Nullable<DateTime>>, ((fun () -> DateTime.Now.AddDays 1), "dateTime?"))
     //temp.Add(typeof<Nullable<DateTime>>, ((fun () -> null), "dateTime?"))
