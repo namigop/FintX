@@ -3,82 +3,135 @@ namespace rec Tefin.Core.Reflection
 open System
 open System.Collections.Generic
 open System.IO
+open System.Linq
 open System.Reflection
 open System.Threading
-open System.Collections.Concurrent
-//open Google.Protobuf.WellKnownTypes
-//open AutoBogus
-//open AutoBogus.Conventions
-//open Google.Protobuf.WellKnownTypes
 open Bogus
 open Microsoft.FSharp.Core
 open Tefin.Core.Interop
 
-module Fake =
+module Faker =
   type Fk =
     {
       Name:string
+      NameParts : string array
       Type:Type
       Get: unit -> obj
     }
-  
-  let fakerMap =
-    let fakerInfo = Dictionary<string, Fk>()
-    let f = Faker()    
-    let props = f.GetType().GetProperties() //|> Array.filter (fun p -> p.Name = "Address")
-    let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode" |]
-     
-    for prop in props do
-      let propInst = prop.GetValue f
-      let mis = prop.PropertyType.GetMethods()
-                |> Array.filter (fun m -> not m.IsSpecialName)
-                |> Array.filter (fun m ->  excluded |> Array.contains m.Name |> not )
-      for mi in mis do
-        if (mi.GetParameters().Length = 0) then
-          fakerInfo.[mi.Name] <-
-            { Name = mi.Name.ToLowerInvariant()
-              Type = mi.ReturnType
-              Get = fun () -> mi.Invoke(propInst, null) }
-    fun (name:string) (targetType2:Type) ->
-      if (SystemType.isSystemType targetType2) then
-        let targetType =
-          if TypeHelper.isNullable(targetType2) then
-            Nullable.GetUnderlyingType(targetType2)
-          else
-            targetType2
-        
-        let ok, v = fakerInfo.TryGetValue (name.ToLowerInvariant())
-        if (ok && v.Type = targetType) then
-          struct(true, v.Get())  
-        else          
-          let scores = Dictionary<float, obj>()
-          for i in fakerInfo do            
-            if (i.Value.Type = targetType) then            
-              let score = Tefin.Core.Utils.calculateSimilarity name i.Key              
-              if score > 0.5 then
-                Console.WriteLine $"Score = {score} - {name }vs {i.Key} of type {i.Value.Type.Name}"
-                let foo = i.Value.Get()
-                scores[score] <- foo 
+    
+  let fakerInfo =
+      let temp = Dictionary<string, Fk>()
+      let f = Faker()    
+      let props = f.GetType().GetProperties()
+      let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode"; "ToUpperInvariant"; "ReplaceLineEndings" |]
+      for prop in props do
+        let propInst = prop.GetValue f
+        let mis = prop.PropertyType.GetMethods()
+                  |> Array.filter (fun m -> not m.IsSpecialName)
+                  |> Array.filter (fun m -> m.Name.Length > 2)
+                  |> Array.filter (fun m ->  excluded |> Array.contains m.Name |> not )
+        for mi in mis do
+          let methodParams = mi.GetParameters()
+          if (methodParams.Length = 0) then
+            temp.[mi.Name] <-
+              { Name = mi.Name.ToLowerInvariant()
+                NameParts = Tefin.Core.Utils.splitWord mi.Name |> Array.map _.ToLowerInvariant()
+                Type = mi.ReturnType
+                Get = fun () -> mi.Invoke(propInst, null) }
           
-          let matched = scores.Count > 0
-          if matched then
-            let inst = scores |> Seq.sortByDescending _.Key |> Seq.head |> _.Value
-            struct(matched, inst)
-          else
-            struct (false, null)
+          let optionalParams = methodParams |> Array.filter (fun p -> p.IsOptional && p.HasDefaultValue)
+          if optionalParams.Length = methodParams.Length then
+            temp.[mi.Name] <-
+              { Name = mi.Name.ToLowerInvariant()
+                NameParts = Tefin.Core.Utils.splitWord mi.Name |> Array.map _.ToLowerInvariant()
+                Type = mi.ReturnType
+                Get = fun () ->
+                  let args = optionalParams |> Array.map _.DefaultValue
+                  mi.Invoke(propInst, args) }
+      temp
+      
+      
+  let private specialRules (name2:string) (type2: Type) : struct (bool * obj) =
+    let nameParts = (Tefin.Core.Utils.splitWord name2) |> Array.map _.ToLowerInvariant()   
+    let matchCounts = fakerInfo.Values |> Seq.map (fun v ->      
+      if type2 = v.Type then
+        let mutable count = 0.0
+        for n in nameParts do
+          let found = v.NameParts.Contains n
+          if found then
+            count <- count + 1.0
+        v, (count / (Convert.ToDouble nameParts.Length))
+      else
+        v, 0
+      )
+    
+    let name = name2.ToLowerInvariant()
+    let f = Faker()        
+    if name.Contains("county") then
+      struct (true, f.Address.County())    
+    elif name.Contains("postal") then
+      struct (true, f.Address.ZipCode())
+    elif name.Contains("address") then
+      struct (true, f.Address.FullAddress())
+    else
+      let (highestMatch, score) = matchCounts |> Seq.sortByDescending (fun (fk, count) -> count) |> Seq.head
+      if (score >= 0.5) then
+        let value = highestMatch.Get()
+        Console.WriteLine $"Match Score = {score} - {name} vs {highestMatch.Name} -> {value}"
+        struct (true, value)
       else
         struct (false, null)
         
-  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
-    Console.WriteLine $"Get default for \"{name}\" of type {type2.Name}"
-    fakerMap name type2
+  let private calcScore (names:string array) (targets:string array) =
+        let mutable score = 0.0
+        for name in names do
+          for i in targets do
+            score <- score +  Tefin.Core.Utils.calculateSimilarity name i        
+        score / (Convert.ToDouble names.Length)
         
-
+  
+  let fakerMap (name:string) (targetType2:Type) =  
+    let targetType =
+      if TypeHelper.isNullable(targetType2) then
+        Nullable.GetUnderlyingType(targetType2)
+      else
+        targetType2
+    
+    let ok, v = fakerInfo.TryGetValue (name.ToLowerInvariant())
+    if (ok && v.Type = targetType) then
+      struct(true, v.Get())  
+    else          
+      let scores = Dictionary<float, Fk>()
+      for i in fakerInfo do            
+        if (i.Value.Type = targetType) then            
+          let score = calcScore (Tefin.Core.Utils.splitWord name) i.Value.NameParts              
+          if score > 0.7 then                
+            //let foo = i.Value.Get()
+            scores[score] <- i.Value 
+      
+      let matched = scores.Count > 0
+      if matched then
+        let inst = scores |> Seq.sortByDescending _.Key |> Seq.head            
+        let defaultValue = inst.Value.Get()
+        //Console.WriteLine $"Score = {inst.Key} - {name} vs {inst.Value.Name} -> {defaultValue}"
+        struct(matched, defaultValue)
+      else
+        struct (false, null)
+   
+        
+  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    if (SystemType.isSystemType type2) then
+      let struct (ok, v) = (specialRules name type2)
+      if ok then struct (ok, v)
+      else fakerMap name type2
+    else
+        struct (false, null)
+   
 
 module TypeBuilder =
   let private handlers =     
     ResizeArray(
-      [| Fake.getDefault
+      [| Faker.getDefault
          SystemType.getDefault
          ArrayType.getDefault
          DictionaryType.getDefault
@@ -89,8 +142,6 @@ module TypeBuilder =
   let register handler = handlers.Insert(0, handler) //side-effect
     
   let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
-    Console.WriteLine $"Get default for \"{name}\" of type {type2.Name}"
-    
     let result =
       [ for h in handlers -> h ]
       |> Seq.fold
@@ -106,8 +157,7 @@ module TypeBuilder =
     
 module SystemType =
 
-  let private info =
-    
+  let private info =    
     let markerToken = (new CancellationTokenSource()).Token
     let temp = Dictionary<Type, (unit -> obj) * string>()
     temp.Add(typeof<int>, ((fun () -> Random.Shared.Next(0,100) ), "int"))

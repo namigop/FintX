@@ -234,17 +234,13 @@ let calculateSimilarity (text1:string) (text2:string) : float=
   // Calculate the similarity score using Jaro-Winkler algorithm
   if String.IsNullOrEmpty(text1) && String.IsNullOrEmpty(text2) then 1.0
   elif text1 = text2 then 1.0
-  elif String.IsNullOrEmpty(text1) || String.IsNullOrEmpty(text2) then 0.0
+  elif String.IsNullOrEmpty(text1) || String.IsNullOrEmpty(text2) then 0.0  
   else
     let s1 = text1.ToLowerInvariant()
     let s2 = text2.ToLowerInvariant()
     let len1 = s1.Length
     let len2 = s2.Length
-    let baseScore =
-      if s1.Contains s2 then 0.5
-      elif s2.Contains s1 then 0.5
-      else 0.0
-    
+          
     // Calculate match window
     let matchWindow = (max len1 len2) / 2 - 1
     let matchWindow = if matchWindow < 0 then 0 else matchWindow
@@ -266,7 +262,7 @@ let calculateSimilarity (text1:string) (text2:string) : float=
           s2Matches.[j] <- true
           matches <- matches + 1
     
-    if matches = 0 then baseScore
+    if matches = 0 then 0
     else
       // Count transpositions
       let mutable k = 0
@@ -292,4 +288,34 @@ let calculateSimilarity (text1:string) (text2:string) : float=
       
       // Calculate Jaro-Winkler similarity
       let p = 0.1 // standard scaling factor
-      baseScore + jaro + (float prefixLen * p * (1.0 - jaro))
+      jaro + (float prefixLen * p * (1.0 - jaro))
+  
+let splitWord (text:string) =
+    //split a camel-cased or Pascal-cased string
+    // "StreetAddress" -> "Street" and "Address"
+    //  "addressPostalCode" -> "address", "Postal", "Code"
+    if System.String.IsNullOrWhiteSpace(text) then
+      [||]
+    else
+      let mutable result = []
+      let mutable currentWord = StringBuilder()
+    
+      for i = 0 to text.Length - 1 do
+        let c = text.[i]
+      
+        if i = 0 then
+          currentWord.Append(c) |> ignore
+        elif Char.IsUpper(c) || c = '_' then
+          // Start a new word when we encounter an uppercase letter
+          if currentWord.Length > 0 then
+            result <- currentWord.ToString() :: result
+            currentWord.Clear() |> ignore
+          currentWord.Append(c) |> ignore
+        else
+          currentWord.Append(c) |> ignore
+    
+      // Add the last word
+      if currentWord.Length > 0 then
+        result <- currentWord.ToString() :: result
+    
+      result |> List.rev |> List.toArray
