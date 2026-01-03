@@ -119,7 +119,7 @@ public class DefaultNode : TypeBaseNode {
                 n = Core.Utils.some(parent?.Value);
             }
 
-            var (__, v) = TypeBuilder.getDefault(this.Type, true, n, 0);
+            var (__, v) = TypeBuilder.getDefault(this.Title, this.Type, true, n, 0);
             this.Value = v;
         }
     }

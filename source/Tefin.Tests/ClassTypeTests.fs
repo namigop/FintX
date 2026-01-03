@@ -7,6 +7,21 @@ open Tefin.Core.Reflection
 open Tefin.Tests.TestInputTypes
 
 [<Fact>]
+let ``Jaro`` () =    
+    let score = Tefin.Core.Utils.calculateSimilarity "Country" "ShipCountry"     
+    Assert.True (score > 0.5)
+   
+    let score2 = Tefin.Core.Utils.calculateSimilarity "City" "City"  
+    Assert.True (score2 > 0.5)
+
+    let score3 = Tefin.Core.Utils.calculateSimilarity "AddressCity" "City"
+    
+    let score4 = Tefin.Core.Utils.calculateSimilarity (Guid.NewGuid().ToString()) (Guid.NewGuid().ToString())
+    Assert.True (score3 > 0.5)
+
+
+
+[<Fact>]
 let ``Can build class instance`` () =
     let struct(ok, instance) = buildType typeof<Test1>
     let test1 = Test1()

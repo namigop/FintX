@@ -2,16 +2,167 @@ namespace rec Tefin.Core.Reflection
 
 open System
 open System.Collections.Generic
+open System.IO
+open System.Linq
 open System.Reflection
 open System.Threading
-open System.Collections.Concurrent
-//open Google.Protobuf.WellKnownTypes
+open Bogus
 open Microsoft.FSharp.Core
+open Tefin.Core.Interop
+
+module Faker =
+  type Fk =
+    {
+      Name:string
+      NameParts : string array
+      Type:Type
+      Get: unit -> obj
+    }
+    
+  let fakerInfo =
+      let temp = Dictionary<string, Fk>()
+      let f = Faker()    
+      let props = f.GetType().GetProperties()
+      let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode"; "ToUpperInvariant"; "ReplaceLineEndings" |]
+      for prop in props do
+        let propInst = prop.GetValue f
+        let mis = prop.PropertyType.GetMethods()
+                  |> Array.filter (fun m -> not m.IsSpecialName)
+                  |> Array.filter (fun m -> m.Name.Length > 2)
+                  |> Array.filter (fun m ->  excluded |> Array.contains m.Name |> not )
+        for mi in mis do
+          let methodParams = mi.GetParameters()
+          if (methodParams.Length = 0) then
+            temp.[mi.Name] <-
+              { Name = mi.Name.ToLowerInvariant()
+                NameParts = Tefin.Core.Utils.splitWord mi.Name |> Array.map _.ToLowerInvariant()
+                Type = mi.ReturnType
+                Get = fun () -> mi.Invoke(propInst, null) }
+          
+          let optionalParams = methodParams |> Array.filter (fun p -> p.IsOptional && p.HasDefaultValue)
+          if optionalParams.Length = methodParams.Length then
+            temp.[mi.Name] <-
+              { Name = mi.Name.ToLowerInvariant()
+                NameParts = Tefin.Core.Utils.splitWord mi.Name |> Array.map _.ToLowerInvariant()
+                Type = mi.ReturnType
+                Get = fun () ->
+                  let args = optionalParams |> Array.map _.DefaultValue
+                  mi.Invoke(propInst, args) }
+      temp
+      
+      
+  let private specialRules (name2:string) (type2: Type) : struct (bool * obj) =
+    let nameParts = (Tefin.Core.Utils.splitWord name2) |> Array.map _.ToLowerInvariant()   
+    let matchCounts = fakerInfo.Values |> Seq.map (fun v ->      
+      if type2 = v.Type then
+        let mutable count = 0.0
+        for n in nameParts do
+          let found = v.NameParts.Contains n
+          if found then
+            count <- count + 1.0
+        v, (count / (Convert.ToDouble nameParts.Length))
+      else
+        v, 0
+      )
+    
+    let name = name2.ToLowerInvariant()
+    let f = Faker()
+    
+    if name.Contains("postal") && type2 = typeof<string> then
+      struct (true, f.Address.ZipCode())
+    elif name.Contains("address") && type2 = typeof<string> then
+      struct (true, f.Address.FullAddress())
+    elif name.Contains("location") && type2 = typeof<string> then
+      struct (true, f.Address.FullAddress())
+    elif name.Contains("weight") && type2 = typeof<string> then
+      struct (true, "kg")  
+    elif name.Contains("image") && (name.Contains("url") || name.Contains("uri")) && type2 = typeof<string> then
+      struct (true, f.Image.PlaceImgUrl())
+    elif name.Contains("sku") && type2 = typeof<string> then
+      let p1 = f.Random.AlphaNumeric(3).ToUpperInvariant()
+      let p2 = f.Random.Digits(3,1, 9) |> fun c -> String.Join("", c)
+      let p3 = f.Random.AlphaNumeric(2).ToUpperInvariant()      
+      struct (true, $"{p1}-{p2}-{p3}")      
+    elif name = "id" then
+      struct (true, f.Random.AlphaNumeric(6).ToUpperInvariant())
+    elif name.Contains "account" && name.Contains "number" && type2 = typeof<string> then
+      let p1 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      let p2 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      let p3 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      struct (true, $"{p1}-{p2}-{p3}")
+    elif name.Contains "transaction" && (name.EndsWith "number" || name.EndsWith "id") && type2 = typeof<string> then
+      let p1 = f.Random.Digits(12,1, 9) |> fun c -> String.Join("", c)
+      struct (true, p1)
+    elif name.Contains "currency" && type2 = typeof<string>  then      
+      struct (true, f.Finance.Currency().Code)
+    elif name.EndsWith("id") &&
+         (name.Contains("employee") ||
+          name.Contains("customer") ||
+          name.Contains("product") ||
+          name.Contains("order") ) && type2 = typeof<string> then
+      let r = f.Random.AlphaNumeric(6).ToUpperInvariant()
+      struct (true, r)      
+    else
+      let cur = matchCounts |> Seq.filter (fun (c,_) -> c.Name = "currency" ) |> Seq.toArray
+      let (highestMatch, score) = matchCounts |> Seq.sortByDescending (fun (fk, count) -> count) |> Seq.head
+      if (score >= 0.5) then
+        let value = highestMatch.Get()
+        //Console.WriteLine $"Match Score = {score} - {name} vs {highestMatch.Name} -> {value}"
+        struct (true, value)
+      else
+        struct (false, null)
+        
+  let private calcScore (names:string array) (targets:string array) =
+        let mutable score = 0.0
+        for name in names do
+          for i in targets do
+            score <- score +  Tefin.Core.Utils.calculateSimilarity name i        
+        score / (Convert.ToDouble names.Length)
+        
+  
+  let fakerMap (name:string) (targetType2:Type) =  
+    let targetType =
+      if TypeHelper.isNullable(targetType2) then
+        Nullable.GetUnderlyingType(targetType2)
+      else
+        targetType2
+    
+    let ok, v = fakerInfo.TryGetValue (name.ToLowerInvariant())
+    if (ok && v.Type = targetType) then
+      struct(true, v.Get())  
+    else          
+      let scores = Dictionary<float, Fk>()
+      for i in fakerInfo do            
+        if (i.Value.Type = targetType) then            
+          let score = calcScore (Tefin.Core.Utils.splitWord name) i.Value.NameParts              
+          if score > 0.7 then                
+            //let foo = i.Value.Get()
+            scores[score] <- i.Value 
+      
+      let matched = scores.Count > 0
+      if matched then
+        let inst = scores |> Seq.sortByDescending _.Key |> Seq.head            
+        let defaultValue = inst.Value.Get()
+        //Console.WriteLine $"Score = {inst.Key} - {name} vs {inst.Value.Name} -> {defaultValue}"
+        struct(matched, defaultValue)
+      else
+        struct (false, null)
+   
+        
+  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    if (SystemType.isSystemType type2) then
+      let struct (ok, v) = (specialRules name type2)
+      if ok then struct (ok, v)
+      else fakerMap name type2
+    else
+        struct (false, null)
+   
 
 module TypeBuilder =
   let private handlers =     
     ResizeArray(
-      [| SystemType.getDefault
+      [| Faker.getDefault
+         SystemType.getDefault
          ArrayType.getDefault
          DictionaryType.getDefault
          GenericListType.getDefault
@@ -19,8 +170,8 @@ module TypeBuilder =
     )
 
   let register handler = handlers.Insert(0, handler) //side-effect
-
-  let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
+    
+  let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
     let result =
       [ for h in handlers -> h ]
       |> Seq.fold
@@ -29,38 +180,25 @@ module TypeBuilder =
           if handled then
             state
           else
-            let ret = handleFunc type2 createInstance parentInstance depth
+            let ret = handleFunc name type2 createInstance parentInstance depth
             ret)
         (struct (false, Unchecked.defaultof<obj>))
-
     result
-//
-// let getDefault (type2: Type) (createInstance: bool) (parentInstance: obj option) depth =
-//     let mutable handled = false
-//     let mutable instance = Unchecked.defaultof<obj>
-//
-//     for handleFunc in handlers do
-//         if (not handled) then
-//             let struct (h, i) = handleFunc type2 createInstance parentInstance depth
-//             handled <- h
-//             instance <- i
-
-//    struct (handled, instance)
-
+    
 module SystemType =
 
-  let private info =
+  let private info =    
     let markerToken = (new CancellationTokenSource()).Token
     let temp = Dictionary<Type, (unit -> obj) * string>()
-    temp.Add(typeof<int>, ((fun () -> 0), "int"))
-    temp.Add(typeof<int16>, ((fun () -> 0s), "int16"))
-    temp.Add(typeof<int64>, ((fun () -> 0L), "long"))
-    temp.Add(typeof<decimal>, ((fun () -> 0m), "dec"))
-    temp.Add(typeof<Double>, ((fun () -> 0.0), "float"))
-    temp.Add(typeof<Single>, ((fun () -> 0.0f), "float32"))
-    temp.Add(typeof<uint>, ((fun () -> 0u), "uint"))
-    temp.Add(typeof<uint16>, ((fun () -> 0us), "uint16"))
-    temp.Add(typeof<uint64>, ((fun () -> 0UL), "ulong"))
+    temp.Add(typeof<int>, ((fun () -> Random.Shared.Next(0,100) ), "int"))
+    temp.Add(typeof<int16>, ((fun () -> Random.Shared.Next(0,100)), "int16"))
+    temp.Add(typeof<int64>, ((fun () -> Random.Shared.Next(0,100)), "long"))
+    temp.Add(typeof<decimal>, ((fun () -> Random.Shared.Next(0,100)), "dec"))
+    temp.Add(typeof<Double>, ((fun () -> Random.Shared.Next(0,100)), "float"))
+    temp.Add(typeof<Single>, ((fun () -> Random.Shared.Next(0,100)), "float32"))
+    temp.Add(typeof<uint>, ((fun () -> Random.Shared.Next(1,100)), "uint"))
+    temp.Add(typeof<uint16>, ((fun () -> Random.Shared.Next(1,100)), "uint16"))
+    temp.Add(typeof<uint64>, ((fun () -> Random.Shared.Next(1,100)), "ulong"))
     temp.Add(typeof<bool>, ((fun () -> true), "bool"))
     temp.Add(typeof<DateTime>, ((fun () -> DateTime.Now.AddDays 1), "dateTime"))
     temp.Add(typeof<DateTimeOffset>, ((fun () -> DateTimeOffset.Now.AddDays 1), "dtOffset"))
@@ -68,20 +206,20 @@ module SystemType =
     temp.Add(typeof<TimeSpan>, ((fun () -> TimeSpan.FromSeconds 1L), "timespan"))
     //temp.Add(typeof<CancellationToken>, ((fun () -> CancellationToken.None), "token"))
     temp.Add(typeof<CancellationToken>, ((fun () -> markerToken), "token"))
-    temp.Add(typeof<string>, ((fun () -> ""), "string"))
+    temp.Add(typeof<string>, ((fun () -> Path.GetRandomFileName()), "string"))
     temp.Add(typeof<char>, ((fun () -> 'c'), "char"))
     temp.Add(typeof<byte>, ((fun () -> byte 0), "byte"))
     temp.Add(typeof<Uri>, ((fun () -> Uri("http://localhost:8080/")), "uri"))
 
-    temp.Add(typeof<Nullable<int>>, ((fun () -> 0), "int?"))
-    temp.Add(typeof<Nullable<int16>>, ((fun () -> 0), "int16?"))
-    temp.Add(typeof<Nullable<int64>>, ((fun () -> 0), "long?"))
-    temp.Add(typeof<Nullable<decimal>>, ((fun () -> 0), "dec?"))
-    temp.Add(typeof<Nullable<Double>>, ((fun () -> 0), "float?"))
-    temp.Add(typeof<Nullable<Single>>, ((fun () -> 0), "float32?"))
-    temp.Add(typeof<Nullable<uint>>, ((fun () -> 0), "uint?"))
-    temp.Add(typeof<Nullable<uint16>>, ((fun () -> 0), "uint16?"))
-    temp.Add(typeof<Nullable<uint64>>, ((fun () -> 0), "ulong?"))
+    temp.Add(typeof<Nullable<int>>, ((fun () -> Random.Shared.Next(0,100)), "int?"))
+    temp.Add(typeof<Nullable<int16>>, ((fun () -> Random.Shared.Next(0,100)), "int16?"))
+    temp.Add(typeof<Nullable<int64>>, ((fun () -> Random.Shared.Next(0,100)), "long?"))
+    temp.Add(typeof<Nullable<decimal>>, ((fun () -> Random.Shared.Next(0,100)), "dec?"))
+    temp.Add(typeof<Nullable<Double>>, ((fun () -> Random.Shared.Next(0,100)), "float?"))
+    temp.Add(typeof<Nullable<Single>>, ((fun () -> Random.Shared.Next(0,100)), "float32?"))
+    temp.Add(typeof<Nullable<uint>>, ((fun () -> Random.Shared.Next(0,100)), "uint?"))
+    temp.Add(typeof<Nullable<uint16>>, ((fun () -> Random.Shared.Next(0,100)), "uint16?"))
+    temp.Add(typeof<Nullable<uint64>>, ((fun () -> Random.Shared.Next(0,100)), "ulong?"))
     temp.Add(typeof<Nullable<bool>>, ((fun () -> true), "bool?"))
     temp.Add(typeof<Nullable<DateTime>>, ((fun () -> DateTime.Now.AddDays 1), "dateTime?"))
     //temp.Add(typeof<Nullable<DateTime>>, ((fun () -> null), "dateTime?"))
@@ -126,9 +264,10 @@ module SystemType =
       let ok, _ = info.TryGetValue(thisType)
       ok
 
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsEnum then
-      let v = Enum.GetValues(thisType).GetValue(0)
+      let enumVals = Enum.GetValues(thisType)
+      let v = enumVals.GetValue(Random.Shared.Next(0, enumVals.Length))
       struct (true, v)
     elif info.ContainsKey(thisType) then
       let gen, _ = info[thisType]
@@ -137,13 +276,13 @@ module SystemType =
       struct (false, TypeHelper.getDefault thisType)
 
 module ArrayType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsArray then
       let elementType = thisType.GetElementType()
       let instance = Array.CreateInstance(elementType, 1)
 
       let struct (ok, element) =
-        TypeBuilder.getDefault elementType createInstance None depth
+        TypeBuilder.getDefault "" elementType createInstance None depth
 
       if ok then
         instance.SetValue(element, 0)
@@ -153,7 +292,7 @@ module ArrayType =
       struct (false, TypeHelper.getDefault thisType)
 
 module GenericListType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if (TypeHelper.isGenericListType thisType) && createInstance then
       let instance2 =
         let instance = Activator.CreateInstance(thisType)
@@ -162,7 +301,7 @@ module GenericListType =
           match TypeHelper.getListItemType thisType with
           | Some elementType ->
             let struct (ok, elementInstance) =
-              TypeBuilder.getDefault elementType true None depth
+              TypeBuilder.getDefault "" elementType true None depth
 
             if ok then
               let addMethod = thisType.GetMethod("Add", [| elementType |])
@@ -186,7 +325,7 @@ module ClassType =
       let mutable objV = Unchecked.defaultof<obj>
 
       try
-        let struct (_, newValue) = TypeBuilder.getDefault prop.PropertyType true None depth
+        let struct (_, newValue) = TypeBuilder.getDefault prop.Name prop.PropertyType true None depth
         objV <- newValue
         prop.SetValue(instance, newValue)
       with exc ->
@@ -222,15 +361,15 @@ module ClassType =
 
       if (count > 0) then
         let a = prop.GetValue(instance, [| count - 1 |])
-        let _ = TypeBuilder.getDefault prop.PropertyType false (Some(a)) depth
+        let _ = TypeBuilder.getDefault prop.Name prop.PropertyType false (Some(a)) depth
         ()
     else
       let currentInstance = prop.GetValue(instance)
-      let _ = TypeBuilder.getDefault prop.PropertyType true (Some currentInstance) depth
+      let _ = TypeBuilder.getDefault prop.Name prop.PropertyType true (Some currentInstance) depth
       ()
 
   let fill (instance: obj) (depth: int) =
-    if (depth > 3) then
+    if (depth > 4) then
       instance
     else
       let editableProps =
@@ -241,6 +380,7 @@ module ClassType =
         let indexParams = prop.GetIndexParameters()
         let isIndexParams = not (indexParams = null) && indexParams.Length > 0
 
+        //Console.WriteLine $"Processing {prop.Name}"
         if prop.CanWrite then
           assignWritableProps prop instance isIndexParams depth
         elif prop.CanRead then
@@ -250,7 +390,7 @@ module ClassType =
 
       instance
 
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsClass && not thisType.IsAbstract then
       if createInstance then
         let constructor = thisType.GetConstructor(Type.EmptyTypes)
@@ -269,7 +409,7 @@ module ClassType =
       struct (false, TypeHelper.getDefault thisType)
 
 module DictionaryType =
-  let getDefault (thisType: Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstanceOpt: obj option) depth =
     if thisType.IsGenericType && (TypeHelper.isDictionaryType thisType) then
       let keyValTypes = thisType.GetGenericArguments()
 
@@ -279,8 +419,8 @@ module DictionaryType =
         else
           parentInstanceOpt.Value
 
-      let struct (_, keyInstance) = TypeBuilder.getDefault keyValTypes[0] true None depth
-      let struct (_, valInstance) = TypeBuilder.getDefault keyValTypes[1] true None depth
+      let struct (_, keyInstance) = TypeBuilder.getDefault "" keyValTypes[0] true None depth
+      let struct (_, valInstance) = TypeBuilder.getDefault "" keyValTypes[1] true None depth
 
       let add =
         thisType.GetMethod("Add", BindingFlags.Public ||| BindingFlags.Instance, null, keyValTypes, null)

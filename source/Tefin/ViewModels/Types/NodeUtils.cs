@@ -92,8 +92,14 @@ public static class NodeUtils {
             if (envVar == null) {
                 continue;
             }
-
-            var value = GetValueOrDefault(envVar.CurrentValue, envVar.DefaultValue, node.Type, io);
+            
+            var value = GetValueOrDefault(
+                envVar.CurrentValue,
+                envVar.DefaultValue,
+                node.Type,
+                node.SystemNode?.Title ?? node.TimestampNode?.Title ?? "",
+                io);
+            
             if (node.IsSystemNode) {
                 node.SystemNode!.Value = value;
             }
@@ -102,7 +108,7 @@ public static class NodeUtils {
             }
         }
 
-        static object GetValueOrDefault(string vCurrentValue, string vDefaultValue, Type actualType, IOs io) {
+        static object GetValueOrDefault(string vCurrentValue, string vDefaultValue, Type actualType, string name, IOs io) {
             try {
                 var cur = TypeHelper.indirectCast(vCurrentValue, actualType);
                 if (cur != null) {
@@ -114,11 +120,11 @@ public static class NodeUtils {
                     return def;
                 }
 
-                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
+                return TypeBuilder.getDefault(name, actualType, true, Core.Utils.none<object>(), 0).Item2;
             }
             catch (Exception exc) {
                 io.Log.Warn($"Unable get value for env variable. Exception: {exc}");
-                return TypeBuilder.getDefault(actualType, true, Core.Utils.none<object>(), 0).Item2;
+                return TypeBuilder.getDefault(name, actualType, true, Core.Utils.none<object>(), 0).Item2;
             }
         }
     }

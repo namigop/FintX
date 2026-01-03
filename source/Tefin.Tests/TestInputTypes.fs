@@ -41,4 +41,4 @@ type Test4() =
      
     
 let buildType t =
-    TypeBuilder.getDefault t true None 0
+    TypeBuilder.getDefault "" t true None 0

@@ -37,12 +37,12 @@ module ServiceMock =
         """
     let private serverStreamTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.Scripting.RunServerStream(this.ServiceName, "{{METHOD_NAME}}", request, responseStream, context);
+        var task = global::Tefin.Features.Scripting.ServerHandler.RunServerStream(this.ServiceName, "{{METHOD_NAME}}", request, responseStream, context);
         await task;
         """
     let private duplexTemplate =
         """            
-        var task = global::Tefin.Features.ServerHandler.Scripting.RunDuplex(this.ServiceName, "{{METHOD_NAME}}", requestStream, responseStream, context);
+        var task = global::Tefin.Features.Scripting.ServerHandler.RunDuplex(this.ServiceName, "{{METHOD_NAME}}", requestStream, responseStream, context);
         await task;
         """
             
@@ -79,7 +79,7 @@ module ServiceMock =
             .Replace("{{SERVICE_NAME}}", serviceName)
             .Replace("{{METHOD_NAME}}", methodName)           
                 
-    let genService (csFile:string) =                
+    let genService (serviceTarget:string) (csFile:string) =                
         let mutable braceCounter = 0
         let mutable serviceName = ""
         let mutable canCopy = false
@@ -107,9 +107,10 @@ module ServiceMock =
             if  m.Success then
                 braceCounter <- 0                
                 let baseName = m.Groups["ServiceName"].Value
-                serviceName <- "FintXImpl" + baseName + "Service"
-                sb.AppendLine($"public class {serviceName} : {baseName}Base") |> ignore
-                canCopy <- true
+                if (baseName = serviceTarget) then
+                    serviceName <- "FintXImpl" + baseName 
+                    sb.AppendLine($"public class {serviceName} : {baseName}.{baseName}Base") |> ignore
+                    canCopy <-  true
             else
                 if (canCopy) then                    
                     let mr = Regex.Match(l, methodSigRegex)
@@ -131,9 +132,9 @@ module ServiceMock =
 
         (serviceName, sb.ToString(), endPos)
     
-    let insertService (io:IOs) (csFile:string) =
+    let insertService (io:IOs) (serviceTarget:string) (csFile:string) =
         let lines = io.File.ReadAllLines csFile
-        let serviceName, code, lineNumber = genService csFile
+        let serviceName, code, lineNumber = genService serviceTarget csFile
         
         match lines |> Array.tryFind (fun l -> l.Contains(serviceName)) with
         | None ->        

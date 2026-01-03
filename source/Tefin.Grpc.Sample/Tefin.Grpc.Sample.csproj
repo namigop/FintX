@@ -35,6 +35,14 @@
         </Protobuf>
         <None Remove="Protos\Northwind.proto" />
         <Protobuf Include="Protos\Northwind.proto" GrpcServices="Server" />
+        <None Update="Protos\greet3.proto">
+          <GrpcServices>Server</GrpcServices>
+          <Access>Public</Access>
+          <ProtoCompile>True</ProtoCompile>
+          <CompileOutputs>True</CompileOutputs>
+          <OutputDir>obj/Debug/net9.0/</OutputDir>
+          <Generator>MSBuild:Compile</Generator>
+        </None>
         
     </ItemGroup>
 

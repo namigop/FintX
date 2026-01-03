@@ -89,7 +89,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
     public ICommand WriteCommand { get; }
 
     private void OnAddListItem() {
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
+        var (ok, reqInstance) = TypeBuilder.getDefault("", this._requestItemType, true, none<object>(), 0);
         if (ok) {
             this._clientStreamEditor.AddItem(reqInstance);
         }
@@ -166,7 +166,7 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
         }
 
         var stream = Activator.CreateInstance(this.ListType)!;
-        var (ok, reqInstance) = TypeBuilder.getDefault(this._requestItemType, true, none<object>(), 0);
+        var (ok, reqInstance) = TypeBuilder.getDefault("", this._requestItemType, true, none<object>(), 0);
         if (ok) {
             var add = this.ListType.GetMethod("Add");
             add!.Invoke(stream, [reqInstance]);
