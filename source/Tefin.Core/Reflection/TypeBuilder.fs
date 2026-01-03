@@ -74,6 +74,15 @@ module Faker =
       struct (true, f.Address.FullAddress())
     elif name.Contains("location") && type2 = typeof<string> then
       struct (true, f.Address.FullAddress())
+    elif name.Contains("weight") && type2 = typeof<string> then
+      struct (true, "kg")  
+    elif name.Contains("image") && (name.Contains("url") || name.Contains("uri")) && type2 = typeof<string> then
+      struct (true, f.Image.PlaceImgUrl())
+    elif name.Contains("sku") && type2 = typeof<string> then
+      let p1 = f.Random.AlphaNumeric(3).ToUpperInvariant()
+      let p2 = f.Random.Digits(3,1, 9) |> fun c -> String.Join("", c)
+      let p3 = f.Random.AlphaNumeric(2).ToUpperInvariant()      
+      struct (true, $"{p1}-{p2}-{p3}")      
     elif name = "id" then
       struct (true, f.Random.AlphaNumeric(6).ToUpperInvariant())
     elif name.Contains "account" && name.Contains "number" && type2 = typeof<string> then
@@ -371,7 +380,7 @@ module ClassType =
         let indexParams = prop.GetIndexParameters()
         let isIndexParams = not (indexParams = null) && indexParams.Length > 0
 
-        Console.WriteLine $"Processing {prop.Name}"
+        //Console.WriteLine $"Processing {prop.Name}"
         if prop.CanWrite then
           assignWritableProps prop instance isIndexParams depth
         elif prop.CanRead then
