@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Reflection;
 
 using Grpc.Core;
@@ -8,13 +9,13 @@ using Tefin.Core.Scripting;
 namespace Tefin.Features.Scripting;
 
 public static class ServerHandler {
-    private static readonly Dictionary<string, ScriptEnv> _env = new();
+    private static readonly ConcurrentDictionary<string, ScriptEnv> _env = new();
 
     public static void Dispose(string serviceName) {
         if (_env.TryGetValue(serviceName, out var env)) {
             Script.dispose(env.Engine);
             env.Methods.Clear();
-            _env.Remove(serviceName);
+            _env.Remove(serviceName, out _);
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }

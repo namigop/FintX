@@ -1,5 +1,6 @@
 namespace Tefin.Core
 
+open System.Collections.Concurrent
 open System.Collections.Generic
 open System.IO
 open System.Reflection
@@ -79,19 +80,26 @@ module AutoSave =
       Remove: string -> unit }
 
   let writer =
-    let cache = Dictionary<string, string>()
+    let cache = ConcurrentDictionary<string, string>()
 
     //write the changes to disk only if is different from the cached value
     let doWrite (io: IOs) (file: string) (json: string) =
       try
+       
         let found, content = cache.TryGetValue file
-
-        if not found then
-          cache[file] <- json
+        if found && not (content = json) then
           io.File.WriteAllText file json
-        else if not (content = json) then
-          cache[file] <- json
-          io.File.WriteAllText file json
+        
+        let updateFunc = System.Func<string, string, string>(fun k v -> json)
+        let _ = cache.AddOrUpdate(file, json,  updateFunc)
+        ()
+        
+        // if not found then
+        //   cache[file] <- json
+        //   io.File.WriteAllText file json
+        // else if not (content = json) then
+        //   cache[file] <- json
+        //   io.File.WriteAllText file json
       with exc ->
         io.Log.Warn($"Unable to auto-save {Path.GetFileName(file)}. {exc.Message}")
 
