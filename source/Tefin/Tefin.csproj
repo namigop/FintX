@@ -433,6 +433,7 @@
         <Compile Remove="ViewModels\Explorer\MethodNode.cs"/>
         <AvaloniaXaml Remove="Views\Explorer\ExplorerView.axaml"/>
         <None Include="Views\Explorer\ExplorerView.axaml"/>
+        <Compile Remove="test.cs" />
     </ItemGroup>
 
 

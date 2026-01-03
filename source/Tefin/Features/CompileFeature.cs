@@ -71,7 +71,7 @@ public class CompileFeature(
 
             if (createMockService) {
                 var grpcFile = csFilesRet.ResultValue.First(t => ServiceMock.containsServiceBase(io, t));
-                await ServiceMock.insertService(io, grpcFile);
+                await ServiceMock.insertService(io, serviceName, grpcFile);
             }
 
             var com = await ServiceClient.compile(Resolver.value, csFilesRet.ResultValue, cParams);

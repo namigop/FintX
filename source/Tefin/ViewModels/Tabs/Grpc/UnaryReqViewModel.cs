@@ -74,13 +74,13 @@ public class UnaryReqViewModel : ViewModelBase {
         var methodParams = reqParams.Item2;
         var metadata = methodParams.FirstOrDefault(t => t?.GetType() == typeof(Metadata));
         if (metadata == null) {
-            var (_, m) = TypeBuilder.getDefault(typeof(Metadata), true, FSharpOption<object>.None, 1);
+            var (_, m) = TypeBuilder.getDefault("headers", typeof(Metadata), true, FSharpOption<object>.None, 1);
             metadata = m;
         }
 
         var deadline = methodParams.FirstOrDefault(t => t?.GetType() == typeof(DateTime));
         if (deadline == null) {
-            var (_, m) = TypeBuilder.getDefault(typeof(DateTime), true, FSharpOption<object>.None, 1);
+            var (_, m) = TypeBuilder.getDefault("deadline", typeof(DateTime), true, FSharpOption<object>.None, 1);
             deadline = m;
         }
 
