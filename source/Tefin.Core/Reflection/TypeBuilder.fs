@@ -66,18 +66,39 @@ module Faker =
       )
     
     let name = name2.ToLowerInvariant()
-    let f = Faker()        
-    if name.Contains("county") then
-      struct (true, f.Address.County())    
-    elif name.Contains("postal") then
+    let f = Faker()
+    
+    if name.Contains("postal") && type2 = typeof<string> then
       struct (true, f.Address.ZipCode())
-    elif name.Contains("address") then
+    elif name.Contains("address") && type2 = typeof<string> then
       struct (true, f.Address.FullAddress())
+    elif name.Contains("location") && type2 = typeof<string> then
+      struct (true, f.Address.FullAddress())
+    elif name = "id" then
+      struct (true, f.Random.AlphaNumeric(6).ToUpperInvariant())
+    elif name.Contains "account" && name.Contains "number" && type2 = typeof<string> then
+      let p1 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      let p2 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      let p3 = f.Random.Digits(4,1, 9) |> fun c -> String.Join("", c)
+      struct (true, $"{p1}-{p2}-{p3}")
+    elif name.Contains "transaction" && (name.EndsWith "number" || name.EndsWith "id") && type2 = typeof<string> then
+      let p1 = f.Random.Digits(12,1, 9) |> fun c -> String.Join("", c)
+      struct (true, p1)
+    elif name.Contains "currency" && type2 = typeof<string>  then      
+      struct (true, f.Finance.Currency().Code)
+    elif name.EndsWith("id") &&
+         (name.Contains("employee") ||
+          name.Contains("customer") ||
+          name.Contains("product") ||
+          name.Contains("order") ) && type2 = typeof<string> then
+      let r = f.Random.AlphaNumeric(6).ToUpperInvariant()
+      struct (true, r)      
     else
+      let cur = matchCounts |> Seq.filter (fun (c,_) -> c.Name = "currency" ) |> Seq.toArray
       let (highestMatch, score) = matchCounts |> Seq.sortByDescending (fun (fk, count) -> count) |> Seq.head
       if (score >= 0.5) then
         let value = highestMatch.Get()
-        Console.WriteLine $"Match Score = {score} - {name} vs {highestMatch.Name} -> {value}"
+        //Console.WriteLine $"Match Score = {score} - {name} vs {highestMatch.Name} -> {value}"
         struct (true, value)
       else
         struct (false, null)
@@ -236,7 +257,8 @@ module SystemType =
 
   let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsEnum then
-      let v = Enum.GetValues(thisType).GetValue(0)
+      let enumVals = Enum.GetValues(thisType)
+      let v = enumVals.GetValue(Random.Shared.Next(0, enumVals.Length))
       struct (true, v)
     elif info.ContainsKey(thisType) then
       let gen, _ = info[thisType]
@@ -338,7 +360,7 @@ module ClassType =
       ()
 
   let fill (instance: obj) (depth: int) =
-    if (depth > 3) then
+    if (depth > 4) then
       instance
     else
       let editableProps =
@@ -349,6 +371,7 @@ module ClassType =
         let indexParams = prop.GetIndexParameters()
         let isIndexParams = not (indexParams = null) && indexParams.Length > 0
 
+        Console.WriteLine $"Processing {prop.Name}"
         if prop.CanWrite then
           assignWritableProps prop instance isIndexParams depth
         elif prop.CanRead then

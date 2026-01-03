@@ -1,0 +1,369 @@
+syntax = "proto3";
+
+package ecommerce;
+
+import "google/protobuf/timestamp.proto";
+
+// ==================== Address ====================
+message Address {
+  string id = 1;
+  string street_address_1 = 2;
+  string street_address_2 = 3;
+  string city = 4;
+  string state_province = 5;
+  string postal_code = 6;
+  string country = 7;
+  AddressType type = 8;
+}
+
+enum AddressType {
+  ADDRESS_TYPE_UNSPECIFIED = 0;
+  ADDRESS_TYPE_BILLING = 1;
+  ADDRESS_TYPE_SHIPPING = 2;
+  ADDRESS_TYPE_BOTH = 3;
+}
+
+// ==================== Customer ====================
+message Customer {
+  string id = 1;
+  string email = 2;
+  string first_name = 3;
+  string last_name = 4;
+  string phone = 5;
+  repeated Address addresses = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+// ==================== Products ====================
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  string sku = 4;
+  double price = 5;
+  string currency = 6;
+  int32 stock_quantity = 7;
+  repeated string image_urls = 8;
+  ProductCategory category = 9;
+  repeated ProductAttribute attributes = 10;
+  double weight = 11;
+  string weight_unit = 12;
+  Dimensions dimensions = 13;
+  bool is_active = 14;
+  google.protobuf.Timestamp created_at = 15;
+}
+
+enum ProductCategory {
+  PRODUCT_CATEGORY_UNSPECIFIED = 0;
+  PRODUCT_CATEGORY_ELECTRONICS = 1;
+  PRODUCT_CATEGORY_CLOTHING = 2;
+  PRODUCT_CATEGORY_BOOKS = 3;
+  PRODUCT_CATEGORY_HOME_GARDEN = 4;
+  PRODUCT_CATEGORY_SPORTS = 5;
+  PRODUCT_CATEGORY_TOYS = 6;
+  PRODUCT_CATEGORY_FOOD_BEVERAGE = 7;
+  PRODUCT_CATEGORY_HEALTH_BEAUTY = 8;
+}
+
+message ProductAttribute {
+  string name = 1;
+  string value = 2;
+}
+
+message Dimensions {
+  double length = 1;
+  double width = 2;
+  double height = 3;
+  string unit = 4;
+}
+
+// ==================== Payment ====================
+message PaymentDetails {
+  string id = 1;
+  PaymentMethod method = 2;
+  PaymentStatus status = 3;
+  double amount = 4;
+  string currency = 5;
+  string transaction_id = 6;
+  google.protobuf.Timestamp processed_at = 7;
+  oneof payment_info {
+    CreditCardInfo credit_card = 8;
+    PayPalInfo paypal = 9;
+    BankTransferInfo bank_transfer = 10;
+  }
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CREDIT_CARD = 1;
+  PAYMENT_METHOD_DEBIT_CARD = 2;
+  PAYMENT_METHOD_PAYPAL = 3;
+  PAYMENT_METHOD_BANK_TRANSFER = 4;
+  PAYMENT_METHOD_CASH_ON_DELIVERY = 5;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PENDING = 1;
+  PAYMENT_STATUS_AUTHORIZED = 2;
+  PAYMENT_STATUS_CAPTURED = 3;
+  PAYMENT_STATUS_FAILED = 4;
+  PAYMENT_STATUS_REFUNDED = 5;
+}
+
+message CreditCardInfo {
+  string last_four_digits = 1;
+  string card_brand = 2;
+  string expiry_month = 3;
+  string expiry_year = 4;
+  string cardholder_name = 5;
+}
+
+message PayPalInfo {
+  string email = 1;
+  string payer_id = 2;
+}
+
+message BankTransferInfo {
+  string account_number = 1;
+  string bank_name = 2;
+  string routing_number = 3;
+}
+
+// ==================== Shipping ====================
+message ShippingMethod {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double cost = 4;
+  string currency = 5;
+  int32 estimated_days_min = 6;
+  int32 estimated_days_max = 7;
+  ShippingCarrier carrier = 8;
+  bool is_available = 9;
+}
+
+enum ShippingCarrier {
+  SHIPPING_CARRIER_UNSPECIFIED = 0;
+  SHIPPING_CARRIER_USPS = 1;
+  SHIPPING_CARRIER_UPS = 2;
+  SHIPPING_CARRIER_FEDEX = 3;
+  SHIPPING_CARRIER_DHL = 4;
+  SHIPPING_CARRIER_LOCAL_COURIER = 5;
+}
+
+// ==================== Order Tracking ====================
+message OrderTracking {
+  string order_id = 1;
+  string tracking_number = 2;
+  ShippingCarrier carrier = 3;
+  OrderStatus current_status = 4;
+  repeated TrackingEvent events = 5;
+  google.protobuf.Timestamp estimated_delivery = 6;
+  google.protobuf.Timestamp actual_delivery = 7;
+}
+
+message TrackingEvent {
+  OrderStatus status = 1;
+  string description = 2;
+  string location = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_CONFIRMED = 2;
+  ORDER_STATUS_PROCESSING = 3;
+  ORDER_STATUS_SHIPPED = 4;
+  ORDER_STATUS_IN_TRANSIT = 5;
+  ORDER_STATUS_OUT_FOR_DELIVERY = 6;
+  ORDER_STATUS_DELIVERED = 7;
+  ORDER_STATUS_CANCELLED = 8;
+  ORDER_STATUS_REFUNDED = 9;
+}
+
+// ==================== Order ====================
+message Order {
+  string id = 1;
+  string customer_id = 2;
+  repeated OrderItem items = 3;
+  Address shipping_address = 4;
+  Address billing_address = 5;
+  ShippingMethod shipping_method = 6;
+  PaymentDetails payment = 7;
+  OrderTracking tracking = 8;
+  OrderStatus status = 9;
+  double subtotal = 10;
+  double tax = 11;
+  double shipping_cost = 12;
+  double discount = 13;
+  double total = 14;
+  string currency = 15;
+  string notes = 16;
+  google.protobuf.Timestamp created_at = 17;
+  google.protobuf.Timestamp updated_at = 18;
+}
+
+message OrderItem {
+  string id = 1;
+  string product_id = 2;
+  string product_name = 3;
+  string sku = 4;
+  int32 quantity = 5;
+  double unit_price = 6;
+  double total_price = 7;
+  string currency = 8;
+}
+
+// ==================== Request/Response Messages ====================
+
+// Customer Service
+message CreateCustomerRequest {
+  Customer customer = 1;
+}
+
+message CreateCustomerResponse {
+  Customer customer = 1;
+}
+
+message GetCustomerRequest {
+  string customer_id = 1;
+}
+
+message GetCustomerResponse {
+  Customer customer = 1;
+}
+
+// Product Service
+message ListProductsRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+  ProductCategory category = 3;
+  string search_query = 4;
+}
+
+message ListProductsResponse {
+  repeated Product products = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message GetProductRequest {
+  string product_id = 1;
+}
+
+message GetProductResponse {
+  Product product = 1;
+}
+
+// Order Service
+message CreateOrderRequest {
+  Order order = 1;
+}
+
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+message ListOrdersRequest {
+  string customer_id = 1;
+  int32 page_size = 2;
+  string page_token = 3;
+  OrderStatus status = 4;
+}
+
+message ListOrdersResponse {
+  repeated Order orders = 1;
+  string next_page_token = 2;
+  int32 total_count = 3;
+}
+
+message UpdateOrderStatusRequest {
+  string order_id = 1;
+  OrderStatus status = 2;
+}
+
+message UpdateOrderStatusResponse {
+  Order order = 1;
+}
+
+// Shipping Service
+message GetShippingMethodsRequest {
+  string destination_postal_code = 1;
+  string destination_country = 2;
+  double total_weight = 3;
+}
+
+message GetShippingMethodsResponse {
+  repeated ShippingMethod methods = 1;
+}
+
+// Tracking Service
+message GetOrderTrackingRequest {
+  string order_id = 1;
+}
+
+message GetOrderTrackingResponse {
+  OrderTracking tracking = 1;
+}
+
+message UpdateTrackingRequest {
+  string order_id = 1;
+  TrackingEvent event = 2;
+}
+
+message UpdateTrackingResponse {
+  OrderTracking tracking = 1;
+}
+
+// ==================== Service Definitions ====================
+
+service CustomerService {
+  rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse);
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+}
+
+service ProductService {
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+}
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+}
+
+service ShippingService {
+  rpc GetShippingMethods(GetShippingMethodsRequest) returns (GetShippingMethodsResponse);
+}
+
+service TrackingService {
+  rpc GetOrderTracking(GetOrderTrackingRequest) returns (GetOrderTrackingResponse);
+  rpc UpdateTracking(UpdateTrackingRequest) returns (UpdateTrackingResponse);
+}
+
+service CombinedService {
+  rpc GetOrderTracking(GetOrderTrackingRequest) returns (GetOrderTrackingResponse);
+  rpc UpdateTracking(UpdateTrackingRequest) returns (UpdateTrackingResponse);
+  rpc GetShippingMethods(GetShippingMethodsRequest) returns (GetShippingMethodsResponse);
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc ListOrders(ListOrdersRequest) returns (ListOrdersResponse);
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
+  rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+  rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+  rpc CreateCustomer(CreateCustomerRequest) returns (CreateCustomerResponse);
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+}

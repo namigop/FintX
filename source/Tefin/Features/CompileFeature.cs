@@ -19,8 +19,7 @@ public class CompileFeature(
     IOs io) {
     private static readonly Dictionary<string, CompileOutput> CompilationCache = new();
 
-    public async Task<(bool, CompileOutput)>
-        CompileExisting(string[] codeFiles, bool createMockService, bool recompile) {
+    public async Task<(bool, CompileOutput)> CompileExisting(string[] codeFiles, bool createMockService, bool recompile) {
         try {
             var key = string.Join("-", codeFiles);
             if (recompile) {
@@ -38,8 +37,7 @@ public class CompileFeature(
                 GlobalHub.publish(new ClientCompileMessage(true));
             }
 
-            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl,
-                recompile, null);
+            CompileParameters? cParams = new(clientName, description, serviceName, protoFiles, [], reflectionUrl, recompile, null);
             var com = await ServiceClient.compile(io, codeFiles, cParams);
             if (com.IsOk) {
                 CompilationCache.Add(key, com.ResultValue);
