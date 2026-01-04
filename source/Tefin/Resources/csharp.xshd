@@ -1,143 +1,99 @@
-<?xml version="1.0"?>
-<SyntaxDefinition name="C#" extensions=".cs" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
-	 <Color name="Comment"             foreground="#5D5F66" />
-         <Color name="String"              foreground="#AA83C3" />
-         <Color name="StringInterpolation" foreground="#B4B6BC" exampleText="string text = $&quot;Hello, {name}!&quot;"/>
-         <Color name="Char"                foreground="Yellow" />
-         <Color name="Preprocessor"        foreground="Blue" />
-         <Color name="Punctuation"         foreground="WhiteSmoke" />
-     
-         <Color name="ValueTypeKeywords"     foreground="#4A7DBC" fontWeight="normal" exampleText="bool b = true;" />
-     
-         <Color name="ReferenceTypeKeywords" foreground="#4A7DBC" fontWeight="normal" exampleText="object o;" />
-         <Color name="MethodCall"            foreground="#4A7DBC" fontWeight="normal" />
-         <Color name="NumberLiteral"         foreground="#3398A3" />
-         <Color name="ThisOrBaseReference"   foreground="#4A7DBC" fontWeight="normal" />
-         <Color name="NullOrValueKeywords"   foreground="#C58362" fontWeight="normal" />
-         <Color name="Keywords"              foreground="#C58362" fontWeight="normal" />
-         <Color name="GotoKeywords"          foreground="#C58362" fontWeight="normal" />
-         <Color name="ContextKeywords"       foreground="#C58362" fontWeight="normal" />
-         <Color name="ExceptionKeywords"     foreground="#C58362" fontWeight="normal" />
-         <Color name="CheckedKeyword"        foreground="#C58362" fontWeight="normal" />
-         <Color name="UnsafeKeywords"        foreground="#C58362" fontWeight="normal" />
-         <Color name="OperatorKeywords"      foreground="#C58362" fontWeight="normal" />
-         <Color name="ParameterModifiers"    foreground="#C58362" fontWeight="normal" />
-         <Color name="Modifiers"             foreground="#C58362" fontWeight="normal" />
-         <Color name="Visibility"            foreground="#C58362" fontWeight="normal" />
-         <Color name="NamespaceKeywords"     foreground="#C58362" fontWeight="normal" />
-         <Color name="GetSetAddRemove"       foreground="#FF00C0FF" fontWeight="normal" />
-         <Color name="TrueFalse"             foreground="#3398A3" fontWeight="normal" />
-         <Color name="TypeKeywords"          foreground="#C58362" fontWeight="normal" />
-         <Color name="SemanticKeywords"      foreground="Cyan" fontWeight="bold" exampleText="if (args == null) throw new ArgumentNullException(nameof(args));" />
-     
-         <Color name="ScriptKeywords"      foreground="DarkKhaki" fontWeight="normal"  />
-          
-         <Color name="CommentMarkerSetTodo"       foreground="#78A234" fontWeight="bold" />
-         <Color name="CommentMarkerSetHackUndone" foreground="#78A234" fontWeight="bold" />
-         
-	<Property name="DocCommentMarker" value="///" />
+<?xml version="1.0" encoding="utf-8"?>
+<SyntaxDefinition name="JsonCSharp" extensions=".json" xmlns="http://icsharpcode.net/sharpdevelop/syntaxdefinition/2008">
+	<!-- JSON Colors -->
+	<Color name="Bool" foreground="#638CB3" exampleText="true | false" />
+	<Color name="Number" foreground="#C2A374" exampleText="3.14" />
+	<Color name="String" foreground="#59A5AD" exampleText="" />
+	<Color name="Null" foreground="#676868" exampleText="" />
+	<Color name="FieldName" foreground="#AA83C3" />
+	<Color name="Punctuation" foreground="#CAD1D8" />
+	<Color name="Comment" foreground="#676868" />
 	
-	<RuleSet name="CommentMarkerSet">
-		<Keywords fontWeight="bold" foreground="Red">
-			<Word>TODO</Word>
-			<Word>FIXME</Word>
-		</Keywords>
-		<Keywords fontWeight="bold" foreground="#E0E000">
-			<Word>HACK</Word>
-			<Word>UNDONE</Word>
-		</Keywords>
-	</RuleSet>
+	<!-- C# Colors -->
+	<Color name="CSharpComment" foreground="#5D5F66" />
+	<Color name="CSharpString" foreground="#AA83C3" />
+	<Color name="CSharpChar" foreground="Yellow" />
+	<Color name="CSharpPreprocessor" foreground="Blue" />
+	<Color name="CSharpPunctuation" foreground="WhiteSmoke" />
+	<Color name="CSharpValueTypeKeywords" foreground="#4A7DBC" fontWeight="normal" />
+	<Color name="CSharpReferenceTypeKeywords" foreground="#4A7DBC" fontWeight="normal" />
+	<Color name="CSharpMethodCall" foreground="#4A7DBC" fontWeight="normal" />
+	<Color name="CSharpNumberLiteral" foreground="#3398A3" />
+	<Color name="CSharpThisOrBaseReference" foreground="#4A7DBC" fontWeight="normal" />
+	<Color name="CSharpNullOrValueKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpGotoKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpContextKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpExceptionKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpCheckedKeyword" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpUnsafeKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpOperatorKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpParameterModifiers" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpModifiers" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpVisibility" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpNamespaceKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpGetSetAddRemove" foreground="#FF00C0FF" fontWeight="normal" />
+	<Color name="CSharpTrueFalse" foreground="#3398A3" fontWeight="normal" />
+	<Color name="CSharpTypeKeywords" foreground="#C58362" fontWeight="normal" />
+	<Color name="CSharpSemanticKeywords" foreground="Cyan" fontWeight="bold" />
 	
-	<!-- This is the main ruleset. -->
-	<RuleSet>
-		<Span color="Preprocessor">
+	<!-- C# RuleSet for embedded code -->
+	<RuleSet name="CSharpCode">
+		<Span color="CSharpPreprocessor">
 			<Begin>\#</Begin>
 			<RuleSet name="PreprocessorSet">
-				<Span> <!-- preprocessor directives that allows comments -->
-					<Begin fontWeight="bold">
-						(define|undef|if|elif|else|endif|line|$&lt;&lt;|&gt;&gt;)\b
-					</Begin>
+				<Span>
+					<Begin fontWeight="bold">(define|undef|if|elif|else|endif|line|region|endregion|error|warning|pragma)\b</Begin>
 					<RuleSet>
-						<Span color="Comment" ruleSet="CommentMarkerSet">
+						<Span color="CSharpComment">
 							<Begin>//</Begin>
 						</Span>
 					</RuleSet>
 				</Span>
-				<Span> <!-- preprocessor directives that don't allow comments -->
-					<Begin fontWeight="bold">
-						(region|endregion|error|warning|pragma)\b
-					</Begin>
-				</Span>
 			</RuleSet>
 		</Span>
 		
-		<Span color="Comment">
-			<Begin color="XmlDoc/DocComment">///(?!/)</Begin>
-			<RuleSet>
-				<Import ruleSet="XmlDoc/DocCommentSet"/>
-				<Import ruleSet="CommentMarkerSet"/>
-			</RuleSet>
-		</Span>
-		
-		<Span color="Comment" ruleSet="CommentMarkerSet">
+		<Span color="CSharpComment">
 			<Begin>//</Begin>
 		</Span>
 		
-		<Span color="Comment" ruleSet="CommentMarkerSet" multiline="true">
+		<Span color="CSharpComment" multiline="true">
 			<Begin>/\*</Begin>
 			<End>\*/</End>
 		</Span>
 		
-		<Span color="String">
+		<Span color="CSharpString">
 			<Begin>"</Begin>
 			<End>"</End>
 			<RuleSet>
-				<!-- span for escape sequences -->
 				<Span begin="\\" end="."/>
 			</RuleSet>
 		</Span>
 		
-		<Span color="Char">
+		<Span color="CSharpChar">
 			<Begin>'</Begin>
 			<End>'</End>
 			<RuleSet>
-				<!-- span for escape sequences -->
 				<Span begin="\\" end="."/>
 			</RuleSet>
 		</Span>
 		
-		<Span color="String" multiline="true">
+		<Span color="CSharpString" multiline="true">
 			<Begin>@"</Begin>
 			<End>"</End>
 			<RuleSet>
-				<!-- span for escape sequences -->
 				<Span begin='""' end=""/>
 			</RuleSet>
 		</Span>
 		
-		<Span color="String">
-			<Begin>\$"</Begin>
-			<End>"</End>
-			<RuleSet>
-				<!-- span for escape sequences -->
-				<Span begin="\\" end="."/>
-				<Span begin="\{\{" end=""/>
-				<!-- string interpolation -->
-				<Span begin="{" end="}" color="StringInterpolation" ruleSet=""/>
-			</RuleSet>
-		</Span>
+		<Rule>@[\w\d_]+</Rule>
 		
-		<!-- don't highlight "@int" as keyword -->
-		<Rule>
-			@[\w\d_]+
-		</Rule>
-		
-		<Keywords color="ThisOrBaseReference">
+		<Keywords color="CSharpThisOrBaseReference">
 			<Word>this</Word>
 			<Word>base</Word>
 		</Keywords>
 		
-		<Keywords color="TypeKeywords">
+		<Keywords color="CSharpTypeKeywords">
 			<Word>as</Word>
 			<Word>is</Word>
 			<Word>new</Word>
@@ -146,12 +102,12 @@
 			<Word>stackalloc</Word>
 		</Keywords>
 		
-		<Keywords color="TrueFalse">
+		<Keywords color="CSharpTrueFalse">
 			<Word>true</Word>
 			<Word>false</Word>
 		</Keywords>
 		
-		<Keywords color="Keywords">
+		<Keywords color="CSharpKeywords">
 			<Word>else</Word>
 			<Word>if</Word>
 			<Word>switch</Word>
@@ -165,14 +121,14 @@
 			<Word>lock</Word>
 		</Keywords>
 		
-		<Keywords color="GotoKeywords">
+		<Keywords color="CSharpGotoKeywords">
 			<Word>break</Word>
 			<Word>continue</Word>
 			<Word>goto</Word>
 			<Word>return</Word>
 		</Keywords>
 		
-		<Keywords color="ContextKeywords">
+		<Keywords color="CSharpContextKeywords">
 			<Word>yield</Word>
 			<Word>partial</Word>
 			<Word>global</Word>
@@ -194,24 +150,24 @@
 			<Word>await</Word>
 		</Keywords>
 		
-		<Keywords color="ExceptionKeywords">
+		<Keywords color="CSharpExceptionKeywords">
 			<Word>try</Word>
 			<Word>throw</Word>
 			<Word>catch</Word>
 			<Word>finally</Word>
 		</Keywords>
 		
-		<Keywords color="CheckedKeyword">
+		<Keywords color="CSharpCheckedKeyword">
 			<Word>checked</Word>
 			<Word>unchecked</Word>
 		</Keywords>
 		
-		<Keywords color="UnsafeKeywords">
+		<Keywords color="CSharpUnsafeKeywords">
 			<Word>fixed</Word>
 			<Word>unsafe</Word>
 		</Keywords>
 		
-		<Keywords color="ValueTypeKeywords">
+		<Keywords color="CSharpValueTypeKeywords">
 			<Word>bool</Word>
 			<Word>byte</Word>
 			<Word>char</Word>
@@ -229,7 +185,7 @@
 			<Word>ulong</Word>
 		</Keywords>
 		
-		<Keywords color="ReferenceTypeKeywords">
+		<Keywords color="CSharpReferenceTypeKeywords">
 			<Word>class</Word>
 			<Word>interface</Word>
 			<Word>delegate</Word>
@@ -238,19 +194,19 @@
 			<Word>void</Word>
 		</Keywords>
 		
-		<Keywords color="OperatorKeywords">
+		<Keywords color="CSharpOperatorKeywords">
 			<Word>explicit</Word>
 			<Word>implicit</Word>
 			<Word>operator</Word>
 		</Keywords>
 		
-		<Keywords color="ParameterModifiers">
+		<Keywords color="CSharpParameterModifiers">
 			<Word>params</Word>
 			<Word>ref</Word>
 			<Word>out</Word>
 		</Keywords>
 		
-		<Keywords color="Modifiers">
+		<Keywords color="CSharpModifiers">
 			<Word>abstract</Word>
 			<Word>const</Word>
 			<Word>event</Word>
@@ -264,60 +220,133 @@
 			<Word>async</Word>
 		</Keywords>
 		
-		<Keywords color="Visibility">
+		<Keywords color="CSharpVisibility">
 			<Word>public</Word>
 			<Word>protected</Word>
 			<Word>private</Word>
 			<Word>internal</Word>
 		</Keywords>
 		
-		<Keywords color="NamespaceKeywords">
+		<Keywords color="CSharpNamespaceKeywords">
 			<Word>namespace</Word>
 			<Word>using</Word>
 		</Keywords>
 		
-		<Keywords color="GetSetAddRemove">
+		<Keywords color="CSharpGetSetAddRemove">
 			<Word>get</Word>
 			<Word>set</Word>
 			<Word>add</Word>
 			<Word>remove</Word>
 		</Keywords>
 		
-		<Keywords color="NullOrValueKeywords">
+		<Keywords color="CSharpNullOrValueKeywords">
 			<Word>null</Word>
 			<Word>value</Word>
 		</Keywords>
-
-		<Keywords color="SemanticKeywords">
+		
+		<Keywords color="CSharpSemanticKeywords">
 			<Word>nameof</Word>
 		</Keywords>
-		<Keywords color="ScriptKeywords">
-        			<Word>$&lt;&lt;</Word>
-        			<Word>&gt;&gt;</Word>
-        			<Word>(</Word>
-        			<Word>)</Word>
-        			
-        </Keywords>
-
-		<!-- Mark previous rule-->
-		<Rule color="MethodCall">
-		\b
-		[\d\w_]+  # an identifier
-		(?=\s*\() # followed by (
+		
+		<Rule color="CSharpMethodCall">
+			\b[\d\w_]+(?=\s*\()
 		</Rule>
 		
-		<!-- Digits -->
-		<Rule color="NumberLiteral">
-			\b0[xX][0-9a-fA-F]+  # hex number
-		|	
-			(	\b\d+(\.[0-9]+)?   #number with optional floating point
-			|	\.[0-9]+           #or just starting with floating point
-			)
-			([eE][+-]?[0-9]+)? # optional exponent
+		<Rule color="CSharpNumberLiteral">
+			\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?
 		</Rule>
 		
-		<Rule color="Punctuation">
+		<Rule color="CSharpPunctuation">
 			[?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
 		</Rule>
+	</RuleSet>
+	
+	<!-- JSON RuleSets -->
+	<RuleSet name="JsonString">
+		<Span begin="\\" end="."/>
+		<!-- Embedded C# code block within strings -->
+		<Span ruleSet="CSharpCode" multiline="true">
+			<Begin>\$&lt;&lt;</Begin>
+			<End>&gt;&gt;</End>
+		</Span>
+	</RuleSet>
+
+	<RuleSet name="Object">
+		<Span color="FieldName" ruleSet="JsonString">
+			<Begin>"</Begin>
+			<End>"</End>
+		</Span>
+		<Span color="FieldName" ruleSet="JsonString">
+			<Begin>'</Begin>
+			<End>'</End>
+		</Span>
+		<Span color="Punctuation" ruleSet="Expression">
+			<Begin>:</Begin>
+		</Span>
+		<Span color="Punctuation">
+			<Begin>,</Begin>
+		</Span>
+		<Span color="Comment">
+			<Begin>//</Begin>
+		</Span>
+	</RuleSet>
+
+	<RuleSet name="Array">
+		<Import ruleSet="Expression"/>
+		<Span color="Punctuation">
+			<Begin>,</Begin>
+		</Span>
+	</RuleSet>
+
+	<RuleSet name="Expression">
+		<!-- C# code blocks outside of strings -->
+		<Span ruleSet="CSharpCode" multiline="true">
+			<Begin>\$&lt;&lt;</Begin>
+			<End>&gt;&gt;</End>
+		</Span>
+		
+		<Keywords color="Bool">
+			<Word>true</Word>
+			<Word>false</Word>
+			<Word>True</Word>
+			<Word>False</Word>
+		</Keywords>
+		
+		<Keywords color="Null">
+			<Word>null</Word>
+		</Keywords>
+		
+		<Span color="String" ruleSet="JsonString">
+			<Begin>"</Begin>
+			<End>"</End>
+		</Span>
+		
+		<Span color="Comment">
+			<Begin>//</Begin>
+		</Span>
+		
+		<Span color="String" ruleSet="JsonString">
+			<Begin>'</Begin>
+			<End>'</End>
+		</Span>
+		
+		<Span color="Punctuation" ruleSet="Object" multiline="true">
+			<Begin>\{</Begin>
+			<End>\}</End>
+		</Span>
+		
+		<Span color="Punctuation" ruleSet="Array" multiline="true">
+			<Begin>\[</Begin>
+			<End>\]</End>
+		</Span>
+		
+		<Rule color="Number">
+			\b0[xX][0-9a-fA-F]+|(\b\d+(\.[0-9]+)?|\.[0-9]+)([eE][+-]?[0-9]+)?
+		</Rule>
+	</RuleSet>
+
+	<!-- Main RuleSet -->
+	<RuleSet>
+		<Import ruleSet="Expression"/>
 	</RuleSet>
 </SyntaxDefinition>
