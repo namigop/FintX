@@ -34,6 +34,10 @@ Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
 | Support for call credentials                                             | ☑         | ☑ |
 | Support for certificates                                                 | ☑         | ☑ |
 | Support for cancelling long-running streaming calls                      | ☑         | ☑ |
+| Support for http3                                                        | ☑         | ☑ |
+| Support for named pipes (windows only)                                   | ☑         | ☑ |
+| Support for Unix Domain Sockets                                          | ☑         | ☑ |
+| Generate realistic test data (uses Bogus library)                        | ☑         | ☑ |
 |                                                                          |           |  |
 | **Request Data Management**                                              | Community | Enterprise |
 | Import and export of individual requests                                 | ☑         | ☑ |
@@ -41,6 +45,13 @@ Check out the FintX Enterprise version at [https://fintx.dev](https://fintx.dev)
 | Auto-save of open tabs                                                   | ☑         | ☑ |
 | Reopens the previous session                                             | ☑         | ☑ |
 | Git-aware. Files can be tracked in git                                   | ☑         | ☑ |
+|                                                                          |           |  |
+| **Create gRPC Mock Services**                                            | Community | Enterprise |
+| Create and manage mock services from  protobuf                           | ☑         | ☑ |
+| Mock unary methods                                                       | ☑         | ☑ |
+| Mock client streaming methods                                            | -         | ☑ |
+| Mock server streaming methods                                            | -         | ☑ |
+| Mock duplex streaming methods                                            | -         | ☑ | 
 |                                                                          |           |  |
 | **Functional Testing**                                                   | Community | Enterprise |
 | Create and manage functional tests                                       | -         | ☑ |
