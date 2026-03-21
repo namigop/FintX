@@ -9,7 +9,7 @@
     <SolidColorBrush x:Key="Bym.Color.DefaultWindowBackground" Color="#26282A" />
     <SolidColorBrush x:Key="Bym.Color.DefaultMenuHeaderBackground" Color="#1E1F22" />
     <SolidColorBrush x:Key="Bym.Color.DefaultMenuBodyBackground" Color="#222326" />
-    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#1A1B1E" />
+    <SolidColorBrush x:Key="Bym.Color.DefaultControlBackground" Color="#18191A" />
 
     
     <SolidColorBrush x:Key="Bym.Color.Green" Color="#5B8657" />
