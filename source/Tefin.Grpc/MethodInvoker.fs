@@ -37,10 +37,9 @@ module MethodInvoker =
     }
 
   let private invokeAwaitableWithResult (mi: MethodInfo) (instance: obj) (args: obj array) =
-    async {
-      let call = mi.Invoke(instance, args)
-
+    task {
       try
+        let call = mi.Invoke(instance, args)
         return Some call
       with exc ->
         Console.WriteLine exc
@@ -51,7 +50,7 @@ module MethodInvoker =
     task {
       let call = mi.Invoke(instance, args)
       let task = call.GetType().GetProperty("ResponseAsync").GetValue(call) :?> Task
-      do! task
+      let! _ = task
       return Option<obj>.None
     }
 
@@ -73,13 +72,13 @@ module MethodInvoker =
 
         let isConfigTheSame =
           prevCfg.Url = cfg.Url
-          && prevCfg.X509Cert = cfg.X509Cert
-          && prevCfg.JWT = cfg.JWT
-          && prevCfg.IsUsingSSL = cfg.IsUsingSSL
-          && prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2
-          && prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3
-          && prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes
-          && prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
+          && (prevCfg.X509Cert = cfg.X509Cert)
+          && (prevCfg.JWT = cfg.JWT)
+          && (prevCfg.IsUsingSSL = cfg.IsUsingSSL)
+          && (prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2)
+          && (prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3)
+          && (prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes)
+          && (prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets)
 
         //if the config was changed, clear the cached instance
         if not isConfigTheSame then

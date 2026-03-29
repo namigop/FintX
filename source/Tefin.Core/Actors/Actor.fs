@@ -2,6 +2,8 @@
 
 open System
 open System.Diagnostics
+open System.Threading
+open System.Threading.Tasks
 open Microsoft.FSharp.Control
 open Tefin.Core
 
@@ -38,50 +40,45 @@ module Actor =
     let proc =
       MailboxProcessor<MessageType<'a>>.Start(fun inbox ->
         let mutable run = true
-
-        let rec loop () =
+         
+        let rec loop () =          
           async {
-            if (run) then
+            if run then              
               let! message = inbox.Receive()
-              Debug.WriteLine($"Actor: processing message: {message.GetType().Name}")
-
+             
               match message with
               | System systemType ->
                 if systemType = SystemType.Stop then
                   run <- false
+                  return ()
+              
+                let! result = handleSys systemType |> Async.Catch
+                match result with
+                | Choice1Of2() -> ()
+                | Choice2Of2 exn -> Console.WriteLine(exn)
 
-                (handleSys systemType)
-                |> Async.Catch
-                |> Async.RunSynchronously
-                |> function
-                  | Choice1Of2() -> ()
-                  | Choice2Of2 exn -> Console.WriteLine(exn)
-
-              | Message m -> //do! handleMsg m
-                (handleMsg m)
-                |> Async.Catch
-                |> Async.RunSynchronously
-                |> function
-                  | Choice1Of2() -> ()
-                  | Choice2Of2 exn -> Console.WriteLine(exn)
+              | Message m ->
+                let! result = handleMsg m |> Async.Catch
+                match result with
+                | Choice1Of2() -> ()
+                | Choice2Of2 exn -> Console.WriteLine(exn)
 
               return! loop ()
           }
-
         loop ())
 
     //return record IActor<'a,'b>
     { Post = fun msg -> proc.Post(msg)
       ReqType = typeof<'a> }
 
-  let createTwoWay<'a, 'b> handleSys (handleMsg) =
+  let createTwoWay<'a, 'b> handleSys handleMsg =
     let proc =
       MailboxProcessor<TwoWay<'a, Ret<'b>>>.Start(fun inbox ->
         let mutable run = true
 
         let rec loop () =
           async {
-            if (run) then
+            if run then
               let! message, rc = inbox.Receive()
 
               match message with
@@ -89,22 +86,16 @@ module Actor =
                 if systemType = SystemType.Stop then
                   run <- false
 
-                (handleSys systemType)
-                |> Async.Catch
-                |> Async.RunSynchronously
-                |> function
-                  | Choice1Of2 r -> rc.Reply(Ret.Ok r)
-                  | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
+                let! result = handleSys systemType |> Async.Catch
+                match result with
+                | Choice1Of2 r -> rc.Reply(Ret.Ok r)
+                | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
 
               | Message m ->
-                //let! result = handleMsg m
-                //rc.Reply result
-                (handleMsg m)
-                |> Async.Catch
-                |> Async.RunSynchronously
-                |> function
-                  | Choice1Of2 r -> rc.Reply(Ret.Ok r)
-                  | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
+                let! result = handleMsg m |> Async.Catch
+                match result with
+                | Choice1Of2 r -> rc.Reply(Ret.Ok r)
+                | Choice2Of2 exn -> rc.Reply(Ret.Error exn)
 
               do! loop ()
           }

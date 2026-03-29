@@ -33,7 +33,7 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
         return! doThis ()
       with exc ->
         if (count = 0) then
-          return! tryExec (count + 1) doThis //retry once
+          return! tryExecAsync (count + 1) doThis //retry once
         else
           raise exc
           return Unchecked.defaultof<'a> //will this be reached??
