@@ -18,7 +18,7 @@ type AsyncStreamReader<'T>
 
   interface IAsyncStreamReader<'T> with
     member this.MoveNext(cancellationToken) = this.MoveNext cancellationToken
-    member this.Current = this.Current
+    member this.Current = stream.Current
 
 module TimedAsyncStreamReader =
   let create<'T> (io: IOs) (stream: IAsyncStreamReader<'T>) (clientName: string) (method: string) =
@@ -32,8 +32,11 @@ module TimedAsyncStreamReader =
 
     let onMoveNext (reader: IAsyncStreamReader<'T>) (token: CancellationToken) =
       task {
-        let! ok, ts = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
-        return ok
+        try 
+          let! ok, _ = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
+          return ok
+        with _ -> return false
+        
       }
 
     new AsyncStreamReader<'T>(stream, onMoveNext)

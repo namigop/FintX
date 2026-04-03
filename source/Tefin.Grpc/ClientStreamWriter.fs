@@ -52,8 +52,8 @@ module TimedClientStreamWriter =
       }
 
     { new IClientStreamActions<'T> with
-        member x.OnCompleteAsync(writer) = task { do! (onComplete writer) }
-        member x.WriteAsync writer msg = task { do! (onWrite writer msg) } }
+        member x.OnCompleteAsync(writer) = onComplete writer
+        member x.WriteAsync writer msg = onWrite writer msg }
 
   let create<'T> (io: IOs) (writer: IClientStreamWriter<'T>) (clientName: string) (method: string) =
     let actions = createAction io clientName method

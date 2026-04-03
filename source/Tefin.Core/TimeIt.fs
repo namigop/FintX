@@ -52,7 +52,7 @@ let runActionWithReturnValue
   with exc ->
     handleError exc sw onError
     sw.Stop()
-    struct (Unchecked.defaultof<'T>, sw.Elapsed)
+    reraise()
 
 let runTask
   (action: unit -> Task)
@@ -73,7 +73,7 @@ let runTask
     with exc ->
       sw.Stop()
       handleError exc sw onError
-      return sw.Elapsed
+      return! Task.FromException<TimeSpan>(exc)
   }
 
 let runTaskWithReturnValue<'T>
@@ -95,7 +95,7 @@ let runTaskWithReturnValue<'T>
     with exc ->
       sw.Stop()
       handleError exc sw onError
-      return (Unchecked.defaultof<'T>, sw.Elapsed)
+      return! Task.FromException<'T * TimeSpan>(exc)
   // let ret =
   //     action()
   //     |> Async.AwaitTask

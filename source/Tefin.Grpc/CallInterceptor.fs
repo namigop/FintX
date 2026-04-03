@@ -18,33 +18,33 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
     io.Log.Error $"Call to {name} failed. Elapsed {ts.TotalMilliseconds} msec"
     io.Log.Error $"{exc}"
 
-  let rec tryExec (count: int) (doThis: unit -> 'a) =
-    try
-      doThis ()
-    with exc ->
-      if (count = 0) then
-        tryExec (count + 1) doThis //retry once
-      else
-        raise exc
-
-  let rec tryExecAsync (count: int) (doThis: unit -> Task<'a>) =
-    task {
-      try
-        return! doThis ()
-      with exc ->
-        if (count = 0) then
-          return! tryExecAsync (count + 1) doThis //retry once
-        else
-          raise exc
-          return Unchecked.defaultof<'a> //will this be reached??
-    }
+  // let rec tryExec (count: int) (doThis: unit -> 'a) =
+  //   try
+  //     doThis ()
+  //   with exc ->
+  //     if (count = 0) then
+  //       tryExec (count + 1) doThis //retry once
+  //     else
+  //       raise exc
+  //
+  // let rec tryExecAsync (count: int) (doThis: unit -> Task<'a>) =
+  //   task {
+  //     try
+  //       return! doThis ()
+  //     with exc ->
+  //       if (count = 0) then
+  //         return! tryExecAsync (count + 1) doThis //retry once
+  //       else
+  //         raise exc
+  //         return Unchecked.defaultof<'a> //will this be reached??
+  //   }
 
   let getWrappedResponseHeaders_ClientStream (clientName: string) (resp: AsyncClientStreamingCall<'TReq, 'TResp>) =
     task {
       let name = "ResponseHeadersAsync"
       let onSuccessOpt = Some(onSuccess name)
       let onErrorOpt = Some(onError name)
-      let! meta, ts = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
+      let! meta, _ = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
       return meta
     //let! meta = resp.ResponseHeadersAsync
     //return meta
@@ -55,7 +55,7 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
       let name = "ResponseHeadersAsync"
       let onSuccessOpt = Some(onSuccess name)
       let onErrorOpt = Some(onError name)
-      let! meta, ts = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
+      let! meta, _ = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
       return meta
     }
 
@@ -64,7 +64,7 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
       let name = "ResponseHeadersAsync"
       let onSuccessOpt = Some(onSuccess name)
       let onErrorOpt = Some(onError name)
-      let! meta, ts = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
+      let! meta, _ = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseHeadersAsync) onSuccessOpt onErrorOpt
       return meta
     }
 
@@ -147,7 +147,7 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
       let name = "ResponseAsync"
       let onSuccessOpt = Some(onSuccess name)
       let onErrorOpt = Some(onError name)
-      let! resp, ts = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseAsync) onSuccessOpt onErrorOpt
+      let! resp, _ = TimeIt.runTaskWithReturnValue (fun () -> resp.ResponseAsync) onSuccessOpt onErrorOpt
       // let! resp = resp.ResponseAsync
       return resp
     }
@@ -164,19 +164,10 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
     let method = context.Method.Name
     let getRespHeaderTask = getWrappedResponseHeaders_ClientStream clientName call
 
-    let getStatus =
-      fun () ->
-        fun () -> getWrappedStatus_ClientStream clientName method call
-        |> tryExec 0
-
-    let getTrailer =
-      fun () ->
-        fun () -> getWrappedTrailer_ClientStream clientName method call
-        |> tryExec 0
-
-    let getResponseTask =
-      fun () -> getWrappedResponse_ClientStream clientName method call
-      |> tryExecAsync 0
+    let getStatus() =getWrappedStatus_ClientStream clientName method call        
+    let getTrailer() = getWrappedTrailer_ClientStream clientName method call      
+    let getResponseTask = getWrappedResponse_ClientStream clientName method call
+      
 
     let dispose = call.Dispose
 
@@ -203,16 +194,9 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
     let call = continuation.Invoke(context)
     let method = context.Method.Name
     let getRespHeaderTask = getWrappedResponseHeaders_DuplexStream clientName call
-
-    let getStatus =
-      fun () ->
-        fun () -> getWrappedStatus_DuplexStream clientName method call
-        |> tryExec 0
-
-    let getTrailer =
-      fun () ->
-        fun () -> getWrappedTrailer_DuplexStream clientName method call
-        |> tryExec 0
+    let getStatus() = getWrappedStatus_DuplexStream clientName method call        
+    let getTrailer() = getWrappedTrailer_DuplexStream clientName method call
+        
 
     //let getResponseTask = getWrappedResponse_DuplexStream clientName method call
     let dispose = call.Dispose
@@ -236,20 +220,11 @@ type CallInterceptor(clientName: string, io: IOs, onErr: Exception -> unit) =
     let method = context.Method.Name
     let getRespHeaderTask = getWrappedResponseHeaders_ServerStream clientName call
 
-    let getStatus =
-      fun () ->
-        fun () -> getWrappedStatus_ServerStream clientName method call
-        |> tryExec 0
-
-    let getTrailer =
-      fun () ->
-        fun () -> getWrappedTrailer_ServerStream clientName method call
-        |> tryExec 0
-
+    let getStatus() = getWrappedStatus_ServerStream clientName method call
+    let getTrailer() = getWrappedTrailer_ServerStream clientName method call
     let dispose = call.Dispose
 
     let reader = TimedAsyncStreamReader.create io call.ResponseStream clientName method
-
     let newCall =
       new AsyncServerStreamingCall<'TResp>(reader, getRespHeaderTask, getStatus, getTrailer, dispose)
 
