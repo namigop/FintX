@@ -76,11 +76,10 @@ module ResponseUtils =
       genType       
 
   let emitClientStreamResponse =
-    let getReturnType (methodInfo: MethodInfo) =
-      methodInfo.ReturnType.GetGenericArguments().[1]
-
-    fun (methodInfo: MethodInfo) isContainerForError ->
-      let builder = emitCompositeResponse "GrpcClientStreamResponse" getReturnType
+    let getReturnType (methodInfo: MethodInfo) =  methodInfo.ReturnType.GetGenericArguments().[1]
+    let builder = emitCompositeResponse "GrpcClientStreamResponse" getReturnType
+    
+    fun (methodInfo: MethodInfo) isContainerForError ->       
       builder methodInfo isContainerForError
 
   let emitUnaryResponse =
@@ -91,10 +90,10 @@ module ResponseUtils =
         methodInfo.ReturnType
 
     let generatedTypes = ConcurrentDictionary<TypeKey, Type>()
-
+    let builder = emitCompositeResponse "GrpcUnaryResponse" getReturnType
+    
     fun (methodInfo: MethodInfo) (isAsync: bool) isContainerForError ->
-      if isAsync then
-        let builder = emitCompositeResponse "GrpcUnaryResponse" getReturnType
+      if isAsync then      
         builder methodInfo isContainerForError
       else
         let className = $"GrpcUnaryResponse_{methodInfo.Name}_{methodInfo.ReturnType.Name}_{methodInfo.GetHashCode()}"
