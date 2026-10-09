@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:DataType="client:ConfigExplorerViewModel"
              x:Class="Tefin.Views.Explorer.Config.ConfigExplorerView">
-    <Border>
+    <Border Background="{StaticResource Bym.Color.DefaultControlBackground}">
         <Grid>
             <TreeDataGrid Source="{Binding ExplorerTree}" ShowColumnHeaders="False" x:Name="TreeDg">
                 <TreeDataGrid.KeyBindings>

@@ -12,7 +12,7 @@
     <!--     <viewModels:NodeViewLocator /> -->
     <!-- </UserControl.DataTemplates> -->
 
-    <Border>
+    <Border Background="{StaticResource Bym.Color.DefaultControlBackground}">
         <Grid>
             <TreeDataGrid Source="{Binding ExplorerTree}" ShowColumnHeaders="False" x:Name="TreeDg">
                 <TreeDataGrid.KeyBindings>
