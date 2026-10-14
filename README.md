@@ -10,8 +10,8 @@ Extremely honored to have FintX featured in the Avalonia App Showcase https://av
 FintX Enterprise reverts to the Community Edition once the trial period is over.  FintX Community is free forever
 
 - Download for windows ([Windows Store](https://apps.microsoft.com/detail/9nz2g6flp92q?hl=en-US&gl=US))
-- Download for macos ([Apple Silicon](https://github.com/namigop/fintx-arm64/releases/download/arm64-v3.0.7/FintX-osx-Setup.pkg))
-- Download for [linux x64](https://github.com/namigop/fintx-linux/releases/download/linux-v3.0.7/FintX.AppImage)
+- Download for macos ([Apple Silicon](https://github.com/namigop/fintx-arm64/releases/download/arm64-v4.0.0/FintX-osx-Setup.pkg))
+- Download for [linux x64](https://github.com/namigop/fintx-linux/releases/download/linux-v4.0.o/FintX.AppImage)
 
 
 ## Looking for Advanced Features?
