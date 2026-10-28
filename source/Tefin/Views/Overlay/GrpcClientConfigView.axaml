@@ -26,11 +26,11 @@
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Description" Classes="FormField" />
-                    <TextBox Text="{Binding Description}" Height="80" />
+                    <TextBox Text="{Binding Description}" Height="70" />
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Json Web Token (JWT)" Classes="FormField" />
-                    <TextBox Text="{Binding Jwt}" Height="80" Watermark="Enter the JWT token (without 'Bearer')" />
+                    <TextBox Text="{Binding Jwt}" Height="70" Watermark="Enter the JWT token (without 'Bearer')" />
                 </StackPanel>
                 <StackPanel>
                     <TextBlock Text="Protocols" Classes="FormField" />
@@ -124,7 +124,11 @@
                             </DockPanel>
                         </Grid>
                     </Grid>
-                    
+
+                    <CheckBox IsChecked="{Binding ValidateCertificate}" IsVisible="{Binding IsUsingSsl}" Margin="0 8 0 0">
+                        <TextBlock Text="Validate certificate"></TextBlock>
+                    </CheckBox>
+
                 </StackPanel>
 
             </StackPanel>

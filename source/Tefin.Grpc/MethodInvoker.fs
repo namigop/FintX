@@ -77,6 +77,7 @@ module MethodInvoker =
           && (prevCfg.IsUsingSSL = cfg.IsUsingSSL)
           && (prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2)
           && (prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3)
+          && (prevCfg.ValidateCertificate = cfg.ValidateCertificate)
           && (prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes)
           && (prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets)
 

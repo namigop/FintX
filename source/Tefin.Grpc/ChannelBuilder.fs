@@ -35,6 +35,7 @@ type CallConfig =
     IsUsingUnixDomainSockets : bool
     IsUsingHttp2 : bool
     IsUsingHttp3 : bool
+    ValidateCertificate : bool
     UnixDomainSocketConfig : UnixDomainSocketClientConfig
     Io: IOs }
 
@@ -75,6 +76,7 @@ type CallConfig =
       IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets
       IsUsingHttp2 = cfg.IsUsingHttp2
       IsUsingHttp3 = cfg.IsUsingHttp3
+      ValidateCertificate = cfg.ValidateCertificate
       UnixDomainSocketConfig = cfg.UnixDomainSockets
       Io = io }
 
@@ -138,36 +140,51 @@ module ChannelBuilder =
     GrpcChannel.ForAddress(cfg.Url, options)
     
 
+  ///Accepts any server certificate. Only applied when the user has not opted in to validation.
+  let private certificateValidationCallback (validateCertificate: bool) =
+    if validateCertificate then
+      Unchecked.defaultof<RemoteCertificateValidationCallback>
+    else
+      RemoteCertificateValidationCallback(fun _ _ _ _ -> true)
+
   let createSocketHandler (cfg : CallConfig) =
+    let sslOptions =
+      SslClientAuthenticationOptions(
+        ApplicationProtocols = ResizeArray<SslApplicationProtocol>(),
+        RemoteCertificateValidationCallback = certificateValidationCallback cfg.ValidateCertificate
+      )
+
     let handler =
       new SocketsHttpHandler(
         EnableMultipleHttp2Connections = true,
         KeepAlivePingDelay = TimeSpan.FromSeconds(60L),
         KeepAlivePingTimeout = TimeSpan.FromSeconds(30L),
         PooledConnectionIdleTimeout = Timeout.InfiniteTimeSpan,
-        SslOptions = SslClientAuthenticationOptions( ApplicationProtocols = ResizeArray<SslApplicationProtocol>())
+        SslOptions = sslOptions
       )
-        
-    if cfg.IsUsingHttp2  then
-      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http2)    
-    if cfg.IsUsingHttp3  then
-      handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http3)
-    handler
-    
-  let private createSecureSocketHandler (cfg: CallConfig) (defaultMethodConfig: MethodConfig) =
-    let x509 = getCert cfg.X509Cert.Value
-    let ignoreSslChecks = RemoteCertificateValidationCallback(fun a b c d -> true)
 
-    let handler = createSocketHandler cfg
-    handler.SslOptions <- SslClientAuthenticationOptions(RemoteCertificateValidationCallback = ignoreSslChecks,
-                                                         ApplicationProtocols = ResizeArray<SslApplicationProtocol>(),
-                                                         ClientCertificates =   X509Certificate2Collection())    
     if cfg.IsUsingHttp2  then
       handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http2)
     if cfg.IsUsingHttp3  then
       handler.SslOptions.ApplicationProtocols.Add(SslApplicationProtocol.Http3)
-     
-    let _ = handler.SslOptions.ClientCertificates.Add(x509)
+    handler
+
+  let private createSecureSocketHandler (cfg: CallConfig) =
+    let handler = createSocketHandler cfg
+
+    match cfg.X509Cert with
+    | Some cert ->
+      try
+        let x509 = getCert cert
+        if isNull (box x509) then
+          cfg.Io.Log.Warn "The client certificate could not be found. Continuing without a client certificate."
+        else
+          handler.SslOptions.ClientCertificates.Add(x509) |> ignore
+      with exc ->
+        cfg.Io.Log.Error $"Failed to load the client certificate: {exc.Message}"
+    | None ->
+      cfg.Io.Log.Warn "No client certificate is configured."
+
     handler
  
   let private createChannel (cfg: CallConfig) (defaultMethodConfig: MethodConfig) (handler:SocketsHttpHandler) =     
@@ -320,7 +337,7 @@ module ChannelBuilder =
     
     let socketHandler =
       if cfg.IsUsingSSL && cfg.Url.StartsWith "https://" then
-        createSecureSocketHandler cfg defaultMethodConfig
+        createSecureSocketHandler cfg
       else
         createSocketHandler cfg
         

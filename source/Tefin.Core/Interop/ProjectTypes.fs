@@ -65,6 +65,8 @@ module ProjectTypes =
     member val UnixDomainSockets = UnixDomainSocketClientConfig() with get, set
     member val IsUsingHttp2 = true with get, set
     member val IsUsingHttp3 = true with get, set
+    ///When false, the server certificate is not validated. Defaults to false for backwards compatibility.
+    member val ValidateCertificate = false with get, set
 
   type MethodGroup =
     { Name: string

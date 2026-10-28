@@ -38,6 +38,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private string _url = "";
     private bool _isHttp2Checked;
     private bool _isHttp3Checked;
+    private bool _validateCertificate;
 
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
@@ -159,6 +160,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         set => this.RaiseAndSetIfChanged(ref _isHttp3Checked, value);
     }
 
+    /// <summary>
+    /// When false, the server certificate is not validated. Defaults to false.
+    /// </summary>
+    public bool ValidateCertificate {
+        get => this._validateCertificate;
+        set => this.RaiseAndSetIfChanged(ref this._validateCertificate, value);
+    }
+
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));
 
     private void Load(string clientConfigFile) {
@@ -171,6 +180,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this.Description = this._clientConfig.Description;
         this.IsHttp2Checked = this._clientConfig.IsUsingHttp2;
         this.IsHttp3Checked = this._clientConfig.IsUsingHttp3;
+        this.ValidateCertificate = this._clientConfig.ValidateCertificate;
         
         if (this._clientConfig.IsUsingNamedPipes) {
             this.TransportOptions.SelectedTransport = TransportOptionsViewModel.NamedPipes;
@@ -235,6 +245,7 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
         this._clientConfig.CertFile = this.CertFile;
         this._clientConfig.IsUsingHttp2 = this.IsHttp2Checked;
         this._clientConfig.IsUsingHttp3 = this.IsHttp3Checked;
+        this._clientConfig.ValidateCertificate = this.ValidateCertificate;
         
         if (this.TransportOptions.IsUsingNamedPipes) {
             this._clientConfig.IsUsingNamedPipes = true;
