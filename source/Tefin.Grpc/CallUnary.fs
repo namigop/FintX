@@ -9,9 +9,28 @@ open Tefin.Core.Interop
 module CallUnary =
   let callError = CallError()
 
+  let private awaitResponse (ctx: Context) =
+    task {
+      match ctx.Response with
+      | Ret.Ok callObj when not (isNull callObj) ->
+        try          
+          //Present in AsyncUnary calls
+          let responsePi = callObj.GetType().GetProperty("ResponseAsync")
+
+          if not (isNull responsePi) then
+            let responseTask = responsePi.GetValue(callObj) :?> Task
+            do! responseTask
+        with _ ->
+          () //the failure is reported when the response wrapper is created
+      | _ ->
+        ()
+
+      return ctx
+    }
+
   let runSteps (io: IOs) (methodInfo: MethodInfo) (mParams: obj array) (callConfig: CallConfig) =
     task {
-      let start (ctx: Context) =       
+      let start (ctx: Context) =
         Task.FromResult { ctx with Io = Some io }
 
       let invoke (ctx: Context) =
@@ -42,6 +61,7 @@ module CallUnary =
         CallPipeline.exec
           [| { Name = "start"; Run = start }
              { Name = "invoke"; Run = invoke }
+             { Name = "awaitResponse"; Run = awaitResponse }
              { Name = "stop"; Run = stop } |]
           execContext
     }
