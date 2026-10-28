@@ -125,7 +125,7 @@
                         </Grid>
                     </Grid>
 
-                    <CheckBox IsChecked="{Binding ValidateCertificate}" IsVisible="{Binding IsUsingSsl}" Margin="0 8 0 0">
+                    <CheckBox IsChecked="{Binding ValidateCertificate}" Margin="0 8 0 0">
                         <TextBlock Text="Validate certificate"></TextBlock>
                     </CheckBox>
 
