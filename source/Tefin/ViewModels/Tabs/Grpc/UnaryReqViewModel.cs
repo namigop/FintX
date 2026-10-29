@@ -63,15 +63,21 @@ public class UnaryReqViewModel : ViewModelBase {
     public TreeRequestEditorViewModel TreeEditor { get; }
 
     public (bool, object?[]) GetMethodParameters() {
-        var reqParams = this.RequestEditor.GetParameters();
+        var (ok, reqParams) = this.RequestEditor.GetParameters();
+        if (!ok) {
+            //the request could not be built. Substituting defaults here would destroy the
+            //request that the user typed and run the call with the wrong arity, so the
+            //failure is reported to the caller instead.
+            return (false, reqParams);
+        }
 
         var expected = this.MethodInfo.GetParameters();
-        if (expected.Length == reqParams.Item2.Length) {
-            return reqParams;
+        if (expected.Length == reqParams.Length) {
+            return (true, reqParams);
         }
 
         //gRPC requests should contain 1. "request" (optional) 2.Headers, 3. deadline, 4. Cancellation token
-        var methodParams = reqParams.Item2;
+        var methodParams = reqParams;
         var metadata = methodParams.FirstOrDefault(t => t?.GetType() == typeof(Metadata));
         if (metadata == null) {
             var (_, m) = TypeBuilder.getDefault("headers", typeof(Metadata), true, FSharpOption<object>.None, 1);
@@ -84,19 +90,27 @@ public class UnaryReqViewModel : ViewModelBase {
             deadline = m;
         }
 
-        var newParams = new List<object>();
-        var req = this.MethodInfo.GetParameters().FirstOrDefault(t => t.Name == "request");
-        var reqInstance = methodParams.FirstOrDefault(t => t?.GetType() == req?.ParameterType);
-        if (reqInstance != null) {
-            newParams.Add(reqInstance);
-        }
-
         var token = this.RequestEditor.CtsReq?.Token ?? CancellationToken.None;
 
-        newParams.Add(metadata);
-        newParams.Add(deadline);
-        newParams.Add(token);
-        var parameters = newParams.ToArray();
+        //build the argument array positionally against the method signature, so that a
+        //request that cannot be found can never shorten it
+        var parameters = expected.Select(p => {
+            if (p.ParameterType == typeof(Metadata)) {
+                return metadata;
+            }
+
+            if (p.ParameterType == typeof(DateTime) || p.ParameterType == typeof(DateTime?)) {
+                return deadline;
+            }
+
+            if (p.ParameterType == typeof(CancellationToken)) {
+                return token;
+            }
+
+            var instance = methodParams.FirstOrDefault(t => t?.GetType() == p.ParameterType);
+            return instance ?? TypeBuilder.getDefault(p.Name, p.ParameterType, true, FSharpOption<object>.None, 1).Item2;
+        }).ToArray();
+
         this.RequestEditor.Show(parameters, this._requestVariables, this._clientGroup);
         return (true, parameters);
     }

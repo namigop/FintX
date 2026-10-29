@@ -1,4 +1,5 @@
 ﻿using Tefin.Core.Interop;
+using Tefin.Grpc.Execution;
 using Tefin.ViewModels;
 
 namespace Tefin.Features;
@@ -12,5 +13,8 @@ public class ShutdownFeature(MainWindowViewModel main) {
         var activeProject = main.ProjectMenuViewModel.RecentProjects.First(p => p.IsSelected);
         var appProject = AppTypes.AppProject.Create(activeProject.Path, activeProject.Package);
         Core.App.saveAppState(main.Io, projects, appProject);
+
+        //release the cached gRPC channels and the connection pools that they own
+        MethodInvoker.disposeGrpcClients();
     }
 }

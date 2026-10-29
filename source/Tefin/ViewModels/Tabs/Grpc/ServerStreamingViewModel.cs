@@ -23,6 +23,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     private AllVariableDefinitions _envVars = new();
     private bool _showTreeEditor;
     private string _statusText;
+    private bool _isCallInFlight;
 
     public ServerStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ServerStreamingReqViewModel(mi, cg, true);
@@ -35,8 +36,19 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
         this.RespViewModel.SubscribeTo(x => ((ServerStreamingRespViewModel)x).CanRead, this.OnCanReadChanged);
     }
+    
+    public bool IsCallInFlight {
+        get => this._isCallInFlight;
+        private set {
+            if (this.RaiseAndSetIfChanged(ref this._isCallInFlight, value)) {
+                this.RaisePropertyChanged(nameof(this.CanStop));
+                this.RaisePropertyChanged(nameof(this.CanStart));
+            }
+        }
+    }
 
-    public bool CanStop => this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null;
+    public bool CanStop => this.IsCallInFlight || (this.RespViewModel.CanRead && this.ReqViewModel.RequestEditor.CtsReq != null);
+    public bool CanStart => !this.IsCallInFlight && !this.RespViewModel.CanRead;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
     public override bool IsLoaded => this.ReqViewModel.IsLoaded;
@@ -126,7 +138,10 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
 
     public override void Init() => this.ReqViewModel.Init(this._envVars.RequestVariables);
 
-    private void OnCanReadChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
+    private void OnCanReadChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+        this.RaisePropertyChanged(nameof(this.CanStart));
+    }
 
     private async Task OnExportRequest() {
         var reqJson = this.GetRequestContent();
@@ -154,32 +169,39 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
             if (paramOk) {
                 this.ReqViewModel.RequestEditor.StartRequest();
 
-                var clientConfig = this.Client.Config.Value;
-                var feature = new CallServerStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
-                var (ok, resp) = await feature.Run();
-                var (_, response, context) = resp.OkayOrFailed();
-                this.IsBusy = false;
+                //from here on the call is pending and the user has to be able to stop it
+                this.IsCallInFlight = true;
+                try {
+                    var clientConfig = this.Client.Config.Value;
+                    var feature = new CallServerStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
+                    var (ok, resp) = await feature.Run();
+                    var (_, response, context) = resp.OkayOrFailed();
+                    this.IsBusy = false;
 
-                this.RespViewModel.Show(ok, response, context);
-                await this.RespViewModel.SetupServerStreamNode(response);
-                await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+                    this.RespViewModel.Show(ok, response, context);
+                    await this.RespViewModel.SetupServerStreamNode(response);
+                    await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
 
-                var elapsed = DateTime.Now - context.StartTime;
-                this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
+                    var elapsed = DateTime.Now - context.StartTime;
+                    this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
 
-                async Task<object> CompleteRead() {
-                    var readServerStream = new ReadServerStreamFeature();
-                    var callResponse = (ServerStreamingCallResponse)response;
-                    callResponse = await readServerStream.CompleteRead(callResponse);
-                    var end = new EndStreamingFeature();
-                    callResponse = await end.EndServerStreaming(callResponse);
+                    async Task<object> CompleteRead() {
+                        var readServerStream = new ReadServerStreamFeature();
+                        var callResponse = (ServerStreamingCallResponse)response;
+                        callResponse = await readServerStream.CompleteRead(callResponse);
+                        var end = new EndStreamingFeature();
+                        callResponse = await end.EndServerStreaming(callResponse);
 
-                    var model = new StandardResponseViewModel.GrpcStandardResponse {
-                        Headers = callResponse.Headers.Value,
-                        Trailers = callResponse.Trailers.Value,
-                        Status = callResponse.Status.Value
-                    };
-                    return model;
+                        var model = new StandardResponseViewModel.GrpcStandardResponse {
+                            Headers = callResponse.Headers.Value,
+                            Trailers = callResponse.Trailers.Value,
+                            Status = callResponse.Status.Value
+                        };
+                        return model;
+                    }
+                }
+                finally {
+                    this.IsCallInFlight = false;
                 }
             }
         }
@@ -195,7 +217,7 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
 
     private void OnStop() {
         if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+            this.ReqViewModel.RequestEditor.CtsReq?.Cancel();
         }
     }
 }

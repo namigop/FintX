@@ -85,6 +85,13 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
             return (true, mParams);
         }
 
+        //the request could not be built. Report why instead of silently returning an
+        //empty parameter set, the caller must not substitute defaults for a request
+        //that the user typed.
+        if (ret.IsError) {
+            this.Io.Log.Error(ret.ErrorValue);
+        }
+
         return (false, []);
     }
 

@@ -19,6 +19,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     private readonly AllVariableDefinitions _envVars = new();
     private bool _showTreeEditor;
     private string _statusText;
+    private bool _isCallInFlight;
 
     public DuplexStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new DuplexStreamingReqViewModel(mi, cg, true);
@@ -40,8 +41,21 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
-    public bool CanStart => !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
-    public bool CanStop => this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null;
+    /// <summary>
+    /// True from the moment a call is started until it has been established or has failed.
+    /// </summary>
+    public bool IsCallInFlight {
+        get => this._isCallInFlight;
+        private set {
+            if (this.RaiseAndSetIfChanged(ref this._isCallInFlight, value)) {
+                this.RaisePropertyChanged(nameof(this.CanStop));
+                this.RaisePropertyChanged(nameof(this.CanStart));
+            }
+        }
+    }
+
+    public bool CanStart => !this.IsCallInFlight && !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
+    public bool CanStop => this.IsCallInFlight || (this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null);
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -166,7 +180,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         }
     }
 
-    private void OnCanWriteChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+        this.RaisePropertyChanged(nameof(this.CanStart));
+    }
 
     private async Task OnExportRequest() {
         var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
@@ -241,18 +258,26 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
             if (paramOk) {
                 var clientConfig = this.Client.Config.Value;
                 var feature = new CallDuplexStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
-                var (ok, resp) = await feature.Run();
-                var (_, response, context) = resp.OkayOrFailed();
-                if (ok) {
-                    this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response,
-                        this._envVars.RequestStreamVariables);
-                    this.RespViewModel.Show(ok, response, context);
-                    _ = this.RespViewModel.SetupDuplexStreamNode(response);
+
+                //from here on the call is pending and the user has to be able to stop it
+                this.IsCallInFlight = true;
+                try {
+                    var (ok, resp) = await feature.Run();
+                    var (_, response, context) = resp.OkayOrFailed();
+                    if (ok) {
+                        this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response,
+                            this._envVars.RequestStreamVariables);
+                        this.RespViewModel.Show(ok, response, context);
+                        _ = this.RespViewModel.SetupDuplexStreamNode(response);
+                    }
+                    else {
+                        var d = (DuplexStreamingCallResponse)response;
+                        d = await DuplexStreamingResponse.getResponseHeader(d);
+                        this.EndStreaming(d);
+                    }
                 }
-                else {
-                    var d = (DuplexStreamingCallResponse)response;
-                    d = await DuplexStreamingResponse.getResponseHeader(d);
-                    this.EndStreaming(d);
+                finally {
+                    this.IsCallInFlight = false;
                 }
             }
         }
@@ -265,10 +290,15 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+        if (!this.CanStop) {
+            return;
+        }
+
+        this.ReqViewModel.RequestEditor.CtsReq?.Cancel();
+
+        //while the call is still being established there is no request stream to close yet
+        if (!this.IsCallInFlight) {
             this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
         }
     }
 }

@@ -19,6 +19,7 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     private readonly AllVariableDefinitions _envVars = new();
     private bool _showTreeEditor;
     private string _statusText = "";
+    private bool _isCallInFlight;
 
     public ClientStreamingViewModel(MethodInfo mi, ProjectTypes.ClientGroup cg) : base(mi, cg) {
         this.ReqViewModel = new ClientStreamingReqViewModel(mi, cg, true);
@@ -34,7 +35,21 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         this.ReqViewModel.SubscribeTo(x => ((ClientStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
-    public bool CanStop => this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null };
+    /// <summary>
+    /// True from the moment a call is started until it has been established or has failed.
+    /// </summary>
+    public bool IsCallInFlight {
+        get => this._isCallInFlight;
+        private set {
+            if (this.RaiseAndSetIfChanged(ref this._isCallInFlight, value)) {
+                this.RaisePropertyChanged(nameof(this.CanStop));
+                this.RaisePropertyChanged(nameof(this.CanStart));
+            }
+        }
+    }
+
+    public bool CanStop => this.IsCallInFlight || (this.ReqViewModel is { CanWrite: true, RequestEditor.CtsReq: not null });
+    public bool CanStart => !this.IsCallInFlight && !this.ReqViewModel.CanWrite;
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
     public override bool IsLoaded => this.ReqViewModel.IsLoaded;
@@ -154,7 +169,10 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
         }
     }
 
-    private void OnCanWriteChanged(ViewModelBase obj) => this.RaisePropertyChanged(nameof(this.CanStop));
+    private void OnCanWriteChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+        this.RaisePropertyChanged(nameof(this.CanStart));
+    }
 
     private async Task OnExportRequest() {
         var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
@@ -217,16 +235,23 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
             var mi = this.ReqViewModel.MethodInfo;
             var (paramOk, mParams) = this.ReqViewModel.GetMethodParameters();
             if (paramOk) {
-                var clientConfig = this.Client.Config.Value;
-                var feature = new CallClientStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
-                var (ok, resp) = await feature.Run();
-                var (_, response, context) = resp.OkayOrFailed();
-                if (ok) {
-                    this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response,
-                        this._envVars.RequestStreamVariables); //
+                //from here on the call is pending and the user has to be able to stop it
+                this.IsCallInFlight = true;
+                try {
+                    var clientConfig = this.Client.Config.Value;
+                    var feature = new CallClientStreamingFeature(mi, mParams, Current.EnvFilePath, clientConfig, this.Io);
+                    var (ok, resp) = await feature.Run();
+                    var (_, response, context) = resp.OkayOrFailed();
+                    if (ok) {
+                        this.ReqViewModel.SetupClientStream((ClientStreamingCallResponse)response,
+                            this._envVars.RequestStreamVariables); //
+                    }
+                    else {
+                        this.EndStreaming((ClientStreamingCallResponse)response);
+                    }
                 }
-                else {
-                    this.EndStreaming((ClientStreamingCallResponse)response);
+                finally {
+                    this.IsCallInFlight = false;
                 }
             }
         }
@@ -236,10 +261,15 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     private void OnStop() {
-        if (this.CanStop) {
-            this.ReqViewModel.RequestEditor.CtsReq!.Cancel();
+        if (!this.CanStop) {
+            return;
+        }
+
+        this.ReqViewModel.RequestEditor.CtsReq?.Cancel();
+
+        //while the call is still being established there is no request stream to close yet
+        if (!this.IsCallInFlight) {
             this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
-            //await this.EndClientStreamingCall(this.ReqViewModel.CallResponse);
         }
     }
 }

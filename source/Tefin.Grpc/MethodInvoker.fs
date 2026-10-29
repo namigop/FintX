@@ -1,12 +1,13 @@
 namespace Tefin.Grpc.Execution
 
 open System
-open System.Collections.Generic
+open System.Collections.Concurrent
 open System.Reflection
 open System.Threading.Tasks
 open Tefin.Core.Reflection
 open Grpc.Core
 open Grpc.Core.Interceptors
+open Grpc.Net.Client
 open Tefin.Grpc.Custom
 
 type TraceMessage =
@@ -17,6 +18,36 @@ type TraceMessage =
   }
 
 module MethodInvoker =
+
+  /// <summary>
+  /// A cached gRPC client together with the channel that it owns. The channel holds an
+  /// HttpClient and its connection pool, so it has to be released explicitly when the
+  /// client is replaced.
+  /// </summary>
+  type private GrpcClientInstance =
+    { Client: obj
+      Channel: GrpcChannel }
+
+  let private clientCache = ConcurrentDictionary<Type, GrpcClientInstance>()
+  let private clientCacheConfig = ConcurrentDictionary<Type, CallConfig>()
+  let private clientCacheGate = obj()
+
+  let private disposeInstance (instance: GrpcClientInstance) =
+    try
+      instance.Channel.Dispose()
+    with _ ->
+      ()
+
+  let private isConfigTheSame (prevCfg: CallConfig) (cfg: CallConfig) =
+    prevCfg.Url = cfg.Url
+    && (prevCfg.X509Cert = cfg.X509Cert)
+    && (prevCfg.JWT = cfg.JWT)
+    && (prevCfg.IsUsingSSL = cfg.IsUsingSSL)
+    && (prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2)
+    && (prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3)
+    && (prevCfg.ValidateCertificate = cfg.ValidateCertificate)
+    && (prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes)
+    && (prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets)
 
   let private isAwaitable (mi: MethodInfo) =
     not (mi.ReturnType.GetMethod("GetAwaiter") = null)
@@ -62,47 +93,57 @@ module MethodInvoker =
     let result = mi.Invoke(instance, args)
     Some result
 
-  let createGrpcClient =
-    let cacheConfig = Dictionary<Type, CallConfig>()
-    let cache = Dictionary<Type, obj>()
+  let private tryGetMatching (clientType: Type) (cfg: CallConfig) =
+    match clientCache.TryGetValue clientType with
+    | true, existing ->
+      match clientCacheConfig.TryGetValue clientType with
+      | true, prevCfg when isConfigTheSame prevCfg cfg -> Some existing
+      | _ -> None
+    | _ -> None
 
-    fun (clientType: Type) (cfg: CallConfig) (onErr: Exception -> unit) ->
-      if (cacheConfig.ContainsKey clientType) then
-        let prevCfg = cacheConfig[clientType]
+  let createGrpcClient (clientType: Type) (cfg: CallConfig) (onErr: Exception -> unit) =
+    //fast path: the cached client was created with the same configuration
+    match tryGetMatching clientType cfg with
+    | Some existing -> existing.Client
+    | None ->
+      lock clientCacheGate (fun () ->
+        //another thread may have created or replaced the client in the meantime
+        match tryGetMatching clientType cfg with
+        | Some existing -> existing.Client
+        | None ->
+          //the configuration was changed, so the cached client is replaced. Its channel
+          //owns a connection pool that has to be released, otherwise every endpoint
+          //change leaks a live socket set.
+          match clientCache.TryRemove clientType with
+          | true, old -> disposeInstance old
+          | _ -> ()
 
-        let isConfigTheSame =
-          prevCfg.Url = cfg.Url
-          && (prevCfg.X509Cert = cfg.X509Cert)
-          && (prevCfg.JWT = cfg.JWT)
-          && (prevCfg.IsUsingSSL = cfg.IsUsingSSL)
-          && (prevCfg.IsUsingHttp2 = cfg.IsUsingHttp2)
-          && (prevCfg.IsUsingHttp3 = cfg.IsUsingHttp3)
-          && (prevCfg.ValidateCertificate = cfg.ValidateCertificate)
-          && (prevCfg.IsUsingNamedPipes = cfg.IsUsingNamedPipes)
-          && (prevCfg.IsUsingUnixDomainSockets = cfg.IsUsingUnixDomainSockets)
+          clientCacheConfig.TryRemove clientType |> ignore
 
-        //if the config was changed, clear the cached instance
-        if not isConfigTheSame then
-          let _ = cache.Remove(clientType)
-          let _ = cacheConfig.Remove(clientType)
-          ()
+          AppContext.SetSwitch(
+            "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport",
+            cfg.Url.StartsWith("http://")
+          )
 
-      if cache.ContainsKey clientType then
-        cache[clientType]
-      else
-        AppContext.SetSwitch(
-          "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport",
-          cfg.Url.StartsWith("http://")
-        )
+          let channel = ChannelBuilder.createGrpcChannel cfg
+          let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io, onErr))
 
-        //let clientType = methodInfo.DeclaringType
-        let channel = (ChannelBuilder.createGrpcChannel cfg) :> ChannelBase
-        let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io, onErr))
+          let clientInstance = Activator.CreateInstance(clientType, callInvoker)
+          clientCache[clientType] <- { Client = clientInstance; Channel = channel }
+          clientCacheConfig[clientType] <- cfg
+          clientInstance)
 
-        let clientInstance = Activator.CreateInstance(clientType, callInvoker)
-        cache[clientType] <- clientInstance
-        cacheConfig[clientType] <- cfg
-        clientInstance
+  /// <summary>
+  /// Releases every cached gRPC channel and its connection pool. Call this when the
+  /// application shuts down.
+  /// </summary>
+  let disposeGrpcClients () =
+    lock clientCacheGate (fun () ->
+      for instance in clientCache.Values do
+        disposeInstance instance
+
+      clientCache.Clear()
+      clientCacheConfig.Clear())
 
   let invoke (methodInfo: MethodInfo) (mParams: obj array) (cfg: CallConfig) (onErr: Exception -> unit) =
     task {
