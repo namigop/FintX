@@ -101,6 +101,9 @@ public class ClientStreamingReqViewModel : UnaryReqViewModel {
             var writer = new WriteClientStreamFeature();
             this.CallResponse = await writer.CompleteWrite(resp);
         }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
         finally {
             this.CanWrite = false;
             //this._clientStreamEditor.Clear();

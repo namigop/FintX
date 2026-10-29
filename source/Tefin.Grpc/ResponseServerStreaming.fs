@@ -69,7 +69,7 @@ type ResponseServerStreaming =
   member x.OkayOrFailed() =
     match x with
     | Okay v -> struct (true, box v.Response, v.Context)
-    | Error err -> struct (true, err.Response, err.Context)
+    | Error err -> struct (false, err.Response, err.Context)
 
 module ServerStreamingResponse =
   let private wrapResponse =

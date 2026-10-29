@@ -31,12 +31,10 @@ module TimedAsyncStreamReader =
       io.Log.Error $"{exc}"
 
     let onMoveNext (reader: IAsyncStreamReader<'T>) (token: CancellationToken) =
-      task {
-        try 
-          let! ok, _ = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
-          return ok
-        with _ -> return false
-        
+      task {        
+        //TimeIt already reports the error and rethrows, so the exception is propagated to the caller.
+        let! ok, _ = TimeIt.runTaskWithReturnValue (fun () -> reader.MoveNext token) (Some onSuccess) (Some onError)
+        return ok
       }
 
     new AsyncStreamReader<'T>(stream, onMoveNext)

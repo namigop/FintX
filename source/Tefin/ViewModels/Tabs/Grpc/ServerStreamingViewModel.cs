@@ -183,6 +183,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                 }
             }
         }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
         finally {
             this.IsBusy = false;
             this.ReqViewModel.RequestEditor.EndRequest();

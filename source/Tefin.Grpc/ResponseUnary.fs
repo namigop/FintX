@@ -27,7 +27,7 @@ type ResponseUnary =
   member x.OkayOrFailed() =
     match x with
     | Okay v -> struct (true, v.Response, v.Context)
-    | Error err -> struct (true, err.Response, err.Context)
+    | Error err -> struct (false, err.Response, err.Context)
 
 type AsyncUnaryCallInfo =
   { ResponseHeadersPropInfo: PropertyInfo

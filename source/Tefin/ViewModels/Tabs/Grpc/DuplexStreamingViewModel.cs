@@ -256,6 +256,9 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 }
             }
         }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
         finally {
             this.IsBusy = false;
         }

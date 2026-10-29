@@ -79,7 +79,7 @@ type ResponseDuplexStreaming =
   member x.OkayOrFailed() =
     match x with
     | Okay v -> struct (true, box v.Response, v.Context)
-    | Error err -> struct (true, err.Response, err.Context)
+    | Error err -> struct (false, err.Response, err.Context)
 
 module DuplexStreamingResponse =
   let private wrapResponse =
@@ -194,20 +194,14 @@ module DuplexStreamingResponse =
 
   let getResponseHeader (resp: DuplexStreamingCallResponse) =
     task {
-      try
-        let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
-        return { resp with Headers = Some meta }
-      with exc ->
-        return { resp with Headers = Some(Metadata()) }
+      let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
+      return { resp with Headers = Some meta }
     }
 
   let completeWrite (resp: DuplexStreamingCallResponse) =
-    task {
-      try
-        do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
-        return { resp with WriteCompleted = true }
-      with exc ->
-        return { resp with WriteCompleted = true }
+    task {      
+      do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
+      return { resp with WriteCompleted = true }
     }
 
   let toStandardCallResponse (resp: DuplexStreamingCallResponse) =

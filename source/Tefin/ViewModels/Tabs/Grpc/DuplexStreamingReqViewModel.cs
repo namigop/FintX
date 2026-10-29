@@ -103,6 +103,9 @@ public class DuplexStreamingReqViewModel : UnaryReqViewModel {
                 this.CallResponse = await writer.CompleteWrite(this.CallResponse);
             }
         }
+        catch (Exception exc) {
+            this.Io.Log.Error(exc);
+        }
         finally {
             this.CanWrite = false;
             //this.ClientStreamEditor.Clear();

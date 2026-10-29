@@ -82,7 +82,7 @@ type ResponseClientStreaming =
   member x.OkayOrFailed() =
     match x with
     | Okay v -> struct (true, box v.Response, v.Context)
-    | Error err -> struct (true, err.Response, err.Context)
+    | Error err -> struct (false, err.Response, err.Context)
 
 module ClientStreamingResponse =
   let private wrapResponse =
@@ -228,21 +228,15 @@ module ClientStreamingResponse =
     }
 
   let getResponseHeader (resp: ClientStreamingCallResponse) =
-    task {
-      try
-        let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
-        return { resp with Headers = Some meta }
-      with exc ->
-        return resp
+    task {       
+      let! meta = resp.CallInfo.GetResponseHeaders(resp.CallResult) //prop.GetValue(okayResp.CallResult) :?> Task<Metadata>
+      return { resp with Headers = Some meta }
     }
 
   let completeWrite (resp: ClientStreamingCallResponse) =
-    task {
-      try
-        do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
-        return { resp with WriteCompleted = true }
-      with exc ->
-        return { resp with WriteCompleted = true }
+    task {      
+      do! (resp.CallInfo.CompleteAsyncMethodInfo.Invoke(resp.RequestStream, null) :?> Task)
+      return { resp with WriteCompleted = true }
     }
 
   let getResponse (resp: ClientStreamingCallResponse) =
