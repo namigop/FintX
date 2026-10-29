@@ -86,26 +86,34 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
 
     private void EndStreaming(DuplexStreamingCallResponse resp) {
         async Task<object> CompleteRead() {
-            var responseCompletedTask = this.RespViewModel.ResponseCompletedTask;
-            if (responseCompletedTask != null) {
-                await responseCompletedTask;
+            try {
+                var responseCompletedTask = this.RespViewModel.ResponseCompletedTask;
+                if (responseCompletedTask != null) {
+                    await responseCompletedTask;
+                }
+
+                var feature = new EndStreamingFeature();
+                var respWithStatus = await feature.EndDuplexStreaming(resp);
+
+                object model = new StandardResponseViewModel.GrpcStandardResponse {
+                    Headers = respWithStatus.Headers.Value,
+                    Trailers = respWithStatus.Trailers.Value,
+                    Status = respWithStatus.Status.Value
+                };
+
+                return model;
             }
-
-            var feature = new EndStreamingFeature();
-            var respWithStatus = await feature.EndDuplexStreaming(resp);
-
-            object model = new StandardResponseViewModel.GrpcStandardResponse {
-                Headers = respWithStatus.Headers.Value,
-                Trailers = respWithStatus.Trailers.Value,
-                Status = respWithStatus.Status.Value
-            };
-
-            this.ReqViewModel.RequestEditor.EndRequest();
-            this.RaisePropertyChanged(nameof(this.CanStop));
-            return model;
+            catch (Exception exc) {
+                this.RespViewModel.ShowFailure(exc);
+                throw;
+            }
+            finally {
+                this.ReqViewModel.RequestEditor.EndRequest();
+                this.RaisePropertyChanged(nameof(this.CanStop));
+            }
         }
 
-        _ = this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+        this.ObserveComplete(this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead));
     }
 
     public override string GetRequestContent() {
@@ -268,12 +276,12 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                         this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response,
                             this._envVars.RequestStreamVariables);
                         this.RespViewModel.Show(ok, response, context);
-                        _ = this.RespViewModel.SetupDuplexStreamNode(response);
+                        this.ObserveComplete(this.RespViewModel.SetupDuplexStreamNode(response));
                     }
                     else {
-                        var d = (DuplexStreamingCallResponse)response;
-                        d = await DuplexStreamingResponse.getResponseHeader(d);
-                        this.EndStreaming(d);
+                        this.ReqViewModel.RequestEditor.EndRequest();
+                        this.RaisePropertyChanged(nameof(this.CanStop));
+                        this.RespViewModel.Show(false, response, context);
                     }
                 }
                 finally {

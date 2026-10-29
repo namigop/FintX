@@ -19,17 +19,17 @@ type TraceMessage =
 
 module MethodInvoker =
 
-  /// <summary>
-  /// A cached gRPC client together with the channel that it owns. The channel holds an
-  /// HttpClient and its connection pool, so it has to be released explicitly when the
-  /// client is replaced.
-  /// </summary>
   type private GrpcClientInstance =
     { Client: obj
       Channel: GrpcChannel }
 
-  let private clientCache = ConcurrentDictionary<Type, GrpcClientInstance>()
-  let private clientCacheConfig = ConcurrentDictionary<Type, CallConfig>()
+  /// <summary>
+  /// The cache key identifies the endpoint as well as the generated client type. Keying
+  /// </summary>
+  type private ClientCacheKey = Type * string
+
+  let private clientCache = ConcurrentDictionary<ClientCacheKey, GrpcClientInstance>()
+  let private clientCacheConfig = ConcurrentDictionary<ClientCacheKey, CallConfig>()
   let private clientCacheGate = obj()
 
   let private disposeInstance (instance: GrpcClientInstance) =
@@ -94,14 +94,18 @@ module MethodInvoker =
     Some result
 
   let private tryGetMatching (clientType: Type) (cfg: CallConfig) =
-    match clientCache.TryGetValue clientType with
+    let key = (clientType, cfg.Url)
+
+    match clientCache.TryGetValue key with
     | true, existing ->
-      match clientCacheConfig.TryGetValue clientType with
+      match clientCacheConfig.TryGetValue key with
       | true, prevCfg when isConfigTheSame prevCfg cfg -> Some existing
       | _ -> None
     | _ -> None
 
   let createGrpcClient (clientType: Type) (cfg: CallConfig) (onErr: Exception -> unit) =
+    let key = (clientType, cfg.Url)
+
     //fast path: the cached client was created with the same configuration
     match tryGetMatching clientType cfg with
     | Some existing -> existing.Client
@@ -114,11 +118,11 @@ module MethodInvoker =
           //the configuration was changed, so the cached client is replaced. Its channel
           //owns a connection pool that has to be released, otherwise every endpoint
           //change leaks a live socket set.
-          match clientCache.TryRemove clientType with
+          match clientCache.TryRemove key with
           | true, old -> disposeInstance old
           | _ -> ()
 
-          clientCacheConfig.TryRemove clientType |> ignore
+          clientCacheConfig.TryRemove key |> ignore
 
           AppContext.SetSwitch(
             "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport",
@@ -129,8 +133,8 @@ module MethodInvoker =
           let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io, onErr))
 
           let clientInstance = Activator.CreateInstance(clientType, callInvoker)
-          clientCache[clientType] <- { Client = clientInstance; Channel = channel }
-          clientCacheConfig[clientType] <- cfg
+          clientCache[key] <- { Client = clientInstance; Channel = channel }
+          clientCacheConfig[key] <- cfg
           clientInstance)
 
   /// <summary>

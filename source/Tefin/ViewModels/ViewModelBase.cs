@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -93,6 +94,13 @@ public class ViewModelBase : ReactiveObject, IDisposable {
     }
 
     protected void MarkForCleanup(IDisposable d) => this._disposables.Add(d);
+
+ 
+    protected void ObserveComplete(Task task) {
+        _ = task.ContinueWith(
+            t => this.Io.Log.Error(t.Exception?.GetBaseException() ?? new Exception("The call failed.")),
+            TaskContinuationOptions.OnlyOnFaulted);
+    }
 
     public void SubscribeTo<R>(Expression<Func<ViewModelBase, R>> prop, Action<ViewModelBase> onChanged) {
         var b = (MemberExpression)prop.Body;

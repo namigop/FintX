@@ -92,18 +92,25 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
 
     private void EndStreaming(ClientStreamingCallResponse resp) {
         async Task<object> CompleteRead() {
-            //get the method call response
-            var callResponse = await ClientStreamingResponse.getResponse(resp);
-
-            //get the headers/trailers
-            var feature = new EndStreamingFeature();
-            callResponse = await feature.EndClientStreaming(callResponse);
-            var response = await this.EndClientStreamingCall(callResponse);
-
-            return response;
+            try {
+                var callResponse = await ClientStreamingResponse.getResponse(resp);
+                var feature = new EndStreamingFeature();
+                callResponse = await feature.EndClientStreaming(callResponse);
+                return await this.EndClientStreamingCall(callResponse);
+            }
+            catch (Exception exc) {
+                this.RespViewModel.ShowFailure(exc);
+                throw;
+            }
+            finally {
+                this.ReqViewModel.RequestEditor.EndRequest();
+                this.RaisePropertyChanged(nameof(this.CanStop));
+            }
         }
 
-        _ = this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead);
+        //the task must be observed. A discarded task swallows the error, leaves the
+        //response pane empty and nothing is logged.
+        this.ObserveComplete(this.RespViewModel.Complete(resp.CallInfo.ResponseItemType, CompleteRead));
     }
 
     public override string GetRequestContent() {
@@ -247,7 +254,12 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                             this._envVars.RequestStreamVariables); //
                     }
                     else {
-                        this.EndStreaming((ClientStreamingCallResponse)response);
+                        //the call failed before it was established. The payload is the
+                        //error, not a call response, so end the request and render the
+                        //failure instead of casting it.
+                        this.ReqViewModel.RequestEditor.EndRequest();
+                        this.RaisePropertyChanged(nameof(this.CanStop));
+                        this.RespViewModel.Show(false, response, context);
                     }
                 }
                 finally {

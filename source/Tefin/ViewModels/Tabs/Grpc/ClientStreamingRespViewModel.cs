@@ -18,6 +18,7 @@ public class ClientStreamingRespViewModel(MethodInfo methodInfo, ProjectTypes.Cl
     }
 
     public override void Show(bool ok, object response, Context context) {
-        //base.Show(ok, response, context);
+        if (ok) return;
+        this.ShowFailure(context.GetError());
     }
 }

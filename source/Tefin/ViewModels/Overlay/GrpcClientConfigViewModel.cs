@@ -23,22 +23,9 @@ namespace Tefin.ViewModels.Overlay;
 public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     private readonly string _clientConfigFile;
     private readonly Action _onClientNameChanged;
-    private string _certFile = "";
-    private string _certFilePassword = "";
     private ProjectTypes.ClientConfig _clientConfig = null!;
-    private string _clientName = "";
-    private string _description = "";
     private bool _isCertFromFile;
-    private bool _isUsingSsl;
-    private string _jwt = "";
-    private bool _requiresPassword;
     private StoreLocation _selectedCertStoreLocation;
-    private StoreCertSelection _selectedStoreCertificate = null!;
-    private string _thumbprint = "";
-    private string _url = "";
-    private bool _isHttp2Checked;
-    private bool _isHttp3Checked;
-    private bool _validateCertificate;
 
     public GrpcClientConfigViewModel(string clientConfigFile, Action onClientNameChanged) {
         this._clientConfigFile = clientConfigFile;
@@ -69,29 +56,29 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
 
     [FileExists]
     public string CertFile {
-        get => this._certFile;
+        get;
         set {
-            this.RaiseAndSetIfChanged(ref this._certFile, value);
+            this.RaiseAndSetIfChanged(ref field, value);
             this.RequiresPassword = Path.GetExtension(value).ToLower() == Ext.pfxExt;
         }
-    }
+    } = "";
 
     public string CertFilePassword {
-        get => this._certFilePassword;
-        set => this.RaiseAndSetIfChanged(ref this._certFilePassword, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public List<StoreLocation> CertStoreLocations { get; } = new();
 
     public string ClientName {
-        get => this._clientName;
-        set => this.RaiseAndSetIfChanged(ref this._clientName, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public string Description {
-        get => this._description;
-        set => this.RaiseAndSetIfChanged(ref this._description, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public bool IsCertFromFile {
         get => this._isCertFromFile;
@@ -99,14 +86,14 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public bool IsUsingSsl {
-        get => this._isUsingSsl;
-        set => this.RaiseAndSetIfChanged(ref this._isUsingSsl, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public string Jwt {
-        get => this._jwt;
-        set => this.RaiseAndSetIfChanged(ref this._jwt, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public ICommand LoadStoreCertificatesCommand { get; }
 
@@ -114,8 +101,8 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     public ICommand OpenCertFileCommand { get; }
 
     public bool RequiresPassword {
-        get => this._requiresPassword;
-        private set => this.RaiseAndSetIfChanged(ref this._requiresPassword, value);
+        get;
+        private set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public ICommand ResetCommand { get; }
@@ -129,43 +116,40 @@ public class GrpcClientConfigViewModel : ViewModelBase, IOverlayViewModel {
     }
 
     public StoreCertSelection SelectedStoreCertificate {
-        get => this._selectedStoreCertificate;
+        get;
         set {
-            this.RaiseAndSetIfChanged(ref this._selectedStoreCertificate, value);
-            this.Thumbprint = this._selectedStoreCertificate?.Thumbprint ?? string.Empty;
+            this.RaiseAndSetIfChanged(ref field, value);
+            this.Thumbprint = field?.Thumbprint ?? string.Empty;
         }
-    }
+    } = null!;
 
     public ObservableCollection<StoreCertSelection> StoreCertificates { get; } = new();
 
     public string Thumbprint {
-        get => this._thumbprint;
-        set => this.RaiseAndSetIfChanged(ref this._thumbprint, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public string Url {
-        get => this._url;
-        set => this.RaiseAndSetIfChanged(ref this._url, value);
-    }
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
+    } = "";
 
     public string Title { get; } = "Client Configuration";
 
     public bool IsHttp2Checked {
-        get => this._isHttp2Checked;
-        set => this.RaiseAndSetIfChanged(ref _isHttp2Checked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public bool IsHttp3Checked {
-        get => this._isHttp3Checked;
-        set => this.RaiseAndSetIfChanged(ref _isHttp3Checked, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
-
-    /// <summary>
-    /// When false, the server certificate is not validated. Defaults to false.
-    /// </summary>
+    
     public bool ValidateCertificate {
-        get => this._validateCertificate;
-        set => this.RaiseAndSetIfChanged(ref this._validateCertificate, value);
+        get;
+        set => this.RaiseAndSetIfChanged(ref field, value);
     }
 
     public void Close() => GlobalHub.publish(new CloseOverlayMessage(this));

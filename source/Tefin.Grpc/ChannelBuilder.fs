@@ -324,15 +324,6 @@ module ChannelBuilder =
     let defaultMethodConfig =
       let m = MethodConfig()
       m.Names.Add(MethodName.Default)
-      m.RetryPolicy <-
-        RetryPolicy(
-          MaxAttempts = 5,
-          InitialBackoff = TimeSpan.FromSeconds 1L,
-          MaxBackoff = TimeSpan.FromSeconds 5L,
-          BackoffMultiplier = 1.5
-        )
-
-      m.RetryPolicy.RetryableStatusCodes.Add(StatusCode.Unavailable)
       m
     
     let socketHandler =

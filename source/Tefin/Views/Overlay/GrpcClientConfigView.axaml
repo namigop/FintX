@@ -126,7 +126,7 @@
                     </Grid>
 
                     <CheckBox IsChecked="{Binding ValidateCertificate}" Margin="0 8 0 0">
-                        <TextBlock Text="Validate certificate"></TextBlock>
+                        <TextBlock Text="Validate server certificate"></TextBlock>
                     </CheckBox>
 
                 </StackPanel>

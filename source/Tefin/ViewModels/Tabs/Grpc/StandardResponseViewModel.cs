@@ -1,6 +1,7 @@
 #region
 
 using System.Reflection;
+using System.Threading.Tasks;
 
 using Grpc.Core;
 
@@ -54,6 +55,24 @@ public abstract class StandardResponseViewModel : ViewModelBase {
     }
 
     public abstract void Init(AllVariableDefinitions envVariables);
+    
+    public void ShowFailure(Exception? error) {
+        var failure = new GrpcCallFailure();
+
+        switch (error) {
+            case RpcException rpc:
+                failure.Status = rpc.StatusCode.ToString();
+                failure.Error = rpc.Status.Detail;
+                break;
+            case not null:
+                failure.Error = error.Message;
+                break;
+        }
+
+        var task = this.ResponseEditor.Complete(typeof(GrpcCallFailure), () => Task.FromResult<object>(failure),
+            this.ResponseVariables);
+        this.ObserveComplete(task);
+    }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {
         try {
@@ -92,5 +111,13 @@ public abstract class StandardResponseViewModel : ViewModelBase {
         public Metadata Headers { get; set; } = new();
         public Status Status { get; set; }
         public Metadata Trailers { get; set; } = new();
+    }
+
+    /// <summary>
+    /// A failed call, flattened for display.
+    /// </summary>
+    public class GrpcCallFailure {
+        public string Status { get; set; } = "";
+        public string Error { get; set; } = "";
     }
 }

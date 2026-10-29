@@ -76,6 +76,9 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         }
     }
 
+    /// <summary>
+    /// Reads the response stream into the response stream editor.
+    /// </summary>
     public async Task SetupServerStreamNode(object response) {
         var resp = (ServerStreamingCallResponse)response;
         var readServerStream = new ReadServerStreamFeature();
@@ -86,9 +89,6 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
                 this.ServerStreamEditor.AddItem(d);
             }
         }
-        catch (Exception exc) {
-            this.Io.Log.Error(exc);
-        }
         finally {
             this.IsBusy = false;
             this.CanRead = false;
@@ -96,9 +96,13 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
     }
 
     public override void Show(bool ok, object response, Context context) {
-        //base.Show(ok, response, context);
-        var stream = Activator.CreateInstance(this._listType);
-        this.ServerStreamEditor.Show(stream!, this.ResponseStreamVariables);
+        if (ok) {
+            var stream = Activator.CreateInstance(this._listType);
+            this.ServerStreamEditor.Show(stream!, this.ResponseStreamVariables);
+            return;
+        }
+
+        this.ShowFailure(context.GetError());
     }
 
     private void ShowAsJson() {

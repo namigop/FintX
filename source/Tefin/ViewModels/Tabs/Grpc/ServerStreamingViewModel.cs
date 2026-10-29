@@ -179,8 +179,19 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                     this.IsBusy = false;
 
                     this.RespViewModel.Show(ok, response, context);
-                    await this.RespViewModel.SetupServerStreamNode(response);
-                    await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+
+                    if (!ok) {
+                        return;
+                    }
+
+                    try {
+                        await this.RespViewModel.SetupServerStreamNode(response);
+                        await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
+                    }
+                    catch (Exception exc) {
+                        this.RespViewModel.ShowFailure(exc);
+                        throw;
+                    }
 
                     var elapsed = DateTime.Now - context.StartTime;
                     this.StatusText = $"Elapsed: {printTimeSpan(elapsed)}";
