@@ -96,14 +96,17 @@ module ChannelBuilder =
     let callCredentials = CallCredentials.FromInterceptor(authInterceptor)
     callCredentials
 
-  let buildChannel (cfg: CallConfig) (httpclient: HttpClient) (defaultMethodConfig: MethodConfig) =
-    let svcConfig = ServiceConfig()
-    svcConfig.MethodConfigs.Add defaultMethodConfig
-
+  /// <summary>
+  /// Composes the channel credentials with the call credentials, when a JWT is configured.
+  /// </summary>
+  /// <remarks>
+  /// Every transport goes through this, so that a JWT is not silently dropped when the client
+  /// uses a named pipe or a unix domain socket instead of http(s).
+  /// </remarks>
+  let private composeCredentials (cfg: CallConfig) =
     let callCredentialsOpt =
       if not (String.IsNullOrWhiteSpace cfg.JWT) then
-        let jwtCredentials = getJWTCredentials cfg
-        Some jwtCredentials
+        Some (getJWTCredentials cfg)
       else
         None
 
@@ -118,12 +121,20 @@ module ChannelBuilder =
       | Some c -> ChannelCredentials.Create(channelCredentials, c)
       | None -> channelCredentials
 
-    let options =      
+    composedCredentials, callCredentialsOpt.IsSome
+
+  let buildChannel (cfg: CallConfig) (httpclient: HttpClient) (defaultMethodConfig: MethodConfig) =
+    let svcConfig = ServiceConfig()
+    svcConfig.MethodConfigs.Add defaultMethodConfig
+
+    let composedCredentials, hasCallCredentials = composeCredentials cfg
+
+    let options =
       if cfg.IsUsingHttp3 then
         GrpcChannelOptions(
           HttpClient = httpclient,
           Credentials = composedCredentials,
-          UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
+          UnsafeUseInsecureChannelCallCredentials = (hasCallCredentials && cfg.Url.StartsWith("http://")),
           ServiceConfig = svcConfig,
           HttpVersion = Version(3,0),
           HttpVersionPolicy = if cfg.IsUsingHttp2 then HttpVersionPolicy.RequestVersionOrLower else HttpVersionPolicy.RequestVersionExact)
@@ -131,12 +142,15 @@ module ChannelBuilder =
         GrpcChannelOptions(
           HttpClient = httpclient,
           Credentials = composedCredentials,
-          UnsafeUseInsecureChannelCallCredentials = (callCredentialsOpt.IsSome && cfg.Url.StartsWith("http://")),
+          UnsafeUseInsecureChannelCallCredentials = (hasCallCredentials && cfg.Url.StartsWith("http://")),
           ServiceConfig = svcConfig
         )
       else
-        GrpcChannelOptions(HttpClient = httpclient)
-    
+        GrpcChannelOptions(
+          HttpClient = httpclient,
+          Credentials = composedCredentials,
+          UnsafeUseInsecureChannelCallCredentials = (hasCallCredentials && cfg.Url.StartsWith("http://")))
+
     GrpcChannel.ForAddress(cfg.Url, options)
     
 
@@ -228,39 +242,38 @@ module ChannelBuilder =
                 raise exc              
             return clientStream :> Stream
           }
-          |> fun t -> ValueTask.FromResult(t.Result)                
+          |> fun t -> ValueTask<Stream>(t)
       
       let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createNamedPipeStream)
       handler.ConnectCallback <- callback
       
       let svcConfig = ServiceConfig()
       svcConfig.MethodConfigs.Add defaultMethodConfig
-      
-      let channelOptions =      
-        if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion = Version(3,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrLower)
-        elif cfg.IsUsingHttp2 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion =  Version(2,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
-        elif cfg.IsUsingHttp3 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion =  Version(3,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
-        else
-          GrpcChannelOptions(HttpHandler = handler, ServiceConfig = svcConfig)
-          
-      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)     
+
+      let composedCredentials, hasCallCredentials = composeCredentials cfg
+
+      //a named pipe is never secured by TLS, so the call credentials are always allowed
+      //over it. Without them the JWT would be dropped and the server would reject the call.
+      let channelOptions =
+        GrpcChannelOptions(
+          ServiceConfig = svcConfig,
+          HttpHandler = handler,
+          Credentials = composedCredentials,
+          UnsafeUseInsecureChannelCallCredentials = hasCallCredentials)
+
+      if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
+        channelOptions.HttpVersion <- Version(3,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionOrLower
+      elif cfg.IsUsingHttp2 then
+        channelOptions.HttpVersion <- Version(2,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionExact
+      elif cfg.IsUsingHttp3 then
+        channelOptions.HttpVersion <- Version(3,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionExact
+
+      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)
       channel
-  
+
   let createUdsChannel (cfg:CallConfig) (uds:UnixDomainSocketClientConfig) (handler:SocketsHttpHandler) (defaultMethodConfig: MethodConfig) =
       let protocolType =
          let ok, v = Enum.TryParse<ProtocolType>(uds.ProtocolType)
@@ -283,7 +296,7 @@ module ChannelBuilder =
 
             return new NetworkStream(socket, true) :> Stream
           }
-          |> fun t -> ValueTask.FromResult(t.Result)                
+          |> fun t -> ValueTask<Stream>(t)
       
         
       let callback = Func<SocketsHttpConnectionContext, CancellationToken,ValueTask<Stream>>(createUdsStream)
@@ -291,32 +304,30 @@ module ChannelBuilder =
         
       let svcConfig = ServiceConfig()
       svcConfig.MethodConfigs.Add defaultMethodConfig
-      
-      let channelOptions =      
-        if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion = Version(3,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionOrHigher)
-        elif cfg.IsUsingHttp2 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion =  Version(2,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
-        elif cfg.IsUsingHttp3 then
-          GrpcChannelOptions(
-            ServiceConfig = svcConfig,
-            HttpHandler = handler,
-            HttpVersion =  Version(3,0),
-            HttpVersionPolicy =  HttpVersionPolicy.RequestVersionExact)
-        else
-          GrpcChannelOptions(HttpHandler = handler, ServiceConfig = svcConfig)
-          
-      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)     
+
+      let composedCredentials, hasCallCredentials = composeCredentials cfg
+
+      //a unix domain socket is never secured by TLS
+      let channelOptions =
+        GrpcChannelOptions(
+          ServiceConfig = svcConfig,
+          HttpHandler = handler,
+          Credentials = composedCredentials,
+          UnsafeUseInsecureChannelCallCredentials = hasCallCredentials)
+
+      if cfg.IsUsingHttp3 && cfg.IsUsingHttp2 then
+        channelOptions.HttpVersion <- Version(3,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionOrHigher
+      elif cfg.IsUsingHttp2 then
+        channelOptions.HttpVersion <- Version(2,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionExact
+      elif cfg.IsUsingHttp3 then
+        channelOptions.HttpVersion <- Version(3,0)
+        channelOptions.HttpVersionPolicy <- HttpVersionPolicy.RequestVersionExact
+
+      let channel = GrpcChannel.ForAddress(cfg.Url, channelOptions)
       channel
-      
+
   let createGrpcChannel (cfg: CallConfig) =
     if cfg.IsUsingHttp2 = false && cfg.IsUsingHttp3 = false then
       raise (ArgumentException("At least one of Http2 or Http3 must be enabled"))

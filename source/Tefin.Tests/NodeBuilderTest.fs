@@ -72,7 +72,8 @@ let ``Can build Dictionary object tree`` () =
     //1. Validate the Key
     Assert.Equal("Key", keyNode.Title)
     Assert.Equal(typeof<string>, keyNode.Type)
-    Assert.Equal(box "", keyNode.Value)
+    let dict = instance :?> Dictionary<string, Test1>
+    Assert.Equal(dict.Keys |> Seq.head, keyNode.Value.ToString())
     
     //2. Validate the Value
     Assert.Equal("Value", valueNode.Title)

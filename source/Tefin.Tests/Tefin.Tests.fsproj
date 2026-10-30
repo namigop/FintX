@@ -12,6 +12,7 @@
         <Compile Include="TestInputTypes.fs" />
         <Compile Include="IoMock.fs" />
         <Compile Include="ClassTypeTests.fs" />
+        <Compile Include="FakerDefaultTests.fs" />
         <Compile Include="ProjectTests.fs" />
         <Compile Include="ShareTests.fs" />
         <Compile Include="CollectionTypesTest.fs" />

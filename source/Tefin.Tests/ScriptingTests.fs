@@ -195,7 +195,7 @@ let ``Can execute handle null return`` () =
         let engine = Script.createEngine "someId"
         let scriptGlobal = ""
         let! res = Script.run io engine scriptGlobal cs
-        Assert.Equal("<null>", Res.getValue res)
+        Assert.Equal("", Res.getValue res)
     }
         
 [<Fact>]

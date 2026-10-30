@@ -23,7 +23,10 @@ module Faker =
       let temp = Dictionary<string, Fk>()
       let f = Faker()    
       let props = f.GetType().GetProperties()
-      let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode"; "ToUpperInvariant"; "ReplaceLineEndings" |]
+      //"String"/"Utf16String"/"Char" (Bogus.Randomizer) fill a buffer with random chars taken from
+      //the whole UTF-16 code unit range, which includes the surrogate block D800-DFFF. They therefore
+      //emit unpaired surrogates, which are not valid UTF-8 and make File.WriteAllText throw.
+      let excluded = [| "WithHost"; "ToString"; "Equals"; "GetType"; "GetHashCode"; "ToUpperInvariant"; "ReplaceLineEndings"; "String"; "Utf16String"; "Char" |]
       for prop in props do
         let propInst = prop.GetValue f
         let mis = prop.PropertyType.GetMethods()
@@ -157,24 +160,30 @@ module Faker =
     else
         struct (false, null)
    
-
+#nowarn 40
 module TypeBuilder =
+  let private handlersLock = obj()
   let private handlers =     
-    ResizeArray(
+    ref
       [| Faker.getDefault
          SystemType.getDefault
          ArrayType.getDefault
          DictionaryType.getDefault
          GenericListType.getDefault
          ClassType.getDefault |]
-    )
 
-  let register handler = handlers.Insert(0, handler) //side-effect
-    
+  ///Handlers are registered while other threads may already be building types (the app
+  ///registers the grpc handler on startup, tests register handlers while other tests run in
+  ///parallel). Publish a new snapshot instead of mutating the list in place, otherwise a
+  ///concurrent getDefault enumerates a collection that is being modified and throws
+  ///"Collection was modified".
+  let register handler = //side-effect
+    lock handlersLock (fun () -> handlers.Value <- Array.append [| handler |] handlers.Value)
+
   let getDefault (name:string) (type2: Type) (createInstance: bool) (parentInstance: obj option) (depth: int) =
     let result =
-      [ for h in handlers -> h ]
-      |> Seq.fold
+      handlers.Value
+      |> Array.fold
         (fun state handleFunc ->
           let struct (handled: bool, _) = state
           if handled then

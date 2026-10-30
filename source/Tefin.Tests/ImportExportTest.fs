@@ -3,6 +3,7 @@ module ImportExportTest
 
 open System
 open System.Threading
+open System.Text.Json
 open Grpc.Core
 open Newtonsoft.Json.Linq
 open Tefin.Core
@@ -11,6 +12,16 @@ open Tefin.Grpc.Dynamic
 open Tefin.Views.Types
 open Xunit
 open Tefin.Tests.TestInputTypes
+
+///The raw json text of a request stream item, exactly as it was written to the export file.
+///Newtonsoft's object model (JObject/JToken) turns every json number into a System.Double,
+///which silently changes decimals - a decimal that carries trailing zeros in its scale
+///(e.g. 0.7400989136686410) is not representable as a double. Tefin reads an exported file
+///back with JsonConvert, which keeps the numbers as they were written, so read the exported
+///item the same way here.
+let private rawRequestStreamText (json: string) (index: int) =
+  use doc = JsonDocument.Parse(json)
+  doc.RootElement.GetProperty("RequestStream").[index].GetRawText()
 
  
 //An approximation of the gRPC AsyncClientStreaming class
@@ -87,7 +98,8 @@ let rec ``Can export gRPC DuplexStream`` () =
     Assert.True(jTest2.HasValues)
     
     //validate that the json in the export file is matching our Test1 input instance
-    let fromExport = jTest1.ToObject<Test1>()
+    let fromExport = rawRequestStreamText (Res.getValue jsonRet) 0
+                     |> Instance.jsonDeserialize<Test1>
                      |> fun t -> t.CancellationTokenType <- CancellationToken.None; t
                      |> fun i ->  Instance.jsonSerialize<Test1>(i)
     (test1 :?> Test1).CancellationTokenType <- CancellationToken.None
@@ -137,7 +149,8 @@ let ``Can export gRPC ClientStream`` () =
     Assert.True(jTest2.HasValues)
     
     //validate that the json in the export file is matching our Test1 input instance
-    let fromExport = jTest1.ToObject<Test1>() 
+    let fromExport = rawRequestStreamText (Res.getValue jsonRet) 0
+                     |> Instance.jsonDeserialize<Test1>
                      |> fun t -> t.CancellationTokenType <- CancellationToken.None; t
                      |> fun i ->  Instance.jsonSerialize<Test1>(i)
     (test1 :?> Test1).CancellationTokenType <- CancellationToken.None

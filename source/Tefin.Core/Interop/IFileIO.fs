@@ -2,6 +2,7 @@ namespace Tefin.Core
 
 open System.IO
 open System.IO.Compression
+open System.Text
 open System.Threading
 open System.Threading.Tasks
 
@@ -24,11 +25,14 @@ type IFileIO =
     
 
 module File =
+  
+  let private utf8 = UTF8Encoding(false)
+
   let fileIO =
     { new IFileIO with
         member x.GetLastWriteTime file = File.GetLastWriteTime file
-        member x.WriteAllTextAsync (file: string) (contents: string) = File.WriteAllTextAsync(file, contents)
-        member x.WriteAllText (file: string) (contents: string) = File.WriteAllText(file, contents)
+        member x.WriteAllTextAsync (file: string) (contents: string) = File.WriteAllTextAsync(file, contents, utf8)
+        member x.WriteAllText (file: string) (contents: string) = File.WriteAllText(file, contents, utf8)
         member x.Copy(source: string, target: string) = File.Copy(source, target)
         member x.Move(source: string, target: string) = File.Move(source, target)
         member x.Copy(source: string, target: string, overwrite: bool) = File.Copy(source, target, overwrite)
