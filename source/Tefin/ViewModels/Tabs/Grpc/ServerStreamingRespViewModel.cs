@@ -76,16 +76,13 @@ public class ServerStreamingRespViewModel : StandardResponseViewModel {
         }
     }
 
-    /// <summary>
-    /// Reads the response stream into the response stream editor.
-    /// </summary>
-    public async Task SetupServerStreamNode(object response) {
+   public async Task SetupServerStreamNode(object response, CancellationToken cancellationToken) {
         var resp = (ServerStreamingCallResponse)response;
         var readServerStream = new ReadServerStreamFeature();
 
         try {
             this.CanRead = true;
-            await foreach (var d in readServerStream.ReadResponseStream(resp, CancellationToken.None)) {
+            await foreach (var d in readServerStream.ReadResponseStream(resp, cancellationToken)) {
                 this.ServerStreamEditor.AddItem(d);
             }
         }

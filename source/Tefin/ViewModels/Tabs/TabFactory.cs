@@ -12,28 +12,34 @@ namespace Tefin.ViewModels.Tabs;
 
 public static class TabFactory {
     public static ITabViewModel? From(IExplorerItem item, IOs io, string file = "") {
-        switch (item) {
-            case MockMethodNode m:
-                return new MockMethodTabViewModel(m, file);
-            case FilePerfNode p:
-                return new FilePerfTabViewModel(p);
+        try {
+            switch (item) {
+                case MockMethodNode m:
+                    return new MockMethodTabViewModel(m, file);
+                case FilePerfNode p:
+                    return new FilePerfTabViewModel(p);
 
-            case FileTestNode p2:
-                return new FileTestTabViewModel(p2);
+                case FileTestNode p2:
+                    return new FileTestTabViewModel(p2);
 
-            case FileReqNode p3:
-                return new FileReqTabViewModel(p3);
+                case FileReqNode p3:
+                    return new FileReqTabViewModel(p3);
 
-            case MethodNode p4:
-                return new MethodTabViewModel(p4, file);
+                case MethodNode p4:
+                    return new MethodTabViewModel(p4, file);
 
-            case EnvNode e2:
-                return new EnvEditorTabViewModel(e2);
+                case EnvNode e2:
+                    return new EnvEditorTabViewModel(e2);
 
-            default:
-                io.Log.Warn($"Unable to open unknown item type: {item.GetType().FullName}");
-                return default;
-            //throw new NotSupportedException($"Unknown explorer item type: {item.GetType().FullName}");
+                default:
+                    io.Log.Warn($"Unable to open unknown item type: {item.GetType().FullName}");
+                    return null;
+                //throw new NotSupportedException($"Unknown explorer item type: {item.GetType().FullName}");
+            }
+        }
+        catch (Exception exc) {
+            io.Log.Warn($"Unable to open tab. {exc}");
+            return null;
         }
     }
 }

@@ -125,7 +125,14 @@ module UnaryResponse =
       let wrapperType = ResponseUtils.emitUnaryResponse methodInfo isAsync isError
       let wrapperInst = Activator.CreateInstance(wrapperType)
 
-      if isAsync then
+      if isError then
+        //the error container already holds the error. Completing the call here would
+        //read the response off the error and replace the message with the result of
+        //that read - a cast error instead of the cause of the failure.
+        let prop = wrapperType.GetProperty("Response")
+        prop.SetValue(wrapperInst, resp)
+        return wrapperInst
+      elif isAsync then
         return! completeAsyncCall methodInfo resp wrapperType wrapperInst
       else
         let prop = wrapperType.GetProperty("Response")

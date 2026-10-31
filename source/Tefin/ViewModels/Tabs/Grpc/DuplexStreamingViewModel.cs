@@ -2,6 +2,7 @@
 
 using System.Reactive;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -36,8 +37,7 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.ImportRequestCommand = this.CreateCommand(this.OnImportRequest);
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite,
             _ => this.RaisePropertyChanged(nameof(this.CanStart)));
-        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).CanRead,
-            _ => this.RaisePropertyChanged(nameof(this.CanStart)));
+        this.RespViewModel.SubscribeTo(x => ((DuplexStreamingRespViewModel)x).CanRead, this.OnCanReadChanged);
         this.ReqViewModel.SubscribeTo(x => ((DuplexStreamingReqViewModel)x).CanWrite, this.OnCanWriteChanged);
     }
 
@@ -55,7 +55,19 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     }
 
     public bool CanStart => !this.IsCallInFlight && !(this.ReqViewModel.CanWrite || this.RespViewModel.CanRead);
-    public bool CanStop => this.IsCallInFlight || (this.ReqViewModel.CanWrite && this.ReqViewModel.RequestEditor.CtsReq != null);
+
+    /// <summary>
+    /// True while the call can be stopped: while it is being established, while the request
+    /// stream can still be written, and while the response is being read.
+    /// </summary>
+    /// <remarks>
+    /// The response read has to be stoppable on its own. Once the request stream has been
+    /// completed, CanWrite is false, so without the read the Stop button would go dead
+    /// exactly while the server is still streaming its replies.
+    /// </remarks>
+    public bool CanStop => this.IsCallInFlight
+                           || (this.ReqViewModel.RequestEditor.CtsReq != null
+                               && (this.ReqViewModel.CanWrite || this.RespViewModel.CanRead));
 
     public ICommand ExportRequestCommand { get; }
     public ICommand ImportRequestCommand { get; }
@@ -104,7 +116,12 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                 return model;
             }
             catch (Exception exc) {
-                this.RespViewModel.ShowFailure(exc);
+                //the user stopping the call is not a failure, so it is not rendered as one.
+                var callToken = this.ReqViewModel.RequestEditor.CtsReq?.Token ?? CancellationToken.None;
+                if (!CallCancellation.IsUserCancellation(exc, callToken)) {
+                    this.RespViewModel.ShowFailure(exc);
+                }
+
                 throw;
             }
             finally {
@@ -193,6 +210,11 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
         this.RaisePropertyChanged(nameof(this.CanStart));
     }
 
+    private void OnCanReadChanged(ViewModelBase obj) {
+        this.RaisePropertyChanged(nameof(this.CanStop));
+        this.RaisePropertyChanged(nameof(this.CanStart));
+    }
+
     private async Task OnExportRequest() {
         var (ok, mParams) = this.ReqViewModel.GetMethodParameters();
         if (ok) {
@@ -276,7 +298,10 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
                         this.ReqViewModel.SetupDuplexStream((DuplexStreamingCallResponse)response,
                             this._envVars.RequestStreamVariables);
                         this.RespViewModel.Show(ok, response, context);
-                        this.ObserveComplete(this.RespViewModel.SetupDuplexStreamNode(response));
+                        //the read watches the token of the call, so that the user can
+                        //interrupt a stream that the server never ends.
+                        var callToken = this.ReqViewModel.RequestEditor.CtsReq?.Token ?? CancellationToken.None;
+                        this.ObserveComplete(this.RespViewModel.SetupDuplexStreamNode(response, callToken));
                     }
                     else {
                         this.ReqViewModel.RequestEditor.EndRequest();
@@ -304,8 +329,9 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
 
         this.ReqViewModel.RequestEditor.CtsReq?.Cancel();
 
-        //while the call is still being established there is no request stream to close yet
-        if (!this.IsCallInFlight) {
+        //while the call is still being established there is no request stream to close yet.
+        //once the request stream has been completed, closing it again would fail.
+        if (!this.IsCallInFlight && this.ReqViewModel.CanWrite) {
             this.ReqViewModel.EndWriteCommand.Execute(Unit.Default);
         }
     }

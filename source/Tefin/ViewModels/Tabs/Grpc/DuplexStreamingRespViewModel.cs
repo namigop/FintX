@@ -80,7 +80,7 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
         }
     }
 
-    public async Task SetupDuplexStreamNode(object response) {
+    public async Task SetupDuplexStreamNode(object response, CancellationToken cancellationToken) {
         var resp = (DuplexStreamingCallResponse)response;
         var readDuplexStream = new ReadDuplexStreamFeature();
         var tcs = new TaskCompletionSource();
@@ -90,15 +90,21 @@ public class DuplexStreamingRespViewModel : StandardResponseViewModel {
             this.IsBusy = true;
             this.CanRead = true;
 
-            await foreach (var d in readDuplexStream.ReadResponseStream(resp, CancellationToken.None)) {
+            await foreach (var d in readDuplexStream.ReadResponseStream(resp, cancellationToken)) {
                 this.ServerStreamEditor.AddItem(d);
             }
 
             tcs.SetResult();
         }
         catch (Exception exc) {
-            tcs.SetException(exc);
-            this.Io.Log.Error(exc);
+            if (CallCancellation.IsUserCancellation(exc, cancellationToken)) {
+                //the user stopped the call. That is not a failure.
+                tcs.SetCanceled();
+            }
+            else {
+                tcs.SetException(exc);
+                this.Io.Log.Error(exc);
+            }
         }
         finally {
             this.IsBusy = false;

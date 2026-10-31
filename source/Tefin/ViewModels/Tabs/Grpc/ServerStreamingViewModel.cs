@@ -2,6 +2,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 using System.Windows.Input;
 
 using ReactiveUI;
@@ -184,12 +185,17 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
                         return;
                     }
 
+                    var callToken = this.ReqViewModel.RequestEditor.CtsReq?.Token ?? CancellationToken.None;
+
                     try {
-                        await this.RespViewModel.SetupServerStreamNode(response);
+                        await this.RespViewModel.SetupServerStreamNode(response, callToken);
                         await this.RespViewModel.Complete(typeof(StandardResponseViewModel.GrpcStandardResponse), CompleteRead);
                     }
                     catch (Exception exc) {
-                        this.RespViewModel.ShowFailure(exc);
+                        if (!CallCancellation.IsUserCancellation(exc, callToken)) {
+                            this.RespViewModel.ShowFailure(exc);
+                        }
+
                         throw;
                     }
 

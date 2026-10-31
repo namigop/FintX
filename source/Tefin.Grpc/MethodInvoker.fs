@@ -67,14 +67,22 @@ module MethodInvoker =
       return resultProperty.GetValue(task) |> Some
     }
 
+  /// <summary>
+  /// Unwraps the exception thrown by MethodInfo.Invoke, so that the caller sees the real
+  /// cause instead of "Exception has been thrown by the target of an invocation."
+  /// </summary>
+  let private unwrapInvocationException (exc: Exception) =
+    match exc with
+    | :? TargetInvocationException as tie when not (isNull tie.InnerException) -> tie.InnerException
+    | _ -> exc
+
   let private invokeAwaitableWithResult (mi: MethodInfo) (instance: obj) (args: obj array) =
     task {
-      try
-        let call = mi.Invoke(instance, args)
-        return Some call
-      with exc ->
-        Console.WriteLine exc
-        return Option<obj>.None
+      //the exception is not swallowed here. Returning None made the caller unwrap an
+      //empty option, and F# reports that as "Object reference not set to an instance of
+      //an object." - which hid the actual cause.
+      let call = mi.Invoke(instance, args)
+      return Some call
     }
 
   let private invokeAwaitable (mi: MethodInfo) (instance: obj) (args: obj array) =
@@ -123,12 +131,6 @@ module MethodInvoker =
           | _ -> ()
 
           clientCacheConfig.TryRemove key |> ignore
-
-          AppContext.SetSwitch(
-            "System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport",
-            cfg.Url.StartsWith("http://")
-          )
-
           let channel = ChannelBuilder.createGrpcChannel cfg
           let callInvoker = channel.Intercept(CallInterceptor(cfg.Url, cfg.Io, onErr))
 
@@ -154,20 +156,25 @@ module MethodInvoker =
 
       let client = createGrpcClient methodInfo.DeclaringType cfg onErr
 
-      //if the return type is a Task
-      if (TypeHelper.isOfType typeof<Task> methodInfo.ReturnType) then
-        if methodInfo.ReturnType.IsGenericType then
-          return! invokeTaskWithResult methodInfo client mParams
-        else
-          return! invokeTask methodInfo client mParams
+      try
+        //if the return type is a Task
+        if (TypeHelper.isOfType typeof<Task> methodInfo.ReturnType) then
+          if methodInfo.ReturnType.IsGenericType then
+            return! invokeTaskWithResult methodInfo client mParams
+          else
+            return! invokeTask methodInfo client mParams
 
-      else if isAwaitable methodInfo then
-        if methodInfo.ReturnType.IsGenericType then
-          return! (invokeAwaitableWithResult methodInfo client mParams)
+        else if isAwaitable methodInfo then
+          if methodInfo.ReturnType.IsGenericType then
+            return! (invokeAwaitableWithResult methodInfo client mParams)
+          else
+            return! invokeAwaitable methodInfo client mParams
+        else if methodInfo.ReturnType = typeof<unit> then
+          return (invokeVoid methodInfo client mParams)
         else
-          return! invokeAwaitable methodInfo client mParams
-      else if methodInfo.ReturnType = typeof<unit> then
-        return (invokeVoid methodInfo client mParams)
-      else
-        return (invokeWithResult methodInfo client mParams)
+          return (invokeWithResult methodInfo client mParams)
+      with exc ->
+        //the real cause is in the inner exception of a TargetInvocationException. The caller
+        //turns this into a failed response, and the call pipeline logs it.
+        return raise (unwrapInvocationException exc)
     }
