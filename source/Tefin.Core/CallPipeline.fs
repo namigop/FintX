@@ -90,6 +90,8 @@ module CallPipeline =
 
       for i in [ 0..lastStep ] do
         if lastStep = i then
+          let! updatedCtx = execStep (steps[i]) ctx
+          ctx <- updatedCtx
           let sum = ctx.Steps |> List.sumBy (fun (_, ts) -> ts.TotalMilliseconds)
           let ok = Res.isOk ctx.Response
 
