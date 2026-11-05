@@ -169,6 +169,9 @@ public class UnaryViewModel : GrpCallTypeViewModelBase {
                 this.StatusText = $"Elapsed {printTimeSpan(context.Elapsed.Value)}";
                 this.RespViewModel.Show(response);
             }
+            else {
+                this.RespViewModel.ShowFailure("", GrpcUiUtils.DescribeUnbuiltRequest(this.ReqViewModel.RequestEditor));
+            }
         }
         finally {
             this.IsBusy = false;

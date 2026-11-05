@@ -39,30 +39,16 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         get;
     } = methodInfo;
 
+    public string? LastParametersError {
+        get;
+        private set;
+    }
+
     public void EndRequest() => this.CtsReq = null;
 
     public (bool, object?[]) GetParameters() {
-        if (this._envVars.Count > 0) {
-            //Update the JSON with the env var values from .fxv
-            var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath);
-            if (curEnv != null) {
-                var jsonObject = JObject.Parse(this.Json);
-                foreach (var e in this._envVars) {
-                    var token = jsonObject.SelectToken(e.JsonPath);
-                    var newValue = curEnv.Variables.FirstOrDefault(t => t.Name == e.Tag)?.CurrentValue;
-                    var type = ActualTypes.First(t => t.FullName == e.TypeName);
-                    var typedValue = TypeHelper.indirectCast(newValue, type);
-                    var writer = new JTokenWriter();
-                    JsonSerializer.Create().Serialize(writer, typedValue);
-
-                    writer.Close();
-                    if (newValue != null) {
-                        token?.Replace(writer.Token!); // Replace the value
-                    }
-                }
-
-                this.Json = jsonObject.ToString();
-            }
+        if (this._envVars.Count > 0 && !this.TryApplyEnvVars()) {
+            return (false, []);
         }
 
         var ret = DynamicTypes.fromJsonRequest(this.MethodInfo, this.Json);
@@ -82,6 +68,7 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
                 mParams[^1] = this.CtsReq.Token;
             }
 
+            this.LastParametersError = null;
             return (true, mParams);
         }
 
@@ -89,10 +76,54 @@ public class JsonRequestEditorViewModel(MethodInfo methodInfo) : ViewModelBase, 
         //empty parameter set, the caller must not substitute defaults for a request
         //that the user typed.
         if (ret.IsError) {
+            this.LastParametersError = ret.ErrorValue?.Message ?? "the parameters could not be built";
             this.Io.Log.Error(ret.ErrorValue);
+        }
+        else {
+            //jsonDeserialize logs the parser exception and returns null, so the cause is in
+            //the log rather than on this result. A literal null document lands here too.
+            this.LastParametersError = "the request JSON did not produce a request";
         }
 
         return (false, []);
+    }
+
+    /// <summary>
+    /// Replaces the values in the JSON with the ones from the current env file. Returns false
+    /// when the JSON cannot be read or a variable cannot be applied, having recorded why in
+    /// <see cref="LastParametersError"/>.
+    /// </summary>
+    private bool TryApplyEnvVars() {
+        try {
+            var curEnv = VarsStructure.getVarsFromFile(this.Io, Current.EnvFilePath);
+            if (curEnv == null) {
+                return true;
+            }
+
+            var jsonObject = JObject.Parse(this.Json);
+            foreach (var e in this._envVars) {
+                var token = jsonObject.SelectToken(e.JsonPath);
+                var newValue = curEnv.Variables.FirstOrDefault(t => t.Name == e.Tag)?.CurrentValue;
+                var type = ActualTypes.First(t => t.FullName == e.TypeName);
+                var typedValue = TypeHelper.indirectCast(newValue, type);
+                var writer = new JTokenWriter();
+                JsonSerializer.Create().Serialize(writer, typedValue);
+
+                writer.Close();
+                if (newValue != null) {
+                    token?.Replace(writer.Token!); // Replace the value
+                }
+            }
+
+            this.Json = jsonObject.ToString();
+            return true;
+        }
+        catch (Exception exc) {
+            //this used to throw out of Send, which then showed the user nothing at all
+            this.LastParametersError = $"the environment variables could not be applied ({exc.Message})";
+            this.Io.Log.Error(exc);
+            return false;
+        }
     }
 
     public void Show(object?[] parameters, List<VarDefinition> envVars, ProjectTypes.ClientGroup clientGroup) {

@@ -57,21 +57,32 @@ public abstract class StandardResponseViewModel : ViewModelBase {
     public abstract void Init(AllVariableDefinitions envVariables);
     
     public void ShowFailure(Exception? error) {
-        var failure = new GrpcCallFailure();
-
         switch (error) {
             case RpcException rpc:
-                failure.Status = rpc.StatusCode.ToString();
-                failure.Error = rpc.Status.Detail;
+                this.ShowFailure(rpc.StatusCode.ToString(), rpc.Status.Detail);
                 break;
             case not null:
-                failure.Error = error.Message;
+                this.ShowFailure("", error.Message);
+                break;
+            default:
+                //Context.GetError() returns null when the call reported no exception, but the
+                //call still failed, so the pane has to show something
+                this.ShowFailure("", "");
                 break;
         }
+    }
 
-        var task = this.ResponseEditor.Complete(typeof(GrpcCallFailure), () => Task.FromResult<object>(failure),
-            this.ResponseVariables);
-        this.ObserveComplete(task);
+    public void ShowFailure(string status, string error) =>
+        this.ObserveComplete(RenderFailure(this.ResponseEditor, this.ResponseVariables, status, error));
+
+    /// <summary>
+    /// Renders a failure into a response editor. Shared with the unary response pane, which
+    /// does not derive from <see cref="StandardResponseViewModel"/>.
+    /// </summary>
+    public static Task RenderFailure(IResponseEditorViewModel editor, List<VarDefinition> responseVariables,
+        string status, string error) {
+        var failure = new GrpcCallFailure { Status = status, Error = error };
+        return editor.Complete(typeof(GrpcCallFailure), () => Task.FromResult<object>(failure), responseVariables);
     }
 
     private void OnIsShowingResponseTreeEditor(ViewModelBase obj) {

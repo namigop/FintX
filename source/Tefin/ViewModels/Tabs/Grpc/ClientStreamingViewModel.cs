@@ -266,6 +266,9 @@ public class ClientStreamingViewModel : GrpCallTypeViewModelBase {
                     this.IsCallInFlight = false;
                 }
             }
+            else {
+               this.RespViewModel.ShowFailure("", GrpcUiUtils.DescribeUnbuiltRequest(this.ReqViewModel.RequestEditor));
+            }
         }
         finally {
             this.IsBusy = false;

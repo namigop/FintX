@@ -13,6 +13,7 @@ namespace Tefin.ViewModels.Tabs;
 public interface IRequestEditorViewModel {
     public CancellationTokenSource? CtsReq { get; }
     public MethodInfo MethodInfo { get; }
+    public string? LastParametersError { get; }
 
     void EndRequest();
 

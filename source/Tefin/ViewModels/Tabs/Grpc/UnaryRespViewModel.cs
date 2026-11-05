@@ -68,6 +68,10 @@ public class UnaryRespViewModel : ViewModelBase {
     public void Show(object response) =>
         this.ResponseEditor.Complete(response.GetType(), () => Task.FromResult(response), this.ResponseVariables);
 
+    public void ShowFailure(string status, string error) =>
+        this.ObserveComplete(
+            StandardResponseViewModel.RenderFailure(this.ResponseEditor, this.ResponseVariables, status, error));
+
     private void ShowAsJson() {
         var (ok, resp) = this.TreeResponseEditor.GetResponse();
         this.ResponseEditor = this._jsonRespEditor;

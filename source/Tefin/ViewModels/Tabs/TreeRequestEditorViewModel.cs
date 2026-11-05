@@ -56,13 +56,21 @@ public class TreeRequestEditorViewModel : ViewModelBase, IRequestEditorViewModel
         get;
     }
 
+    public string? LastParametersError {
+        get;
+        private set;
+    }
+
     public void EndRequest() => this.CtsReq = null;
 
     //public List<object?> MethodParameterInstances { get; }
     public (bool, object?[]) GetParameters() {
         if (this.Items.Count == 0 || this.Items[0].Items.Count == 0) {
+            this.LastParametersError = "no parameters have been added";
             return (false, []);
         }
+
+        this.LastParametersError = null;
 
         /* check for nodes with env tag and update the value of
          *  the node with the env variable  */

@@ -16,6 +16,14 @@ using Tefin.ViewModels.Types;
 namespace Tefin.ViewModels.Tabs.Grpc;
 
 public static class GrpcUiUtils {
+    
+    public static string DescribeUnbuiltRequest(IRequestEditorViewModel requestEditor) {
+        var reason = requestEditor.LastParametersError;
+        return string.IsNullOrWhiteSpace(reason)
+            ? "The request could not be built."
+            : $"The request could not be built: {reason}";
+    }
+
     public static async Task ExportRequest(object?[] mParams,
         List<VarDefinition> requestVariables,
         List<VarDefinition> responseVariables,
