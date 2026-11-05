@@ -1,6 +1,7 @@
 namespace rec Tefin.Core.Reflection
 
 open System
+open System.Collections.Concurrent
 open System.Collections.Generic
 open System.IO
 open System.Linq
@@ -194,6 +195,72 @@ module TypeBuilder =
         (struct (false, Unchecked.defaultof<obj>))
     result
     
+/// A proto3 enum uses its zero-valued member as a sentinel meaning "the caller never set this
+/// field". proto3 does not put that value on the wire, so a generated default must pick a member
+/// that carries a real value instead.
+///
+/// Authors spell the sentinel in several ways and only the [OriginalName] attribute - which the
+/// protobuf compiler puts on every member of a generated enum - records which spelling was used:
+/// ADDRESS_TYPE_UNSPECIFIED, UNSPECIFIED, STATUS_UNDEFINED, STATUSUNSPECIFIED, undefined...
+module EnumType =
+
+  let private sentinelWords = [| "UNSPECIFIED"; "UNDEFINED"; "UNKNOWN" |]
+  let private isSentinelName (protoName: string) =
+    let upper = protoName.ToUpperInvariant()
+    sentinelWords |> Array.exists (fun word -> upper.EndsWith(word, StringComparison.Ordinal))
+
+  /// The name the .proto author wrote. Only protobuf enums carry it
+  let private protoName (enumMember: FieldInfo) =
+    let attr = enumMember.GetCustomAttribute<Google.Protobuf.Reflection.OriginalNameAttribute>()
+    if isNull attr then None else Some attr.Name
+  
+  let private buildCandidates (enumType: Type) =
+    let members = enumType.GetFields(BindingFlags.Public ||| BindingFlags.Static)
+
+    let isProtobufEnum = members |> Array.exists (fun m -> not (protoName m).IsNone)
+
+    //Only the zero member can be the sentinel - that is where proto3 puts it.
+    let sentinel =
+      if isProtobufEnum then
+        let zero = Enum.ToObject(enumType, 0)
+        members
+        |> Array.tryFind (fun m -> Object.Equals(m.GetValue(null), zero))
+        |> Option.filter (fun m ->
+          match protoName m with
+          | Some n -> isSentinelName n
+          | None -> false)
+      else
+        None
+
+    match sentinel with
+    | Some sentinel ->
+      let remaining =
+        members
+        |> Array.filter (fun m -> not (Object.ReferenceEquals(m, sentinel)))
+        |> Array.map (fun m -> m.GetValue(null))
+
+      //Nothing but a sentinel: returning it is better than failing.
+      if remaining.Length = 0 then [| sentinel.GetValue(null) |] else remaining
+    | None ->
+      members |> Array.map (fun m -> m.GetValue(null))
+
+  let private candidatesCache = ConcurrentDictionary<Type, obj array>()
+
+  let private candidatesFor (enumType: Type) =
+    match candidatesCache.TryGetValue(enumType) with
+    | true, cached -> cached
+    | _ ->
+      let built = buildCandidates enumType
+      candidatesCache.TryAdd(enumType, built) |> ignore
+      built
+
+  let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
+    if thisType.IsEnum then
+      let candidates = candidatesFor thisType
+      struct (true, candidates.[Random.Shared.Next(candidates.Length)])
+    else
+      struct (false, TypeHelper.getDefault thisType)
+
 module SystemType =
 
   let private info =    
@@ -275,9 +342,7 @@ module SystemType =
 
   let getDefault (name:string) (thisType: Type) (createInstance: bool) (parentInstance: obj option) depth =
     if thisType.IsEnum then
-      let enumVals = Enum.GetValues(thisType)
-      let v = enumVals.GetValue(Random.Shared.Next(0, enumVals.Length))
-      struct (true, v)
+      EnumType.getDefault name thisType createInstance parentInstance depth
     elif info.ContainsKey(thisType) then
       let gen, _ = info[thisType]
       struct (true, gen ())

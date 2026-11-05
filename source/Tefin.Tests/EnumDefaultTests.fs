@@ -55,7 +55,8 @@ type private MeaningfulZero =
     | [<OriginalName("A")>] A = 0
     | [<OriginalName("B")>] B = 1
 
-// A name that ends with a sentinel word only by accident must not be filtered.
+// The prefix of a sentinel is arbitrary - it does not have to be the enum's own type prefix - and a
+// member that merely carries a sentinel word is a real value that has to stay reachable.
 type private KnownSuffix =
     | [<OriginalName("FOO_UNSPECIFIED")>] Unset = 0
     | [<OriginalName("FOO_KNOWN")>] Known = 1
@@ -119,7 +120,7 @@ let ``a protobuf enum whose zero member has a meaning keeps it`` () =
     Assert.True((hits > 0), "the meaningful A = 0 member was never picked")
 
 [<Fact>]
-let ``a name that merely ends in a sentinel word is not filtered`` () =
+let ``a real member is not mistaken for a sentinel`` () =
     let seen =
         [ for _ in 1..400 -> pick typeof<KnownSuffix> ] |> List.distinct
 
