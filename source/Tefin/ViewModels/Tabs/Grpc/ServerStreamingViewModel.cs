@@ -41,7 +41,9 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
     public bool IsCallInFlight {
         get => this._isCallInFlight;
         private set {
-            if (this.RaiseAndSetIfChanged(ref this._isCallInFlight, value)) {
+            var changed = this._isCallInFlight != value;
+            this.RaiseAndSetIfChanged(ref this._isCallInFlight, value);
+            if (changed) {
                 this.RaisePropertyChanged(nameof(this.CanStop));
                 this.RaisePropertyChanged(nameof(this.CanStart));
             }
@@ -231,7 +233,6 @@ public class ServerStreamingViewModel : GrpCallTypeViewModelBase {
         finally {
             this.IsBusy = false;
             this.ReqViewModel.RequestEditor.EndRequest();
-            //this.RaisePropertyChanged(nameof(this.CanStop));
         }
     }
 

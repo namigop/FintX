@@ -47,7 +47,9 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     public bool IsCallInFlight {
         get => this._isCallInFlight;
         private set {
-            if (this.RaiseAndSetIfChanged(ref this._isCallInFlight, value)) {
+            var changed = this._isCallInFlight != value;
+            this.RaiseAndSetIfChanged(ref this._isCallInFlight, value);
+            if (changed) {
                 this.RaisePropertyChanged(nameof(this.CanStop));
                 this.RaisePropertyChanged(nameof(this.CanStart));
             }
@@ -60,11 +62,6 @@ public class DuplexStreamingViewModel : GrpCallTypeViewModelBase {
     /// True while the call can be stopped: while it is being established, while the request
     /// stream can still be written, and while the response is being read.
     /// </summary>
-    /// <remarks>
-    /// The response read has to be stoppable on its own. Once the request stream has been
-    /// completed, CanWrite is false, so without the read the Stop button would go dead
-    /// exactly while the server is still streaming its replies.
-    /// </remarks>
     public bool CanStop => this.IsCallInFlight
                            || (this.ReqViewModel.RequestEditor.CtsReq != null
                                && (this.ReqViewModel.CanWrite || this.RespViewModel.CanRead));
