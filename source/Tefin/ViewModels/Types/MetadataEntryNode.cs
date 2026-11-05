@@ -10,7 +10,7 @@ namespace Tefin.ViewModels.Types;
 
 public sealed class MetadataEntryNode : TypeBaseNode {
     private readonly Metadata.Entry _entry;
-    private readonly object _index;
+    private readonly int _index;
     private readonly Metadata _metadata;
 
     public MetadataEntryNode(string name, Type type, ITypeInfo propInfo, object? instance, TypeBaseNode? parent) : base(
@@ -23,7 +23,9 @@ public sealed class MetadataEntryNode : TypeBaseNode {
     }
 
     public override string FormattedValue => this._entry.Value;
-
+    public int Index => this._index;
+    public Metadata Metadata => this._metadata;
+    
     public string Key { get; set; }
     public int TargetListItemsCount { get; set; }
 
@@ -32,10 +34,11 @@ public sealed class MetadataEntryNode : TypeBaseNode {
 
         //Create child nodes Key and Value that when edited will change the Key and EntryValue properties of this
         //MetadataEntryNode.  This is different from how the other nodes work!
-        TypeInfo? keyPropInfo = new(typeof(MetadataEntryNode).GetProperty("Key")!);
+        //TypeInfo? keyPropInfo = new(typeof(MetadataEntryNode).GetProperty("Key")!);
+        var keyPropInfo = new MetadataKeyTypeInfo(this);
         var keyNode = TypeNodeBuilder.Create("Key", typeof(string), keyPropInfo, new Dictionary<string, int>(),
             this.Key, this);
-        TypeInfo? entryValuePropInfo = new(typeof(MetadataEntryNode).GetProperty(nameof(this.FormattedValue))!);
+        var entryValuePropInfo = new MetadataValueTypeInfo(this); //new(typeof(MetadataEntryNode).GetProperty(nameof(this.FormattedValue))!);
         var valueNode = TypeNodeBuilder.Create("Value", typeof(string), entryValuePropInfo,
             new Dictionary<string, int>(), this.FormattedValue, this);
 
